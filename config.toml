@@ -14,7 +14,7 @@ theme = "hugo-goa"
 RSSLink = true
 
 ## Hugo Built-in Features
-disqusShortname = "https-shenoybr-github-io-hugo-goa-demo" # Comment out to disable Disqus.
+disqusShortname = "cimentadaj-github-io" # Comment out to disable Disqus.
 googleAnalytics = "XYZ"
 enableRobotsTXT = true
 
