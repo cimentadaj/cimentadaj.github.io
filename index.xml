@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Jorge Cimentada</title>
-    <link>https://shenoybr.github.io/hugo-goa-demo/</link>
+    <link>/</link>
     <description>Recent content on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Tue, 24 Oct 2017 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="https://shenoybr.github.io/hugo-goa-demo/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>PhD thesis template with Sweave and knitr</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2017-10-24-phd-thesis-template-with-sweave-and-knitr/phd-thesis-template-with-sweave-and-knitr/</link>
+      <link>/blog/2017-10-24-phd-thesis-template-with-sweave-and-knitr/phd-thesis-template-with-sweave-and-knitr/</link>
       <pubDate>Tue, 24 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2017-10-24-phd-thesis-template-with-sweave-and-knitr/phd-thesis-template-with-sweave-and-knitr/</guid>
+      <guid>/blog/2017-10-24-phd-thesis-template-with-sweave-and-knitr/phd-thesis-template-with-sweave-and-knitr/</guid>
       <description>&lt;p&gt;Writing my thesis with &lt;code&gt;Sweave&lt;/code&gt; and &lt;code&gt;knitr&lt;/code&gt; was very nice at the beginning, but then I began running into problems when I wanted to combine different chapters into one single document. Most of the problems were related to having each chapter be compilable on its own with separate bibliographies, among other things. I wrote a detailed guide on how I did it and you can read it &lt;a href=&#34;https://cimentadaj.github.io/phd_thesis/thesis_template_example/2017-10-24-thesis-template.html&#34;&gt;here&lt;/a&gt;. I’d love some feedback as workflow is still very rudimentary. You can post a comment on this post or email me at &lt;a href=&#34;mailto:cimentadaj@gmail.com&#34;&gt;cimentadaj@gmail.com&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Hope it’s useful.&lt;/p&gt;
 </description>
@@ -24,10 +24,10 @@
     
     <item>
       <title>Scraping and visualizing How I Met Your Mother</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</link>
+      <link>/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</link>
       <pubDate>Mon, 16 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</guid>
+      <guid>/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</guid>
       <description>&lt;p&gt;How I Met Your Mother (HIMYM from here after) is a television series very similar to the classical ‘Friends’ series from the 90’s. Following the release of the &lt;a href=&#34;http://tidytextmining.com/&#34;&gt;tidy text&lt;/a&gt; book I was looking for a project in which I could apply these skills. I decided I would scrape all the transcripts from HIMYM and analyze patterns between characters. This post really took me to the limit in terms of web scraping and pattern matching, which was specifically what I wanted to improve in the first place. Let’s begin!&lt;/p&gt;
 &lt;p&gt;My first task was whether there was any consistency in the URL’s that stored the transcripts. If you ever watched HIMYM, we know there’s around nine seasons, each one with about 22 episodes. This makes about 200 episodes give or take. It would be a big pain to manually write down 200 complicated URL’s. Luckily, there is a way of finding the 200 links without writing them down manually.&lt;/p&gt;
 &lt;p&gt;First, we create the links for the 9 websites that contain all episodes (1 through season 9)&lt;/p&gt;
@@ -191,7 +191,7 @@ words_per_character %&amp;gt;%
   scale_y_continuous(name = &amp;quot;Percentage of words per episode&amp;quot;) +
   theme_minimal() +
   facet_wrap(~ character, ncol = 3)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;768&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;768&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Ted is clearly the character with the highest number of words per episode followed by Barney. Lily and Robin, the only two women have very low presence compared to the men. In fact, if one looks closely, Lily seemed to have decreased slightly over time, having an all time low in season 4. Marshall, Lily’s partner in the show, does have much lower presence than both Barney and Ted but he has been catching up over time.&lt;/p&gt;
 &lt;p&gt;We also see an interesting pattern where Barney has a lot of peaks, suggesting that in some specific episodes he gains predominance, where Ted has an overall higher level of words per episode. And when Ted has peaks, it’s usually below its trend-line.&lt;/p&gt;
 &lt;p&gt;Looking at the distribution:&lt;/p&gt;
@@ -215,7 +215,7 @@ words_per_character %&amp;gt;%
   ggtitle(&amp;quot;Percentage of words per season&amp;quot;) +
   facet_wrap(~ season, ncol = 7) +
   theme_minimal()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;we see the differences much clearer. For example, we see Barney’s peaks through out every season with Season 6 seeing a clear peak of 40%. On the other hand, we see that their distributions don’t change that much over time! Suggesting that the presence of each character is very similar in all seasons. Don’t get me wrong, there are differences like Lily in Season 2 and then in Season 6, but in overall terms the previous plot suggests no increase over seasons, and this plot suggests that between seasons, there’s not a lot of change in their distributions that affects the overall mean.&lt;/p&gt;
 &lt;p&gt;If you’ve watched the TV series, you’ll remember Barney always repeating one similar trademark word: legendary! Although it is a bit cumbersome for us to count the number of occurrences of that sentence once we unnested each sentence, we can at least count the number of words per character and see whether some characters have particular words.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;count_words &amp;lt;-
@@ -230,7 +230,7 @@ count_words %&amp;gt;%
   geom_col(alpha = 0.8) +
   coord_flip() +
   facet_wrap(~ character, scales = &amp;quot;free_y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Here we see that a lot of the words we capture are actually nouns or expressions which are common to everyone, such as ‘yeah’, ‘hey’ or ‘time’. We can weight down commonly used words for other words which are important but don’t get repeated a lot. We can exclude those words using &lt;code&gt;bind_tf_idf()&lt;/code&gt;, which for each character decreases the weight for commonly used words and increases the weight for words that are not used very much in a collection or corpus of documents (see 3.3 in &lt;a href=&#34;http://tidytextmining.com/tfidf.html&#34; class=&#34;uri&#34;&gt;http://tidytextmining.com/tfidf.html&lt;/a&gt;).&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;count_words %&amp;gt;%
   bind_tf_idf(word, character, n) %&amp;gt;%
@@ -241,7 +241,7 @@ count_words %&amp;gt;%
   geom_col(alpha = 0.8) +
   coord_flip() +
   facet_wrap(~ character, scales = &amp;quot;free_y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-16-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-16-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Now Barney has a very distinctive word usage, one particularly sexist with words such as couger, bang and tits. Also, we see the word legendary as the thirdly repeated word, something we were expecting! On the other hand, we see Ted with things like professor (him), aunt (because of aunt Lily and such).&lt;/p&gt;
 &lt;p&gt;Knowing that Ted is the main character in the series is no surprise. To finish off, we’re interested in knowing which characters are related to each other. First, let’s turn the data frame into a suitable format.&lt;/p&gt;
 &lt;p&gt;Here we turn all lines to lower case and check which characters are present in the text of each dialogue. The loop will return a vector of logicals whether there was a mention of any of the characters. For simplicity I exclude all lines where there is more than 1 mention of a character, that is, 2 or more characters.&lt;/p&gt;
@@ -280,7 +280,7 @@ character_relation %&amp;gt;%
                 width = 2.5, show.legend = FALSE) +
   geom_node_text(aes(label = name), repel = TRUE) +
   theme_void()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-19-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-19-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;A very clear pattern emerges. There is a strong relationship between Robin and Barney towards Ted. In fact, their direct relationship is very weak, but both are very well connected to Ted. On the other hand, Marshall and Lily are also reasonably connected to Ted but with a weaker link. Both of them are indeed very connected, as should be expected since they were a couple in the TV series.&lt;/p&gt;
 &lt;p&gt;We also see that the weakest members of the group are Robin and Barney with only strong bonds toward Ted but no strong relationship with the other from the group. Overall, there seems to be a division: Marshall and Lily hold a somewhat close relationship with each other and towards Ted and Barney and Robin tend to be related to Ted but no one else.&lt;/p&gt;
 &lt;p&gt;As a follow-up question, is this pattern of relationships the same across all seasons? We can do that very quickly by filtering each season using the previous plot.&lt;/p&gt;
@@ -308,7 +308,7 @@ all_season_plots &amp;lt;- lapply(seasons, function(season_num) {
 
 # Plot all graphs side-by-side
 cowplot::plot_grid(plotlist = all_season_plots, labels = seasons)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-20-1.png&#34; width=&#34;960&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-20-1.png&#34; width=&#34;960&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;There are reasonable changes for all non-Ted relationship! For example, for season 2 the relationship Marshall-Lily-Ted becomes much stronger and it disappears in season 3. Let’s remember that these results might be affected by the fact that I excluded some episodes because of low number of dialogue lines. Keeping that in mind, we also see that for season 7 the Robin-Barney relationship became much stronger (is this the season the started dating?). All in all, the relationships don’t look dramatically different from the previous plot. Everyone seems to be strongly related to Ted. The main difference is the changes in relationship between the other members of the cast.&lt;/p&gt;
 &lt;p&gt;This dataset has a lot of potential and I’m sure I’ve scratched the surface of what one can do with this data. I encourage anyone interested in the topic to use the code to analyze the data further. One idea I might explore in the future is to build a model that attempts to predict who said what for all dialogue lines that didn’t have a character member. This can be done by extracting features from all sentences and using these patterns try to classify which. Any feedback is welcome, so feel free to message me at &lt;a href=&#34;mailto:cimentadaj@gmail.com&#34;&gt;cimentadaj@gmail.com&lt;/a&gt;&lt;/p&gt;
 </description>
@@ -316,10 +316,10 @@ cowplot::plot_grid(plotlist = all_season_plots, labels = seasons)&lt;/code&gt;&l
     
     <item>
       <title>The LOO and the Bootstrap</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</link>
+      <link>/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</link>
       <pubDate>Thu, 07 Sep 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</guid>
+      <guid>/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</guid>
       <description>&lt;p&gt;This is the second entry, and probably the last, on model validation methods. These posts are inspired by the work of Kohavi (1995), which I totally recommend reading. This post will talk talk about the Leave-One-Out Cross Validation (LOOCV), which is the extreme version of the K-Fold Cross Validation and the Bootstrap for model assessment.&lt;/p&gt;
 &lt;p&gt;Let’s dive in!&lt;/p&gt;
 &lt;div id=&#34;the-leave-one-out-cv-method&#34; class=&#34;section level2&#34;&gt;
@@ -415,10 +415,10 @@ summary(bootstrap)
     
     <item>
       <title>Holdout and cross-validation</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</link>
+      <link>/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</link>
       <pubDate>Wed, 06 Sep 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</guid>
+      <guid>/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</guid>
       <description>&lt;p&gt;In a recent attempt to bring a bit of discipline into my life, I’ve been forcing myself to read papers after lunch, specifically concentrated on data science topics. The whole idea is to educated myself every day, but if I find something cool that I can implement in R, I’ll do it right away.&lt;/p&gt;
 &lt;p&gt;This blogpost is the first of a series of entries I plan to post explaining the main concepts of Kohavi (1995), which compares cross-validation methods and bootstrap methods for model selection. This first post will implement a K-Fold cross validation from scratch in order to understand more deeply what’s going on behind the scenes.&lt;/p&gt;
 &lt;p&gt;Before we explain the concept of K-Fold cross validation, we need to define what the ‘Holdout’ method is.&lt;/p&gt;
@@ -538,10 +538,10 @@ k_fold_cv %&amp;gt;%
     
     <item>
       <title>perccalc package</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2017-08-01-perccalc-package/perccalc-package/</link>
+      <link>/blog/2017-08-01-perccalc-package/perccalc-package/</link>
       <pubDate>Tue, 01 Aug 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2017-08-01-perccalc-package/perccalc-package/</guid>
+      <guid>/blog/2017-08-01-perccalc-package/perccalc-package/</guid>
       <description>&lt;p&gt;Reardon (2011) introduced a very interesting concept in which he calculates percentile differences from ordered categorical variables. He explains his procedure very much in detail in the appendix of the book chapter but no formal implementation has been yet available on the web. With this package I introduce a function that applies the procedure, following a step-by-step Stata script that Sean Reardon kindly sent me.&lt;/p&gt;
 &lt;p&gt;In this vignette I show you how to use the function and match the results to the Stata code provided by Reardon himself.&lt;/p&gt;
 &lt;p&gt;For this example, we’ll use a real world data set, one I’m very much familiar with: PISA. We’ll use the PISA 2012 wave for Germany because it asked parents about their income category. For this example we’ll need the packages below.&lt;/p&gt;
@@ -594,7 +594,7 @@ dataset_ready &amp;lt;-
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;quot;perccalc&amp;quot;, repo = &amp;quot;https://cran.rediris.es/&amp;quot;)
 ## 
 ## The downloaded binary packages are in
-##  /var/folders/w0/pscnb7zx5y9g_qf13cxhl0_r0000gn/T//RtmpvBtLBJ/downloaded_packages
+##  /var/folders/w0/pscnb7zx5y9g_qf13cxhl0_r0000gn/T//RtmpYdxHZM/downloaded_packages
 library(perccalc)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The package has two functions, which I’ll show some examples. The first one is called &lt;code&gt;perc_diff&lt;/code&gt; and it’s very easy to use, we just specify the data, the name of the categorical and continuous variable and the percentile difference we want.&lt;/p&gt;
 &lt;p&gt;Let’s put it to use!&lt;/p&gt;
@@ -813,7 +813,7 @@ postclose `memhold&amp;#39;
   ggplot(aes(percentile, estimate)) +
   geom_point() +
   geom_errorbar(aes(ymin = ci_low, ymax = ci_hi))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-08-01-perccalc-package/2017-08-01-perccalc-package_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;576&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-08-01-perccalc-package/2017-08-01-perccalc-package_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;576&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Please note that for calculating the difference between two percentiles it is more accurate to use the &lt;code&gt;perc_diff&lt;/code&gt; function. The &lt;code&gt;perc_diff&lt;/code&gt; calculates the difference through a linear combination of coefficients resulting in a different standard error.&lt;/p&gt;
 &lt;p&gt;For example:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_dist(dataset_ready, income, score, wt) %&amp;gt;%
@@ -837,10 +837,10 @@ postclose `memhold&amp;#39;
     
     <item>
       <title>Replicating Dupriez and Dumay (2006)</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2017-04-13-replicating-dupriez-and-dumay-2006/replicating-dupriez-and-dumay-2006/</link>
+      <link>/blog/2017-04-13-replicating-dupriez-and-dumay-2006/replicating-dupriez-and-dumay-2006/</link>
       <pubDate>Thu, 13 Apr 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2017-04-13-replicating-dupriez-and-dumay-2006/replicating-dupriez-and-dumay-2006/</guid>
+      <guid>/blog/2017-04-13-replicating-dupriez-and-dumay-2006/replicating-dupriez-and-dumay-2006/</guid>
       <description>&lt;p&gt;So, I was bored for two days and decided I’d replicate a paper I had read. The paper is called ‘Inequalities in school systems: effect of school structure or of society structure?’ written by Vincent Dupriez and Xavier Dumay which you can read from &lt;a href=&#34;http://www.tandfonline.com/doi/full/10.1080/03050060600628074?scroll=top&amp;amp;needAccess=true&#34;&gt;here&lt;/a&gt;. I made available two version, one in &lt;a href=&#34;https://github.com/cimentadaj/Inequality_schools_replication/raw/master/replication_tracking_pisa.pdf&#34;&gt;pdf&lt;/a&gt; and another in &lt;a href=&#34;https://cimentadaj.github.io/Inequality_schools_replication/replication_tracking_pisa.html&#34;&gt;html&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;If you’re interested in looking at the code or suggesting some changes, do send me an email at &lt;code&gt;cimentadaj@gmail.com&lt;/code&gt; or check the &lt;a href=&#34;https://github.com/cimentadaj/Inequality_schools_replication&#34;&gt;Github repository&lt;/a&gt;.&lt;/p&gt;
 </description>
@@ -848,10 +848,10 @@ postclose `memhold&amp;#39;
     
     <item>
       <title>My PISA twitter bot</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</link>
+      <link>/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</link>
       <pubDate>Wed, 08 Mar 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</guid>
+      <guid>/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</guid>
       <description>&lt;p&gt;I’ve long wanted to prepare a project with R related to education. I knew I’d found the idea when I read Thomas Lumley’s &lt;a href=&#34;http://notstatschat.tumblr.com/post/156007757906/a-bus-watching-bot&#34;&gt;attempt to create a Twitter bot in which he tweeted bus arrivals in New Zealand&lt;/a&gt;. Quoting him, “Is it really hard to write a bot? No. Even I can do it. And I’m old.”&lt;/p&gt;
 &lt;p&gt;So I said to myself, alright, you have to create a Twitter bot but it has to be related to education. It’s an easy project which shouldn’t take a lot of your time. I then came up with this idea: what if you could randomly sample questions from the &lt;a href=&#34;http://www.oecd.org/pisa/aboutpisa/&#34;&gt;PISA databases&lt;/a&gt; and create a sort of random facts generator. The result would be one graph a day, showing a question for some random sample of countries. I figured, why not prepare a post (both for me to remember how I did it but also so others can contribute to the project) where I explained step-by-step how I did it?&lt;/p&gt;
 &lt;p&gt;The repository for the project is &lt;a href=&#34;https://github.com/cimentadaj/PISAfacts_twitterBot&#34;&gt;here&lt;/a&gt;, so feel free to drop any comments or improvements. The idea is to load the &lt;a href=&#34;http://vs-web-fs-1.oecd.org/pisa/PUF_SPSS_COMBINED_CMB_STU_QQQ.zip&#34;&gt;PISA 2015 data&lt;/a&gt;, randomly pick a question that doesn’t have a lot of labels (because then it’s very difficult to plot it nicely), and based on the type of question create an appropriate graph. Of course, all of this needs to be done on the fly, without human assistance. You can follow this twitter account at &lt;span class=&#34;citation&#34;&gt;@DailyPISA_Facts&lt;/span&gt;. Let’s start!&lt;/p&gt;
@@ -960,17 +960,17 @@ write_lines(new_var, path = &amp;quot;./all_variables.txt&amp;quot;, append = T)
   pisa.table(var_name, data = ., by = &amp;quot;cnt&amp;quot;) %&amp;gt;%
   filter(complete.cases(.))&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Let’s check out the contents of &lt;code&gt;try_df&lt;/code&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;##          cnt ec022q09na Freq Percentage Std.err.
-## 1  Australia          1 4441      80.88        0
-## 2  Australia          2 1050      19.12        0
-## 3    Belgium          1 1143      86.59        0
-## 4    Belgium          2  177      13.41        0
-## 5   Bulgaria          1 2804      76.86        0
-## 6   Bulgaria          2  844      23.14        0
-## 7    Croatia          1 2332      86.43        0
-## 8    Croatia          2  366      13.57        0
-## 9    Denmark          1  920      84.71        0
-## 10   Denmark          2  166      15.29        0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##          cnt st123q03na Freq Percentage Std.err.
+## 1  Australia          1  327       2.34        0
+## 2  Australia          2  962       6.90        0
+## 3  Australia          3 5681      40.73        0
+## 4  Australia          4 6979      50.03        0
+## 5    Austria          1  151       2.18        0
+## 6    Austria          2  391       5.65        0
+## 7    Austria          3 1532      22.13        0
+## 8    Austria          4 4849      70.04        0
+## 9    Belgium          1  168       1.82        0
+## 10   Belgium          2  568       6.15        0&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Great! To finish with the data, we simply need one more thing: to recode the value labels with the &lt;code&gt;labels&lt;/code&gt; vector.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;try_df[var_name] &amp;lt;- labels[try_df[, var_name]]&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Awesome. We have the data ready, more or less. Let’s produce a dirty plot to check how long the title is.&lt;/p&gt;
@@ -979,7 +979,7 @@ write_lines(new_var, path = &amp;quot;./all_variables.txt&amp;quot;, append = T)
 ggplot(try_df, aes_string(names(try_df)[2], &amp;quot;Percentage&amp;quot;)) +
   geom_col() +
   xlab(title_question)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Note: Because the question is randomly sampled, you might be getting a short title. Rerun the script and eventually you’ll get a long one.&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;So, the question &lt;em&gt;might&lt;/em&gt; have two problems. The wording is a bit confusing (something we can’t really do anything about because that’s how it’s written in the questionnaire) and it’s too long. For the second problem I created a function that cuts the title in an arbitrary cutoff point (based on experimental tests on how many letters fit into a ggplot coordinate plane) but it makes sure that the cutoff is not in the middle of a word, i.e. it searches for the closest end of a word.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## Section: Get the title
@@ -1157,7 +1157,7 @@ class(try_df) &amp;lt;- c(class(try_df), label_class)&lt;/code&gt;&lt;/pre&gt;
 pisa_graph(data = try_df,
              y_title = final_title,
              fill_var = var_name)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-24-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-24-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;file &amp;lt;- tempfile()
 ggsave(file, device = &amp;quot;png&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
@@ -1205,10 +1205,10 @@ unlink(file)&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Cognitive inequality around the world – Shiny app</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</link>
+      <link>/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</link>
       <pubDate>Mon, 12 Dec 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</guid>
+      <guid>/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</guid>
       <description>&lt;p&gt;For the last month I’ve been working on this massive dataset that combines all PISA, TIMSS and PIRLS surveys into one major database. It has over 3 million students and over 2,000 variables, including student background and school and teacher information. I started playing around with it and ending up doing this: &lt;a href=&#34;https://cimentadaj.shinyapps.io/shiny/&#34; class=&#34;uri&#34;&gt;https://cimentadaj.shinyapps.io/shiny/&lt;/a&gt;. Feel free to check it out and drop any comments below.&lt;/p&gt;
 &lt;p&gt;If you want to contribute, &lt;a href=&#34;https://github.com/cimentadaj/Inequality_Shinyapp&#34;&gt;this&lt;/a&gt; is the Github repository. I plan to keep adding some stuff to the app, including new surveys and automatic plot downloading, so don’t forget to check it out.&lt;/p&gt;
 </description>
@@ -1216,10 +1216,10 @@ unlink(file)&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Fitting the wrong model</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</link>
+      <link>/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</link>
       <pubDate>Thu, 10 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</guid>
+      <guid>/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</guid>
       <description>&lt;p&gt;These exercises are from the book &lt;a href=&#34;http://www.stat.columbia.edu/~gelman/arm/&#34;&gt;Data Analysis Using Regression and Multilevel/Hierarchical Models&lt;/a&gt;. I’ve really gotten into completing these exercises and I guess that by posting them I’ve found an excuse to keep doing it. This time I went back to chapter 8 which deals with simulations. I picked the first exercise, page 165 exercise 8.6.1, which says:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Fitting the wrong model: suppose you have 100 data points that arose from the following model: y = 3 + 0.1×1 + 0.5×2 + error, with errors having a t distribution with mean 0, scale 5, and 4 degrees of freedom.We shall explore the implications of fitting a standard linear regression to these data.&lt;/p&gt;
@@ -1339,10 +1339,10 @@ cbind(repl_coef + (-1 * repl_se), repl_coef + (1 * repl_se))&lt;/code&gt;&lt;/pr
     
     <item>
       <title>Multilevel modeling – Part 1</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-1/multilevel-modeling--part-1/</link>
+      <link>/blog/2016-11-06-multilevel-modeling--part-1/multilevel-modeling--part-1/</link>
       <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-1/multilevel-modeling--part-1/</guid>
+      <guid>/blog/2016-11-06-multilevel-modeling--part-1/multilevel-modeling--part-1/</guid>
       <description>&lt;p&gt;I’ve been reading Andrew Gelman’s and Jennifer Hill’s book again but this time concentrating on the multilevel section of the book. I finished the first chapter (chapter 12) and got fixed on the exercises 12.2, 12.3 and 12.4. I finally completed them and I thought I’d share the three exercises in two posts, mostly for me to come back to these in the future. The first exercise goes as follows:&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
 &lt;li&gt;&lt;p&gt;Write a model predicting CD4 percentage as a function of time with varying intercepts across children. Fit using lmer() and interpret the coefficient for time.&lt;/p&gt;&lt;/li&gt;
@@ -1457,7 +1457,7 @@ df3$diff &amp;lt;- df3$X1 - df3$X2
 # Graph it
 ggplot(df3, aes(diff)) + geom_histogram(bins = 100) +
   xlim(0, 0.2)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-1/2016-11-06-multilevel-modeling--part-1_files/figure-html/fig.-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2016-11-06-multilevel-modeling--part-1/2016-11-06-multilevel-modeling--part-1_files/figure-html/fig.-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;It looks like the difference is always higher than zero which means that in the second model the difference between the upper and lower CI is smaller than in the first model. This suggests we have greater certainty of our estimation by including the two predictors in the model.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Numerically, the between-child variance in the first
 # model was:
@@ -1509,10 +1509,10 @@ display(mod2)&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Multilevel modeling – Part 2</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-2/multilevel-modeling--part-2/</link>
+      <link>/blog/2016-11-06-multilevel-modeling--part-2/multilevel-modeling--part-2/</link>
       <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-2/multilevel-modeling--part-2/</guid>
+      <guid>/blog/2016-11-06-multilevel-modeling--part-2/multilevel-modeling--part-2/</guid>
       <description>&lt;p&gt;This is a continuation of the multilevel exercise 12.2 from chapter 12 of Data Analysis Using Regression and Multilevel/Hierarchical Models. In the last post (link to previous post) we explored the basic interpretation of multilevel modeling with a varying intercept and delved into comparing models and understanding partial pooling.&lt;/p&gt;
 &lt;p&gt;This was all done by completing the exercise 12.2 from chapter 12 of the book Data Analysis Using Regression and Multilevel/Hierarchical Models. Exercises 12.3 and 12.4 continue using the same dataset and the same models, so I figured I’d post them here. Let’s start.&lt;/p&gt;
 &lt;p&gt;Exercise 12.3 asks:&lt;/p&gt;
@@ -1550,7 +1550,7 @@ newpred &amp;lt;- predict(mod2, newdata = pred_data)
 # That it! We have the predicted percentage of CD4 for a fixed date for every child.
 # Let&amp;#39;s look at the distribution
 hist(newpred)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;There’s quite some variation going from 0% to even 60%. It’d be nice to know what CD4 is.&lt;/p&gt;
 &lt;hr /&gt;
 &lt;p&gt;Question (b) is pretty similar but instead of asking for a new time point for each child, it asks to predict the CD4 percentage for a new child who was 4 years old at the baseline with a set of hypothetical time periods.&lt;/p&gt;
@@ -1589,7 +1589,7 @@ sd_cd4 &amp;lt;- sd(predict(mod2, newdata = finaltime_data), na.rm = T)
 set.seed(421)
 
 hist(rnorm(1000, mean_cd4, sd = sd_cd4))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;It’s incredibly wide and it even includes negative numbers, something impossible with percentages. But whats the actual CD4 percentage of that date?&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cd4 &amp;lt;- subset(cd4, !is.na(VDATE))
 cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]&lt;/code&gt;&lt;/pre&gt;
@@ -1607,10 +1607,10 @@ cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Los pobres no son los peores pero los ricos sí son los mejores: desigualdad educativa</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</link>
+      <link>/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</link>
       <pubDate>Sat, 24 Sep 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</guid>
+      <guid>/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</guid>
       <description>&lt;p&gt;Hace poco escribí un artículo sobre la desigualdad educativa en países Latinoamericanos y describí como la República Dominicana no parece estar tan mal como creemos. Ofrecí dos posibles explicaciones de porque esto pudiera ser bueno o malo, dependiendo del enfoque con que se ve (missing link after the ‘,’ with this: &lt;a href=&#34;http://www.jorgecimentada.com/?p=137&#34; class=&#34;uri&#34;&gt;http://www.jorgecimentada.com/?p=137&lt;/a&gt;). Luego de escribirlo me quedé pensando en algo que di por sentado: ¿realmente los ‘peores’ estudiantes son los estudiantes pobres? ¿son los estudiantes pobres los ‘peores’ en las escuelas públicas y privadas? Y a raíz del artículo de &lt;a href=&#34;http://acento.com.do/2016/opinion/8377420-desigualdad-educativa-interpela-desafia/&#34;&gt;Dinorah Garcia&lt;/a&gt;, ¿existe desigualdad entre las zonas rurales y urbanas?&lt;/p&gt;
 &lt;p&gt;Estas preguntas no solo ayudan a diagnosticar el estado actual de la desigualdad, más que eso, permiten inferir de donde pudieran provenir las fuentes de desigualdad. Si encontramos una diferencia bastante amplia entre los ‘mejores’ y ‘peores’ estudiantes, pero la diferencia es menor entre escuelas públicas y privada, pues la causa no es necesariamente las diferencias en calidad entre las tipos de escuelas. Sin embargo, si existen diferencias similares entre los estudiantes de escuelas rurales y urbanas, pues la razón puede ser precisamente en temas como la calidad educativa entre sectores pobres y ricos. Lo interesante de estas preguntas es que son todas preguntas empíricas, y se pueden responder con bases de datos como las de TERCE.&lt;/p&gt;
 &lt;div id=&#34;realmente-los-peores-estudiantes-son-los-estudiantes-pobres&#34; class=&#34;section level2&#34;&gt;
@@ -1652,10 +1652,10 @@ cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Obtaining robust standard errors and odds ratios for logistic regression in R</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</link>
+      <link>/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</link>
       <pubDate>Mon, 19 Sep 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</guid>
+      <guid>/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</guid>
       <description>&lt;p&gt;I’ve always found it frustrating how it’s so easy to produce robust standard errors in Stata and in R it’s so complicated. First, we have to estimate the standard errors separately and then replace the previous standard errors with the new ones. Second, if you want to estimate odds ratios instead of logit coefficients, then the robust standard errors need to be scaled. All of that is as simple as adding robust or in the Stata logit command.&lt;/p&gt;
 &lt;p&gt;I decided to make it as simple in R.&lt;/p&gt;
 &lt;p&gt;First, I have to give credit to &lt;a href=&#34;http://stackoverflow.com/users/4233642/achim-zeileis&#34;&gt;Achim Zeileis&lt;/a&gt; in this &lt;a href=&#34;http://stackoverflow.com/questions/27367974/different-robust-standard-errors-of-logit-regression-in-stata-and-r&#34;&gt;question&lt;/a&gt; because he provided part of code to generate the robust standard errors.&lt;/p&gt;
@@ -1756,10 +1756,10 @@ logit z x1 x2 x3, robust or
     
     <item>
       <title>Simulations and model predictions in R</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</link>
+      <link>/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</link>
       <pubDate>Tue, 13 Sep 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</guid>
+      <guid>/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</guid>
       <description>&lt;p&gt;I was on a flight from Asturias to Barcelona yesterday and I finally had some free time to open Gelman and Hill’s book and submerge in some studying. After finishing the chapter on simulations, I tried doing the first exercise and enjoyed it very much.&lt;/p&gt;
 &lt;p&gt;The exercise goes as follows:&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Discrete probability simulation: suppose that a basketball player has a 60% chance of making a shot, and he keeps taking shots until he misses two in a row. Also assume his shots are independent (so that each shot has 60% probability of success, no matter what happened before).&lt;/em&gt;&lt;/p&gt;
@@ -1795,19 +1795,19 @@ thrower(0.6)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# b)
 attempts &amp;lt;- replicate(1000, thrower(0.60))
 mean(sapply(attempts, length)) &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 8.769&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 9.242&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# mean number of shots until two shots are missed in a row&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sd(sapply(attempts, length)) &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 7.148758&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 8.038411&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# standard deviation of shots made
 # until two shots are missed in a row&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;hist(sapply(attempts, length)) # distribution of shots made&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2016-09-13-simulations-and-model-predictions-in-r/2016-09-13-simulations-and-model-predictions-in-r_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2016-09-13-simulations-and-model-predictions-in-r/2016-09-13-simulations-and-model-predictions-in-r_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# c)
 df &amp;lt;- cbind(sapply(attempts, mean), sapply(attempts, length)) 
 # data frame with % of shots made and number of shots thrown
 plot(df[, 2], df[, 1])&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2016-09-13-simulations-and-model-predictions-in-r/2016-09-13-simulations-and-model-predictions-in-r_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2016-09-13-simulations-and-model-predictions-in-r/2016-09-13-simulations-and-model-predictions-in-r_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;That was fun. I think the key take away here is that you can use these type of simulations to asses the accuracy of model predictions, for example. If you have the probability of being in either 1 or 0 in any dependent variable, then simulation can help determine its reliability by looking at the distribution of the replications.&lt;/p&gt;
 &lt;p&gt;Whenever I have some free time I’ll go back to the next exercises.&lt;/p&gt;
 </description>
@@ -1815,10 +1815,10 @@ plot(df[, 2], df[, 1])&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Children: public or private goods?</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</link>
+      <link>/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</link>
       <pubDate>Mon, 29 Aug 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</guid>
+      <guid>/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</guid>
       <description>&lt;p&gt;The role of the welfare state, as agreed by many scholars, is to de-commodify its citizens. Some argue that this should be the way that the generosity of the state should be measured; instead of net public and private social expenditure, it should be the extent to which citizens are de-commodified by the services and transfers of the welfare state.&lt;/p&gt;
 &lt;p&gt;The aim of educational investment can be seen from different lenses, but today we’ll focus on the economic and social returns to education. An important share of the state budget is aimed at the formation and education of citizens through public education. In countries where there is a substantial investment, human capital, innovation and production are maximized creating a highly productive working population that can sustain the young and the elderly through pensions, health and child care; note that in some scenarios an uneducated workforce can sustain those who depend on them but it will possible be with more quantity of work (hours) and less quality [1]. Following this logic, it is arguable that because most of today’s workers will benefit from pensions, retirement schemes, care assistance and healthcare, they are to take care of their young population, the next generation’s workers. Covering kids’ education through higher taxes could be seen as loan: A young worker covers the expenses of a child, and that child, eventually, will cover the pension of that worker; this is a simplified version of the argument.&lt;/p&gt;
 &lt;p&gt;The scheme I just outlined is virtually widespread across western European countries. But it is important to note that in other countries, due to the intrinsic organization of the state, it is unimaginable to do so. In the counterfactual situation where you don’t have a strong welfare state, maybe it’s unfair to tax those who are not benefiting from the goods that the taxes are being spent on. In places like the United States, where the generosity of the welfare system is minimal, some people don’t find it reasonable to pay for everyone’s kids, even more, when you’re paying already, for instance, a private school for your own.&lt;/p&gt;
@@ -1844,10 +1844,10 @@ plot(df[, 2], df[, 1])&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Producing stargazer tables with odds ratios and standard errors in R</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</link>
+      <link>/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</link>
       <pubDate>Mon, 22 Aug 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</guid>
+      <guid>/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</guid>
       <description>&lt;p&gt;Whoa, what a day. I’ve been using the stargazer package for producing my (beautiful) regression tables in R for a while now. Among all the arguments of its main function (&lt;code&gt;stargazer()&lt;/code&gt; ) are &lt;code&gt;apply.coef&lt;/code&gt;, &lt;code&gt;apply.se&lt;/code&gt;, &lt;code&gt;apply.ci&lt;/code&gt;, … and so on for all the other statistics of a regression output. Each of these arguments, if specified, applies a function over the specified statistic. So, for calculating the odds ratios I would simply apply the &lt;code&gt;exp()&lt;/code&gt; function over the set of log odds. It turns out that if you apply any function over the coefficients (or any other statistic), stargazer automatically recalculates t values with the new coefficients! This means that the significance of my model will depend on the new values and we surely wouldn’t want that.&lt;/p&gt;
 &lt;p&gt;Let’s show a reproducible example:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# install.packages(&amp;quot;stargazer&amp;quot;) # in case you don&amp;#39;t have this package
@@ -2034,10 +2034,10 @@ devtools::install_github(&amp;quot;cimentadaj/cimentadaj&amp;quot;)&lt;/code&gt;
     
     <item>
       <title>T-tests, regression (and ANOVA): They&#39;re all the same!</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2016-08-20-ttests-regression-and-anova-theyre-all-the-same/ttests-regression-and-anova-theyre-all-the-same/</link>
+      <link>/blog/2016-08-20-ttests-regression-and-anova-theyre-all-the-same/ttests-regression-and-anova-theyre-all-the-same/</link>
       <pubDate>Sat, 20 Aug 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2016-08-20-ttests-regression-and-anova-theyre-all-the-same/ttests-regression-and-anova-theyre-all-the-same/</guid>
+      <guid>/blog/2016-08-20-ttests-regression-and-anova-theyre-all-the-same/ttests-regression-and-anova-theyre-all-the-same/</guid>
       <description>&lt;p&gt;Upon reading “How Not To Lie with Statistics: Avoiding Common Mistakes in Quantitative Political Science” from Gary King, I stumbled into a section which proved that t-tests, ANOVA and Linear Regression are intimately related, both conceptually and algebraically. As a late-comer in statistics, one usually does not pay attention to these nuances. I decided to make a short simulation in R just to make sure my intuition was right.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(1)
 
@@ -2076,11 +2076,11 @@ lm(income ~ gender + kids)&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>About</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/about/</link>
+      <link>/about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/about/</guid>
-      <description>&lt;p&gt;&lt;center&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/img/headshot.jpg&#34; alt=&#34;Drawing&#34; style=&#34;width: 200px;&#34;/&gt;&lt;/center&gt;&lt;/p&gt;
+      <guid>/about/</guid>
+      <description>&lt;p&gt;&lt;center&gt;&lt;img src=&#34;/img/headshot.jpg&#34; alt=&#34;Drawing&#34; style=&#34;width: 200px;&#34;/&gt;&lt;/center&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;br&gt;&lt;/p&gt;
 
@@ -2094,13 +2094,13 @@ lm(income ~ gender + kids)&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Curriculum Vitae</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/vitae/</link>
+      <link>/vitae/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/vitae/</guid>
+      <guid>/vitae/</guid>
       <description>
 
-&lt;p&gt;You can download my CV from &lt;a href=&#34;https://shenoybr.github.io/hugo-goa-demo/vitae/Jorge_Cimentada_CV.pdf&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;You can download my CV from &lt;a href=&#34;/vitae/Jorge_Cimentada_CV.pdf&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;Here’s a brief summary:&lt;/p&gt;
 
@@ -2166,10 +2166,10 @@ lm(income ~ gender + kids)&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Projects</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/projects/</link>
+      <link>/projects/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/projects/</guid>
+      <guid>/projects/</guid>
       <description>&lt;p&gt;&lt;p&gt;
 &lt;div style=&#34;width: auto&#34;&gt;
 &lt;img src=&#34;img/teaching_r.jpg&#34; alt=&#34;Me.&#34; style=&#34;float: center; width: 100%;max-height: 130%; PADDING-LEFT: 30px&#34;/&gt;

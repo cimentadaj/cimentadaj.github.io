@@ -2,147 +2,147 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Jorge Cimentada</title>
-    <link>https://shenoybr.github.io/hugo-goa-demo/tags/</link>
+    <link>/tags/</link>
     <description>Recent content in Tags on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Mon, 16 Oct 2017 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="https://shenoybr.github.io/hugo-goa-demo/tags/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Eda</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/tags/eda/</link>
+      <link>/tags/eda/</link>
       <pubDate>Mon, 16 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/tags/eda/</guid>
+      <guid>/tags/eda/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Education</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/tags/education/</link>
+      <link>/tags/education/</link>
       <pubDate>Thu, 13 Apr 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/tags/education/</guid>
+      <guid>/tags/education/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Gelman</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/tags/gelman/</link>
+      <link>/tags/gelman/</link>
       <pubDate>Thu, 10 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/tags/gelman/</guid>
+      <guid>/tags/gelman/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Inequality</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/tags/inequality/</link>
+      <link>/tags/inequality/</link>
       <pubDate>Thu, 13 Apr 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/tags/inequality/</guid>
+      <guid>/tags/inequality/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Knitr</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/tags/knitr/</link>
+      <link>/tags/knitr/</link>
       <pubDate>Tue, 24 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/tags/knitr/</guid>
+      <guid>/tags/knitr/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Latex</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/tags/latex/</link>
+      <link>/tags/latex/</link>
       <pubDate>Tue, 24 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/tags/latex/</guid>
+      <guid>/tags/latex/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Machine Learning</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/tags/machine-learning/</link>
+      <link>/tags/machine-learning/</link>
       <pubDate>Thu, 07 Sep 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/tags/machine-learning/</guid>
+      <guid>/tags/machine-learning/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Multilevel</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/tags/multilevel/</link>
+      <link>/tags/multilevel/</link>
       <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/tags/multilevel/</guid>
+      <guid>/tags/multilevel/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Packages</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/tags/packages/</link>
+      <link>/tags/packages/</link>
       <pubDate>Tue, 01 Aug 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/tags/packages/</guid>
+      <guid>/tags/packages/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Pisa</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/tags/pisa/</link>
+      <link>/tags/pisa/</link>
       <pubDate>Wed, 08 Mar 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/tags/pisa/</guid>
+      <guid>/tags/pisa/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Projects</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/tags/projects/</link>
+      <link>/tags/projects/</link>
       <pubDate>Mon, 16 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/tags/projects/</guid>
+      <guid>/tags/projects/</guid>
       <description></description>
     </item>
     
     <item>
       <title>R</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/tags/r/</link>
+      <link>/tags/r/</link>
       <pubDate>Tue, 24 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/tags/r/</guid>
+      <guid>/tags/r/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Scraping</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/tags/scraping/</link>
+      <link>/tags/scraping/</link>
       <pubDate>Mon, 16 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/tags/scraping/</guid>
+      <guid>/tags/scraping/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Shiny</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/tags/shiny/</link>
+      <link>/tags/shiny/</link>
       <pubDate>Mon, 12 Dec 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/tags/shiny/</guid>
+      <guid>/tags/shiny/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Simulation</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/tags/simulation/</link>
+      <link>/tags/simulation/</link>
       <pubDate>Thu, 07 Sep 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/tags/simulation/</guid>
+      <guid>/tags/simulation/</guid>
       <description></description>
     </item>
     
