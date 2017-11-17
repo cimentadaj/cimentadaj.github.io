@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Pisa on Jorge Cimentada</title>
-    <link>https://shenoybr.github.io/hugo-goa-demo/tags/pisa/</link>
+    <link>/tags/pisa/</link>
     <description>Recent content in Pisa on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Wed, 08 Mar 2017 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="https://shenoybr.github.io/hugo-goa-demo/tags/pisa/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="/tags/pisa/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>My PISA twitter bot</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</link>
+      <link>/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</link>
       <pubDate>Wed, 08 Mar 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</guid>
+      <guid>/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</guid>
       <description>&lt;p&gt;I’ve long wanted to prepare a project with R related to education. I knew I’d found the idea when I read Thomas Lumley’s &lt;a href=&#34;http://notstatschat.tumblr.com/post/156007757906/a-bus-watching-bot&#34;&gt;attempt to create a Twitter bot in which he tweeted bus arrivals in New Zealand&lt;/a&gt;. Quoting him, “Is it really hard to write a bot? No. Even I can do it. And I’m old.”&lt;/p&gt;
 &lt;p&gt;So I said to myself, alright, you have to create a Twitter bot but it has to be related to education. It’s an easy project which shouldn’t take a lot of your time. I then came up with this idea: what if you could randomly sample questions from the &lt;a href=&#34;http://www.oecd.org/pisa/aboutpisa/&#34;&gt;PISA databases&lt;/a&gt; and create a sort of random facts generator. The result would be one graph a day, showing a question for some random sample of countries. I figured, why not prepare a post (both for me to remember how I did it but also so others can contribute to the project) where I explained step-by-step how I did it?&lt;/p&gt;
 &lt;p&gt;The repository for the project is &lt;a href=&#34;https://github.com/cimentadaj/PISAfacts_twitterBot&#34;&gt;here&lt;/a&gt;, so feel free to drop any comments or improvements. The idea is to load the &lt;a href=&#34;http://vs-web-fs-1.oecd.org/pisa/PUF_SPSS_COMBINED_CMB_STU_QQQ.zip&#34;&gt;PISA 2015 data&lt;/a&gt;, randomly pick a question that doesn’t have a lot of labels (because then it’s very difficult to plot it nicely), and based on the type of question create an appropriate graph. Of course, all of this needs to be done on the fly, without human assistance. You can follow this twitter account at &lt;span class=&#34;citation&#34;&gt;@DailyPISA_Facts&lt;/span&gt;. Let’s start!&lt;/p&gt;
@@ -125,17 +125,17 @@ write_lines(new_var, path = &amp;quot;./all_variables.txt&amp;quot;, append = T)
   pisa.table(var_name, data = ., by = &amp;quot;cnt&amp;quot;) %&amp;gt;%
   filter(complete.cases(.))&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Let’s check out the contents of &lt;code&gt;try_df&lt;/code&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;##          cnt ec022q09na Freq Percentage Std.err.
-## 1  Australia          1 4441      80.88        0
-## 2  Australia          2 1050      19.12        0
-## 3    Belgium          1 1143      86.59        0
-## 4    Belgium          2  177      13.41        0
-## 5   Bulgaria          1 2804      76.86        0
-## 6   Bulgaria          2  844      23.14        0
-## 7    Croatia          1 2332      86.43        0
-## 8    Croatia          2  366      13.57        0
-## 9    Denmark          1  920      84.71        0
-## 10   Denmark          2  166      15.29        0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##          cnt st123q03na Freq Percentage Std.err.
+## 1  Australia          1  327       2.34        0
+## 2  Australia          2  962       6.90        0
+## 3  Australia          3 5681      40.73        0
+## 4  Australia          4 6979      50.03        0
+## 5    Austria          1  151       2.18        0
+## 6    Austria          2  391       5.65        0
+## 7    Austria          3 1532      22.13        0
+## 8    Austria          4 4849      70.04        0
+## 9    Belgium          1  168       1.82        0
+## 10   Belgium          2  568       6.15        0&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Great! To finish with the data, we simply need one more thing: to recode the value labels with the &lt;code&gt;labels&lt;/code&gt; vector.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;try_df[var_name] &amp;lt;- labels[try_df[, var_name]]&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Awesome. We have the data ready, more or less. Let’s produce a dirty plot to check how long the title is.&lt;/p&gt;
@@ -144,7 +144,7 @@ write_lines(new_var, path = &amp;quot;./all_variables.txt&amp;quot;, append = T)
 ggplot(try_df, aes_string(names(try_df)[2], &amp;quot;Percentage&amp;quot;)) +
   geom_col() +
   xlab(title_question)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Note: Because the question is randomly sampled, you might be getting a short title. Rerun the script and eventually you’ll get a long one.&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;So, the question &lt;em&gt;might&lt;/em&gt; have two problems. The wording is a bit confusing (something we can’t really do anything about because that’s how it’s written in the questionnaire) and it’s too long. For the second problem I created a function that cuts the title in an arbitrary cutoff point (based on experimental tests on how many letters fit into a ggplot coordinate plane) but it makes sure that the cutoff is not in the middle of a word, i.e. it searches for the closest end of a word.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## Section: Get the title
@@ -322,7 +322,7 @@ class(try_df) &amp;lt;- c(class(try_df), label_class)&lt;/code&gt;&lt;/pre&gt;
 pisa_graph(data = try_df,
              y_title = final_title,
              fill_var = var_name)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-24-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-24-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;file &amp;lt;- tempfile()
 ggsave(file, device = &amp;quot;png&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
@@ -370,10 +370,10 @@ unlink(file)&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Cognitive inequality around the world – Shiny app</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</link>
+      <link>/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</link>
       <pubDate>Mon, 12 Dec 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</guid>
+      <guid>/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</guid>
       <description>&lt;p&gt;For the last month I’ve been working on this massive dataset that combines all PISA, TIMSS and PIRLS surveys into one major database. It has over 3 million students and over 2,000 variables, including student background and school and teacher information. I started playing around with it and ending up doing this: &lt;a href=&#34;https://cimentadaj.shinyapps.io/shiny/&#34; class=&#34;uri&#34;&gt;https://cimentadaj.shinyapps.io/shiny/&lt;/a&gt;. Feel free to check it out and drop any comments below.&lt;/p&gt;
 &lt;p&gt;If you want to contribute, &lt;a href=&#34;https://github.com/cimentadaj/Inequality_Shinyapp&#34;&gt;this&lt;/a&gt; is the Github repository. I plan to keep adding some stuff to the app, including new surveys and automatic plot downloading, so don’t forget to check it out.&lt;/p&gt;
 </description>

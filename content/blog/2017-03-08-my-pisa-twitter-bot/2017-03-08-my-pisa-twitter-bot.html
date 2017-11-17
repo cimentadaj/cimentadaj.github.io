@@ -116,17 +116,17 @@ write_lines(new_var, path = &quot;./all_variables.txt&quot;, append = T)
   pisa.table(var_name, data = ., by = &quot;cnt&quot;) %&gt;%
   filter(complete.cases(.))</code></pre>
 <p>Let’s check out the contents of <code>try_df</code>:</p>
-<pre><code>##          cnt ec022q09na Freq Percentage Std.err.
-## 1  Australia          1 4441      80.88        0
-## 2  Australia          2 1050      19.12        0
-## 3    Belgium          1 1143      86.59        0
-## 4    Belgium          2  177      13.41        0
-## 5   Bulgaria          1 2804      76.86        0
-## 6   Bulgaria          2  844      23.14        0
-## 7    Croatia          1 2332      86.43        0
-## 8    Croatia          2  366      13.57        0
-## 9    Denmark          1  920      84.71        0
-## 10   Denmark          2  166      15.29        0</code></pre>
+<pre><code>##          cnt st123q03na Freq Percentage Std.err.
+## 1  Australia          1  327       2.34        0
+## 2  Australia          2  962       6.90        0
+## 3  Australia          3 5681      40.73        0
+## 4  Australia          4 6979      50.03        0
+## 5    Austria          1  151       2.18        0
+## 6    Austria          2  391       5.65        0
+## 7    Austria          3 1532      22.13        0
+## 8    Austria          4 4849      70.04        0
+## 9    Belgium          1  168       1.82        0
+## 10   Belgium          2  568       6.15        0</code></pre>
 <p>Great! To finish with the data, we simply need one more thing: to recode the value labels with the <code>labels</code> vector.</p>
 <pre class="r"><code>try_df[var_name] &lt;- labels[try_df[, var_name]]</code></pre>
 <p>Awesome. We have the data ready, more or less. Let’s produce a dirty plot to check how long the title is.</p>
@@ -135,7 +135,7 @@ write_lines(new_var, path = &quot;./all_variables.txt&quot;, append = T)
 ggplot(try_df, aes_string(names(try_df)[2], &quot;Percentage&quot;)) +
   geom_col() +
   xlab(title_question)</code></pre>
-<p><img src="/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p><em>Note: Because the question is randomly sampled, you might be getting a short title. Rerun the script and eventually you’ll get a long one.</em></p>
 <p>So, the question <em>might</em> have two problems. The wording is a bit confusing (something we can’t really do anything about because that’s how it’s written in the questionnaire) and it’s too long. For the second problem I created a function that cuts the title in an arbitrary cutoff point (based on experimental tests on how many letters fit into a ggplot coordinate plane) but it makes sure that the cutoff is not in the middle of a word, i.e. it searches for the closest end of a word.</p>
 <pre class="r"><code>## Section: Get the title
@@ -313,7 +313,7 @@ class(try_df) &lt;- c(class(try_df), label_class)</code></pre>
 pisa_graph(data = try_df,
              y_title = final_title,
              fill_var = var_name)</code></pre>
-<p><img src="/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>file &lt;- tempfile()
 ggsave(file, device = &quot;png&quot;)</code></pre>
 </div>

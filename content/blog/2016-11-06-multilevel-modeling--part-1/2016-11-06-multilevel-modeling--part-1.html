@@ -122,7 +122,7 @@ df3$diff &lt;- df3$X1 - df3$X2
 # Graph it
 ggplot(df3, aes(diff)) + geom_histogram(bins = 100) +
   xlim(0, 0.2)</code></pre>
-<p><img src="/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-1/2016-11-06-multilevel-modeling--part-1_files/figure-html/fig.-1.png" width="672" /></p>
+<p><img src="/blog/2016-11-06-multilevel-modeling--part-1/2016-11-06-multilevel-modeling--part-1_files/figure-html/fig.-1.png" width="672" /></p>
 <p>It looks like the difference is always higher than zero which means that in the second model the difference between the upper and lower CI is smaller than in the first model. This suggests we have greater certainty of our estimation by including the two predictors in the model.</p>
 <pre class="r"><code># Numerically, the between-child variance in the first
 # model was:

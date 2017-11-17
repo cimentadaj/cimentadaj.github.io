@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Multilevel on Jorge Cimentada</title>
-    <link>https://shenoybr.github.io/hugo-goa-demo/tags/multilevel/</link>
+    <link>/tags/multilevel/</link>
     <description>Recent content in Multilevel on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Sun, 06 Nov 2016 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="https://shenoybr.github.io/hugo-goa-demo/tags/multilevel/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="/tags/multilevel/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Multilevel modeling – Part 1</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-1/multilevel-modeling--part-1/</link>
+      <link>/blog/2016-11-06-multilevel-modeling--part-1/multilevel-modeling--part-1/</link>
       <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-1/multilevel-modeling--part-1/</guid>
+      <guid>/blog/2016-11-06-multilevel-modeling--part-1/multilevel-modeling--part-1/</guid>
       <description>&lt;p&gt;I’ve been reading Andrew Gelman’s and Jennifer Hill’s book again but this time concentrating on the multilevel section of the book. I finished the first chapter (chapter 12) and got fixed on the exercises 12.2, 12.3 and 12.4. I finally completed them and I thought I’d share the three exercises in two posts, mostly for me to come back to these in the future. The first exercise goes as follows:&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
 &lt;li&gt;&lt;p&gt;Write a model predicting CD4 percentage as a function of time with varying intercepts across children. Fit using lmer() and interpret the coefficient for time.&lt;/p&gt;&lt;/li&gt;
@@ -131,7 +131,7 @@ df3$diff &amp;lt;- df3$X1 - df3$X2
 # Graph it
 ggplot(df3, aes(diff)) + geom_histogram(bins = 100) +
   xlim(0, 0.2)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-1/2016-11-06-multilevel-modeling--part-1_files/figure-html/fig.-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2016-11-06-multilevel-modeling--part-1/2016-11-06-multilevel-modeling--part-1_files/figure-html/fig.-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;It looks like the difference is always higher than zero which means that in the second model the difference between the upper and lower CI is smaller than in the first model. This suggests we have greater certainty of our estimation by including the two predictors in the model.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Numerically, the between-child variance in the first
 # model was:
@@ -183,10 +183,10 @@ display(mod2)&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Multilevel modeling – Part 2</title>
-      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-2/multilevel-modeling--part-2/</link>
+      <link>/blog/2016-11-06-multilevel-modeling--part-2/multilevel-modeling--part-2/</link>
       <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-2/multilevel-modeling--part-2/</guid>
+      <guid>/blog/2016-11-06-multilevel-modeling--part-2/multilevel-modeling--part-2/</guid>
       <description>&lt;p&gt;This is a continuation of the multilevel exercise 12.2 from chapter 12 of Data Analysis Using Regression and Multilevel/Hierarchical Models. In the last post (link to previous post) we explored the basic interpretation of multilevel modeling with a varying intercept and delved into comparing models and understanding partial pooling.&lt;/p&gt;
 &lt;p&gt;This was all done by completing the exercise 12.2 from chapter 12 of the book Data Analysis Using Regression and Multilevel/Hierarchical Models. Exercises 12.3 and 12.4 continue using the same dataset and the same models, so I figured I’d post them here. Let’s start.&lt;/p&gt;
 &lt;p&gt;Exercise 12.3 asks:&lt;/p&gt;
@@ -224,7 +224,7 @@ newpred &amp;lt;- predict(mod2, newdata = pred_data)
 # That it! We have the predicted percentage of CD4 for a fixed date for every child.
 # Let&amp;#39;s look at the distribution
 hist(newpred)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;There’s quite some variation going from 0% to even 60%. It’d be nice to know what CD4 is.&lt;/p&gt;
 &lt;hr /&gt;
 &lt;p&gt;Question (b) is pretty similar but instead of asking for a new time point for each child, it asks to predict the CD4 percentage for a new child who was 4 years old at the baseline with a set of hypothetical time periods.&lt;/p&gt;
@@ -263,7 +263,7 @@ sd_cd4 &amp;lt;- sd(predict(mod2, newdata = finaltime_data), na.rm = T)
 set.seed(421)
 
 hist(rnorm(1000, mean_cd4, sd = sd_cd4))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;It’s incredibly wide and it even includes negative numbers, something impossible with percentages. But whats the actual CD4 percentage of that date?&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cd4 &amp;lt;- subset(cd4, !is.na(VDATE))
 cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]&lt;/code&gt;&lt;/pre&gt;

@@ -45,7 +45,7 @@ newpred &lt;- predict(mod2, newdata = pred_data)
 # That it! We have the predicted percentage of CD4 for a fixed date for every child.
 # Let&#39;s look at the distribution
 hist(newpred)</code></pre>
-<p><img src="/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p><img src="/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <p>There’s quite some variation going from 0% to even 60%. It’d be nice to know what CD4 is.</p>
 <hr />
 <p>Question (b) is pretty similar but instead of asking for a new time point for each child, it asks to predict the CD4 percentage for a new child who was 4 years old at the baseline with a set of hypothetical time periods.</p>
@@ -84,7 +84,7 @@ sd_cd4 &lt;- sd(predict(mod2, newdata = finaltime_data), na.rm = T)
 set.seed(421)
 
 hist(rnorm(1000, mean_cd4, sd = sd_cd4))</code></pre>
-<p><img src="/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>It’s incredibly wide and it even includes negative numbers, something impossible with percentages. But whats the actual CD4 percentage of that date?</p>
 <pre class="r"><code>cd4 &lt;- subset(cd4, !is.na(VDATE))
 cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]</code></pre>

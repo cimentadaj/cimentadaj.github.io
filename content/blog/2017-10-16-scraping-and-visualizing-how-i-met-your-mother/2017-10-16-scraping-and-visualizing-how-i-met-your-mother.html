@@ -171,7 +171,7 @@ words_per_character %&gt;%
   scale_y_continuous(name = &quot;Percentage of words per episode&quot;) +
   theme_minimal() +
   facet_wrap(~ character, ncol = 3)</code></pre>
-<p><img src="/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-13-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-13-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Ted is clearly the character with the highest number of words per episode followed by Barney. Lily and Robin, the only two women have very low presence compared to the men. In fact, if one looks closely, Lily seemed to have decreased slightly over time, having an all time low in season 4. Marshall, Lily’s partner in the show, does have much lower presence than both Barney and Ted but he has been catching up over time.</p>
 <p>We also see an interesting pattern where Barney has a lot of peaks, suggesting that in some specific episodes he gains predominance, where Ted has an overall higher level of words per episode. And when Ted has peaks, it’s usually below its trend-line.</p>
 <p>Looking at the distribution:</p>
@@ -195,7 +195,7 @@ words_per_character %&gt;%
   ggtitle(&quot;Percentage of words per season&quot;) +
   facet_wrap(~ season, ncol = 7) +
   theme_minimal()</code></pre>
-<p><img src="/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>we see the differences much clearer. For example, we see Barney’s peaks through out every season with Season 6 seeing a clear peak of 40%. On the other hand, we see that their distributions don’t change that much over time! Suggesting that the presence of each character is very similar in all seasons. Don’t get me wrong, there are differences like Lily in Season 2 and then in Season 6, but in overall terms the previous plot suggests no increase over seasons, and this plot suggests that between seasons, there’s not a lot of change in their distributions that affects the overall mean.</p>
 <p>If you’ve watched the TV series, you’ll remember Barney always repeating one similar trademark word: legendary! Although it is a bit cumbersome for us to count the number of occurrences of that sentence once we unnested each sentence, we can at least count the number of words per character and see whether some characters have particular words.</p>
 <pre class="r"><code>count_words &lt;-
@@ -210,7 +210,7 @@ count_words %&gt;%
   geom_col(alpha = 0.8) +
   coord_flip() +
   facet_wrap(~ character, scales = &quot;free_y&quot;)</code></pre>
-<p><img src="/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Here we see that a lot of the words we capture are actually nouns or expressions which are common to everyone, such as ‘yeah’, ‘hey’ or ‘time’. We can weight down commonly used words for other words which are important but don’t get repeated a lot. We can exclude those words using <code>bind_tf_idf()</code>, which for each character decreases the weight for commonly used words and increases the weight for words that are not used very much in a collection or corpus of documents (see 3.3 in <a href="http://tidytextmining.com/tfidf.html" class="uri">http://tidytextmining.com/tfidf.html</a>).</p>
 <pre class="r"><code>count_words %&gt;%
   bind_tf_idf(word, character, n) %&gt;%
@@ -221,7 +221,7 @@ count_words %&gt;%
   geom_col(alpha = 0.8) +
   coord_flip() +
   facet_wrap(~ character, scales = &quot;free_y&quot;)</code></pre>
-<p><img src="/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Now Barney has a very distinctive word usage, one particularly sexist with words such as couger, bang and tits. Also, we see the word legendary as the thirdly repeated word, something we were expecting! On the other hand, we see Ted with things like professor (him), aunt (because of aunt Lily and such).</p>
 <p>Knowing that Ted is the main character in the series is no surprise. To finish off, we’re interested in knowing which characters are related to each other. First, let’s turn the data frame into a suitable format.</p>
 <p>Here we turn all lines to lower case and check which characters are present in the text of each dialogue. The loop will return a vector of logicals whether there was a mention of any of the characters. For simplicity I exclude all lines where there is more than 1 mention of a character, that is, 2 or more characters.</p>
@@ -260,7 +260,7 @@ character_relation %&gt;%
                 width = 2.5, show.legend = FALSE) +
   geom_node_text(aes(label = name), repel = TRUE) +
   theme_void()</code></pre>
-<p><img src="/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>A very clear pattern emerges. There is a strong relationship between Robin and Barney towards Ted. In fact, their direct relationship is very weak, but both are very well connected to Ted. On the other hand, Marshall and Lily are also reasonably connected to Ted but with a weaker link. Both of them are indeed very connected, as should be expected since they were a couple in the TV series.</p>
 <p>We also see that the weakest members of the group are Robin and Barney with only strong bonds toward Ted but no strong relationship with the other from the group. Overall, there seems to be a division: Marshall and Lily hold a somewhat close relationship with each other and towards Ted and Barney and Robin tend to be related to Ted but no one else.</p>
 <p>As a follow-up question, is this pattern of relationships the same across all seasons? We can do that very quickly by filtering each season using the previous plot.</p>
@@ -288,6 +288,6 @@ all_season_plots &lt;- lapply(seasons, function(season_num) {
 
 # Plot all graphs side-by-side
 cowplot::plot_grid(plotlist = all_season_plots, labels = seasons)</code></pre>
-<p><img src="/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-20-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p><img src="/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-20-1.png" width="960" style="display: block; margin: auto;" /></p>
 <p>There are reasonable changes for all non-Ted relationship! For example, for season 2 the relationship Marshall-Lily-Ted becomes much stronger and it disappears in season 3. Let’s remember that these results might be affected by the fact that I excluded some episodes because of low number of dialogue lines. Keeping that in mind, we also see that for season 7 the Robin-Barney relationship became much stronger (is this the season the started dating?). All in all, the relationships don’t look dramatically different from the previous plot. Everyone seems to be strongly related to Ted. The main difference is the changes in relationship between the other members of the cast.</p>
 <p>This dataset has a lot of potential and I’m sure I’ve scratched the surface of what one can do with this data. I encourage anyone interested in the topic to use the code to analyze the data further. One idea I might explore in the future is to build a model that attempts to predict who said what for all dialogue lines that didn’t have a character member. This can be done by extracting features from all sentences and using these patterns try to classify which. Any feedback is welcome, so feel free to message me at <a href="mailto:cimentadaj@gmail.com">cimentadaj@gmail.com</a></p>
