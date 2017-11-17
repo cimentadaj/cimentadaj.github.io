@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Projects on Jorge Cimentada</title>
-    <link>/hugo-goa-demo/tags/projects/</link>
+    <link>https://shenoybr.github.io/hugo-goa-demo/tags/projects/</link>
     <description>Recent content in Projects on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Mon, 16 Oct 2017 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="/hugo-goa-demo/tags/projects/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://shenoybr.github.io/hugo-goa-demo/tags/projects/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Scraping and visualizing How I Met Your Mother</title>
-      <link>/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</link>
+      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</link>
       <pubDate>Mon, 16 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</guid>
+      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</guid>
       <description>&lt;p&gt;How I Met Your Mother (HIMYM from here after) is a television series very similar to the classical ‘Friends’ series from the 90’s. Following the release of the &lt;a href=&#34;http://tidytextmining.com/&#34;&gt;tidy text&lt;/a&gt; book I was looking for a project in which I could apply these skills. I decided I would scrape all the transcripts from HIMYM and analyze patterns between characters. This post really took me to the limit in terms of web scraping and pattern matching, which was specifically what I wanted to improve in the first place. Let’s begin!&lt;/p&gt;
 &lt;p&gt;My first task was whether there was any consistency in the URL’s that stored the transcripts. If you ever watched HIMYM, we know there’s around nine seasons, each one with about 22 episodes. This makes about 200 episodes give or take. It would be a big pain to manually write down 200 complicated URL’s. Luckily, there is a way of finding the 200 links without writing them down manually.&lt;/p&gt;
 &lt;p&gt;First, we create the links for the 9 websites that contain all episodes (1 through season 9)&lt;/p&gt;
@@ -180,7 +180,7 @@ words_per_character %&amp;gt;%
   scale_y_continuous(name = &amp;quot;Percentage of words per episode&amp;quot;) +
   theme_minimal() +
   facet_wrap(~ character, ncol = 3)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;768&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;768&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Ted is clearly the character with the highest number of words per episode followed by Barney. Lily and Robin, the only two women have very low presence compared to the men. In fact, if one looks closely, Lily seemed to have decreased slightly over time, having an all time low in season 4. Marshall, Lily’s partner in the show, does have much lower presence than both Barney and Ted but he has been catching up over time.&lt;/p&gt;
 &lt;p&gt;We also see an interesting pattern where Barney has a lot of peaks, suggesting that in some specific episodes he gains predominance, where Ted has an overall higher level of words per episode. And when Ted has peaks, it’s usually below its trend-line.&lt;/p&gt;
 &lt;p&gt;Looking at the distribution:&lt;/p&gt;
@@ -204,7 +204,7 @@ words_per_character %&amp;gt;%
   ggtitle(&amp;quot;Percentage of words per season&amp;quot;) +
   facet_wrap(~ season, ncol = 7) +
   theme_minimal()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;we see the differences much clearer. For example, we see Barney’s peaks through out every season with Season 6 seeing a clear peak of 40%. On the other hand, we see that their distributions don’t change that much over time! Suggesting that the presence of each character is very similar in all seasons. Don’t get me wrong, there are differences like Lily in Season 2 and then in Season 6, but in overall terms the previous plot suggests no increase over seasons, and this plot suggests that between seasons, there’s not a lot of change in their distributions that affects the overall mean.&lt;/p&gt;
 &lt;p&gt;If you’ve watched the TV series, you’ll remember Barney always repeating one similar trademark word: legendary! Although it is a bit cumbersome for us to count the number of occurrences of that sentence once we unnested each sentence, we can at least count the number of words per character and see whether some characters have particular words.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;count_words &amp;lt;-
@@ -219,7 +219,7 @@ count_words %&amp;gt;%
   geom_col(alpha = 0.8) +
   coord_flip() +
   facet_wrap(~ character, scales = &amp;quot;free_y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Here we see that a lot of the words we capture are actually nouns or expressions which are common to everyone, such as ‘yeah’, ‘hey’ or ‘time’. We can weight down commonly used words for other words which are important but don’t get repeated a lot. We can exclude those words using &lt;code&gt;bind_tf_idf()&lt;/code&gt;, which for each character decreases the weight for commonly used words and increases the weight for words that are not used very much in a collection or corpus of documents (see 3.3 in &lt;a href=&#34;http://tidytextmining.com/tfidf.html&#34; class=&#34;uri&#34;&gt;http://tidytextmining.com/tfidf.html&lt;/a&gt;).&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;count_words %&amp;gt;%
   bind_tf_idf(word, character, n) %&amp;gt;%
@@ -230,7 +230,7 @@ count_words %&amp;gt;%
   geom_col(alpha = 0.8) +
   coord_flip() +
   facet_wrap(~ character, scales = &amp;quot;free_y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-16-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-16-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Now Barney has a very distinctive word usage, one particularly sexist with words such as couger, bang and tits. Also, we see the word legendary as the thirdly repeated word, something we were expecting! On the other hand, we see Ted with things like professor (him), aunt (because of aunt Lily and such).&lt;/p&gt;
 &lt;p&gt;Knowing that Ted is the main character in the series is no surprise. To finish off, we’re interested in knowing which characters are related to each other. First, let’s turn the data frame into a suitable format.&lt;/p&gt;
 &lt;p&gt;Here we turn all lines to lower case and check which characters are present in the text of each dialogue. The loop will return a vector of logicals whether there was a mention of any of the characters. For simplicity I exclude all lines where there is more than 1 mention of a character, that is, 2 or more characters.&lt;/p&gt;
@@ -269,7 +269,7 @@ character_relation %&amp;gt;%
                 width = 2.5, show.legend = FALSE) +
   geom_node_text(aes(label = name), repel = TRUE) +
   theme_void()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-19-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-19-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;A very clear pattern emerges. There is a strong relationship between Robin and Barney towards Ted. In fact, their direct relationship is very weak, but both are very well connected to Ted. On the other hand, Marshall and Lily are also reasonably connected to Ted but with a weaker link. Both of them are indeed very connected, as should be expected since they were a couple in the TV series.&lt;/p&gt;
 &lt;p&gt;We also see that the weakest members of the group are Robin and Barney with only strong bonds toward Ted but no strong relationship with the other from the group. Overall, there seems to be a division: Marshall and Lily hold a somewhat close relationship with each other and towards Ted and Barney and Robin tend to be related to Ted but no one else.&lt;/p&gt;
 &lt;p&gt;As a follow-up question, is this pattern of relationships the same across all seasons? We can do that very quickly by filtering each season using the previous plot.&lt;/p&gt;
@@ -297,7 +297,7 @@ all_season_plots &amp;lt;- lapply(seasons, function(season_num) {
 
 # Plot all graphs side-by-side
 cowplot::plot_grid(plotlist = all_season_plots, labels = seasons)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-20-1.png&#34; width=&#34;960&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-20-1.png&#34; width=&#34;960&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;There are reasonable changes for all non-Ted relationship! For example, for season 2 the relationship Marshall-Lily-Ted becomes much stronger and it disappears in season 3. Let’s remember that these results might be affected by the fact that I excluded some episodes because of low number of dialogue lines. Keeping that in mind, we also see that for season 7 the Robin-Barney relationship became much stronger (is this the season the started dating?). All in all, the relationships don’t look dramatically different from the previous plot. Everyone seems to be strongly related to Ted. The main difference is the changes in relationship between the other members of the cast.&lt;/p&gt;
 &lt;p&gt;This dataset has a lot of potential and I’m sure I’ve scratched the surface of what one can do with this data. I encourage anyone interested in the topic to use the code to analyze the data further. One idea I might explore in the future is to build a model that attempts to predict who said what for all dialogue lines that didn’t have a character member. This can be done by extracting features from all sentences and using these patterns try to classify which. Any feedback is welcome, so feel free to message me at &lt;a href=&#34;mailto:cimentadaj@gmail.com&#34;&gt;cimentadaj@gmail.com&lt;/a&gt;&lt;/p&gt;
 </description>
@@ -305,10 +305,10 @@ cowplot::plot_grid(plotlist = all_season_plots, labels = seasons)&lt;/code&gt;&l
     
     <item>
       <title>perccalc package</title>
-      <link>/hugo-goa-demo/blog/2017-08-01-perccalc-package/perccalc-package/</link>
+      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2017-08-01-perccalc-package/perccalc-package/</link>
       <pubDate>Tue, 01 Aug 2017 00:00:00 +0000</pubDate>
       
-      <guid>/hugo-goa-demo/blog/2017-08-01-perccalc-package/perccalc-package/</guid>
+      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2017-08-01-perccalc-package/perccalc-package/</guid>
       <description>&lt;p&gt;Reardon (2011) introduced a very interesting concept in which he calculates percentile differences from ordered categorical variables. He explains his procedure very much in detail in the appendix of the book chapter but no formal implementation has been yet available on the web. With this package I introduce a function that applies the procedure, following a step-by-step Stata script that Sean Reardon kindly sent me.&lt;/p&gt;
 &lt;p&gt;In this vignette I show you how to use the function and match the results to the Stata code provided by Reardon himself.&lt;/p&gt;
 &lt;p&gt;For this example, we’ll use a real world data set, one I’m very much familiar with: PISA. We’ll use the PISA 2012 wave for Germany because it asked parents about their income category. For this example we’ll need the packages below.&lt;/p&gt;
@@ -361,7 +361,7 @@ dataset_ready &amp;lt;-
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;quot;perccalc&amp;quot;, repo = &amp;quot;https://cran.rediris.es/&amp;quot;)
 ## 
 ## The downloaded binary packages are in
-##  /var/folders/w0/pscnb7zx5y9g_qf13cxhl0_r0000gn/T//RtmpWExwak/downloaded_packages
+##  /var/folders/w0/pscnb7zx5y9g_qf13cxhl0_r0000gn/T//RtmpvBtLBJ/downloaded_packages
 library(perccalc)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The package has two functions, which I’ll show some examples. The first one is called &lt;code&gt;perc_diff&lt;/code&gt; and it’s very easy to use, we just specify the data, the name of the categorical and continuous variable and the percentile difference we want.&lt;/p&gt;
 &lt;p&gt;Let’s put it to use!&lt;/p&gt;
@@ -580,7 +580,7 @@ postclose `memhold&amp;#39;
   ggplot(aes(percentile, estimate)) +
   geom_point() +
   geom_errorbar(aes(ymin = ci_low, ymax = ci_hi))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-08-01-perccalc-package/2017-08-01-perccalc-package_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;576&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-08-01-perccalc-package/2017-08-01-perccalc-package_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;576&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Please note that for calculating the difference between two percentiles it is more accurate to use the &lt;code&gt;perc_diff&lt;/code&gt; function. The &lt;code&gt;perc_diff&lt;/code&gt; calculates the difference through a linear combination of coefficients resulting in a different standard error.&lt;/p&gt;
 &lt;p&gt;For example:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_dist(dataset_ready, income, score, wt) %&amp;gt;%
@@ -604,10 +604,10 @@ postclose `memhold&amp;#39;
     
     <item>
       <title>My PISA twitter bot</title>
-      <link>/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</link>
+      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</link>
       <pubDate>Wed, 08 Mar 2017 00:00:00 +0000</pubDate>
       
-      <guid>/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</guid>
+      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</guid>
       <description>&lt;p&gt;I’ve long wanted to prepare a project with R related to education. I knew I’d found the idea when I read Thomas Lumley’s &lt;a href=&#34;http://notstatschat.tumblr.com/post/156007757906/a-bus-watching-bot&#34;&gt;attempt to create a Twitter bot in which he tweeted bus arrivals in New Zealand&lt;/a&gt;. Quoting him, “Is it really hard to write a bot? No. Even I can do it. And I’m old.”&lt;/p&gt;
 &lt;p&gt;So I said to myself, alright, you have to create a Twitter bot but it has to be related to education. It’s an easy project which shouldn’t take a lot of your time. I then came up with this idea: what if you could randomly sample questions from the &lt;a href=&#34;http://www.oecd.org/pisa/aboutpisa/&#34;&gt;PISA databases&lt;/a&gt; and create a sort of random facts generator. The result would be one graph a day, showing a question for some random sample of countries. I figured, why not prepare a post (both for me to remember how I did it but also so others can contribute to the project) where I explained step-by-step how I did it?&lt;/p&gt;
 &lt;p&gt;The repository for the project is &lt;a href=&#34;https://github.com/cimentadaj/PISAfacts_twitterBot&#34;&gt;here&lt;/a&gt;, so feel free to drop any comments or improvements. The idea is to load the &lt;a href=&#34;http://vs-web-fs-1.oecd.org/pisa/PUF_SPSS_COMBINED_CMB_STU_QQQ.zip&#34;&gt;PISA 2015 data&lt;/a&gt;, randomly pick a question that doesn’t have a lot of labels (because then it’s very difficult to plot it nicely), and based on the type of question create an appropriate graph. Of course, all of this needs to be done on the fly, without human assistance. You can follow this twitter account at &lt;span class=&#34;citation&#34;&gt;@DailyPISA_Facts&lt;/span&gt;. Let’s start!&lt;/p&gt;
@@ -735,7 +735,7 @@ write_lines(new_var, path = &amp;quot;./all_variables.txt&amp;quot;, append = T)
 ggplot(try_df, aes_string(names(try_df)[2], &amp;quot;Percentage&amp;quot;)) +
   geom_col() +
   xlab(title_question)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Note: Because the question is randomly sampled, you might be getting a short title. Rerun the script and eventually you’ll get a long one.&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;So, the question &lt;em&gt;might&lt;/em&gt; have two problems. The wording is a bit confusing (something we can’t really do anything about because that’s how it’s written in the questionnaire) and it’s too long. For the second problem I created a function that cuts the title in an arbitrary cutoff point (based on experimental tests on how many letters fit into a ggplot coordinate plane) but it makes sure that the cutoff is not in the middle of a word, i.e. it searches for the closest end of a word.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## Section: Get the title
@@ -913,7 +913,7 @@ class(try_df) &amp;lt;- c(class(try_df), label_class)&lt;/code&gt;&lt;/pre&gt;
 pisa_graph(data = try_df,
              y_title = final_title,
              fill_var = var_name)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-24-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-24-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;file &amp;lt;- tempfile()
 ggsave(file, device = &amp;quot;png&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
@@ -961,10 +961,10 @@ unlink(file)&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Cognitive inequality around the world – Shiny app</title>
-      <link>/hugo-goa-demo/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</link>
+      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</link>
       <pubDate>Mon, 12 Dec 2016 00:00:00 +0000</pubDate>
       
-      <guid>/hugo-goa-demo/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</guid>
+      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</guid>
       <description>&lt;p&gt;For the last month I’ve been working on this massive dataset that combines all PISA, TIMSS and PIRLS surveys into one major database. It has over 3 million students and over 2,000 variables, including student background and school and teacher information. I started playing around with it and ending up doing this: &lt;a href=&#34;https://cimentadaj.shinyapps.io/shiny/&#34; class=&#34;uri&#34;&gt;https://cimentadaj.shinyapps.io/shiny/&lt;/a&gt;. Feel free to check it out and drop any comments below.&lt;/p&gt;
 &lt;p&gt;If you want to contribute, &lt;a href=&#34;https://github.com/cimentadaj/Inequality_Shinyapp&#34;&gt;this&lt;/a&gt; is the Github repository. I plan to keep adding some stuff to the app, including new surveys and automatic plot downloading, so don’t forget to check it out.&lt;/p&gt;
 </description>

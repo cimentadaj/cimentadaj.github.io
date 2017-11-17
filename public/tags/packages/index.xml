@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Packages on Jorge Cimentada</title>
-    <link>/hugo-goa-demo/tags/packages/</link>
+    <link>https://shenoybr.github.io/hugo-goa-demo/tags/packages/</link>
     <description>Recent content in Packages on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Tue, 01 Aug 2017 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="/hugo-goa-demo/tags/packages/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://shenoybr.github.io/hugo-goa-demo/tags/packages/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>perccalc package</title>
-      <link>/hugo-goa-demo/blog/2017-08-01-perccalc-package/perccalc-package/</link>
+      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2017-08-01-perccalc-package/perccalc-package/</link>
       <pubDate>Tue, 01 Aug 2017 00:00:00 +0000</pubDate>
       
-      <guid>/hugo-goa-demo/blog/2017-08-01-perccalc-package/perccalc-package/</guid>
+      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2017-08-01-perccalc-package/perccalc-package/</guid>
       <description>&lt;p&gt;Reardon (2011) introduced a very interesting concept in which he calculates percentile differences from ordered categorical variables. He explains his procedure very much in detail in the appendix of the book chapter but no formal implementation has been yet available on the web. With this package I introduce a function that applies the procedure, following a step-by-step Stata script that Sean Reardon kindly sent me.&lt;/p&gt;
 &lt;p&gt;In this vignette I show you how to use the function and match the results to the Stata code provided by Reardon himself.&lt;/p&gt;
 &lt;p&gt;For this example, we’ll use a real world data set, one I’m very much familiar with: PISA. We’ll use the PISA 2012 wave for Germany because it asked parents about their income category. For this example we’ll need the packages below.&lt;/p&gt;
@@ -69,7 +69,7 @@ dataset_ready &amp;lt;-
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;quot;perccalc&amp;quot;, repo = &amp;quot;https://cran.rediris.es/&amp;quot;)
 ## 
 ## The downloaded binary packages are in
-##  /var/folders/w0/pscnb7zx5y9g_qf13cxhl0_r0000gn/T//RtmpWExwak/downloaded_packages
+##  /var/folders/w0/pscnb7zx5y9g_qf13cxhl0_r0000gn/T//RtmpvBtLBJ/downloaded_packages
 library(perccalc)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The package has two functions, which I’ll show some examples. The first one is called &lt;code&gt;perc_diff&lt;/code&gt; and it’s very easy to use, we just specify the data, the name of the categorical and continuous variable and the percentile difference we want.&lt;/p&gt;
 &lt;p&gt;Let’s put it to use!&lt;/p&gt;
@@ -288,7 +288,7 @@ postclose `memhold&amp;#39;
   ggplot(aes(percentile, estimate)) +
   geom_point() +
   geom_errorbar(aes(ymin = ci_low, ymax = ci_hi))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-08-01-perccalc-package/2017-08-01-perccalc-package_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;576&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2017-08-01-perccalc-package/2017-08-01-perccalc-package_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;576&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Please note that for calculating the difference between two percentiles it is more accurate to use the &lt;code&gt;perc_diff&lt;/code&gt; function. The &lt;code&gt;perc_diff&lt;/code&gt; calculates the difference through a linear combination of coefficients resulting in a different standard error.&lt;/p&gt;
 &lt;p&gt;For example:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_dist(dataset_ready, income, score, wt) %&amp;gt;%
@@ -312,10 +312,10 @@ postclose `memhold&amp;#39;
     
     <item>
       <title>Producing stargazer tables with odds ratios and standard errors in R</title>
-      <link>/hugo-goa-demo/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</link>
+      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</link>
       <pubDate>Mon, 22 Aug 2016 00:00:00 +0000</pubDate>
       
-      <guid>/hugo-goa-demo/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</guid>
+      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</guid>
       <description>&lt;p&gt;Whoa, what a day. I’ve been using the stargazer package for producing my (beautiful) regression tables in R for a while now. Among all the arguments of its main function (&lt;code&gt;stargazer()&lt;/code&gt; ) are &lt;code&gt;apply.coef&lt;/code&gt;, &lt;code&gt;apply.se&lt;/code&gt;, &lt;code&gt;apply.ci&lt;/code&gt;, … and so on for all the other statistics of a regression output. Each of these arguments, if specified, applies a function over the specified statistic. So, for calculating the odds ratios I would simply apply the &lt;code&gt;exp()&lt;/code&gt; function over the set of log odds. It turns out that if you apply any function over the coefficients (or any other statistic), stargazer automatically recalculates t values with the new coefficients! This means that the significance of my model will depend on the new values and we surely wouldn’t want that.&lt;/p&gt;
 &lt;p&gt;Let’s show a reproducible example:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# install.packages(&amp;quot;stargazer&amp;quot;) # in case you don&amp;#39;t have this package
