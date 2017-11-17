@@ -463,6 +463,6 @@ env EDITOR=nano crontab -e
 To save the file, press Control + O (to write out the file), then enter to accept the file name, then
 press Control + X (to exit nano). If all went well, then you should see "crontab: installing new crontab" without anything after that.
 
-Aaaaaand that's it! You now have a working script that will be run from Monday to Friday at 9:30 am. This script will read the PISA data, pick a random variable, make a graph and tweet it.  You can follow this twitter account at @DailyPISA_Facts.
+Aaaaaand that's it! You now have a working script that will be run from Monday to Friday at 9:30 am. This script will read the PISA data, pick a random variable, make a graph and tweet it.  You can follow this twitter account at [@DailyPISA_Facts](https://twitter.com/DailyPISA_Facts).
 
 Hope this was useful!

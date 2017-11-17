@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Inequality on Jorge Cimentada</title>
-    <link>/hugo-goa-demo/tags/inequality/</link>
+    <link>https://shenoybr.github.io/hugo-goa-demo/tags/inequality/</link>
     <description>Recent content in Inequality on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Thu, 13 Apr 2017 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="/hugo-goa-demo/tags/inequality/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://shenoybr.github.io/hugo-goa-demo/tags/inequality/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Replicating Dupriez and Dumay (2006)</title>
-      <link>/hugo-goa-demo/blog/2017-04-13-replicating-dupriez-and-dumay-2006/replicating-dupriez-and-dumay-2006/</link>
+      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2017-04-13-replicating-dupriez-and-dumay-2006/replicating-dupriez-and-dumay-2006/</link>
       <pubDate>Thu, 13 Apr 2017 00:00:00 +0000</pubDate>
       
-      <guid>/hugo-goa-demo/blog/2017-04-13-replicating-dupriez-and-dumay-2006/replicating-dupriez-and-dumay-2006/</guid>
+      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2017-04-13-replicating-dupriez-and-dumay-2006/replicating-dupriez-and-dumay-2006/</guid>
       <description>&lt;p&gt;So, I was bored for two days and decided I’d replicate a paper I had read. The paper is called ‘Inequalities in school systems: effect of school structure or of society structure?’ written by Vincent Dupriez and Xavier Dumay which you can read from &lt;a href=&#34;http://www.tandfonline.com/doi/full/10.1080/03050060600628074?scroll=top&amp;amp;needAccess=true&#34;&gt;here&lt;/a&gt;. I made available two version, one in &lt;a href=&#34;https://github.com/cimentadaj/Inequality_schools_replication/raw/master/replication_tracking_pisa.pdf&#34;&gt;pdf&lt;/a&gt; and another in &lt;a href=&#34;https://cimentadaj.github.io/Inequality_schools_replication/replication_tracking_pisa.html&#34;&gt;html&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;If you’re interested in looking at the code or suggesting some changes, do send me an email at &lt;code&gt;cimentadaj@gmail.com&lt;/code&gt; or check the &lt;a href=&#34;https://github.com/cimentadaj/Inequality_schools_replication&#34;&gt;Github repository&lt;/a&gt;.&lt;/p&gt;
 </description>
@@ -24,10 +24,10 @@
     
     <item>
       <title>Los pobres no son los peores pero los ricos sí son los mejores: desigualdad educativa</title>
-      <link>/hugo-goa-demo/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</link>
+      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</link>
       <pubDate>Sat, 24 Sep 2016 00:00:00 +0000</pubDate>
       
-      <guid>/hugo-goa-demo/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</guid>
+      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</guid>
       <description>&lt;p&gt;Hace poco escribí un artículo sobre la desigualdad educativa en países Latinoamericanos y describí como la República Dominicana no parece estar tan mal como creemos. Ofrecí dos posibles explicaciones de porque esto pudiera ser bueno o malo, dependiendo del enfoque con que se ve (missing link after the ‘,’ with this: &lt;a href=&#34;http://www.jorgecimentada.com/?p=137&#34; class=&#34;uri&#34;&gt;http://www.jorgecimentada.com/?p=137&lt;/a&gt;). Luego de escribirlo me quedé pensando en algo que di por sentado: ¿realmente los ‘peores’ estudiantes son los estudiantes pobres? ¿son los estudiantes pobres los ‘peores’ en las escuelas públicas y privadas? Y a raíz del artículo de &lt;a href=&#34;http://acento.com.do/2016/opinion/8377420-desigualdad-educativa-interpela-desafia/&#34;&gt;Dinorah Garcia&lt;/a&gt;, ¿existe desigualdad entre las zonas rurales y urbanas?&lt;/p&gt;
 &lt;p&gt;Estas preguntas no solo ayudan a diagnosticar el estado actual de la desigualdad, más que eso, permiten inferir de donde pudieran provenir las fuentes de desigualdad. Si encontramos una diferencia bastante amplia entre los ‘mejores’ y ‘peores’ estudiantes, pero la diferencia es menor entre escuelas públicas y privada, pues la causa no es necesariamente las diferencias en calidad entre las tipos de escuelas. Sin embargo, si existen diferencias similares entre los estudiantes de escuelas rurales y urbanas, pues la razón puede ser precisamente en temas como la calidad educativa entre sectores pobres y ricos. Lo interesante de estas preguntas es que son todas preguntas empíricas, y se pueden responder con bases de datos como las de TERCE.&lt;/p&gt;
 &lt;div id=&#34;realmente-los-peores-estudiantes-son-los-estudiantes-pobres&#34; class=&#34;section level2&#34;&gt;
@@ -69,10 +69,10 @@
     
     <item>
       <title>Children: public or private goods?</title>
-      <link>/hugo-goa-demo/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</link>
+      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</link>
       <pubDate>Mon, 29 Aug 2016 00:00:00 +0000</pubDate>
       
-      <guid>/hugo-goa-demo/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</guid>
+      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</guid>
       <description>&lt;p&gt;The role of the welfare state, as agreed by many scholars, is to de-commodify its citizens. Some argue that this should be the way that the generosity of the state should be measured; instead of net public and private social expenditure, it should be the extent to which citizens are de-commodified by the services and transfers of the welfare state.&lt;/p&gt;
 &lt;p&gt;The aim of educational investment can be seen from different lenses, but today we’ll focus on the economic and social returns to education. An important share of the state budget is aimed at the formation and education of citizens through public education. In countries where there is a substantial investment, human capital, innovation and production are maximized creating a highly productive working population that can sustain the young and the elderly through pensions, health and child care; note that in some scenarios an uneducated workforce can sustain those who depend on them but it will possible be with more quantity of work (hours) and less quality [1]. Following this logic, it is arguable that because most of today’s workers will benefit from pensions, retirement schemes, care assistance and healthcare, they are to take care of their young population, the next generation’s workers. Covering kids’ education through higher taxes could be seen as loan: A young worker covers the expenses of a child, and that child, eventually, will cover the pension of that worker; this is a simplified version of the argument.&lt;/p&gt;
 &lt;p&gt;The scheme I just outlined is virtually widespread across western European countries. But it is important to note that in other countries, due to the intrinsic organization of the state, it is unimaginable to do so. In the counterfactual situation where you don’t have a strong welfare state, maybe it’s unfair to tax those who are not benefiting from the goods that the taxes are being spent on. In places like the United States, where the generosity of the welfare system is minimal, some people don’t find it reasonable to pay for everyone’s kids, even more, when you’re paying already, for instance, a private school for your own.&lt;/p&gt;

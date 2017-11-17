@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Simulation on Jorge Cimentada</title>
-    <link>/hugo-goa-demo/tags/simulation/</link>
+    <link>https://shenoybr.github.io/hugo-goa-demo/tags/simulation/</link>
     <description>Recent content in Simulation on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Thu, 07 Sep 2017 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="/hugo-goa-demo/tags/simulation/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://shenoybr.github.io/hugo-goa-demo/tags/simulation/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>The LOO and the Bootstrap</title>
-      <link>/hugo-goa-demo/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</link>
+      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</link>
       <pubDate>Thu, 07 Sep 2017 00:00:00 +0000</pubDate>
       
-      <guid>/hugo-goa-demo/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</guid>
+      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</guid>
       <description>&lt;p&gt;This is the second entry, and probably the last, on model validation methods. These posts are inspired by the work of Kohavi (1995), which I totally recommend reading. This post will talk talk about the Leave-One-Out Cross Validation (LOOCV), which is the extreme version of the K-Fold Cross Validation and the Bootstrap for model assessment.&lt;/p&gt;
 &lt;p&gt;Let’s dive in!&lt;/p&gt;
 &lt;div id=&#34;the-leave-one-out-cv-method&#34; class=&#34;section level2&#34;&gt;
@@ -112,10 +112,10 @@ summary(bootstrap)
     
     <item>
       <title>Holdout and cross-validation</title>
-      <link>/hugo-goa-demo/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</link>
+      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</link>
       <pubDate>Wed, 06 Sep 2017 00:00:00 +0000</pubDate>
       
-      <guid>/hugo-goa-demo/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</guid>
+      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</guid>
       <description>&lt;p&gt;In a recent attempt to bring a bit of discipline into my life, I’ve been forcing myself to read papers after lunch, specifically concentrated on data science topics. The whole idea is to educated myself every day, but if I find something cool that I can implement in R, I’ll do it right away.&lt;/p&gt;
 &lt;p&gt;This blogpost is the first of a series of entries I plan to post explaining the main concepts of Kohavi (1995), which compares cross-validation methods and bootstrap methods for model selection. This first post will implement a K-Fold cross validation from scratch in order to understand more deeply what’s going on behind the scenes.&lt;/p&gt;
 &lt;p&gt;Before we explain the concept of K-Fold cross validation, we need to define what the ‘Holdout’ method is.&lt;/p&gt;
@@ -235,10 +235,10 @@ k_fold_cv %&amp;gt;%
     
     <item>
       <title>Simulations and model predictions in R</title>
-      <link>/hugo-goa-demo/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</link>
+      <link>https://shenoybr.github.io/hugo-goa-demo/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</link>
       <pubDate>Tue, 13 Sep 2016 00:00:00 +0000</pubDate>
       
-      <guid>/hugo-goa-demo/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</guid>
+      <guid>https://shenoybr.github.io/hugo-goa-demo/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</guid>
       <description>&lt;p&gt;I was on a flight from Asturias to Barcelona yesterday and I finally had some free time to open Gelman and Hill’s book and submerge in some studying. After finishing the chapter on simulations, I tried doing the first exercise and enjoyed it very much.&lt;/p&gt;
 &lt;p&gt;The exercise goes as follows:&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Discrete probability simulation: suppose that a basketball player has a 60% chance of making a shot, and he keeps taking shots until he misses two in a row. Also assume his shots are independent (so that each shot has 60% probability of success, no matter what happened before).&lt;/em&gt;&lt;/p&gt;
@@ -268,25 +268,25 @@ return(vec)
 # shots in a row.&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# test
 thrower(0.6)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 1 1 1 0 0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 0 0&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# 0 1 0 1 0 0
 # Last two elements are always zero&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# b)
 attempts &amp;lt;- replicate(1000, thrower(0.60))
 mean(sapply(attempts, length)) &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 8.923&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 8.769&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# mean number of shots until two shots are missed in a row&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sd(sapply(attempts, length)) &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 7.628189&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 7.148758&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# standard deviation of shots made
 # until two shots are missed in a row&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;hist(sapply(attempts, length)) # distribution of shots made&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2016-09-13-simulations-and-model-predictions-in-r/2016-09-13-simulations-and-model-predictions-in-r_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2016-09-13-simulations-and-model-predictions-in-r/2016-09-13-simulations-and-model-predictions-in-r_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# c)
 df &amp;lt;- cbind(sapply(attempts, mean), sapply(attempts, length)) 
 # data frame with % of shots made and number of shots thrown
 plot(df[, 2], df[, 1])&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2016-09-13-simulations-and-model-predictions-in-r/2016-09-13-simulations-and-model-predictions-in-r_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://shenoybr.github.io/hugo-goa-demo/hugo-goa-demo/blog/2016-09-13-simulations-and-model-predictions-in-r/2016-09-13-simulations-and-model-predictions-in-r_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;That was fun. I think the key take away here is that you can use these type of simulations to asses the accuracy of model predictions, for example. If you have the probability of being in either 1 or 0 in any dependent variable, then simulation can help determine its reliability by looking at the distribution of the replications.&lt;/p&gt;
 &lt;p&gt;Whenever I have some free time I’ll go back to the next exercises.&lt;/p&gt;
 </description>
