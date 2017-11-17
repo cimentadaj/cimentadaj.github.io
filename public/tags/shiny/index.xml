@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Shiny on Jorge Cimentada</title>
+    <link>/hugo-goa-demo/tags/shiny/</link>
+    <description>Recent content in Shiny on Jorge Cimentada</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Mon, 12 Dec 2016 00:00:00 +0000</lastBuildDate>
+    
+        <atom:link href="/hugo-goa-demo/tags/shiny/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Cognitive inequality around the world – Shiny app</title>
+      <link>/hugo-goa-demo/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</link>
+      <pubDate>Mon, 12 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</guid>
+      <description>&lt;p&gt;For the last month I’ve been working on this massive dataset that combines all PISA, TIMSS and PIRLS surveys into one major database. It has over 3 million students and over 2,000 variables, including student background and school and teacher information. I started playing around with it and ending up doing this: &lt;a href=&#34;https://cimentadaj.shinyapps.io/shiny/&#34; class=&#34;uri&#34;&gt;https://cimentadaj.shinyapps.io/shiny/&lt;/a&gt;. Feel free to check it out and drop any comments below.&lt;/p&gt;
+&lt;p&gt;If you want to contribute, &lt;a href=&#34;https://github.com/cimentadaj/Inequality_Shinyapp&#34;&gt;this&lt;/a&gt; is the Github repository. I plan to keep adding some stuff to the app, including new surveys and automatic plot downloading, so don’t forget to check it out.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

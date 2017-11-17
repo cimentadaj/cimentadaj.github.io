@@ -1,0 +1,117 @@
+---
+title: "The LOO and the Bootstrap"
+author: Jorge Cimentada
+date: '2017-09-07'
+slug: the-loo-and-the-bootstrap
+tags: ['simulation', 'R', 'machine-learning']
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#",
+  message = FALSE,
+  warning = FALSE
+)
+
+options(tibble.print_min = 5, tibble.print_max = 5)
+```
+
+This is the second entry, and probably the last, on model validation methods. These posts are inspired by the work of Kohavi (1995), which I totally recommend reading. This post will talk talk about the Leave-One-Out Cross Validation (LOOCV), which is the extreme version of the K-Fold Cross Validation and the Bootstrap for model assessment.
+
+Let's dive in!
+
+## The Leave-One-Out CV method
+
+The LOOCV is actually a very intuitive idea if you know how the K-Fold CV works.
+
+* LOOCV: Let's imagine a data set with 30 rows. We separate the 1st row to be the test data and the remaining 29 rows to be the training data. We fit the model on the training data and then predict the one observation we left out. We record the model accuracy and then repeat but predicting the 2nd row from training the model on row 1 and 3:30. We repeat until every row has been predicted.
+
+This is surprisingly easy to implement in R.
+
+```{r}
+library(tidyverse)
+
+set.seed(21341)
+loo_result <-
+  map_lgl(1:nrow(mtcars), ~ {
+  test <- mtcars[.x, ] # Pick the .x row of the iteration to be the test
+  train <- mtcars[-.x, ] # Let the training be all the data EXCEPT that row
+  
+  train_model <- glm(am ~ mpg + cyl + disp, family = binomial(), data = train) # Fit any model
+  
+  # Since the prediction is in probabilities, pass the probability
+  # to generate either a 1 or 0 based on the probability
+  prediction <- predict(train_model, newdata = test, type = "response") %>% rbinom(1, 1, .)
+  
+  test$am == prediction # compare whether the prediction matches the actual value
+})
+
+summary(loo_result %>% as.numeric) # percentage of accurate results
+```
+
+It looks like our model had nearly 60% accuracy, not very good. But not entirely bad given our very low sample size.
+
+Advantages:
+
+* Just as with the K-Fold CV, this approach is useful because it uses all the data. At some point, every rows gets to be the test set and training set, maximizing information.
+
+* In fact, it uses almost ALL the data as the original data set as the training set is just N - 1 (this method uses even more than the K-Fold CV).
+
+Disadvantage:
+
+* This approach is very heavy on your computer. We need to refit de model N times (although there is a shortcut for linear regreesion, see [here](https://gerardnico.com/wiki/lang/r/cross_validation)).
+
+* Given that the test set is of only 1 observation, there might be a lot of variance in the prediction, making the accuracy test more unreliable (that is, relative to K-Fold CV)
+
+## The Bootstrap method
+
+The bootstrap method is a bit different. Maybe you've heard about the bootstrap for estimating standard errors, and in fact for model assessment it’s very similar.
+
+* Boostrap method: Take the data from before with 30 rows. Suppose we resample this dataset with replacement. That is, the dataset will have the same 30 rows, but row 1 might be repeated 3 times, row 2 might be repeated 4 times, row 3 might not be in the dataset anymore, and so on. Now, take this resampled data and use it to train the model. Now test your predictions on the actual data (the one with 30 unique rows) and calculate the model accuracy. Repeat N times.
+
+Again, the R implementation is very straightforward.
+
+```{r, message = F}
+
+set.seed(21314)
+bootstrap <-
+  map_dbl(1:500, ~ {
+  train <- mtcars[sample(nrow(mtcars), replace = T), ] # randomly sample rows with replacement
+  test <- mtcars
+  
+  train_model <- glm(am ~ mpg + cyl + disp, family = binomial(), data = train) # fit any model
+  
+  # Get predicted probabilities and assign a 1 or 0 based on the probability
+  prediction <- predict(train_model, newdata = test, type = "response") %>% rbinom(nrow(mtcars), 1, .)
+  accuracy <- test$am == prediction # compare whether the prediction matches the actual value
+  
+  mean(accuracy) # get the proportion of correct predictions
+})
+
+summary(bootstrap)
+```
+
+We got a better accuracy with the bootstrap (probably biased, see below) and a range of possible values going from 0.43 to 0.93. Note that if you run these models you'll get a bunch of warnings like `glm.fit: fitted probabilities numerically 0 or 1 occurred` because we just have too few observations to be including covariates, resulting in a lot of overfitting.
+
+Advantages:
+
+* Variance is small considering both train and test have the same number of rows.
+
+Disadvantages
+
+* It gives more biased results than the CV methods because it repeats data, rather than keep unique observations for training and testing.
+
+In the end, it's a trade-off against what you're looking for. In some instances, it's alright to have a slightly biased estimate (either pessimistic or optimistic) as long as its reliable (bootstrap). On other instances, it's better to have a very exact prediction but that is less unreliable (CV methods).
+
+Some rule of thumbs:
+
+* For large sample sizes, the variance issues become less important and the computational part is more of an issues. I still would stick by repeated CV for small and large sample sizes. See [here](https://stats.stackexchange.com/questions/18348/differences-between-cross-validation-and-bootstrapping-to-estimate-the-predictio)
+
+* Cross validation is a good tool when deciding on the model -- it helps you avoid fooling yourself into thinking that you have a good model when in fact you are overfitting. When your model is fixed, then using the bootstrap makes more sense to assess accuracy (to me at least). See again [here](https://stats.stackexchange.com/questions/18348/differences-between-cross-validation-and-bootstrapping-to-estimate-the-predictio)
+
+## Conclusion
+
+Again, this is a very crude approach, and the whole idea is to understand the inner workings of these algorithms in practice. For more thorough approaches I suggest using the `cv` functions from the `boot` package or `caret` or `modelr`. I hope this was useful. I will try to keep doing these things as they help me understand these techniques better.
+
+* Kohavi, Ron. "A study of cross-validation and bootstrap for accuracy estimation and model selection." Ijcai. Vol. 14. No. 2. 1995.

@@ -1,0 +1,11 @@
+---
+title:  "Cognitive inequality around the world – Shiny app"
+author: Jorge Cimentada
+date: '2016-12-12'
+slug: cognitive-inequality-around-the-world--shiny-app
+tags: ['PISA', 'shiny', 'R', 'projects']
+---
+
+For the last month I’ve been working on this massive dataset that combines all PISA, TIMSS and PIRLS surveys into one major database. It has over 3 million students and over 2,000 variables, including student background and school and teacher information. I started playing around with it and ending up doing this: https://cimentadaj.shinyapps.io/shiny/. Feel free to check it out and drop any comments below.
+
+If you want to contribute, [this](https://github.com/cimentadaj/Inequality_Shinyapp) is the Github repository. I plan to keep adding some stuff to the app, including new surveys and automatic plot downloading, so don’t forget to check it out.

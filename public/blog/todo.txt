@@ -1,0 +1,8 @@
+Well, now you know that you can create posts within the blog folder only as .Rmd
+
+Things to do:
+
+- Set code highlight to R standards
+- Take new picture for website
+
+Change PISA twitter url to new website

@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Packages on Jorge Cimentada</title>
+    <link>/hugo-goa-demo/tags/packages/</link>
+    <description>Recent content in Packages on Jorge Cimentada</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Tue, 01 Aug 2017 00:00:00 +0000</lastBuildDate>
+    
+        <atom:link href="/hugo-goa-demo/tags/packages/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>perccalc package</title>
+      <link>/hugo-goa-demo/blog/2017-08-01-perccalc-package/perccalc-package/</link>
+      <pubDate>Tue, 01 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2017-08-01-perccalc-package/perccalc-package/</guid>
+      <description>&lt;p&gt;Reardon (2011) introduced a very interesting concept in which he calculates percentile differences from ordered categorical variables. He explains his procedure very much in detail in the appendix of the book chapter but no formal implementation has been yet available on the web. With this package I introduce a function that applies the procedure, following a step-by-step Stata script that Sean Reardon kindly sent me.&lt;/p&gt;
+&lt;p&gt;In this vignette I show you how to use the function and match the results to the Stata code provided by Reardon himself.&lt;/p&gt;
+&lt;p&gt;For this example, we’ll use a real world data set, one I’m very much familiar with: PISA. We’ll use the PISA 2012 wave for Germany because it asked parents about their income category. For this example we’ll need the packages below.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# install.packages(c(&amp;quot;devtools&amp;quot;, &amp;quot;matrixStats&amp;quot;, &amp;quot;tidyverse&amp;quot;))
+# devtools::install_github(&amp;quot;pbiecek/PISA2012lite&amp;quot;)
+
+library(matrixStats)
+library(tidyverse)
+library(haven)
+library(PISA2012lite)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you haven’t installed any of the packages above, uncomment the first two lines to install them. Beware that the &lt;code&gt;PISA2012lite&lt;/code&gt; package contains the PISA 2012 data and takes a while to download.&lt;/p&gt;
+&lt;p&gt;Let’s prepare the data. Below we filter only German students, select only the math test results and calculate the median of all math plausible values to get one single math score. Finally, we match each student with their corresponding income data from their parents data and their sample weights.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ger_student &amp;lt;- student2012 %&amp;gt;%
+  filter(CNT == &amp;quot;Germany&amp;quot;) %&amp;gt;%
+  select(CNT, STIDSTD, matches(&amp;quot;^PV*.MATH$&amp;quot;)) %&amp;gt;%
+  transmute(CNT, STIDSTD,
+            avg_score = rowMeans(student2012[student2012$CNT == &amp;quot;Germany&amp;quot;, paste0(&amp;quot;PV&amp;quot;, 1:5, &amp;quot;MATH&amp;quot;)]))
+
+ger_parent &amp;lt;-
+  parent2012 %&amp;gt;%
+  filter(CNT == &amp;quot;Germany&amp;quot;) %&amp;gt;%
+  select(CNT, STIDSTD, PA07Q01)
+
+ger_weights &amp;lt;-
+  student2012weights %&amp;gt;%
+  filter(CNT == &amp;quot;Germany&amp;quot;) %&amp;gt;%
+  select(CNT, STIDSTD, W_FSTUWT)
+
+dataset_ready &amp;lt;-
+  ger_student %&amp;gt;%
+  left_join(ger_parent, by = c(&amp;quot;CNT&amp;quot;, &amp;quot;STIDSTD&amp;quot;)) %&amp;gt;%
+  left_join(ger_weights, by = c(&amp;quot;CNT&amp;quot;, &amp;quot;STIDSTD&amp;quot;)) %&amp;gt;%
+  as_tibble() %&amp;gt;%
+  rename(income = PA07Q01,
+         score = avg_score,
+         wt = W_FSTUWT) %&amp;gt;%
+  select(-CNT, -STIDSTD)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The final results is this dataset:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 10 x 3
+##      score         income       wt
+##      &amp;lt;dbl&amp;gt;         &amp;lt;fctr&amp;gt;    &amp;lt;dbl&amp;gt;
+## 1 439.5622 Less than &amp;lt;$A&amp;gt; 137.3068
+## 2 523.1422 Less than &amp;lt;$A&amp;gt; 170.0566
+## 3 291.4083 Less than &amp;lt;$A&amp;gt; 162.3794
+## 4 436.6023 Less than &amp;lt;$A&amp;gt; 162.3794
+## 5 367.4326 Less than &amp;lt;$A&amp;gt; 114.6644
+## # ... with 5 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This is the minimum dataset that the function will accept. This means that it needs to have at least a categorical variable and a continuous variable (the vector of weights is optional).&lt;/p&gt;
+&lt;p&gt;The package is called &lt;code&gt;perccalc&lt;/code&gt;, short for percentile calculator and we can install and load it with this code:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;quot;perccalc&amp;quot;, repo = &amp;quot;https://cran.rediris.es/&amp;quot;)
+## 
+## The downloaded binary packages are in
+##  /var/folders/w0/pscnb7zx5y9g_qf13cxhl0_r0000gn/T//RtmpWExwak/downloaded_packages
+library(perccalc)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The package has two functions, which I’ll show some examples. The first one is called &lt;code&gt;perc_diff&lt;/code&gt; and it’s very easy to use, we just specify the data, the name of the categorical and continuous variable and the percentile difference we want.&lt;/p&gt;
+&lt;p&gt;Let’s put it to use!&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_diff(dataset_ready, income, score, percentiles = c(90, 10))
+## Error: is_ordered_fct is not TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I generated that error on purpose to raise a very important requirement of the function. The categorical variable needs to be an ordered factor (categorical). It is very important because otherwise we could be calculating percentile differences of categorical variables such as married, single and widowed, which doesn’t make a lot of sense.&lt;/p&gt;
+&lt;p&gt;We can turn it into an ordered factor with the code below.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dataset_ready &amp;lt;-
+  dataset_ready %&amp;gt;%
+  mutate(income = factor(income, ordered = TRUE))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now it’ll work.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_diff(dataset_ready, income, score, percentiles = c(90, 10))
+## difference         se 
+##   97.00706    8.74790&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can play around with other percentiles&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_diff(dataset_ready, income, score, percentiles = c(50, 10))
+## difference         se 
+##  58.776200   8.291083&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And we can add a vector of weights&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_diff(dataset_ready, income, score, weights = wt, percentiles = c(90, 10))
+## difference         se 
+##  95.228517   8.454902&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now, how are we sure that these estimates are as accurate as the Reardon (2011) implementation? We can compare the Stata ouput using this data set.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Saving the dataset to a path
+dataset_ready %&amp;gt;%
+  write_dta(path = &amp;quot;/Users/cimentadaj/Downloads/pisa_income.dta&amp;quot;, version = 13)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Running the code below using the &lt;code&gt;pisa_income.dta&lt;/code&gt;..&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;*--------
+use &amp;quot;/Users/cimentadaj/Downloads/pisa_income.dta&amp;quot;, clear
+
+tab income, gen(inc)
+*--------
+
+/*-----------------------
+    Making a data set that has 
+    one observation per income category
+    and has mean and se(mean) in each category
+    and percent of population in the category
+------------------------*/
+
+tempname memhold
+tempfile results
+postfile `memhold&amp;#39; income mean se_mean per using `results&amp;#39;
+
+forv i = 1/6 {
+    qui sum inc`i&amp;#39; [aw=wt]
+    loc per`i&amp;#39; = r(mean)    
+                                
+    qui sum score if inc`i&amp;#39;==1 
+                            
+    if `r(N)&amp;#39;&amp;gt;0 {
+        qui regress score if inc`i&amp;#39;==1 [aw=wt]
+        post `memhold&amp;#39; (`i&amp;#39;) (_b[_cons]) (_se[_cons]) (`per`i&amp;#39;&amp;#39;)
+                            
+    }               
+}
+postclose `memhold&amp;#39; 
+
+/*-----------------------
+    Making income categories
+    into percentiles
+------------------------*/
+
+
+    use `results&amp;#39;, clear
+
+    sort income
+    gen cathi = sum(per)
+    gen catlo = cathi[_n-1]
+    replace catlo = 0 if income==1
+    gen catmid = (catlo+cathi)/2
+    
+    /*-----------------------
+        Calculate income 
+        achievement gaps
+    ------------------------*/
+
+    sort income
+    
+    g x1 = catmid
+    g x2 = catmid^2 + ((cathi-catlo)^2)/12
+    g x3 = catmid^3 + ((cathi-catlo)^2)/4
+
+    g cimnhi = mean + 1.96*se_mean
+    g cimnlo = mean - 1.96*se_mean
+
+    reg mean x1 x2 x3 [aw=1/se_mean^2] 
+
+    twoway (rcap cimnhi cimnlo catmid) (scatter mean catmid) ///
+        (function y = _b[_cons] + _b[x1]*x + _b[x2]*x^2 + _b[x3]*x^3, ran(0 1)) 
+    
+    loc hi_p = 90
+    loc lo_p = 10
+
+    loc d1 = [`hi_p&amp;#39; - `lo_p&amp;#39;]/100
+    loc d2 = [(`hi_p&amp;#39;)^2 - (`lo_p&amp;#39;)^2]/(100^2)
+    loc d3 = [(`hi_p&amp;#39;)^3 - (`lo_p&amp;#39;)^3]/(100^3)
+
+    lincom `d1&amp;#39;*x1 + `d2&amp;#39;*x2 + `d3&amp;#39;*x3
+    loc diff`hi_p&amp;#39;`lo_p&amp;#39; = r(estimate)
+    loc se`hi_p&amp;#39;`lo_p&amp;#39; = r(se)
+    
+    di &amp;quot;`hi_p&amp;#39;-`lo_p&amp;#39; gap:     `diff`hi_p&amp;#39;`lo_p&amp;#39;&amp;#39;&amp;quot;
+    di &amp;quot;se(`hi_p&amp;#39;-`lo_p&amp;#39; gap): `se`hi_p&amp;#39;`lo_p&amp;#39;&amp;#39;&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I get that the 90/10 difference is &lt;code&gt;95.22&lt;/code&gt; with a standard error of &lt;code&gt;8.45&lt;/code&gt;. Does it sound familiar?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_diff(dataset_ready, income, score, weights = wt, percentiles = c(90, 10))
+## difference         se 
+##  95.228517   8.454902&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The second function of the package is called &lt;code&gt;perc_dist&lt;/code&gt; and instead of calculating the difference of two percentiles, it returns the score and standard error of every percentile. The arguments of the function are exactly the same but without the &lt;code&gt;percentiles&lt;/code&gt; argument, because this will return the whole set of percentiles.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_dist(dataset_ready, income, score)
+##     percentile   estimate std.error
+## 1            1   3.693889  1.327722
+## 2            2   7.280584  2.591314
+## 3            3  10.762009  3.792189
+## 4            4  14.140090  4.931759
+## 5            5  17.416754  6.011441
+## 6            6  20.593925  7.032650
+## 7            7  23.673529  7.996804
+## 8            8  26.657492  8.905323
+## 9            9  29.547739  9.759628
+## 10          10  32.346196 10.561142
+## 11          11  35.054789 11.311287
+## 12          12  37.675443 12.011489
+## 13          13  40.210083 12.663175
+## 14          14  42.660636 13.267774
+## 15          15  45.029026 13.826714
+## 16          16  47.317180 14.341427
+## 17          17  49.527023 14.813345
+## 18          18  51.660481 15.243900
+## 19          19  53.719479 15.634527
+## 20          20  55.705943 15.986660
+## 21          21  57.621798 16.301735
+## 22          22  59.468970 16.581186
+## 23          23  61.249385 16.826450
+## 24          24  62.964968 17.038960
+## 25          25  64.617644 17.220150
+## 26          26  66.209340 17.371453
+## 27          27  67.741982 17.494296
+## 28          28  69.217493 17.590108
+## 29          29  70.637801 17.660310
+## 30          30  72.004830 17.706321
+## 31          31  73.320507 17.729551
+## 32          32  74.586757 17.731404
+## 33          33  75.805505 17.713275
+## 34          34  76.978678 17.676548
+## 35          35  78.108200 17.622596
+## 36          36  79.195997 17.552774
+## 37          37  80.243995 17.468422
+## 38          38  81.254120 17.370860
+## 39          39  82.228297 17.261387
+## 40          40  83.168451 17.141273
+## 41          41  84.076509 17.011761
+## 42          42  84.954395 16.874063
+## 43          43  85.804036 16.729352
+## 44          44  86.627357 16.578762
+## 45          45  87.426284 16.423385
+## 46          46  88.202741 16.264261
+## 47          47  88.958656 16.102380
+## 48          48  89.695953 15.938677
+## 49          49  90.416558 15.774024
+## 50          50  91.122396 15.609233
+## 51          51  91.815394 15.445050
+## 52          52  92.497476 15.282149
+## 53          53  93.170569 15.121139
+## 54          54  93.836598 14.962558
+## 55          55  94.497488 14.806873
+## 56          56  95.155165 14.654486
+## 57          57  95.811555 14.505735
+## 58          58  96.468584 14.360901
+## 59          59  97.128176 14.220213
+## 60          60  97.792258 14.083859
+## 61          61  98.462754 13.951996
+## 62          62  99.141592 13.824764
+## 63          63  99.830695 13.702302
+## 64          64 100.531991 13.584764
+## 65          65 101.247404 13.472342
+## 66          66 101.978860 13.365285
+## 67          67 102.728285 13.263927
+## 68          68 103.497604 13.168712
+## 69          69 104.288742 13.080222
+## 70          70 105.103627 12.999208
+## 71          71 105.944182 12.926622
+## 72          72 106.812333 12.863647
+## 73          73 107.710007 12.811728
+## 74          74 108.639129 12.772604
+## 75          75 109.601624 12.748328
+## 76          76 110.599418 12.741293
+## 77          77 111.634436 12.754239
+## 78          78 112.708605 12.790256
+## 79          79 113.823849 12.852771
+## 80          80 114.982095 12.945522
+## 81          81 116.185267 13.072509
+## 82          82 117.435292 13.237935
+## 83          83 118.734096 13.446126
+## 84          84 120.083602 13.701443
+## 85          85 121.485739 14.008184
+## 86          86 122.942430 14.370488
+## 87          87 124.455601 14.792251
+## 88          88 126.027178 15.277052
+## 89          89 127.659088 15.828107
+## 90          90 129.353254 16.448235
+## 91          91 131.111603 17.139861
+## 92          92 132.936061 17.905030
+## 93          93 134.828552 18.745443
+## 94          94 136.791004 19.662499
+## 95          95 138.825340 20.657348
+## 96          96 140.933487 21.730939
+## 97          97 143.117371 22.884074
+## 98          98 145.378916 24.117446
+## 99          99 147.720049 25.431683
+## 100        100 150.142695 26.827377&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can also add the optional set of weights and graph it:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_dist(dataset_ready, income, score, wt) %&amp;gt;%
+  mutate(ci_low = estimate - 1.96 * std.error,
+         ci_hi = estimate + 1.96 * std.error) %&amp;gt;%
+  ggplot(aes(percentile, estimate)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_hi))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-08-01-perccalc-package/2017-08-01-perccalc-package_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;576&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Please note that for calculating the difference between two percentiles it is more accurate to use the &lt;code&gt;perc_diff&lt;/code&gt; function. The &lt;code&gt;perc_diff&lt;/code&gt; calculates the difference through a linear combination of coefficients resulting in a different standard error.&lt;/p&gt;
+&lt;p&gt;For example:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_dist(dataset_ready, income, score, wt) %&amp;gt;%
+  filter(percentile %in% c(90, 10)) %&amp;gt;%
+  summarize(diff = diff(estimate),
+            se_diff = diff(std.error))
+##       diff  se_diff
+## 1 95.22852 5.679855&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;compared to&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_diff(dataset_ready, income, score, weights = wt, percentiles = c(90, 10))
+## difference         se 
+##  95.228517   8.454902&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;They both have the same point estimate but a different standard error.&lt;/p&gt;
+&lt;p&gt;I hope this was a convincing example, I know this will be useful for me. All the intelectual ideas come from Sean Reardon and the Stata code was written by Sean Reardon, Ximena Portilla, and Jenna Finch. The R implemention is my own work.&lt;/p&gt;
+&lt;p&gt;You can find the package repository &lt;a href=&#34;https://github.com/cimentadaj/perccalc&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Reardon, Sean F. “The widening academic achievement gap between the rich and the poor: New evidence and possible explanations.” Whither opportunity (2011): 91-116.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Producing stargazer tables with odds ratios and standard errors in R</title>
+      <link>/hugo-goa-demo/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</link>
+      <pubDate>Mon, 22 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</guid>
+      <description>&lt;p&gt;Whoa, what a day. I’ve been using the stargazer package for producing my (beautiful) regression tables in R for a while now. Among all the arguments of its main function (&lt;code&gt;stargazer()&lt;/code&gt; ) are &lt;code&gt;apply.coef&lt;/code&gt;, &lt;code&gt;apply.se&lt;/code&gt;, &lt;code&gt;apply.ci&lt;/code&gt;, … and so on for all the other statistics of a regression output. Each of these arguments, if specified, applies a function over the specified statistic. So, for calculating the odds ratios I would simply apply the &lt;code&gt;exp()&lt;/code&gt; function over the set of log odds. It turns out that if you apply any function over the coefficients (or any other statistic), stargazer automatically recalculates t values with the new coefficients! This means that the significance of my model will depend on the new values and we surely wouldn’t want that.&lt;/p&gt;
+&lt;p&gt;Let’s show a reproducible example:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# install.packages(&amp;quot;stargazer&amp;quot;) # in case you don&amp;#39;t have this package
+suppressMessages(library(stargazer))
+
+m1 &amp;lt;- glm(mtcars$vs ~ mtcars$hp + mtcars$mpg)
+
+stargazer(m1, type = &amp;quot;text&amp;quot;) # Our standard log odds&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## =============================================
+##                       Dependent variable:    
+##                   ---------------------------
+##                               vs             
+## ---------------------------------------------
+## hp                         -0.004**          
+##                             (0.001)          
+##                                              
+## mpg                          0.022           
+##                             (0.017)          
+##                                              
+## Constant                     0.566           
+##                             (0.519)          
+##                                              
+## ---------------------------------------------
+## Observations                  32             
+## Log Likelihood              -11.217          
+## Akaike Inf. Crit.           28.434           
+## =============================================
+## Note:             *p&amp;lt;0.1; **p&amp;lt;0.05; ***p&amp;lt;0.01&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;stargazer(m1, apply.coef = exp, type = &amp;quot;text&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## =============================================
+##                       Dependent variable:    
+##                   ---------------------------
+##                               vs             
+## ---------------------------------------------
+## hp                         0.996***          
+##                             (0.001)          
+##                                              
+## mpg                        1.022***          
+##                             (0.017)          
+##                                              
+## Constant                   1.762***          
+##                             (0.519)          
+##                                              
+## ---------------------------------------------
+## Observations                  32             
+## Log Likelihood              -11.217          
+## Akaike Inf. Crit.           28.434           
+## =============================================
+## Note:             *p&amp;lt;0.1; **p&amp;lt;0.05; ***p&amp;lt;0.01&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The coefficients are correct, but look at the significance levels! Those are some really undesirable results. I was actually using this for quite some time without noticing. In light of this problem I decided to create a small function that extracted the statistics separately and applied the appropriate conversion when needed. It’s far from being a flexible function, but it can surely help you run some quick-and-dirty logistic regressions with odds ratios instead of log odds.&lt;/p&gt;
+&lt;p&gt;Here’s the function and an example:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;stargazer2 &amp;lt;- function(model, odd.ratio = F, ...) {
+  if(!(&amp;quot;list&amp;quot; %in% class(model))) model &amp;lt;- list(model)
+    
+  if (odd.ratio) {
+    coefOR2 &amp;lt;- lapply(model, function(x) exp(coef(x)))
+    seOR2 &amp;lt;- lapply(model, function(x) exp(coef(x)) * summary(x)$coef[, 2])
+    p2 &amp;lt;- lapply(model, function(x) summary(x)$coefficients[, 4])
+    stargazer(model, coef = coefOR2, se = seOR2, p = p2, ...)
+    
+  } else {
+    stargazer(model, ...)
+  }
+}
+
+stargazer(m1, type = &amp;quot;text&amp;quot;) # Our standard log odds&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## =============================================
+##                       Dependent variable:    
+##                   ---------------------------
+##                               vs             
+## ---------------------------------------------
+## hp                         -0.004**          
+##                             (0.001)          
+##                                              
+## mpg                          0.022           
+##                             (0.017)          
+##                                              
+## Constant                     0.566           
+##                             (0.519)          
+##                                              
+## ---------------------------------------------
+## Observations                  32             
+## Log Likelihood              -11.217          
+## Akaike Inf. Crit.           28.434           
+## =============================================
+## Note:             *p&amp;lt;0.1; **p&amp;lt;0.05; ***p&amp;lt;0.01&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;stargazer2(m1, odd.ratio = T, type = &amp;quot;text&amp;quot;) &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## =============================================
+##                       Dependent variable:    
+##                   ---------------------------
+##                               vs             
+## ---------------------------------------------
+## hp                          0.996**          
+##                             (0.001)          
+##                                              
+## mpg                          1.022           
+##                             (0.017)          
+##                                              
+## Constant                     1.762           
+##                             (0.915)          
+##                                              
+## ---------------------------------------------
+## Observations                  32             
+## Log Likelihood              -11.217          
+## Akaike Inf. Crit.           28.434           
+## =============================================
+## Note:             *p&amp;lt;0.1; **p&amp;lt;0.05; ***p&amp;lt;0.01&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Now the coefficients and significance is correct!&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# You can also use lists
+m1 &amp;lt;- glm(mtcars$vs ~ mtcars$mpg)
+m2 &amp;lt;- glm(mtcars$vs ~ mtcars$mpg + mtcars$hp)
+m3 &amp;lt;- glm(mtcars$vs ~ mtcars$mpg + mtcars$hp + mtcars$am)
+
+models &amp;lt;- list(m1, m2, m3)
+
+stargazer(models, type = &amp;quot;text&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## ===============================================
+##                        Dependent variable:     
+##                   -----------------------------
+##                                vs              
+##                      (1)        (2)      (3)   
+## -----------------------------------------------
+## mpg                0.056***    0.022    0.041* 
+##                    (0.011)    (0.017)  (0.022) 
+##                                                
+## hp                           -0.004**  -0.003* 
+##                               (0.001)  (0.002) 
+##                                                
+## am                                      -0.223 
+##                                        (0.173) 
+##                                                
+## Constant          -0.678***    0.566    0.141  
+##                    (0.239)    (0.519)  (0.611) 
+##                                                
+## -----------------------------------------------
+## Observations          32        32        32   
+## Log Likelihood     -14.669    -11.217  -10.299 
+## Akaike Inf. Crit.   33.338    28.434    28.599 
+## ===============================================
+## Note:               *p&amp;lt;0.1; **p&amp;lt;0.05; ***p&amp;lt;0.01&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;stargazer2(models, odd.ratio = T, type = &amp;quot;text&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## ===============================================
+##                        Dependent variable:     
+##                   -----------------------------
+##                                vs              
+##                      (1)        (2)      (3)   
+## -----------------------------------------------
+## mpg                1.057***    1.022    1.042* 
+##                    (0.012)    (0.017)  (0.023) 
+##                                                
+## hp                            0.996**   0.997* 
+##                               (0.001)  (0.002) 
+##                                                
+## am                                      0.800  
+##                                        (0.139) 
+##                                                
+## Constant           0.508***    1.762    1.151  
+##                    (0.121)    (0.915)  (0.703) 
+##                                                
+## -----------------------------------------------
+## Observations          32        32        32   
+## Log Likelihood     -14.669    -11.217  -10.299 
+## Akaike Inf. Crit.   33.338    28.434    28.599 
+## ===============================================
+## Note:               *p&amp;lt;0.1; **p&amp;lt;0.05; ***p&amp;lt;0.01&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Same significance but different coefficients and SE&amp;#39;s&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Caveats:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;It only accepts one model or one list containing several models. I did this because I didn’t want to get into distinguishing between several separate models. If you want to improve it, &lt;a href=&#34;https://github.com/cimentadaj/cimentadaj/blob/master/R/stargazer2.R&#34;&gt;here’s&lt;/a&gt; the Github website, submit a pull request!&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;It doesn’t calculate confidence intervals as the formula is more complicated and I didn’t need them for now.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;p&gt;Update: I included this function in my personal package which you can install like this:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# install.packages(&amp;quot;devtools&amp;quot;)
+devtools::install_github(&amp;quot;cimentadaj/cimentadaj&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

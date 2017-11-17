@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Eda on Jorge Cimentada</title>
+    <link>/hugo-goa-demo/tags/eda/</link>
+    <description>Recent content in Eda on Jorge Cimentada</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Mon, 16 Oct 2017 00:00:00 +0000</lastBuildDate>
+    
+        <atom:link href="/hugo-goa-demo/tags/eda/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Scraping and visualizing How I Met Your Mother</title>
+      <link>/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</link>
+      <pubDate>Mon, 16 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</guid>
+      <description>&lt;p&gt;How I Met Your Mother (HIMYM from here after) is a television series very similar to the classical ‘Friends’ series from the 90’s. Following the release of the &lt;a href=&#34;http://tidytextmining.com/&#34;&gt;tidy text&lt;/a&gt; book I was looking for a project in which I could apply these skills. I decided I would scrape all the transcripts from HIMYM and analyze patterns between characters. This post really took me to the limit in terms of web scraping and pattern matching, which was specifically what I wanted to improve in the first place. Let’s begin!&lt;/p&gt;
+&lt;p&gt;My first task was whether there was any consistency in the URL’s that stored the transcripts. If you ever watched HIMYM, we know there’s around nine seasons, each one with about 22 episodes. This makes about 200 episodes give or take. It would be a big pain to manually write down 200 complicated URL’s. Luckily, there is a way of finding the 200 links without writing them down manually.&lt;/p&gt;
+&lt;p&gt;First, we create the links for the 9 websites that contain all episodes (1 through season 9)&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rvest)
+library(tidyverse)
+library(stringr)
+library(tidytext)
+
+main_url &amp;lt;- &amp;quot;http://transcripts.foreverdreaming.org&amp;quot;
+all_pages &amp;lt;- paste0(&amp;quot;http://transcripts.foreverdreaming.org/viewforum.php?f=177&amp;amp;start=&amp;quot;, seq(0, 200, 25))
+characters &amp;lt;- c(&amp;quot;ted&amp;quot;, &amp;quot;lily&amp;quot;, &amp;quot;marshall&amp;quot;, &amp;quot;barney&amp;quot;, &amp;quot;robin&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Each of the URL’s of &lt;code&gt;all_pages&lt;/code&gt; contains all episodes for that season (so around 22 URL’s). I also picked the characters we’re gonna concentrate for now. From here the job is very easy. We create a function that reads each link and parses the section containing all links for that season. We can do that using &lt;a href=&#34;http://selectorgadget.com/.&#34;&gt;SelectorGadget&lt;/a&gt; to find the section we’re interested in. We then search for the &lt;code&gt;href&lt;/code&gt; attribute to grab all links in that attribute and finally create a tibble with each episode together with it’s link.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;episode_getter &amp;lt;- function(link) {
+  title_reference &amp;lt;-
+    link %&amp;gt;%
+    read_html() %&amp;gt;%
+    html_nodes(&amp;quot;.topictitle&amp;quot;) # Get the html node name with &amp;#39;selector gadget&amp;#39;
+  
+  episode_links &amp;lt;-
+    title_reference %&amp;gt;%
+    html_attr(&amp;quot;href&amp;quot;) %&amp;gt;%
+    gsub(&amp;quot;^.&amp;quot;, &amp;quot;&amp;quot;, .) %&amp;gt;%
+    paste0(main_url, .) %&amp;gt;%
+    setNames(title_reference %&amp;gt;% html_text()) %&amp;gt;%
+    enframe(name = &amp;quot;episode_name&amp;quot;, value = &amp;quot;link&amp;quot;)
+  
+  episode_links
+}
+
+all_episodes &amp;lt;- map_df(all_pages, episode_getter) # loop over all seasons and get all episode links
+all_episodes$id &amp;lt;- 1:nrow(all_episodes)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There we go! Now we have a very organized &lt;code&gt;tibble&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_episodes
+# # A tibble: 208 x 3
+#                      episode_name
+#                             &amp;lt;chr&amp;gt;
+#  1                  01x01 - Pilot
+#  2         01x02 - Purple Giraffe
+#  3 01x03 - Sweet Taste of Liberty
+#  4    01x04 - Return of the Shirt
+#  5           01x05 - Okay Awesome
+#  6         01x06 - Slutty Pumpkin
+#  7             01x07 - Matchmaker
+#  8               01x08 - The Duel
+#  9   01x09 - Belly Full of Turkey
+# 10 01x10 - The Pineapple Incident
+# # ... with 198 more rows, and 2 more variables: link &amp;lt;chr&amp;gt;, id &amp;lt;int&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The remaining part is to actually scrape the text from each episode. We can work that out for a single episode and then turn that into a function and apply for all episodes.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;episode_fun &amp;lt;- function(file) {
+  
+  file %&amp;gt;%
+    read_html() %&amp;gt;%
+    html_nodes(&amp;quot;.postbody&amp;quot;) %&amp;gt;%
+    html_text() %&amp;gt;%
+    str_split(&amp;quot;\n|\t&amp;quot;) %&amp;gt;%
+    .[[1]] %&amp;gt;%
+    data_frame(text = .) %&amp;gt;%
+    filter(str_detect(text, &amp;quot;&amp;quot;), # Lots of empty spaces
+           !str_detect(text, &amp;quot;^\\t&amp;quot;), # Lots of lines with \t to delete
+           !str_detect(text, &amp;quot;^\\[.*\\]$&amp;quot;), # Text that start with brackets
+           !str_detect(text, &amp;quot;^\\(.*\\)$&amp;quot;), # Text that starts with parenthesis
+           str_detect(text, &amp;quot;^*.:&amp;quot;), # I want only lines with start with dialogue (:)
+           !str_detect(text, &amp;quot;^ad&amp;quot;)) # Remove lines that start with ad (for &amp;#39;ads&amp;#39;, the link of google ads)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The above function reads each episode, turns the html text into a data frame and organizes it clearly for text analysis. For example:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;episode_fun(all_episodes$link[15])
+# # A tibble: 195 x 1
+#                                                                           text
+#                                                                          &amp;lt;chr&amp;gt;
+#  1 Ted from 2030: Kids, something you might not know about your Uncle Marshall
+#  2                  &amp;quot;Ted: You don&amp;#39;t have to shout out \&amp;quot;poker\&amp;quot; when you win.&amp;quot;
+#  3                                     Marshall: I know. It&amp;#39;s just fun to say.
+#  4 &amp;quot;Ted from 2030: We all finally agreed Marshall should be running our game n
+#  5 &amp;quot;Marshall: It&amp;#39;s called \&amp;quot;Marsh-gammon.\&amp;quot; It combines all the best features 
+#  6                                               Robin: Backgammon, obviously.
+#  7 &amp;quot;Marshall: No. Backgammon sucks. I took the only good part of backgammon, t
+#  8                                     Lily: I&amp;#39;m so excited Victoria&amp;#39;s coming.
+#  9                                   Robin: I&amp;#39;m going to go get another round.
+# 10 Ted: Okay, I want to lay down some ground rules for tonight. Barney, I actu
+# # ... with 185 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We now have a data frame with only dialogue for each character. We need to apply that function to each episode and &lt;code&gt;bind&lt;/code&gt; everything together. We first apply the function to every episode.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_episodes$text &amp;lt;- map(all_episodes$link, episode_fun)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;text&lt;/code&gt; list-column is an organized list with text for each episode. However, manual inspection of some episodes actually denotes a small error that limits our analysis greatly. Among the main interests of this document is to study relationships and presence between characters. For that, we need each line of text to be accompanied by the character who said it. Unfortunately, some of these scripts don’t have that.&lt;/p&gt;
+&lt;p&gt;For example, check any episode from season &lt;a href=&#34;http://transcripts.foreverdreaming.org/viewforum.php?f=177&amp;amp;start=175&#34;&gt;8&lt;/a&gt; and &lt;a href=&#34;http://transcripts.foreverdreaming.org/viewforum.php?f=177&amp;amp;start=200&#34;&gt;9&lt;/a&gt;. The writer didn’t write the dialogue and just rewrote the lines. There’s nothing we can do so far to improve that and we’ll be excluding these episodes. This pattern is also present in random episodes like in season 4 or season 6. We can exclude chapters based on the number of lines we parsed. On average, each of these episodes has about 200 lines of dialogue. Anything significantly lower, like 30 or 50 lines, is an episode which doesn’t have a lot of dialogue.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_episodes$count &amp;lt;- map_dbl(all_episodes$text, nrow)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can extend the previous &lt;code&gt;tibble&lt;/code&gt; to be a big more organized by separating the episode-season column into separate season and episo numbers.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_episodes &amp;lt;-
+  all_episodes %&amp;gt;%
+  separate(episode_name, c(&amp;quot;season&amp;quot;, &amp;quot;episode&amp;quot;), &amp;quot;-&amp;quot;, extra = &amp;quot;merge&amp;quot;) %&amp;gt;%
+  separate(season, c(&amp;quot;season&amp;quot;, &amp;quot;episode_number&amp;quot;), sep = &amp;quot;x&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Great! We now have a very organized &lt;code&gt;tibble&lt;/code&gt; with all the information we need. Next step is to actually break down the lines into words and start looking for general patterns. We can do that by looping through all episodes that have over 100 lines (just an arbitrary threshold) and unnesting each line for each &lt;strong&gt;valid&lt;/strong&gt; character.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lines_characters &amp;lt;-
+  map(filter(all_episodes, count &amp;gt; 100) %&amp;gt;% pull(text), ~ { 
+    # only loop over episodes that have over 100 lines
+    .x %&amp;gt;%
+      separate(text, c(&amp;quot;character&amp;quot;, &amp;quot;text&amp;quot;), sep = &amp;quot;:&amp;quot;, extra = &amp;#39;merge&amp;#39;) %&amp;gt;%
+      # separate character dialogue from actual dialogo
+      unnest_tokens(character, character) %&amp;gt;%
+      filter(str_detect(character, paste0(paste0(&amp;quot;^&amp;quot;, characters, &amp;quot;$&amp;quot;), collapse = &amp;quot;|&amp;quot;))) %&amp;gt;%
+      # only count the lines of our chosen characters
+      mutate(episode_lines_id = 1:nrow(.))
+  }) %&amp;gt;%
+  setNames(filter(all_episodes, count &amp;gt; 100) %&amp;gt;% # name according to episode
+             unite(season_episode, season, episode_number, sep = &amp;quot;x&amp;quot;) %&amp;gt;%
+             pull(season_episode)) %&amp;gt;%
+  enframe() %&amp;gt;%
+  unnest() %&amp;gt;%
+  mutate(all_lines_id = 1:nrow(.))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Ok, our text is sort of ready. Let’s remove some bad words.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;words_per_character &amp;lt;-
+  lines_characters %&amp;gt;%
+  unnest_tokens(word, text) %&amp;gt;% # expand all sentences into words
+  anti_join(stop_words) %&amp;gt;% # remove bad words
+  filter(!word %in% characters) %&amp;gt;% # only select characters we&amp;#39;re interested
+  arrange(name) %&amp;gt;%
+  separate(name, c(&amp;quot;season&amp;quot;, &amp;quot;episode&amp;quot;), sep = &amp;quot;x&amp;quot;, remove = FALSE) %&amp;gt;%
+  mutate(name = factor(name, ordered = TRUE),
+         season = factor(season, ordered = TRUE),
+         episode = factor(episode, ordered = TRUE)) %&amp;gt;%
+  filter(season != &amp;quot;07&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Just to make sure, let’s look at the &lt;code&gt;tibble&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;words_per_character
+# # A tibble: 88,174 x 7
+#      name season episode character episode_lines_id all_lines_id      word
+#     &amp;lt;ord&amp;gt;  &amp;lt;ord&amp;gt;   &amp;lt;ord&amp;gt;     &amp;lt;chr&amp;gt;            &amp;lt;int&amp;gt;        &amp;lt;int&amp;gt;     &amp;lt;chr&amp;gt;
+#  1 01x01      01     01   marshall                1            1      ring
+#  2 01x01      01     01   marshall                1            1     marry
+#  3 01x01      01     01        ted                2            2   perfect
+#  4 01x01      01     01        ted                2            2   engaged
+#  5 01x01      01     01        ted                2            2       pop
+#  6 01x01      01     01        ted                2            2 champagne
+#  7 01x01      01     01        ted                2            2     drink
+#  8 01x01      01     01        ted                2            2     toast
+#  9 01x01      01     01        ted                2            2   kitchen
+# 10 01x01      01     01        ted                2            2     floor
+# # ... with 88,164 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Perfect! One row per word, per character, per episode with the id of the line of the word.&lt;/p&gt;
+&lt;p&gt;Alright, let’s get our hands dirty. First, let visualize the presence of each character in terms of words over time.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Filtering position of first episode of all seasons to
+# position the X axis in the next plot.
+first_episodes &amp;lt;-
+  all_episodes %&amp;gt;%
+  filter(count &amp;gt; 100, episode_number == &amp;quot;01 &amp;quot;) %&amp;gt;%
+  pull(id)
+
+words_per_character %&amp;gt;%
+  split(.$name) %&amp;gt;%
+  setNames(1:length(.)) %&amp;gt;%
+  enframe(name = &amp;quot;episode_id&amp;quot;) %&amp;gt;%
+  unnest() %&amp;gt;%
+  count(episode_id, character) %&amp;gt;%
+  group_by(episode_id) %&amp;gt;%
+  mutate(total_n = sum(n),
+         perc = round(n / total_n, 2)) %&amp;gt;%
+  ggplot(aes(as.numeric(episode_id), perc, group = character, colour = character)) +
+  geom_line() +
+  geom_smooth(method = &amp;quot;lm&amp;quot;) +
+  scale_colour_discrete(guide = FALSE) +
+  scale_x_continuous(name = &amp;quot;Seasons&amp;quot;,
+                     breaks = first_episodes, labels = paste0(&amp;quot;S&amp;quot;, 1:7)) +
+  scale_y_continuous(name = &amp;quot;Percentage of words per episode&amp;quot;) +
+  theme_minimal() +
+  facet_wrap(~ character, ncol = 3)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;768&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Ted is clearly the character with the highest number of words per episode followed by Barney. Lily and Robin, the only two women have very low presence compared to the men. In fact, if one looks closely, Lily seemed to have decreased slightly over time, having an all time low in season 4. Marshall, Lily’s partner in the show, does have much lower presence than both Barney and Ted but he has been catching up over time.&lt;/p&gt;
+&lt;p&gt;We also see an interesting pattern where Barney has a lot of peaks, suggesting that in some specific episodes he gains predominance, where Ted has an overall higher level of words per episode. And when Ted has peaks, it’s usually below its trend-line.&lt;/p&gt;
+&lt;p&gt;Looking at the distribution:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# devtools::install_github(&amp;quot;clauswilke/ggjoy&amp;quot;)
+library(ggjoy)
+
+words_per_character %&amp;gt;%
+  split(.$name) %&amp;gt;%
+  setNames(1:length(.)) %&amp;gt;%
+  enframe(name = &amp;quot;episode_id&amp;quot;) %&amp;gt;%
+  unnest() %&amp;gt;%
+  count(season, episode_id, character) %&amp;gt;%
+  group_by(episode_id) %&amp;gt;%
+  mutate(total_n = sum(n),
+         perc = round(n / total_n, 2)) %&amp;gt;%
+  ggplot(aes(x = perc, y = character, fill = character)) +
+  geom_joy(scale = 0.85) +
+  scale_fill_discrete(guide = F) +
+  scale_y_discrete(name = NULL, expand=c(0.01, 0)) +
+  scale_x_continuous(name = &amp;quot;Percentage of words&amp;quot;, expand=c(0.01, 0)) +
+  ggtitle(&amp;quot;Percentage of words per season&amp;quot;) +
+  facet_wrap(~ season, ncol = 7) +
+  theme_minimal()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;we see the differences much clearer. For example, we see Barney’s peaks through out every season with Season 6 seeing a clear peak of 40%. On the other hand, we see that their distributions don’t change that much over time! Suggesting that the presence of each character is very similar in all seasons. Don’t get me wrong, there are differences like Lily in Season 2 and then in Season 6, but in overall terms the previous plot suggests no increase over seasons, and this plot suggests that between seasons, there’s not a lot of change in their distributions that affects the overall mean.&lt;/p&gt;
+&lt;p&gt;If you’ve watched the TV series, you’ll remember Barney always repeating one similar trademark word: legendary! Although it is a bit cumbersome for us to count the number of occurrences of that sentence once we unnested each sentence, we can at least count the number of words per character and see whether some characters have particular words.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;count_words &amp;lt;-
+  words_per_character %&amp;gt;%
+  filter(!word %in% characters) %&amp;gt;%
+  count(character, word, sort = TRUE)
+
+count_words %&amp;gt;%
+  group_by(character) %&amp;gt;%
+  top_n(20) %&amp;gt;%
+  ggplot(aes(reorder(word, n), n)) +
+  geom_col(alpha = 0.8) +
+  coord_flip() +
+  facet_wrap(~ character, scales = &amp;quot;free_y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Here we see that a lot of the words we capture are actually nouns or expressions which are common to everyone, such as ‘yeah’, ‘hey’ or ‘time’. We can weight down commonly used words for other words which are important but don’t get repeated a lot. We can exclude those words using &lt;code&gt;bind_tf_idf()&lt;/code&gt;, which for each character decreases the weight for commonly used words and increases the weight for words that are not used very much in a collection or corpus of documents (see 3.3 in &lt;a href=&#34;http://tidytextmining.com/tfidf.html&#34; class=&#34;uri&#34;&gt;http://tidytextmining.com/tfidf.html&lt;/a&gt;).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;count_words %&amp;gt;%
+  bind_tf_idf(word, character, n) %&amp;gt;%
+  arrange(desc(tf_idf)) %&amp;gt;%
+  group_by(character) %&amp;gt;%
+  top_n(20) %&amp;gt;%
+  ggplot(aes(reorder(word, n), n)) +
+  geom_col(alpha = 0.8) +
+  coord_flip() +
+  facet_wrap(~ character, scales = &amp;quot;free_y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-16-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Now Barney has a very distinctive word usage, one particularly sexist with words such as couger, bang and tits. Also, we see the word legendary as the thirdly repeated word, something we were expecting! On the other hand, we see Ted with things like professor (him), aunt (because of aunt Lily and such).&lt;/p&gt;
+&lt;p&gt;Knowing that Ted is the main character in the series is no surprise. To finish off, we’re interested in knowing which characters are related to each other. First, let’s turn the data frame into a suitable format.&lt;/p&gt;
+&lt;p&gt;Here we turn all lines to lower case and check which characters are present in the text of each dialogue. The loop will return a vector of logicals whether there was a mention of any of the characters. For simplicity I exclude all lines where there is more than 1 mention of a character, that is, 2 or more characters.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lines_characters &amp;lt;-
+  lines_characters %&amp;gt;%
+  mutate(text = str_to_lower(text))
+
+rows_fil &amp;lt;-
+  map(characters, ~ str_detect(lines_characters$text, .x)) %&amp;gt;%
+  reduce(`+`) %&amp;gt;%
+  ifelse(. &amp;gt;= 2, 0, .) # excluding sentences which have 2 or more mentions for now
+  # ideally we would want to choose to count the number of mentions
+  # per line or randomly choose another a person that was mentioned.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now that we have the rows that have a mention of another character, we subset only those rows. Then we want know which character was mentioned in which line. I loop through each line and test which character is present in that specific dialogue line. The loop returns the actual character name for each dialogue. Because we already filtered lines that &lt;strong&gt;have&lt;/strong&gt; a character name mentioned, the loop should return a vector of the same length.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;character_relation &amp;lt;-
+  lines_characters %&amp;gt;%
+  filter(as.logical(rows_fil)) %&amp;gt;%
+  mutate(who_said_what =
+           map_chr(.$text, ~ { # loop over all each line
+             who_said_what &amp;lt;- map_lgl(characters, function(.y) str_detect(.x, .y))
+             # loop over each character and check whether he/she was mentioned
+             # in that line
+             characters[who_said_what]
+             # subset the character that matched
+           }))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Finally, we plot the relationship using the &lt;code&gt;ggraph&lt;/code&gt; package.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggraph)
+library(igraph)
+
+character_relation %&amp;gt;%
+  count(character, who_said_what) %&amp;gt;%
+  graph_from_data_frame() %&amp;gt;%
+  ggraph(layout = &amp;quot;linear&amp;quot;, circular = TRUE) +
+  geom_edge_arc(aes(edge_alpha = n, edge_width = n),
+                width = 2.5, show.legend = FALSE) +
+  geom_node_text(aes(label = name), repel = TRUE) +
+  theme_void()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-19-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;A very clear pattern emerges. There is a strong relationship between Robin and Barney towards Ted. In fact, their direct relationship is very weak, but both are very well connected to Ted. On the other hand, Marshall and Lily are also reasonably connected to Ted but with a weaker link. Both of them are indeed very connected, as should be expected since they were a couple in the TV series.&lt;/p&gt;
+&lt;p&gt;We also see that the weakest members of the group are Robin and Barney with only strong bonds toward Ted but no strong relationship with the other from the group. Overall, there seems to be a division: Marshall and Lily hold a somewhat close relationship with each other and towards Ted and Barney and Robin tend to be related to Ted but no one else.&lt;/p&gt;
+&lt;p&gt;As a follow-up question, is this pattern of relationships the same across all seasons? We can do that very quickly by filtering each season using the previous plot.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(cowplot)
+
+# Loop through each season
+seasons &amp;lt;- paste0(0, 1:7)
+
+all_season_plots &amp;lt;- lapply(seasons, function(season_num) {
+
+  set.seed(2131)
+  
+  character_relation %&amp;gt;%
+    # Extract the season number from the `name` column
+    mutate(season = str_replace_all(character_relation$name, &amp;quot;x(.*)$&amp;quot;, &amp;quot;&amp;quot;)) %&amp;gt;%
+    filter(season == season_num) %&amp;gt;%
+    count(character, who_said_what) %&amp;gt;%
+    graph_from_data_frame() %&amp;gt;%
+    ggraph(layout = &amp;quot;linear&amp;quot;, circular = TRUE) +
+    geom_edge_arc(aes(edge_alpha = n, edge_width = n),
+                  width = 2.5, show.legend = FALSE) +
+    geom_node_text(aes(label = name), repel = TRUE) +
+    theme_void()
+})
+
+# Plot all graphs side-by-side
+cowplot::plot_grid(plotlist = all_season_plots, labels = seasons)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-20-1.png&#34; width=&#34;960&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;There are reasonable changes for all non-Ted relationship! For example, for season 2 the relationship Marshall-Lily-Ted becomes much stronger and it disappears in season 3. Let’s remember that these results might be affected by the fact that I excluded some episodes because of low number of dialogue lines. Keeping that in mind, we also see that for season 7 the Robin-Barney relationship became much stronger (is this the season the started dating?). All in all, the relationships don’t look dramatically different from the previous plot. Everyone seems to be strongly related to Ted. The main difference is the changes in relationship between the other members of the cast.&lt;/p&gt;
+&lt;p&gt;This dataset has a lot of potential and I’m sure I’ve scratched the surface of what one can do with this data. I encourage anyone interested in the topic to use the code to analyze the data further. One idea I might explore in the future is to build a model that attempts to predict who said what for all dialogue lines that didn’t have a character member. This can be done by extracting features from all sentences and using these patterns try to classify which. Any feedback is welcome, so feel free to message me at &lt;a href=&#34;mailto:cimentadaj@gmail.com&#34;&gt;cimentadaj@gmail.com&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Children: public or private goods?</title>
+      <link>/hugo-goa-demo/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</link>
+      <pubDate>Mon, 29 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</guid>
+      <description>&lt;p&gt;The role of the welfare state, as agreed by many scholars, is to de-commodify its citizens. Some argue that this should be the way that the generosity of the state should be measured; instead of net public and private social expenditure, it should be the extent to which citizens are de-commodified by the services and transfers of the welfare state.&lt;/p&gt;
+&lt;p&gt;The aim of educational investment can be seen from different lenses, but today we’ll focus on the economic and social returns to education. An important share of the state budget is aimed at the formation and education of citizens through public education. In countries where there is a substantial investment, human capital, innovation and production are maximized creating a highly productive working population that can sustain the young and the elderly through pensions, health and child care; note that in some scenarios an uneducated workforce can sustain those who depend on them but it will possible be with more quantity of work (hours) and less quality [1]. Following this logic, it is arguable that because most of today’s workers will benefit from pensions, retirement schemes, care assistance and healthcare, they are to take care of their young population, the next generation’s workers. Covering kids’ education through higher taxes could be seen as loan: A young worker covers the expenses of a child, and that child, eventually, will cover the pension of that worker; this is a simplified version of the argument.&lt;/p&gt;
+&lt;p&gt;The scheme I just outlined is virtually widespread across western European countries. But it is important to note that in other countries, due to the intrinsic organization of the state, it is unimaginable to do so. In the counterfactual situation where you don’t have a strong welfare state, maybe it’s unfair to tax those who are not benefiting from the goods that the taxes are being spent on. In places like the United States, where the generosity of the welfare system is minimal, some people don’t find it reasonable to pay for everyone’s kids, even more, when you’re paying already, for instance, a private school for your own.&lt;/p&gt;
+&lt;p&gt;There’s also another important case: childless couples. Perhaps the exact reason why they didn’t have children was not to have to spend a big proportion of their lifelong income. So, why should they pay? According to their position it seems very unfair. Their long held argument can be synthesized in one sentence: those who want children should be the ones who pay for them.&lt;/p&gt;
+&lt;p&gt;After presenting very briefly the arguments of the positions in the debate, it is interesting then to posit the important question concerning it: Should children be a public or private good? I presume this question is easy to answer but not easy to apply; adjusting a state to this premise can take decades and it’s an expensive endeavor. So, evaluating this question must be accompanied by hard scientific thinking.&lt;/p&gt;
+&lt;p&gt;I will start off by stating my position on this dilemma. I support the notion of kids being a public good. I support it not just for the fact that they will pay or not for my pension schemes but because everyone deserves the same opportunities. And if we don’t provide them with equal opportunities, then the gap we see between poor and rich will be as it is today: very sizable. Despite that I sometimes question myself: can they entirely be a public good? Adopting the notion that the family is a private sphere, and at least the states considers it because it is reluctant to interfere within it, then children should not just be considered as a public good. If we pay attention to authors like McDonald (2000) and Lewis &amp;amp; Astrom (1992), we constantly see that the way the state promotes gender equality in the family is not through hands-on, direct implementation of intrusive policies like reeducating couples and telling them what’s right and what’s not. Instead, most of the family policies try to promote gender equality by integrating women into the labor force, reducing the gender wage gap and promoting female and male parental leave. Kids then can never be entirely public goods.&lt;/p&gt;
+&lt;p&gt;Nevertheless, do they contribute to society, meaning, are the interrelated with the “public”?&lt;/p&gt;
+&lt;p&gt;I think this question is rooted in the intrinsic dynamics of society. We are social animals and it is unfashionable to think that we are independent of each other. The most independent citizen living within society is never unattached of its surroundings. Everyone’s paths cross indirectly and directly with the decisions and actions of other people. It might be even irresponsible to think that one’s actions only affect themselves. The principal idea to take from this question is that those who think of themselves as independent actors of society are committing a fallacy that could be the exact reason why the levels and indexes of inequalities are so high nowadays.&lt;/p&gt;
+&lt;p&gt;The Nobel laureate James Heckman has been arguing for the past decade one of his most controversial findings: the first years of a child are the most important ones. Contrary to the long held thought of concentrating the bigger part of the educational budget on tertiary education, he finds that the return of investment of human beings are the highest in the early years and it decreases with time. This means that the first years should be the ones where the highest investment should be: be it monetary and emotional. With the evaluation of the Perry preschool program and the Abecedarian project, Heckman finds that you can trace inequalities between children as early as 22 months old. The principal reason being that some kids get better early childhood education than others. Among others, I think this an important reason to reflect why children should be a public good.&lt;/p&gt;
+&lt;p&gt;Inequalities are being reproduced from an early age, leading to a more polarized society where you have lucky and unlucky kids. Those that receive the better education will at the end, have better jobs, less odds of committing crime, more prone of a stable union (possibly due to the fact that they will have a stable job). Furthermore, and I think this is a key argument against those that don’t want to contribute, these educated children will in most of the cases, help society better than the ones who aren’t educated. This help can be manifested in direct and indirect ways: respecting traffic lights, avoiding corruption in public institutions, being fair, meritocratic, reporting robberies, not stealing, respecting others, among an endless number of thing. This point makes an important argument: the focus on which some of the parents and scholars are viewing the debate might be wrongly specified. As I have succinctly showed, the benefits of having an educated population are not only personal, but also public. I think that the principal reason why there is a strong opposition to this idea is because they evaluate it as taking care of someone else’s children when nobody is taking care of theirs; that is a strong point, but I urge everyone to see it with another lense. If you turned the coin around and you start seeing this as an investment towards societal problems, which in the short and long run affects us all, then it becomes a tax deduction, just as any other one.&lt;/p&gt;
+&lt;p&gt;As I argued before, we are all interrelated and it is our business what our fellow citizens do. So, someone who doesn’t have children, still participates in society, interacts within it, and is affected by criminality, public services, and private services. The problem with providing this argument for a country with a weak welfare state is that you won’t receive quality elderly care from this children when you retire. Conversely, in strong-welfare countries, the argument is the main (pragmatic) reason to do so. However, the second idea, that we should do it for everyone to have the same opportunities, is more than enough to warrant the changes. This would be an even more noble reason because you won’t be contributing to receive something but because everyone deserves the same opportunities. For the U.S, this is a reason to tackle one of the most debatable topics of the last 40 years: inequalities.&lt;/p&gt;
+&lt;p&gt;Now, if we were to delve more into the inequality problem, which shows itself to be the major issue when comparing educational opportunities, it is also important to think of the struggles of having children. Not particularly of the difficulties of childrearing, which are a consequence of the decision to child bear, but the fact that it is too hard to combine work and childrearing now a days. This is quite notorious in the lean welfare state countries and southern European ones.&lt;/p&gt;
+&lt;p&gt;The demands of the work space and the schedules that are imposed to parents and workers make it virtually impossible for men or women to dedicated high quality time to their children. The most common solution that we’ve seen is for women to quit their jobs or to sacrifice leisure time to take care of the child. So, in the end, this deems either the education of the future population or the ambitions and life course perspective of a mother.&lt;/p&gt;
+&lt;p&gt;Catherine Hakim’s preference theory, posits that women now have the preference of having a child but this was not entirely the case in the past where the bargaining power of the man was higher than hers. But a woman who has professional ambitions might also want to have a baby. Does this mean that she has to renounce her ambitions? This will certainly harm the tax system (less taxes paid) but it will help society because she will dedicate more time to the child (And if you acknowledge this, then you are implicitly arguing that children are indeed a public good). But as one of Esping-Andersen’s chapter from his book the Incomplete Revolution shows, permitting the woman to go back to work after parental leave, by providing free high quality childcare, will in the long run pay the costs of this childcare service and even produce a surplus for the welfare state. And that is why I think this is not an easy question to answer, conversely to what Paula England and Nancy Folbre imply. The implication of implementing this idea entails a complete reorganization and readjustment of the tax and welfare system, if there is one [2]. And also, what would be the consequences of this new regime besides the public childcare? Will the problem of inequalities be solved or others problems will arise as side effects?&lt;/p&gt;
+&lt;p&gt;And here I will talk about something that is intrinsically related to having healthy children: the labor perspectives of the mother. The Incomplete Revolution, book by Esping-Andersen, takes on the job of explaining the problem with many of today’s countries: the poor family policies that they implement (if any) when concerning women’s labor market inclusion and combination of working and childrearing. Specifically in two chapters he argues that children should be a public good because children benefit everyone, but furthermore, an important step is to include women in the labor market given that it will help the income prospects of the household and the egalitarianism in the family. How can this be related to children as being a public good, one may ask? This is a complex relation, on which everything is potentially endogenous, but all present evidence shows that if the mother goes back to work after the parental leave, it does not have an adverse effect on the development of the child. This is, assuming that the child is in early high quality childcare. This has important implications! It means that the inclusion of mothers into the labor force will increase the bargaining power of the women in the family, it will heighten the income of the family household, it will expand the human capital of the women; in short, it will not impose the opportunity costs that she will otherwise would’ve had to bear for the remaining part of her life if she would’ve stayed home. This will increase the chances of being in a more egalitarian family, thus the children will be exposed to more equal surroundings.&lt;/p&gt;
+&lt;p&gt;From the point of view that I see it, it’s about heightening the bar of educational attainment. Instead of having the two extremes that we see in the liberal welfare state regimes (excluding UK), extremely poor and uneducated groups and highly rich and educated group, you will set a bar of minimum education. By doing this you will inevitable give secureness to families, opportunities, possibly change the economic structure of the country by increasing the odds of turning it to a knowledge based economy (although this is way more complex then I suggest).&lt;/p&gt;
+&lt;p&gt;As a conclusion, I shall finish off with another question, which I think is as important as the one which initiated this essay. I have tried to argue that children are faring under the destiny that is imposed to them. There has been, since after the World War II, persistent inequalities between classes and all the evidence shows that they are not shrinking. In some countries, namely European ones, the decision to help children might be an economic one or an altruistic one. This is worrisome. Are children being taken care of in Europe because they are the payers of the pensioners or because of the noble argument of equal opportunities? I really don’t know the reason for which Europe or the U.S is doing it for. But should everyone take care of children for the economic benefits or for the equal opportunity argument?&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;[1] Let’s not get into the major changes that the quality of job production will have if the population is highly educated. For a book with interesting ideas, read The Race between Education and Technology by Claudia Goldin &amp;amp; Lawrence Katz.&lt;/p&gt;
+&lt;p&gt;[2] In the case where there is no welfare state, then this is another story.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

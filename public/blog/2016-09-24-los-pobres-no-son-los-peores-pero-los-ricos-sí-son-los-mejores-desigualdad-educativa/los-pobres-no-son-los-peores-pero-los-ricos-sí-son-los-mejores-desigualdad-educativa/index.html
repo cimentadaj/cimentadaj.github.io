@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Simple minimalist theme">
+<meta name="keywords" content="blog,goa,hugo,r,statistics,education">
+
+<base href="/hugo-goa-demo/">
+
+<title>Jorge Cimentada</title>
+
+<meta name="generator" content="Hugo 0.30.2" />
+
+
+
+
+
+
+<link rel="stylesheet" href="/hugo-goa-demo/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
+<script src="/hugo-goa-demo/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="/hugo-goa-demo/css/main.css">
+
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="row text-left title">
+  <h1 class="title">Los pobres no son los peores pero los ricos sí son los mejores: desigualdad educativa</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON SEP 24, 2016 
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    <p>Hace poco escribí un artículo sobre la desigualdad educativa en países Latinoamericanos y describí como la República Dominicana no parece estar tan mal como creemos. Ofrecí dos posibles explicaciones de porque esto pudiera ser bueno o malo, dependiendo del enfoque con que se ve (missing link after the ‘,’ with this: <a href="http://www.jorgecimentada.com/?p=137" class="uri">http://www.jorgecimentada.com/?p=137</a>). Luego de escribirlo me quedé pensando en algo que di por sentado: ¿realmente los ‘peores’ estudiantes son los estudiantes pobres? ¿son los estudiantes pobres los ‘peores’ en las escuelas públicas y privadas? Y a raíz del artículo de <a href="http://acento.com.do/2016/opinion/8377420-desigualdad-educativa-interpela-desafia/">Dinorah Garcia</a>, ¿existe desigualdad entre las zonas rurales y urbanas?</p>
+<p>Estas preguntas no solo ayudan a diagnosticar el estado actual de la desigualdad, más que eso, permiten inferir de donde pudieran provenir las fuentes de desigualdad. Si encontramos una diferencia bastante amplia entre los ‘mejores’ y ‘peores’ estudiantes, pero la diferencia es menor entre escuelas públicas y privada, pues la causa no es necesariamente las diferencias en calidad entre las tipos de escuelas. Sin embargo, si existen diferencias similares entre los estudiantes de escuelas rurales y urbanas, pues la razón puede ser precisamente en temas como la calidad educativa entre sectores pobres y ricos. Lo interesante de estas preguntas es que son todas preguntas empíricas, y se pueden responder con bases de datos como las de TERCE.</p>
+<div id="realmente-los-peores-estudiantes-son-los-estudiantes-pobres" class="section level2">
+<h2>1. ¿realmente los ‘peores’ estudiantes son los estudiantes pobres?</h2>
+<!-- ![1stplot](img/inquality_grade_topic.png) -->
+<p><img src="img/inquality_grade_topic.png" alt="Drawing" style="width: 600px;"/></p>
+<p>Este gráfico presente claramente que no lo son. Tanto en matemáticas y lenguaje, los estudiantes más pobres (barra azul) suelen tener una mejor puntuación que los ‘peores’ estudiantes (barra roja). Esto parecer ser el caso sin importar que sean de la zona rural o urbana. Sería informativo comparar estos resultados desagregados por tipo de escuela, es decir, privada o pública, para identificar si los ‘peores’ estudiantes son los de las escuelas públicas.</p>
+<p>En contraste, los estudiantes ricos (barra morada) si tienen la misma puntuación que los ‘mejores’ estudiantes (barra verde). De hecho, en zonas rurales los estudiantes ricos se desempeñan tan bien que obtienen una puntuación más alta que los ‘mejores’ estudiantes. Este gráfico cuenta una historia muy interesante. En resumen, los estudiantes pobres no reflejan ser los ‘peores’ del sistema educativo. Y por otro lado, los estudiantes ricos sí son los mejores estudiantes en sus respectivas materias.</p>
+<p>Desde un punto de vista más general, la distribución entre la zona rural y urbana es muy similar, sugiriendo que no existe una desigualdad muy marcada.</p>
+</div>
+<div id="son-los-estudiantes-pobres-los-peores-en-las-escuelas-publicas-y-privadas" class="section level2">
+<h2>2. ¿son los estudiantes pobres los ‘peores’ en las escuelas públicas y privadas?</h2>
+<!-- ![2ndplot](img/inquality_public_topic.png) -->
+<p><img src="img/inquality_public_topic.png" alt="Drawing" style="width: 650px;"/></p>
+<p>En este gráfico el panorama es un poco diferente. Los estudiantes pobres (barra verde) sí se desempeñan peor que los estudiantes promedios (barra roja) en las escuelas privadas. Esto no significa que son los ‘peores’ ya que el punto de comparación es el estudiante promedio y no los ‘peores’ estudiantes de las escuelas privadas. No obstante, si se nota una estratificación bastante clara: los estudiantes pobres tienen puntuación más baja que los estudiantes promedio, mientras que los estudiantes ricos (barra azul) tienen mayor puntuación que el estudiante average.</p>
+<p>Viendo la otra cara de la moneda, las escuelas públicas, los estudiantes pobres si tienen el mismo desempeño que el estudiante promedio. Esto no significa que han mejorado en comparación con la escuela privada. Todo lo contrario. Los estudiantes pobres tienen un desempeño similar tanto en las escuelas públicas y privadas; lo que pasa es que el estudiante promedio de la escuela pública (barra roja) tienen una puntuación mucho más baja que el mismo estudiante en la escuela privada. Esto sugiere que, en promedio, los estudiantes de escuelas públicas tienen un peor desempeño que los de las escuelas privadas. De hecho, los ricos son igual de buenos sin importar el tipo de escuela. Los pobres, por otro lado, tienen una puntuación similar entre escuelas públicas y privadas, pero tienen un desempeño ligeramente menor en las escuelas públicas.</p>
+</div>
+<div id="existe-desigualdad-entre-las-zonas-rurales-y-urbanas" class="section level2">
+<h2>3. ¿existe desigualdad entre las zonas rurales y urbanas?</h2>
+<!-- ![3rdplot](img/inquality_ruralidad_topic.png) -->
+<p><img src="img/inquality_ruralidad_topic.png" alt="Drawing" style="width: 650px;"/></p>
+<p>Este gráfico presenta que tanta desigualdad existe entre los estudiantes en 3ro y 6to de primaria en matemática y lengua para las zonas rurales y urbanas. Empecemos con la lengua española, la sección con las puntuaciones en color rojo. Para los estudiantes de 3ro de primaria, resulta que hay una desigualdad mucho más grande en la zona urbana que en la zona rural. Pero esta desigualdad es en gran parte debido a que los ‘mejores’ estudiantes de la zona urbana son mucho mejor que los de la zona rural, mientras que los ‘peores’ estudiantes son prácticamente iguales. ¿Será este el efecto escuela privada? Para 6to de primaria la desigualdad se ha doblado entre ambas zonas. Esto es consistente con la teoría de capital humano propuesta por James Heckman, que sugiere que mientras más pasa el tiempo, más difícil se hace cerrar la brecha entre los ‘mejores’ y ‘peores’ estudiantes. Aquí se nota la gran brecha que existe entre las zonas urbanas y zonas rurales. En la sección de matemáticas (puntuaciones en color azul), la diferencia entre la zona rural y urbana es más pequeña, aunque se nota un patron claro: los estudiantes urbanos son mejores que los rurales. Cualquier persona que <a href="http://linkis.com/www.listindiario.com/AG90F">sabe los pocos recursos que se le asignan a las provincias fuera de Santiago y Santo Domingo</a> no se sorprendería en encontrar estos resultados. No obstante, siempre es bueno confirmar las especulaciones con datos empíricos.</p>
+<div id="que-significa-todo-esto" class="section level4">
+<h4>¿Que significa todo esto?</h4>
+<p>Realmente, toda la información presentada aquí es pura descripción. No podemos concluir que vivir en las zonas rurales o ir a una escuela pública hace que tengas un peor desempeño, por más que quisiera. La ciencia no funciona de esta manera. Aparentemente existen brechas importantes entre las zonas urbanas y rurales, y tal y como sugiere Ceara Hatton, la distribución del presupuesto nacional abarca en su mayoría a Santo Domingo y Santiago. Se podría empezar por priorizar el gasto educativo a los que más lo necesitan, que suelen ser las zonas rurales. Esto tampoco es una solución inmediata; hay que priorizar la calidad del gasto y no el monto.</p>
+<p>Por otro lado, podemos ver que los estudiantes pobres si tienen un peor desempeño que los estudiantes ricos, tanto en las escuelas privadas como en las públicas. Sugerir que se debe mejorar la calidad educativa pública ya se sabe, y si esta fuera homogénea a lo largo de las escuelas esperaríamos que los estudiantes ricos tuvieran la misma puntuación que los pobres, algo que no es el caso. Me parece que una de las explicaciones puede estar en el hecho de que los pobres tienen una ‘racha’ o acumulación de malas experiencias educativas a lo largo de la vida. Al momento de llegar a 3ro o 6to de primaria ya están muy por detrás de sus compañeros de mayores recursos. <a href="http://www.diariolibre.com/opinion/dialogo-libre/el-problema-es-que-la-economia-crece-pero-no-se-distribuye-la-riqueza-EE5262978">El acceso a educación temprana, de muy alta calidad, de forma universal, puede ayudar a remediar este problema de inmovilidad social</a>. Esto es algo que muchas personas ya han pedido en otros países y no es nuevo.</p>
+<p>Para terminar en una nota buena, no nos debemos sentir tan mal por estos resultados: como dije aquí(poner link <a href="http://www.jorgecimentada.com/?p=137" class="uri">http://www.jorgecimentada.com/?p=137</a>), en comparación con cualquier otro país latinoamericano, tenemos mucha menor desigualdad, lo importante sería asegurarnos que no crezca, porque es muy difícil cerrarlo después.</p>
+<hr />
+<p>Notas:</p>
+<ul>
+<li><p>La pobreza en este caso se mide como los estudiantes que vienen de familias donde sus padres no se graduaron de la escuela secundaria. Opuestamente, los ricos son los estudiantes que vienen de familias donde los padres han obtenido un grado universitario o más.</p></li>
+<li><p>El promedio de los ‘peores’ estudiantes es el promedio de todos los niños que están en el 25% de la parte inferior de la distribución, mientras que el promedio de los ‘mejores’ estudiantes es el promedio del 25% de la parte superior de la distribución.</p></li>
+<li><p>Cualquier persona interesada en reproducir estos análisis, <a href="https://github.com/cimentadaj/blog-articles/tree/master/private_public_schools">aquí</a> está el código</p></li>
+</ul>
+</div>
+</div>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+      
+      
+      TAGS:
+      
+      
+      <a class="meta" href="/tags/education">EDUCATION</a>, 
+      
+      <a class="meta" href="/tags/inequality">INEQUALITY</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+<div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-shenoybr-github-io-hugo-goa-demo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  <span><a class="menu-item" href="/hugo-goa-demo/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/">&lt; prev | </a></span>
+  
+  
+  <span><a class="menu-item" href="/hugo-goa-demo/blog">blog</a></span>
+  
+  
+  <span><a class="menu-item" href="/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-2/multilevel-modeling--part-2/"> | next &gt;</a></span>
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="/hugo-goa-demo/">home</a></h4>
+</section>
+
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2017. Jorge Cimentada. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+
+<script type="text/javascript">
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'XYZ', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+

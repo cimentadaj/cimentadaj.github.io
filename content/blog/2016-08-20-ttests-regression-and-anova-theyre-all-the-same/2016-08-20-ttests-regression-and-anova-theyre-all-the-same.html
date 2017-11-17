@@ -1,0 +1,43 @@
+---
+title:  "T-tests, regression (and ANOVA): They're all the same!"
+author: Jorge Cimentada
+date: '2016-08-20'
+slug: ttests-regression-and-anova-theyre-all-the-same
+tags: ['R']
+---
+
+
+
+<p>Upon reading “How Not To Lie with Statistics: Avoiding Common Mistakes in Quantitative Political Science” from Gary King, I stumbled into a section which proved that t-tests, ANOVA and Linear Regression are intimately related, both conceptually and algebraically. As a late-comer in statistics, one usually does not pay attention to these nuances. I decided to make a short simulation in R just to make sure my intuition was right.</p>
+<pre class="r"><code>set.seed(1)
+
+income &lt;- sample(1000:5000, 100, replace = T)
+gender &lt;- rep(c(1, 0), 50)</code></pre>
+<pre class="r"><code>t &lt;- t.test(income ~ gender)
+unname(t$estimate[2] - t$estimate[1])</code></pre>
+<pre><code>## [1] 201.46</code></pre>
+<pre class="r"><code>coef(model &lt;- lm(income ~ gender))</code></pre>
+<pre><code>## (Intercept)      gender 
+##     2970.64      201.46</code></pre>
+<pre class="r"><code># The ANOVA model is actually computed through the lm
+# call but we can use the anova() function to check if
+# the differences are significant as well.
+
+anova(model)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: income
+##           Df    Sum Sq Mean Sq F value Pr(&gt;F)
+## gender     1   1014653 1014653  0.8842 0.3494
+## Residuals 98 112463658 1147588</code></pre>
+<p>It’s fun to find out about these things and prove that they make sense. However, the strength of linear models is that you can ‘adjust’ for other important variables and get an adjusted estimated difference. Let’s add another variable called kids with the number of children per person and see how the difference changes.</p>
+<pre class="r"><code>kids &lt;- sample(1:4, 100, replace = T)
+lm(income ~ gender + kids)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = income ~ gender + kids)
+## 
+## Coefficients:
+## (Intercept)       gender         kids  
+##    2945.911      200.471        9.891</code></pre>
+<p>Well, we can now say that the difference in income between male and females is of about 200 adjusted for the number of children per person.</p>

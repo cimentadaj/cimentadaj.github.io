@@ -1,0 +1,2218 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Jorge Cimentada</title>
+    <link>/hugo-goa-demo/</link>
+    <description>Recent content on Jorge Cimentada</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Tue, 24 Oct 2017 00:00:00 +0000</lastBuildDate>
+    
+        <atom:link href="/hugo-goa-demo/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>PhD thesis template with Sweave and knitr</title>
+      <link>/hugo-goa-demo/blog/2017-10-24-phd-thesis-template-with-sweave-and-knitr/phd-thesis-template-with-sweave-and-knitr/</link>
+      <pubDate>Tue, 24 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2017-10-24-phd-thesis-template-with-sweave-and-knitr/phd-thesis-template-with-sweave-and-knitr/</guid>
+      <description>&lt;p&gt;Writing my thesis with &lt;code&gt;Sweave&lt;/code&gt; and &lt;code&gt;knitr&lt;/code&gt; was very nice at the beginning, but then I began running into problems when I wanted to combine different chapters into one single document. Most of the problems were related to having each chapter be compilable on its own with separate bibliographies, among other things. I wrote a detailed guide on how I did it and you can read it &lt;a href=&#34;https://cimentadaj.github.io/phd_thesis/thesis_template_example/2017-10-24-thesis-template.html&#34;&gt;here&lt;/a&gt;. I’d love some feedback as workflow is still very rudimentary. You can post a comment on this post or email me at &lt;a href=&#34;mailto:cimentadaj@gmail.com&#34;&gt;cimentadaj@gmail.com&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Hope it’s useful.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Scraping and visualizing How I Met Your Mother</title>
+      <link>/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</link>
+      <pubDate>Mon, 16 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</guid>
+      <description>&lt;p&gt;How I Met Your Mother (HIMYM from here after) is a television series very similar to the classical ‘Friends’ series from the 90’s. Following the release of the &lt;a href=&#34;http://tidytextmining.com/&#34;&gt;tidy text&lt;/a&gt; book I was looking for a project in which I could apply these skills. I decided I would scrape all the transcripts from HIMYM and analyze patterns between characters. This post really took me to the limit in terms of web scraping and pattern matching, which was specifically what I wanted to improve in the first place. Let’s begin!&lt;/p&gt;
+&lt;p&gt;My first task was whether there was any consistency in the URL’s that stored the transcripts. If you ever watched HIMYM, we know there’s around nine seasons, each one with about 22 episodes. This makes about 200 episodes give or take. It would be a big pain to manually write down 200 complicated URL’s. Luckily, there is a way of finding the 200 links without writing them down manually.&lt;/p&gt;
+&lt;p&gt;First, we create the links for the 9 websites that contain all episodes (1 through season 9)&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rvest)
+library(tidyverse)
+library(stringr)
+library(tidytext)
+
+main_url &amp;lt;- &amp;quot;http://transcripts.foreverdreaming.org&amp;quot;
+all_pages &amp;lt;- paste0(&amp;quot;http://transcripts.foreverdreaming.org/viewforum.php?f=177&amp;amp;start=&amp;quot;, seq(0, 200, 25))
+characters &amp;lt;- c(&amp;quot;ted&amp;quot;, &amp;quot;lily&amp;quot;, &amp;quot;marshall&amp;quot;, &amp;quot;barney&amp;quot;, &amp;quot;robin&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Each of the URL’s of &lt;code&gt;all_pages&lt;/code&gt; contains all episodes for that season (so around 22 URL’s). I also picked the characters we’re gonna concentrate for now. From here the job is very easy. We create a function that reads each link and parses the section containing all links for that season. We can do that using &lt;a href=&#34;http://selectorgadget.com/.&#34;&gt;SelectorGadget&lt;/a&gt; to find the section we’re interested in. We then search for the &lt;code&gt;href&lt;/code&gt; attribute to grab all links in that attribute and finally create a tibble with each episode together with it’s link.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;episode_getter &amp;lt;- function(link) {
+  title_reference &amp;lt;-
+    link %&amp;gt;%
+    read_html() %&amp;gt;%
+    html_nodes(&amp;quot;.topictitle&amp;quot;) # Get the html node name with &amp;#39;selector gadget&amp;#39;
+  
+  episode_links &amp;lt;-
+    title_reference %&amp;gt;%
+    html_attr(&amp;quot;href&amp;quot;) %&amp;gt;%
+    gsub(&amp;quot;^.&amp;quot;, &amp;quot;&amp;quot;, .) %&amp;gt;%
+    paste0(main_url, .) %&amp;gt;%
+    setNames(title_reference %&amp;gt;% html_text()) %&amp;gt;%
+    enframe(name = &amp;quot;episode_name&amp;quot;, value = &amp;quot;link&amp;quot;)
+  
+  episode_links
+}
+
+all_episodes &amp;lt;- map_df(all_pages, episode_getter) # loop over all seasons and get all episode links
+all_episodes$id &amp;lt;- 1:nrow(all_episodes)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There we go! Now we have a very organized &lt;code&gt;tibble&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_episodes
+# # A tibble: 208 x 3
+#                      episode_name
+#                             &amp;lt;chr&amp;gt;
+#  1                  01x01 - Pilot
+#  2         01x02 - Purple Giraffe
+#  3 01x03 - Sweet Taste of Liberty
+#  4    01x04 - Return of the Shirt
+#  5           01x05 - Okay Awesome
+#  6         01x06 - Slutty Pumpkin
+#  7             01x07 - Matchmaker
+#  8               01x08 - The Duel
+#  9   01x09 - Belly Full of Turkey
+# 10 01x10 - The Pineapple Incident
+# # ... with 198 more rows, and 2 more variables: link &amp;lt;chr&amp;gt;, id &amp;lt;int&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The remaining part is to actually scrape the text from each episode. We can work that out for a single episode and then turn that into a function and apply for all episodes.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;episode_fun &amp;lt;- function(file) {
+  
+  file %&amp;gt;%
+    read_html() %&amp;gt;%
+    html_nodes(&amp;quot;.postbody&amp;quot;) %&amp;gt;%
+    html_text() %&amp;gt;%
+    str_split(&amp;quot;\n|\t&amp;quot;) %&amp;gt;%
+    .[[1]] %&amp;gt;%
+    data_frame(text = .) %&amp;gt;%
+    filter(str_detect(text, &amp;quot;&amp;quot;), # Lots of empty spaces
+           !str_detect(text, &amp;quot;^\\t&amp;quot;), # Lots of lines with \t to delete
+           !str_detect(text, &amp;quot;^\\[.*\\]$&amp;quot;), # Text that start with brackets
+           !str_detect(text, &amp;quot;^\\(.*\\)$&amp;quot;), # Text that starts with parenthesis
+           str_detect(text, &amp;quot;^*.:&amp;quot;), # I want only lines with start with dialogue (:)
+           !str_detect(text, &amp;quot;^ad&amp;quot;)) # Remove lines that start with ad (for &amp;#39;ads&amp;#39;, the link of google ads)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The above function reads each episode, turns the html text into a data frame and organizes it clearly for text analysis. For example:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;episode_fun(all_episodes$link[15])
+# # A tibble: 195 x 1
+#                                                                           text
+#                                                                          &amp;lt;chr&amp;gt;
+#  1 Ted from 2030: Kids, something you might not know about your Uncle Marshall
+#  2                  &amp;quot;Ted: You don&amp;#39;t have to shout out \&amp;quot;poker\&amp;quot; when you win.&amp;quot;
+#  3                                     Marshall: I know. It&amp;#39;s just fun to say.
+#  4 &amp;quot;Ted from 2030: We all finally agreed Marshall should be running our game n
+#  5 &amp;quot;Marshall: It&amp;#39;s called \&amp;quot;Marsh-gammon.\&amp;quot; It combines all the best features 
+#  6                                               Robin: Backgammon, obviously.
+#  7 &amp;quot;Marshall: No. Backgammon sucks. I took the only good part of backgammon, t
+#  8                                     Lily: I&amp;#39;m so excited Victoria&amp;#39;s coming.
+#  9                                   Robin: I&amp;#39;m going to go get another round.
+# 10 Ted: Okay, I want to lay down some ground rules for tonight. Barney, I actu
+# # ... with 185 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We now have a data frame with only dialogue for each character. We need to apply that function to each episode and &lt;code&gt;bind&lt;/code&gt; everything together. We first apply the function to every episode.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_episodes$text &amp;lt;- map(all_episodes$link, episode_fun)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;text&lt;/code&gt; list-column is an organized list with text for each episode. However, manual inspection of some episodes actually denotes a small error that limits our analysis greatly. Among the main interests of this document is to study relationships and presence between characters. For that, we need each line of text to be accompanied by the character who said it. Unfortunately, some of these scripts don’t have that.&lt;/p&gt;
+&lt;p&gt;For example, check any episode from season &lt;a href=&#34;http://transcripts.foreverdreaming.org/viewforum.php?f=177&amp;amp;start=175&#34;&gt;8&lt;/a&gt; and &lt;a href=&#34;http://transcripts.foreverdreaming.org/viewforum.php?f=177&amp;amp;start=200&#34;&gt;9&lt;/a&gt;. The writer didn’t write the dialogue and just rewrote the lines. There’s nothing we can do so far to improve that and we’ll be excluding these episodes. This pattern is also present in random episodes like in season 4 or season 6. We can exclude chapters based on the number of lines we parsed. On average, each of these episodes has about 200 lines of dialogue. Anything significantly lower, like 30 or 50 lines, is an episode which doesn’t have a lot of dialogue.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_episodes$count &amp;lt;- map_dbl(all_episodes$text, nrow)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can extend the previous &lt;code&gt;tibble&lt;/code&gt; to be a big more organized by separating the episode-season column into separate season and episo numbers.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_episodes &amp;lt;-
+  all_episodes %&amp;gt;%
+  separate(episode_name, c(&amp;quot;season&amp;quot;, &amp;quot;episode&amp;quot;), &amp;quot;-&amp;quot;, extra = &amp;quot;merge&amp;quot;) %&amp;gt;%
+  separate(season, c(&amp;quot;season&amp;quot;, &amp;quot;episode_number&amp;quot;), sep = &amp;quot;x&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Great! We now have a very organized &lt;code&gt;tibble&lt;/code&gt; with all the information we need. Next step is to actually break down the lines into words and start looking for general patterns. We can do that by looping through all episodes that have over 100 lines (just an arbitrary threshold) and unnesting each line for each &lt;strong&gt;valid&lt;/strong&gt; character.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lines_characters &amp;lt;-
+  map(filter(all_episodes, count &amp;gt; 100) %&amp;gt;% pull(text), ~ { 
+    # only loop over episodes that have over 100 lines
+    .x %&amp;gt;%
+      separate(text, c(&amp;quot;character&amp;quot;, &amp;quot;text&amp;quot;), sep = &amp;quot;:&amp;quot;, extra = &amp;#39;merge&amp;#39;) %&amp;gt;%
+      # separate character dialogue from actual dialogo
+      unnest_tokens(character, character) %&amp;gt;%
+      filter(str_detect(character, paste0(paste0(&amp;quot;^&amp;quot;, characters, &amp;quot;$&amp;quot;), collapse = &amp;quot;|&amp;quot;))) %&amp;gt;%
+      # only count the lines of our chosen characters
+      mutate(episode_lines_id = 1:nrow(.))
+  }) %&amp;gt;%
+  setNames(filter(all_episodes, count &amp;gt; 100) %&amp;gt;% # name according to episode
+             unite(season_episode, season, episode_number, sep = &amp;quot;x&amp;quot;) %&amp;gt;%
+             pull(season_episode)) %&amp;gt;%
+  enframe() %&amp;gt;%
+  unnest() %&amp;gt;%
+  mutate(all_lines_id = 1:nrow(.))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Ok, our text is sort of ready. Let’s remove some bad words.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;words_per_character &amp;lt;-
+  lines_characters %&amp;gt;%
+  unnest_tokens(word, text) %&amp;gt;% # expand all sentences into words
+  anti_join(stop_words) %&amp;gt;% # remove bad words
+  filter(!word %in% characters) %&amp;gt;% # only select characters we&amp;#39;re interested
+  arrange(name) %&amp;gt;%
+  separate(name, c(&amp;quot;season&amp;quot;, &amp;quot;episode&amp;quot;), sep = &amp;quot;x&amp;quot;, remove = FALSE) %&amp;gt;%
+  mutate(name = factor(name, ordered = TRUE),
+         season = factor(season, ordered = TRUE),
+         episode = factor(episode, ordered = TRUE)) %&amp;gt;%
+  filter(season != &amp;quot;07&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Just to make sure, let’s look at the &lt;code&gt;tibble&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;words_per_character
+# # A tibble: 88,174 x 7
+#      name season episode character episode_lines_id all_lines_id      word
+#     &amp;lt;ord&amp;gt;  &amp;lt;ord&amp;gt;   &amp;lt;ord&amp;gt;     &amp;lt;chr&amp;gt;            &amp;lt;int&amp;gt;        &amp;lt;int&amp;gt;     &amp;lt;chr&amp;gt;
+#  1 01x01      01     01   marshall                1            1      ring
+#  2 01x01      01     01   marshall                1            1     marry
+#  3 01x01      01     01        ted                2            2   perfect
+#  4 01x01      01     01        ted                2            2   engaged
+#  5 01x01      01     01        ted                2            2       pop
+#  6 01x01      01     01        ted                2            2 champagne
+#  7 01x01      01     01        ted                2            2     drink
+#  8 01x01      01     01        ted                2            2     toast
+#  9 01x01      01     01        ted                2            2   kitchen
+# 10 01x01      01     01        ted                2            2     floor
+# # ... with 88,164 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Perfect! One row per word, per character, per episode with the id of the line of the word.&lt;/p&gt;
+&lt;p&gt;Alright, let’s get our hands dirty. First, let visualize the presence of each character in terms of words over time.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Filtering position of first episode of all seasons to
+# position the X axis in the next plot.
+first_episodes &amp;lt;-
+  all_episodes %&amp;gt;%
+  filter(count &amp;gt; 100, episode_number == &amp;quot;01 &amp;quot;) %&amp;gt;%
+  pull(id)
+
+words_per_character %&amp;gt;%
+  split(.$name) %&amp;gt;%
+  setNames(1:length(.)) %&amp;gt;%
+  enframe(name = &amp;quot;episode_id&amp;quot;) %&amp;gt;%
+  unnest() %&amp;gt;%
+  count(episode_id, character) %&amp;gt;%
+  group_by(episode_id) %&amp;gt;%
+  mutate(total_n = sum(n),
+         perc = round(n / total_n, 2)) %&amp;gt;%
+  ggplot(aes(as.numeric(episode_id), perc, group = character, colour = character)) +
+  geom_line() +
+  geom_smooth(method = &amp;quot;lm&amp;quot;) +
+  scale_colour_discrete(guide = FALSE) +
+  scale_x_continuous(name = &amp;quot;Seasons&amp;quot;,
+                     breaks = first_episodes, labels = paste0(&amp;quot;S&amp;quot;, 1:7)) +
+  scale_y_continuous(name = &amp;quot;Percentage of words per episode&amp;quot;) +
+  theme_minimal() +
+  facet_wrap(~ character, ncol = 3)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;768&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Ted is clearly the character with the highest number of words per episode followed by Barney. Lily and Robin, the only two women have very low presence compared to the men. In fact, if one looks closely, Lily seemed to have decreased slightly over time, having an all time low in season 4. Marshall, Lily’s partner in the show, does have much lower presence than both Barney and Ted but he has been catching up over time.&lt;/p&gt;
+&lt;p&gt;We also see an interesting pattern where Barney has a lot of peaks, suggesting that in some specific episodes he gains predominance, where Ted has an overall higher level of words per episode. And when Ted has peaks, it’s usually below its trend-line.&lt;/p&gt;
+&lt;p&gt;Looking at the distribution:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# devtools::install_github(&amp;quot;clauswilke/ggjoy&amp;quot;)
+library(ggjoy)
+
+words_per_character %&amp;gt;%
+  split(.$name) %&amp;gt;%
+  setNames(1:length(.)) %&amp;gt;%
+  enframe(name = &amp;quot;episode_id&amp;quot;) %&amp;gt;%
+  unnest() %&amp;gt;%
+  count(season, episode_id, character) %&amp;gt;%
+  group_by(episode_id) %&amp;gt;%
+  mutate(total_n = sum(n),
+         perc = round(n / total_n, 2)) %&amp;gt;%
+  ggplot(aes(x = perc, y = character, fill = character)) +
+  geom_joy(scale = 0.85) +
+  scale_fill_discrete(guide = F) +
+  scale_y_discrete(name = NULL, expand=c(0.01, 0)) +
+  scale_x_continuous(name = &amp;quot;Percentage of words&amp;quot;, expand=c(0.01, 0)) +
+  ggtitle(&amp;quot;Percentage of words per season&amp;quot;) +
+  facet_wrap(~ season, ncol = 7) +
+  theme_minimal()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;we see the differences much clearer. For example, we see Barney’s peaks through out every season with Season 6 seeing a clear peak of 40%. On the other hand, we see that their distributions don’t change that much over time! Suggesting that the presence of each character is very similar in all seasons. Don’t get me wrong, there are differences like Lily in Season 2 and then in Season 6, but in overall terms the previous plot suggests no increase over seasons, and this plot suggests that between seasons, there’s not a lot of change in their distributions that affects the overall mean.&lt;/p&gt;
+&lt;p&gt;If you’ve watched the TV series, you’ll remember Barney always repeating one similar trademark word: legendary! Although it is a bit cumbersome for us to count the number of occurrences of that sentence once we unnested each sentence, we can at least count the number of words per character and see whether some characters have particular words.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;count_words &amp;lt;-
+  words_per_character %&amp;gt;%
+  filter(!word %in% characters) %&amp;gt;%
+  count(character, word, sort = TRUE)
+
+count_words %&amp;gt;%
+  group_by(character) %&amp;gt;%
+  top_n(20) %&amp;gt;%
+  ggplot(aes(reorder(word, n), n)) +
+  geom_col(alpha = 0.8) +
+  coord_flip() +
+  facet_wrap(~ character, scales = &amp;quot;free_y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Here we see that a lot of the words we capture are actually nouns or expressions which are common to everyone, such as ‘yeah’, ‘hey’ or ‘time’. We can weight down commonly used words for other words which are important but don’t get repeated a lot. We can exclude those words using &lt;code&gt;bind_tf_idf()&lt;/code&gt;, which for each character decreases the weight for commonly used words and increases the weight for words that are not used very much in a collection or corpus of documents (see 3.3 in &lt;a href=&#34;http://tidytextmining.com/tfidf.html&#34; class=&#34;uri&#34;&gt;http://tidytextmining.com/tfidf.html&lt;/a&gt;).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;count_words %&amp;gt;%
+  bind_tf_idf(word, character, n) %&amp;gt;%
+  arrange(desc(tf_idf)) %&amp;gt;%
+  group_by(character) %&amp;gt;%
+  top_n(20) %&amp;gt;%
+  ggplot(aes(reorder(word, n), n)) +
+  geom_col(alpha = 0.8) +
+  coord_flip() +
+  facet_wrap(~ character, scales = &amp;quot;free_y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-16-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Now Barney has a very distinctive word usage, one particularly sexist with words such as couger, bang and tits. Also, we see the word legendary as the thirdly repeated word, something we were expecting! On the other hand, we see Ted with things like professor (him), aunt (because of aunt Lily and such).&lt;/p&gt;
+&lt;p&gt;Knowing that Ted is the main character in the series is no surprise. To finish off, we’re interested in knowing which characters are related to each other. First, let’s turn the data frame into a suitable format.&lt;/p&gt;
+&lt;p&gt;Here we turn all lines to lower case and check which characters are present in the text of each dialogue. The loop will return a vector of logicals whether there was a mention of any of the characters. For simplicity I exclude all lines where there is more than 1 mention of a character, that is, 2 or more characters.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lines_characters &amp;lt;-
+  lines_characters %&amp;gt;%
+  mutate(text = str_to_lower(text))
+
+rows_fil &amp;lt;-
+  map(characters, ~ str_detect(lines_characters$text, .x)) %&amp;gt;%
+  reduce(`+`) %&amp;gt;%
+  ifelse(. &amp;gt;= 2, 0, .) # excluding sentences which have 2 or more mentions for now
+  # ideally we would want to choose to count the number of mentions
+  # per line or randomly choose another a person that was mentioned.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now that we have the rows that have a mention of another character, we subset only those rows. Then we want know which character was mentioned in which line. I loop through each line and test which character is present in that specific dialogue line. The loop returns the actual character name for each dialogue. Because we already filtered lines that &lt;strong&gt;have&lt;/strong&gt; a character name mentioned, the loop should return a vector of the same length.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;character_relation &amp;lt;-
+  lines_characters %&amp;gt;%
+  filter(as.logical(rows_fil)) %&amp;gt;%
+  mutate(who_said_what =
+           map_chr(.$text, ~ { # loop over all each line
+             who_said_what &amp;lt;- map_lgl(characters, function(.y) str_detect(.x, .y))
+             # loop over each character and check whether he/she was mentioned
+             # in that line
+             characters[who_said_what]
+             # subset the character that matched
+           }))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Finally, we plot the relationship using the &lt;code&gt;ggraph&lt;/code&gt; package.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggraph)
+library(igraph)
+
+character_relation %&amp;gt;%
+  count(character, who_said_what) %&amp;gt;%
+  graph_from_data_frame() %&amp;gt;%
+  ggraph(layout = &amp;quot;linear&amp;quot;, circular = TRUE) +
+  geom_edge_arc(aes(edge_alpha = n, edge_width = n),
+                width = 2.5, show.legend = FALSE) +
+  geom_node_text(aes(label = name), repel = TRUE) +
+  theme_void()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-19-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;A very clear pattern emerges. There is a strong relationship between Robin and Barney towards Ted. In fact, their direct relationship is very weak, but both are very well connected to Ted. On the other hand, Marshall and Lily are also reasonably connected to Ted but with a weaker link. Both of them are indeed very connected, as should be expected since they were a couple in the TV series.&lt;/p&gt;
+&lt;p&gt;We also see that the weakest members of the group are Robin and Barney with only strong bonds toward Ted but no strong relationship with the other from the group. Overall, there seems to be a division: Marshall and Lily hold a somewhat close relationship with each other and towards Ted and Barney and Robin tend to be related to Ted but no one else.&lt;/p&gt;
+&lt;p&gt;As a follow-up question, is this pattern of relationships the same across all seasons? We can do that very quickly by filtering each season using the previous plot.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(cowplot)
+
+# Loop through each season
+seasons &amp;lt;- paste0(0, 1:7)
+
+all_season_plots &amp;lt;- lapply(seasons, function(season_num) {
+
+  set.seed(2131)
+  
+  character_relation %&amp;gt;%
+    # Extract the season number from the `name` column
+    mutate(season = str_replace_all(character_relation$name, &amp;quot;x(.*)$&amp;quot;, &amp;quot;&amp;quot;)) %&amp;gt;%
+    filter(season == season_num) %&amp;gt;%
+    count(character, who_said_what) %&amp;gt;%
+    graph_from_data_frame() %&amp;gt;%
+    ggraph(layout = &amp;quot;linear&amp;quot;, circular = TRUE) +
+    geom_edge_arc(aes(edge_alpha = n, edge_width = n),
+                  width = 2.5, show.legend = FALSE) +
+    geom_node_text(aes(label = name), repel = TRUE) +
+    theme_void()
+})
+
+# Plot all graphs side-by-side
+cowplot::plot_grid(plotlist = all_season_plots, labels = seasons)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-20-1.png&#34; width=&#34;960&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;There are reasonable changes for all non-Ted relationship! For example, for season 2 the relationship Marshall-Lily-Ted becomes much stronger and it disappears in season 3. Let’s remember that these results might be affected by the fact that I excluded some episodes because of low number of dialogue lines. Keeping that in mind, we also see that for season 7 the Robin-Barney relationship became much stronger (is this the season the started dating?). All in all, the relationships don’t look dramatically different from the previous plot. Everyone seems to be strongly related to Ted. The main difference is the changes in relationship between the other members of the cast.&lt;/p&gt;
+&lt;p&gt;This dataset has a lot of potential and I’m sure I’ve scratched the surface of what one can do with this data. I encourage anyone interested in the topic to use the code to analyze the data further. One idea I might explore in the future is to build a model that attempts to predict who said what for all dialogue lines that didn’t have a character member. This can be done by extracting features from all sentences and using these patterns try to classify which. Any feedback is welcome, so feel free to message me at &lt;a href=&#34;mailto:cimentadaj@gmail.com&#34;&gt;cimentadaj@gmail.com&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>The LOO and the Bootstrap</title>
+      <link>/hugo-goa-demo/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</link>
+      <pubDate>Thu, 07 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</guid>
+      <description>&lt;p&gt;This is the second entry, and probably the last, on model validation methods. These posts are inspired by the work of Kohavi (1995), which I totally recommend reading. This post will talk talk about the Leave-One-Out Cross Validation (LOOCV), which is the extreme version of the K-Fold Cross Validation and the Bootstrap for model assessment.&lt;/p&gt;
+&lt;p&gt;Let’s dive in!&lt;/p&gt;
+&lt;div id=&#34;the-leave-one-out-cv-method&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The Leave-One-Out CV method&lt;/h2&gt;
+&lt;p&gt;The LOOCV is actually a very intuitive idea if you know how the K-Fold CV works.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;LOOCV: Let’s imagine a data set with 30 rows. We separate the 1st row to be the test data and the remaining 29 rows to be the training data. We fit the model on the training data and then predict the one observation we left out. We record the model accuracy and then repeat but predicting the 2nd row from training the model on row 1 and 3:30. We repeat until every row has been predicted.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This is surprisingly easy to implement in R.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+
+set.seed(21341)
+loo_result &amp;lt;-
+  map_lgl(1:nrow(mtcars), ~ {
+  test &amp;lt;- mtcars[.x, ] # Pick the .x row of the iteration to be the test
+  train &amp;lt;- mtcars[-.x, ] # Let the training be all the data EXCEPT that row
+  
+  train_model &amp;lt;- glm(am ~ mpg + cyl + disp, family = binomial(), data = train) # Fit any model
+  
+  # Since the prediction is in probabilities, pass the probability
+  # to generate either a 1 or 0 based on the probability
+  prediction &amp;lt;- predict(train_model, newdata = test, type = &amp;quot;response&amp;quot;) %&amp;gt;% rbinom(1, 1, .)
+  
+  test$am == prediction # compare whether the prediction matches the actual value
+})
+
+summary(loo_result %&amp;gt;% as.numeric) # percentage of accurate results
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#  0.0000  0.0000  1.0000  0.5938  1.0000  1.0000&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It looks like our model had nearly 60% accuracy, not very good. But not entirely bad given our very low sample size.&lt;/p&gt;
+&lt;p&gt;Advantages:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Just as with the K-Fold CV, this approach is useful because it uses all the data. At some point, every rows gets to be the test set and training set, maximizing information.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In fact, it uses almost ALL the data as the original data set as the training set is just N - 1 (this method uses even more than the K-Fold CV).&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Disadvantage:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;This approach is very heavy on your computer. We need to refit de model N times (although there is a shortcut for linear regreesion, see &lt;a href=&#34;https://gerardnico.com/wiki/lang/r/cross_validation&#34;&gt;here&lt;/a&gt;).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Given that the test set is of only 1 observation, there might be a lot of variance in the prediction, making the accuracy test more unreliable (that is, relative to K-Fold CV)&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-bootstrap-method&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The Bootstrap method&lt;/h2&gt;
+&lt;p&gt;The bootstrap method is a bit different. Maybe you’ve heard about the bootstrap for estimating standard errors, and in fact for model assessment it’s very similar.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Boostrap method: Take the data from before with 30 rows. Suppose we resample this dataset with replacement. That is, the dataset will have the same 30 rows, but row 1 might be repeated 3 times, row 2 might be repeated 4 times, row 3 might not be in the dataset anymore, and so on. Now, take this resampled data and use it to train the model. Now test your predictions on the actual data (the one with 30 unique rows) and calculate the model accuracy. Repeat N times.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Again, the R implementation is very straightforward.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+set.seed(21314)
+bootstrap &amp;lt;-
+  map_dbl(1:500, ~ {
+  train &amp;lt;- mtcars[sample(nrow(mtcars), replace = T), ] # randomly sample rows with replacement
+  test &amp;lt;- mtcars
+  
+  train_model &amp;lt;- glm(am ~ mpg + cyl + disp, family = binomial(), data = train) # fit any model
+  
+  # Get predicted probabilities and assign a 1 or 0 based on the probability
+  prediction &amp;lt;- predict(train_model, newdata = test, type = &amp;quot;response&amp;quot;) %&amp;gt;% rbinom(nrow(mtcars), 1, .)
+  accuracy &amp;lt;- test$am == prediction # compare whether the prediction matches the actual value
+  
+  mean(accuracy) # get the proportion of correct predictions
+})
+
+summary(bootstrap)
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#  0.4375  0.6875  0.7500  0.7468  0.8125  0.9375&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We got a better accuracy with the bootstrap (probably biased, see below) and a range of possible values going from 0.43 to 0.93. Note that if you run these models you’ll get a bunch of warnings like &lt;code&gt;glm.fit: fitted probabilities numerically 0 or 1 occurred&lt;/code&gt; because we just have too few observations to be including covariates, resulting in a lot of overfitting.&lt;/p&gt;
+&lt;p&gt;Advantages:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Variance is small considering both train and test have the same number of rows.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Disadvantages&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;It gives more biased results than the CV methods because it repeats data, rather than keep unique observations for training and testing.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In the end, it’s a trade-off against what you’re looking for. In some instances, it’s alright to have a slightly biased estimate (either pessimistic or optimistic) as long as its reliable (bootstrap). On other instances, it’s better to have a very exact prediction but that is less unreliable (CV methods).&lt;/p&gt;
+&lt;p&gt;Some rule of thumbs:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;For large sample sizes, the variance issues become less important and the computational part is more of an issues. I still would stick by repeated CV for small and large sample sizes. See &lt;a href=&#34;https://stats.stackexchange.com/questions/18348/differences-between-cross-validation-and-bootstrapping-to-estimate-the-predictio&#34;&gt;here&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Cross validation is a good tool when deciding on the model – it helps you avoid fooling yourself into thinking that you have a good model when in fact you are overfitting. When your model is fixed, then using the bootstrap makes more sense to assess accuracy (to me at least). See again &lt;a href=&#34;https://stats.stackexchange.com/questions/18348/differences-between-cross-validation-and-bootstrapping-to-estimate-the-predictio&#34;&gt;here&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Again, this is a very crude approach, and the whole idea is to understand the inner workings of these algorithms in practice. For more thorough approaches I suggest using the &lt;code&gt;cv&lt;/code&gt; functions from the &lt;code&gt;boot&lt;/code&gt; package or &lt;code&gt;caret&lt;/code&gt; or &lt;code&gt;modelr&lt;/code&gt;. I hope this was useful. I will try to keep doing these things as they help me understand these techniques better.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Kohavi, Ron. “A study of cross-validation and bootstrap for accuracy estimation and model selection.” Ijcai. Vol. 14. No. 2. 1995.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Holdout and cross-validation</title>
+      <link>/hugo-goa-demo/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</link>
+      <pubDate>Wed, 06 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</guid>
+      <description>&lt;p&gt;In a recent attempt to bring a bit of discipline into my life, I’ve been forcing myself to read papers after lunch, specifically concentrated on data science topics. The whole idea is to educated myself every day, but if I find something cool that I can implement in R, I’ll do it right away.&lt;/p&gt;
+&lt;p&gt;This blogpost is the first of a series of entries I plan to post explaining the main concepts of Kohavi (1995), which compares cross-validation methods and bootstrap methods for model selection. This first post will implement a K-Fold cross validation from scratch in order to understand more deeply what’s going on behind the scenes.&lt;/p&gt;
+&lt;p&gt;Before we explain the concept of K-Fold cross validation, we need to define what the ‘Holdout’ method is.&lt;/p&gt;
+&lt;div id=&#34;holdout-method&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Holdout method&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Holdout method: Imagine we have a dataset with house prices as the dependent variable and two independent variables showing the square footage of the house and the number of rooms. Now, imagine this dataset has &lt;code&gt;30&lt;/code&gt; rows. The whole idea is that you build a model that can predict house prices accurately. To ‘train’ your model, or see how well it performs, we randomly subset 20 of those rows and fit the model. The second step is to predict the values of those 10 rows that we excluded and measure how well our predictions were. As a rule of thumb, experts suggest to randomly sample 80% of the data into the training set and 20% into the test set.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;A very quick example:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+library(modelr)
+
+holdout &amp;lt;- function(repeat_times) { # empty argument for later
+  n &amp;lt;- nrow(mtcars)
+  eighty_percent &amp;lt;- (n * 0.8) %&amp;gt;% floor
+  train_sample &amp;lt;- sample(1:n, eighty_percent) # randomly pick 80% of the rows
+  test_sample &amp;lt;- setdiff(1:n, train_sample) # get the remaining 20% of the rows
+  
+  train &amp;lt;- mtcars[train_sample, ] # subset the 80% of the rows
+  test &amp;lt;- mtcars[test_sample, ] # subset 20% of the rows
+  
+  train_model &amp;lt;- lm(mpg ~ ., data = train)
+  
+  test %&amp;gt;%
+    add_predictions(train_model) %&amp;gt;% # add the predicted mpg values to the test data
+    summarize(average_error = (pred - mpg) %&amp;gt;% mean %&amp;gt;% round(2)) %&amp;gt;%
+    pull(average_error)
+  # calculate the average difference of the predicition from the actual value
+}
+
+set.seed(2131)
+holdout()
+# [1] 3.59&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can see that on average the training set over predicts the actual values by about 3.6 points. An even more complex approach is what Kohavi (1995) calls “random subsampling”.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;random-subsampling&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Random subsampling&lt;/h2&gt;
+&lt;p&gt;In a nutshell, repeat the previous &lt;code&gt;N&lt;/code&gt; times and calculate the average and standard deviation of your metric of interest.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(2134)
+
+random_subsampling &amp;lt;- map_dbl(1:500, holdout)
+summary(random_subsampling)
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# -7.3100 -0.7525  0.4000  0.4255  1.5550  9.1500&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We get a mean error of 0.42, a maximum of 9.15 and a minimum of -7.31. Quite some variation, eh? It is precisely for this reason that Kohavi (1995) highlights that random subsampling has an important problem.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Each time we resample, some observations might’ve been in the previous resample, leading to non-independence and making the training dataset unrepresentative of the original dataset.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What happens when you try to predict Y from an unrepresented X, 500 times? What we just saw before.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;k-fold-cross-validation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;K-Fold cross validation&lt;/h2&gt;
+&lt;p&gt;Let’s move on to cross validation. K-Fold cross validation is a bit trickier, but here is a simple explanation.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;K-Fold cross validation: Take the house prices dataset from the previous example, divide the dataset into 10 parts of equal size, so if the data is 30 rows long, you’ll have 10 datasets of 3 rows each. Each split contains unique rows not present in other splits. In the first iteration, take the first dataset as the test dataset and merge the remaining 9 datasets as the train dataset. Fit the model on the training data, predict on the test data and record model accuracy. Repeat a new iteration where dataset 2 is the test set and data set 1 and 3:10 merged is the training set. Repeat for all K slices.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can implement this in R.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;k_slicer &amp;lt;- function(data, slices) {
+  stopifnot(nrow(data) &amp;gt; slices) # the number of rows must be bigger than the K slices
+  slice_size &amp;lt;- (nrow(data) / slices) %&amp;gt;% floor
+  
+  rows &amp;lt;- 1:nrow(data)
+  data_list &amp;lt;- rep(list(list()), slices) # create empty list of N slices
+
+  # Randomly sample slice_size from the rows available, but exclude these rows
+  # from the next sample of rows. This makes sure each slice has unique rows.
+  for (k in 1:slices) {
+    specific_rows &amp;lt;- sample(rows, slice_size) # sample unique rows for K slice
+    rows &amp;lt;- setdiff(rows, specific_rows) # exclue those rows
+    data_list[[k]] &amp;lt;- data[specific_rows, ] # sample the K slice and save in empty list
+  }
+  
+  data_list
+}
+
+mtcars_sliced &amp;lt;- k_slicer(mtcars, slices = 5) # data sliced in K slices&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;All good so far? We took a dataset and split it into K mutually exclusive datasets. The next step is to run the modeling on &lt;code&gt;K = 2:10&lt;/code&gt; and test on &lt;code&gt;K = 1&lt;/code&gt;, and then repeat on &lt;code&gt;K = c(1, 3:10)&lt;/code&gt; as training and test on &lt;code&gt;K = 2&lt;/code&gt;, and repeat for al &lt;code&gt;K’s&lt;/code&gt;. Below we implement it in R.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+k_fold_cv &amp;lt;-
+  map_dbl(seq_along(mtcars_sliced), ~ {
+  test &amp;lt;- mtcars_sliced[[.x]] # Take the K fold
+  
+  # Note the -.x, for excluding that K
+  train &amp;lt;- mtcars_sliced[-.x] %&amp;gt;% reduce(bind_rows) # bind row all remaining K&amp;#39;s
+  
+  lm(mpg ~ ., data = train) %&amp;gt;%
+    rmse(test) # calculate the root mean square error of predicting the test set
+})
+
+k_fold_cv %&amp;gt;%
+  summary
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#   3.192   3.746   3.993   3.957   4.279   4.574&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And we get a summary of the root mean square error, a metric we decided to use now, instead of predictions. We can asses how accurate our model is this way and compare several specification of models and choose the one which better fits the data.&lt;/p&gt;
+&lt;p&gt;The main advantage of this approach:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;We maximize the use of data because all data is used, at some point, as test and training.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This is very interesting in contrast to the holdout method in which we can’t maximize our data! Take data out of the test set and the predictions will have wider uncertainty intervals, take data out of the train set and get biased predictions.&lt;/p&gt;
+&lt;p&gt;This approach, as any other, has disadvantages.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;It is computationally intensive, given that we have to run the model K-1 times. In this setting it’s trivial, but in more complex modeling this can be quite costly.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If in any of the K iterations the predictions are bad, the overall accuracy will be bad, considering that other K iterations will also likely be bad. In other words, predictions need to be stable across all K iterations.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Building on the previous point, once the model is stable, increasing the number of folds (5, 10, 20, 25…) generates little change considering that the accuracy will be similar (and the variance of different K-folds will be similar as well).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Finally, if Y consists of categories, and one of these categories is very minimal, the best K-Fold CV can do is predict the class with more observations. If an observation of this minimal class gets to be in the test set in one of the iterations, then the training model will have very little accuracy for that category. See Kohavi (1995) page 3, example 1 for a detailed example.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;This was my first attempt at manually implementing the Holdout method and the K-Fold CV. These examples are certainly flawed, like rounding the decimal number of rows correct for the unique number of rows in each K-Fold slice. If anyone is interested in correcting thes, please do send a pull request. For those interested in using more reliable approaches, take a look at the &lt;code&gt;caret&lt;/code&gt; and the &lt;code&gt;modelr&lt;/code&gt; package. In the next entry I will implement the LOO method and the bootstrap (and maybe the stratified K-Fold CV)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Kohavi, Ron. “A study of cross-validation and bootstrap for accuracy estimation and model selection.” Ijcai. Vol. 14. No. 2. 1995.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>perccalc package</title>
+      <link>/hugo-goa-demo/blog/2017-08-01-perccalc-package/perccalc-package/</link>
+      <pubDate>Tue, 01 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2017-08-01-perccalc-package/perccalc-package/</guid>
+      <description>&lt;p&gt;Reardon (2011) introduced a very interesting concept in which he calculates percentile differences from ordered categorical variables. He explains his procedure very much in detail in the appendix of the book chapter but no formal implementation has been yet available on the web. With this package I introduce a function that applies the procedure, following a step-by-step Stata script that Sean Reardon kindly sent me.&lt;/p&gt;
+&lt;p&gt;In this vignette I show you how to use the function and match the results to the Stata code provided by Reardon himself.&lt;/p&gt;
+&lt;p&gt;For this example, we’ll use a real world data set, one I’m very much familiar with: PISA. We’ll use the PISA 2012 wave for Germany because it asked parents about their income category. For this example we’ll need the packages below.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# install.packages(c(&amp;quot;devtools&amp;quot;, &amp;quot;matrixStats&amp;quot;, &amp;quot;tidyverse&amp;quot;))
+# devtools::install_github(&amp;quot;pbiecek/PISA2012lite&amp;quot;)
+
+library(matrixStats)
+library(tidyverse)
+library(haven)
+library(PISA2012lite)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you haven’t installed any of the packages above, uncomment the first two lines to install them. Beware that the &lt;code&gt;PISA2012lite&lt;/code&gt; package contains the PISA 2012 data and takes a while to download.&lt;/p&gt;
+&lt;p&gt;Let’s prepare the data. Below we filter only German students, select only the math test results and calculate the median of all math plausible values to get one single math score. Finally, we match each student with their corresponding income data from their parents data and their sample weights.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ger_student &amp;lt;- student2012 %&amp;gt;%
+  filter(CNT == &amp;quot;Germany&amp;quot;) %&amp;gt;%
+  select(CNT, STIDSTD, matches(&amp;quot;^PV*.MATH$&amp;quot;)) %&amp;gt;%
+  transmute(CNT, STIDSTD,
+            avg_score = rowMeans(student2012[student2012$CNT == &amp;quot;Germany&amp;quot;, paste0(&amp;quot;PV&amp;quot;, 1:5, &amp;quot;MATH&amp;quot;)]))
+
+ger_parent &amp;lt;-
+  parent2012 %&amp;gt;%
+  filter(CNT == &amp;quot;Germany&amp;quot;) %&amp;gt;%
+  select(CNT, STIDSTD, PA07Q01)
+
+ger_weights &amp;lt;-
+  student2012weights %&amp;gt;%
+  filter(CNT == &amp;quot;Germany&amp;quot;) %&amp;gt;%
+  select(CNT, STIDSTD, W_FSTUWT)
+
+dataset_ready &amp;lt;-
+  ger_student %&amp;gt;%
+  left_join(ger_parent, by = c(&amp;quot;CNT&amp;quot;, &amp;quot;STIDSTD&amp;quot;)) %&amp;gt;%
+  left_join(ger_weights, by = c(&amp;quot;CNT&amp;quot;, &amp;quot;STIDSTD&amp;quot;)) %&amp;gt;%
+  as_tibble() %&amp;gt;%
+  rename(income = PA07Q01,
+         score = avg_score,
+         wt = W_FSTUWT) %&amp;gt;%
+  select(-CNT, -STIDSTD)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The final results is this dataset:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 10 x 3
+##      score         income       wt
+##      &amp;lt;dbl&amp;gt;         &amp;lt;fctr&amp;gt;    &amp;lt;dbl&amp;gt;
+## 1 439.5622 Less than &amp;lt;$A&amp;gt; 137.3068
+## 2 523.1422 Less than &amp;lt;$A&amp;gt; 170.0566
+## 3 291.4083 Less than &amp;lt;$A&amp;gt; 162.3794
+## 4 436.6023 Less than &amp;lt;$A&amp;gt; 162.3794
+## 5 367.4326 Less than &amp;lt;$A&amp;gt; 114.6644
+## # ... with 5 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This is the minimum dataset that the function will accept. This means that it needs to have at least a categorical variable and a continuous variable (the vector of weights is optional).&lt;/p&gt;
+&lt;p&gt;The package is called &lt;code&gt;perccalc&lt;/code&gt;, short for percentile calculator and we can install and load it with this code:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;quot;perccalc&amp;quot;, repo = &amp;quot;https://cran.rediris.es/&amp;quot;)
+## 
+## The downloaded binary packages are in
+##  /var/folders/w0/pscnb7zx5y9g_qf13cxhl0_r0000gn/T//RtmpWExwak/downloaded_packages
+library(perccalc)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The package has two functions, which I’ll show some examples. The first one is called &lt;code&gt;perc_diff&lt;/code&gt; and it’s very easy to use, we just specify the data, the name of the categorical and continuous variable and the percentile difference we want.&lt;/p&gt;
+&lt;p&gt;Let’s put it to use!&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_diff(dataset_ready, income, score, percentiles = c(90, 10))
+## Error: is_ordered_fct is not TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I generated that error on purpose to raise a very important requirement of the function. The categorical variable needs to be an ordered factor (categorical). It is very important because otherwise we could be calculating percentile differences of categorical variables such as married, single and widowed, which doesn’t make a lot of sense.&lt;/p&gt;
+&lt;p&gt;We can turn it into an ordered factor with the code below.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dataset_ready &amp;lt;-
+  dataset_ready %&amp;gt;%
+  mutate(income = factor(income, ordered = TRUE))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now it’ll work.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_diff(dataset_ready, income, score, percentiles = c(90, 10))
+## difference         se 
+##   97.00706    8.74790&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can play around with other percentiles&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_diff(dataset_ready, income, score, percentiles = c(50, 10))
+## difference         se 
+##  58.776200   8.291083&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And we can add a vector of weights&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_diff(dataset_ready, income, score, weights = wt, percentiles = c(90, 10))
+## difference         se 
+##  95.228517   8.454902&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now, how are we sure that these estimates are as accurate as the Reardon (2011) implementation? We can compare the Stata ouput using this data set.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Saving the dataset to a path
+dataset_ready %&amp;gt;%
+  write_dta(path = &amp;quot;/Users/cimentadaj/Downloads/pisa_income.dta&amp;quot;, version = 13)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Running the code below using the &lt;code&gt;pisa_income.dta&lt;/code&gt;..&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;*--------
+use &amp;quot;/Users/cimentadaj/Downloads/pisa_income.dta&amp;quot;, clear
+
+tab income, gen(inc)
+*--------
+
+/*-----------------------
+    Making a data set that has 
+    one observation per income category
+    and has mean and se(mean) in each category
+    and percent of population in the category
+------------------------*/
+
+tempname memhold
+tempfile results
+postfile `memhold&amp;#39; income mean se_mean per using `results&amp;#39;
+
+forv i = 1/6 {
+    qui sum inc`i&amp;#39; [aw=wt]
+    loc per`i&amp;#39; = r(mean)    
+                                
+    qui sum score if inc`i&amp;#39;==1 
+                            
+    if `r(N)&amp;#39;&amp;gt;0 {
+        qui regress score if inc`i&amp;#39;==1 [aw=wt]
+        post `memhold&amp;#39; (`i&amp;#39;) (_b[_cons]) (_se[_cons]) (`per`i&amp;#39;&amp;#39;)
+                            
+    }               
+}
+postclose `memhold&amp;#39; 
+
+/*-----------------------
+    Making income categories
+    into percentiles
+------------------------*/
+
+
+    use `results&amp;#39;, clear
+
+    sort income
+    gen cathi = sum(per)
+    gen catlo = cathi[_n-1]
+    replace catlo = 0 if income==1
+    gen catmid = (catlo+cathi)/2
+    
+    /*-----------------------
+        Calculate income 
+        achievement gaps
+    ------------------------*/
+
+    sort income
+    
+    g x1 = catmid
+    g x2 = catmid^2 + ((cathi-catlo)^2)/12
+    g x3 = catmid^3 + ((cathi-catlo)^2)/4
+
+    g cimnhi = mean + 1.96*se_mean
+    g cimnlo = mean - 1.96*se_mean
+
+    reg mean x1 x2 x3 [aw=1/se_mean^2] 
+
+    twoway (rcap cimnhi cimnlo catmid) (scatter mean catmid) ///
+        (function y = _b[_cons] + _b[x1]*x + _b[x2]*x^2 + _b[x3]*x^3, ran(0 1)) 
+    
+    loc hi_p = 90
+    loc lo_p = 10
+
+    loc d1 = [`hi_p&amp;#39; - `lo_p&amp;#39;]/100
+    loc d2 = [(`hi_p&amp;#39;)^2 - (`lo_p&amp;#39;)^2]/(100^2)
+    loc d3 = [(`hi_p&amp;#39;)^3 - (`lo_p&amp;#39;)^3]/(100^3)
+
+    lincom `d1&amp;#39;*x1 + `d2&amp;#39;*x2 + `d3&amp;#39;*x3
+    loc diff`hi_p&amp;#39;`lo_p&amp;#39; = r(estimate)
+    loc se`hi_p&amp;#39;`lo_p&amp;#39; = r(se)
+    
+    di &amp;quot;`hi_p&amp;#39;-`lo_p&amp;#39; gap:     `diff`hi_p&amp;#39;`lo_p&amp;#39;&amp;#39;&amp;quot;
+    di &amp;quot;se(`hi_p&amp;#39;-`lo_p&amp;#39; gap): `se`hi_p&amp;#39;`lo_p&amp;#39;&amp;#39;&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I get that the 90/10 difference is &lt;code&gt;95.22&lt;/code&gt; with a standard error of &lt;code&gt;8.45&lt;/code&gt;. Does it sound familiar?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_diff(dataset_ready, income, score, weights = wt, percentiles = c(90, 10))
+## difference         se 
+##  95.228517   8.454902&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The second function of the package is called &lt;code&gt;perc_dist&lt;/code&gt; and instead of calculating the difference of two percentiles, it returns the score and standard error of every percentile. The arguments of the function are exactly the same but without the &lt;code&gt;percentiles&lt;/code&gt; argument, because this will return the whole set of percentiles.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_dist(dataset_ready, income, score)
+##     percentile   estimate std.error
+## 1            1   3.693889  1.327722
+## 2            2   7.280584  2.591314
+## 3            3  10.762009  3.792189
+## 4            4  14.140090  4.931759
+## 5            5  17.416754  6.011441
+## 6            6  20.593925  7.032650
+## 7            7  23.673529  7.996804
+## 8            8  26.657492  8.905323
+## 9            9  29.547739  9.759628
+## 10          10  32.346196 10.561142
+## 11          11  35.054789 11.311287
+## 12          12  37.675443 12.011489
+## 13          13  40.210083 12.663175
+## 14          14  42.660636 13.267774
+## 15          15  45.029026 13.826714
+## 16          16  47.317180 14.341427
+## 17          17  49.527023 14.813345
+## 18          18  51.660481 15.243900
+## 19          19  53.719479 15.634527
+## 20          20  55.705943 15.986660
+## 21          21  57.621798 16.301735
+## 22          22  59.468970 16.581186
+## 23          23  61.249385 16.826450
+## 24          24  62.964968 17.038960
+## 25          25  64.617644 17.220150
+## 26          26  66.209340 17.371453
+## 27          27  67.741982 17.494296
+## 28          28  69.217493 17.590108
+## 29          29  70.637801 17.660310
+## 30          30  72.004830 17.706321
+## 31          31  73.320507 17.729551
+## 32          32  74.586757 17.731404
+## 33          33  75.805505 17.713275
+## 34          34  76.978678 17.676548
+## 35          35  78.108200 17.622596
+## 36          36  79.195997 17.552774
+## 37          37  80.243995 17.468422
+## 38          38  81.254120 17.370860
+## 39          39  82.228297 17.261387
+## 40          40  83.168451 17.141273
+## 41          41  84.076509 17.011761
+## 42          42  84.954395 16.874063
+## 43          43  85.804036 16.729352
+## 44          44  86.627357 16.578762
+## 45          45  87.426284 16.423385
+## 46          46  88.202741 16.264261
+## 47          47  88.958656 16.102380
+## 48          48  89.695953 15.938677
+## 49          49  90.416558 15.774024
+## 50          50  91.122396 15.609233
+## 51          51  91.815394 15.445050
+## 52          52  92.497476 15.282149
+## 53          53  93.170569 15.121139
+## 54          54  93.836598 14.962558
+## 55          55  94.497488 14.806873
+## 56          56  95.155165 14.654486
+## 57          57  95.811555 14.505735
+## 58          58  96.468584 14.360901
+## 59          59  97.128176 14.220213
+## 60          60  97.792258 14.083859
+## 61          61  98.462754 13.951996
+## 62          62  99.141592 13.824764
+## 63          63  99.830695 13.702302
+## 64          64 100.531991 13.584764
+## 65          65 101.247404 13.472342
+## 66          66 101.978860 13.365285
+## 67          67 102.728285 13.263927
+## 68          68 103.497604 13.168712
+## 69          69 104.288742 13.080222
+## 70          70 105.103627 12.999208
+## 71          71 105.944182 12.926622
+## 72          72 106.812333 12.863647
+## 73          73 107.710007 12.811728
+## 74          74 108.639129 12.772604
+## 75          75 109.601624 12.748328
+## 76          76 110.599418 12.741293
+## 77          77 111.634436 12.754239
+## 78          78 112.708605 12.790256
+## 79          79 113.823849 12.852771
+## 80          80 114.982095 12.945522
+## 81          81 116.185267 13.072509
+## 82          82 117.435292 13.237935
+## 83          83 118.734096 13.446126
+## 84          84 120.083602 13.701443
+## 85          85 121.485739 14.008184
+## 86          86 122.942430 14.370488
+## 87          87 124.455601 14.792251
+## 88          88 126.027178 15.277052
+## 89          89 127.659088 15.828107
+## 90          90 129.353254 16.448235
+## 91          91 131.111603 17.139861
+## 92          92 132.936061 17.905030
+## 93          93 134.828552 18.745443
+## 94          94 136.791004 19.662499
+## 95          95 138.825340 20.657348
+## 96          96 140.933487 21.730939
+## 97          97 143.117371 22.884074
+## 98          98 145.378916 24.117446
+## 99          99 147.720049 25.431683
+## 100        100 150.142695 26.827377&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can also add the optional set of weights and graph it:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_dist(dataset_ready, income, score, wt) %&amp;gt;%
+  mutate(ci_low = estimate - 1.96 * std.error,
+         ci_hi = estimate + 1.96 * std.error) %&amp;gt;%
+  ggplot(aes(percentile, estimate)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_hi))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-08-01-perccalc-package/2017-08-01-perccalc-package_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;576&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Please note that for calculating the difference between two percentiles it is more accurate to use the &lt;code&gt;perc_diff&lt;/code&gt; function. The &lt;code&gt;perc_diff&lt;/code&gt; calculates the difference through a linear combination of coefficients resulting in a different standard error.&lt;/p&gt;
+&lt;p&gt;For example:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_dist(dataset_ready, income, score, wt) %&amp;gt;%
+  filter(percentile %in% c(90, 10)) %&amp;gt;%
+  summarize(diff = diff(estimate),
+            se_diff = diff(std.error))
+##       diff  se_diff
+## 1 95.22852 5.679855&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;compared to&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_diff(dataset_ready, income, score, weights = wt, percentiles = c(90, 10))
+## difference         se 
+##  95.228517   8.454902&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;They both have the same point estimate but a different standard error.&lt;/p&gt;
+&lt;p&gt;I hope this was a convincing example, I know this will be useful for me. All the intelectual ideas come from Sean Reardon and the Stata code was written by Sean Reardon, Ximena Portilla, and Jenna Finch. The R implemention is my own work.&lt;/p&gt;
+&lt;p&gt;You can find the package repository &lt;a href=&#34;https://github.com/cimentadaj/perccalc&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Reardon, Sean F. “The widening academic achievement gap between the rich and the poor: New evidence and possible explanations.” Whither opportunity (2011): 91-116.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Replicating Dupriez and Dumay (2006)</title>
+      <link>/hugo-goa-demo/blog/2017-04-13-replicating-dupriez-and-dumay-2006/replicating-dupriez-and-dumay-2006/</link>
+      <pubDate>Thu, 13 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2017-04-13-replicating-dupriez-and-dumay-2006/replicating-dupriez-and-dumay-2006/</guid>
+      <description>&lt;p&gt;So, I was bored for two days and decided I’d replicate a paper I had read. The paper is called ‘Inequalities in school systems: effect of school structure or of society structure?’ written by Vincent Dupriez and Xavier Dumay which you can read from &lt;a href=&#34;http://www.tandfonline.com/doi/full/10.1080/03050060600628074?scroll=top&amp;amp;needAccess=true&#34;&gt;here&lt;/a&gt;. I made available two version, one in &lt;a href=&#34;https://github.com/cimentadaj/Inequality_schools_replication/raw/master/replication_tracking_pisa.pdf&#34;&gt;pdf&lt;/a&gt; and another in &lt;a href=&#34;https://cimentadaj.github.io/Inequality_schools_replication/replication_tracking_pisa.html&#34;&gt;html&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If you’re interested in looking at the code or suggesting some changes, do send me an email at &lt;code&gt;cimentadaj@gmail.com&lt;/code&gt; or check the &lt;a href=&#34;https://github.com/cimentadaj/Inequality_schools_replication&#34;&gt;Github repository&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>My PISA twitter bot</title>
+      <link>/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</link>
+      <pubDate>Wed, 08 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</guid>
+      <description>&lt;p&gt;I’ve long wanted to prepare a project with R related to education. I knew I’d found the idea when I read Thomas Lumley’s &lt;a href=&#34;http://notstatschat.tumblr.com/post/156007757906/a-bus-watching-bot&#34;&gt;attempt to create a Twitter bot in which he tweeted bus arrivals in New Zealand&lt;/a&gt;. Quoting him, “Is it really hard to write a bot? No. Even I can do it. And I’m old.”&lt;/p&gt;
+&lt;p&gt;So I said to myself, alright, you have to create a Twitter bot but it has to be related to education. It’s an easy project which shouldn’t take a lot of your time. I then came up with this idea: what if you could randomly sample questions from the &lt;a href=&#34;http://www.oecd.org/pisa/aboutpisa/&#34;&gt;PISA databases&lt;/a&gt; and create a sort of random facts generator. The result would be one graph a day, showing a question for some random sample of countries. I figured, why not prepare a post (both for me to remember how I did it but also so others can contribute to the project) where I explained step-by-step how I did it?&lt;/p&gt;
+&lt;p&gt;The repository for the project is &lt;a href=&#34;https://github.com/cimentadaj/PISAfacts_twitterBot&#34;&gt;here&lt;/a&gt;, so feel free to drop any comments or improvements. The idea is to load the &lt;a href=&#34;http://vs-web-fs-1.oecd.org/pisa/PUF_SPSS_COMBINED_CMB_STU_QQQ.zip&#34;&gt;PISA 2015 data&lt;/a&gt;, randomly pick a question that doesn’t have a lot of labels (because then it’s very difficult to plot it nicely), and based on the type of question create an appropriate graph. Of course, all of this needs to be done on the fly, without human assistance. You can follow this twitter account at &lt;span class=&#34;citation&#34;&gt;@DailyPISA_Facts&lt;/span&gt;. Let’s start!&lt;/p&gt;
+&lt;div id=&#34;data-wrangling&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Data wrangling&lt;/h2&gt;
+&lt;p&gt;First we load some of the packages we’ll use and read the PISA 2015 student data.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+library(forcats)
+library(haven)
+library(intsvy) # For correct estimation of PISA estimates
+library(countrycode) # For countrycodes
+library(cimentadaj) # devtools::install_github(&amp;quot;cimentadaj/cimentadaj&amp;quot;)
+library(lazyeval)
+library(ggthemes) # devtools::install_github(&amp;quot;jrnold/ggthemes&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;file_name &amp;lt;- file.path(tempdir(), &amp;quot;pisa.zip&amp;quot;)
+
+download.file(
+  &amp;quot;http://vs-web-fs-1.oecd.org/pisa/PUF_SPSS_COMBINED_CMB_STU_QQQ.zip&amp;quot;,
+  destfile = file_name
+)
+
+unzip(file_name, exdir = tempdir())
+
+pisa_2015 &amp;lt;- read_spss(file.path(tempdir(), &amp;quot;CY6_MS_CMB_STU_QQQ.sav&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In my system it takes about 2 minutes. Make sure to download the zip file from the link above to download the datasets. (We could’ve downloaded the data from R to a temporary file and then delete it but since we’ll be tweeting every single day I though that having the data in my system would be a smarter move)&lt;/p&gt;
+&lt;p&gt;The idea is to generate a script that can be used with all PISA datasets, so at some point we should be able not only to randomly pick question but also randomly pick PISA surveys (PISA has been implemented since the year 2000 in three year intervals). We create some places holders for the variable country name, the format of the country names and the missing labels we want to ignore for each question (I think these labels should be the same across all surveys).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;country_var &amp;lt;- &amp;quot;cnt&amp;quot;
+country_types &amp;lt;- &amp;quot;iso3c&amp;quot;
+
+missing_labels &amp;lt;- c(&amp;quot;Valid Skip&amp;quot;,
+                    &amp;quot;Not Reached&amp;quot;,
+                    &amp;quot;Not Applicable&amp;quot;,
+                    &amp;quot;Invalid&amp;quot;,
+                    &amp;quot;No Response&amp;quot;)
+
+int_data &amp;lt;- pisa_2015 # Create a safe copy of the data, since it takes about 2 mins to read.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;After this, I started doing some basic data manipulation. Each line is followed by a comment on why I did it.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;names(int_data) &amp;lt;- tolower(names(int_data)) # It&amp;#39;s easier to write variable names as lower case
+int_data$region &amp;lt;- countrycode(int_data[[country_var]], country_types, &amp;quot;continent&amp;quot;)
+# Create a region variable to add regional colours to plots at some point.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Most PISA datasets are in SPSS format, where the variable’s question has been written as a label. If you’ve used SPSS or SAS you know that labels are very common; they basically outline the question of that variable. In R, this didn’t properly exists until the &lt;code&gt;foreign&lt;/code&gt; and &lt;code&gt;haven&lt;/code&gt; package. With &lt;code&gt;read_spss()&lt;/code&gt;, each variable has now two important attributes called &lt;code&gt;label&lt;/code&gt; and &lt;code&gt;labels&lt;/code&gt;. Respectively, the first one contains the question, while the second contains the value labels (assuming the file to be read has these labels). This information will be vital to our PISA bot. In fact, this script works only if the data has these two attributes. If you’re feeling particularly adventurous, you can fork this repository and make the script work also with metadata!&lt;/p&gt;
+&lt;p&gt;Have a look at the country names in &lt;code&gt;int_data[[country_var]][1:10]&lt;/code&gt;. They’re all written as 3-letter country codes. But to our luck, the &lt;code&gt;labels&lt;/code&gt; attribute has the correct names with the 3-letter equivalent. We can save these attributes and recode the 3-letter country name to long names.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Saving country names to change 3 letter country name to long country names
+country_labels &amp;lt;- attr(int_data[[country_var]], &amp;quot;labels&amp;quot;)
+
+# Reversing the 3-letter code to names so I can search for countries
+# in a lookup table
+country_names &amp;lt;- reverse_name(country_labels)
+
+# Lookup 3-letter code and change them for long country names
+int_data[, country_var] &amp;lt;- country_names[int_data[[country_var]]]
+attr(int_data[[country_var]], &amp;quot;labels&amp;quot;) &amp;lt;- country_labels&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Next thing I’d like to do is check which variables will be valid, i.e. those which have a &lt;code&gt;labels&lt;/code&gt; attribute, have 2 or more &lt;code&gt;labels&lt;/code&gt; aside from the &lt;code&gt;missing&lt;/code&gt; category of labels and are not either characters or factors (remember that all variables should be numeric with an attribute that contains the labels; character columns are actually invalid here). This will give me the list of variables that I’ll be able to use.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;subset_vars &amp;lt;- 
+  int_data %&amp;gt;%
+  map_lgl(function(x)
+    !is.null(attr(x, &amp;quot;labels&amp;quot;)) &amp;amp;&amp;amp;
+    length(setdiff(names(attr(x, &amp;quot;labels&amp;quot;)), missing_labels)) &amp;gt;= 2 &amp;amp;&amp;amp;
+    !typeof(x) %in% c(&amp;quot;character&amp;quot;, &amp;quot;factor&amp;quot;)) %&amp;gt;%
+  which()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Great, we have our vector of valid columns.&lt;/p&gt;
+&lt;p&gt;The next steps are fairly straight forward. I randomply sample one of those indexes (which have the variale name as a &lt;code&gt;names&lt;/code&gt; attribute, check &lt;code&gt;subset_vars&lt;/code&gt;), together with the &lt;code&gt;cnt&lt;/code&gt; and &lt;code&gt;region&lt;/code&gt; variables.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;valid_df_fun &amp;lt;- function(data, vars_select) {
+  data %&amp;gt;%
+  select_(&amp;quot;cnt&amp;quot;, &amp;quot;region&amp;quot;, sample(names(vars_select), 1)) %&amp;gt;%
+  as.data.frame()
+}
+
+valid_df &amp;lt;- valid_df_fun(int_data, subset_vars)
+random_countries &amp;lt;- unique(valid_df$cnt) # To sample unique countries later on&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We also need to check how many labels we have, aside from the &lt;code&gt;missing&lt;/code&gt; labels. In any case, if those unique labels have more than 5, we need to resample a new variable. It’s difficult to understand a plot with that many labels. We need to make our plots as simple and straightforward as possible.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;var_labels &amp;lt;- attr(valid_df[[names(valid_df)[3]]], &amp;#39;labels&amp;#39;) # Get labels
+
+# Get unique labels
+valid_labels &amp;lt;- function(variable_label, miss) {
+  variable_label %&amp;gt;%
+    names() %&amp;gt;%
+    setdiff(miss)
+}
+
+len_labels &amp;lt;- length(valid_labels(var_labels, missing_labels)) # length of unique labels
+
+# While the length of the of the labels is &amp;gt; 4, sample a new variable.
+while (len_labels &amp;gt; 4) {
+  valid_df &amp;lt;- valid_df_fun(int_data, subset_vars)
+  var_labels &amp;lt;- attr(valid_df[[names(valid_df)[3]]], &amp;#39;labels&amp;#39;) # Get labels
+  len_labels &amp;lt;- length(valid_labels(var_labels, missing_labels))
+}
+
+# Make 100% sure we get the results:
+stopifnot(len_labels &amp;lt;= 4)
+
+(labels &amp;lt;- reverse_name(var_labels)) 
+# Reverse vector names to objects and viceversa for 
+# later recoding.
+
+var_name &amp;lt;- names(valid_df)[3]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Before estimating the &lt;code&gt;PISA&lt;/code&gt; proportions, I want to create a record of all variables that have been used. Whenever a graph has something wrong we wanna know which variable it was, so we can reproduce the problem and fix it later in the future.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;new_var &amp;lt;- paste(var_name, Sys.Date(), sep = &amp;quot; - &amp;quot;)
+write_lines(new_var, path = &amp;quot;./all_variables.txt&amp;quot;, append = T) 
+# I create an empty .txt file to write the vars&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now comes the estimation section. Using the &lt;code&gt;pisa.table&lt;/code&gt; function from the package &lt;code&gt;intsvy&lt;/code&gt; we can correctly estimate the population proportions of any variable for any valid country. This table will be the core data behind our plot.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;try_df &amp;lt;-
+  valid_df %&amp;gt;%
+  filter(!is.na(region)) %&amp;gt;%
+  pisa.table(var_name, data = ., by = &amp;quot;cnt&amp;quot;) %&amp;gt;%
+  filter(complete.cases(.))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Let’s check out the contents of &lt;code&gt;try_df&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;##          cnt st094q01na Freq Percentage Std.err.
+## 1    Algeria          1  583      11.05        0
+## 2    Algeria          2  633      12.00        0
+## 3    Algeria          3 2939      55.69        0
+## 4    Algeria          4 1122      21.26        0
+## 5  Australia          1 1843      14.63        0
+## 6  Australia          2 2753      21.86        0
+## 7  Australia          3 6040      47.96        0
+## 8  Australia          4 1958      15.55        0
+## 9    Austria          1 1364      21.09        0
+## 10   Austria          2 1630      25.21        0&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Great! To finish with the data, we simply need one more thing: to recode the value labels with the &lt;code&gt;labels&lt;/code&gt; vector.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;try_df[var_name] &amp;lt;- labels[try_df[, var_name]]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Awesome. We have the data ready, more or less. Let’s produce a dirty plot to check how long the title is.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;title_question &amp;lt;- attr(valid_df[, var_name], &amp;#39;label&amp;#39;)
+
+ggplot(try_df, aes_string(names(try_df)[2], &amp;quot;Percentage&amp;quot;)) +
+  geom_col() +
+  xlab(title_question)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Note: Because the question is randomly sampled, you might be getting a short title. Rerun the script and eventually you’ll get a long one.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;So, the question &lt;em&gt;might&lt;/em&gt; have two problems. The wording is a bit confusing (something we can’t really do anything about because that’s how it’s written in the questionnaire) and it’s too long. For the second problem I created a function that cuts the title in an arbitrary cutoff point (based on experimental tests on how many letters fit into a ggplot coordinate plane) but it makes sure that the cutoff is not in the middle of a word, i.e. it searches for the closest end of a word.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## Section: Get the title
+cut &amp;lt;- 60 # Arbitrary cutoff
+
+# This function accepts a sentence (or better, a title) and cuts it between
+# the start and cutoff arguments (just as substr).
+# But if the cutoff is not an empty space it will search +-1 index by
+# index from the cutoff point until it reaches
+# the closest empty space. It will return from start to the new cutoff
+sentence_cut &amp;lt;- function(sentence, start, cutoff) {
+  
+  if (nchar(sentence) &amp;lt;= cutoff) return(substr(sentence, start, cutoff))
+  
+  excerpt &amp;lt;- substr(sentence, start, cutoff)
+  actual_val &amp;lt;- cutoff
+  neg_val &amp;lt;- pos_val &amp;lt;- actual_val
+  
+  if (!substr(excerpt, actual_val, actual_val) == &amp;quot; &amp;quot;) {
+    
+    expr &amp;lt;- c(substr(sentence, neg_val, neg_val) == &amp;quot; &amp;quot;, substr(sentence, pos_val, pos_val) == &amp;quot; &amp;quot;)
+    
+    while (!any(expr)) {
+      neg_val &amp;lt;- neg_val - 1
+      pos_val &amp;lt;- pos_val + 1
+      
+      expr &amp;lt;- c(substr(sentence, neg_val, neg_val) == &amp;quot; &amp;quot;, substr(sentence, pos_val, pos_val) == &amp;quot; &amp;quot;)
+    }
+    
+    cutoff &amp;lt;- ifelse(which(expr) == 1, neg_val, pos_val)
+    excerpt &amp;lt;- substr(sentence, start, cutoff)
+    return(excerpt)
+    
+  } else {
+    
+    return(excerpt)
+    
+  }
+}
+
+# How many lines in ggplot2 should this new title have? Based on the cut off
+sentence_vecs &amp;lt;- ceiling(nchar(title_question) / cut)
+
+# Create an empty list with the length of `lines` of the title.
+# In this list I&amp;#39;ll paste the divided question and later paste them together
+list_excerpts &amp;lt;- replicate(sentence_vecs, vector(&amp;quot;character&amp;quot;, 0))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Just to make sure our function works, let’s do some quick tests. Let’s create the sentence &lt;code&gt;This is my new sentence&lt;/code&gt; and subset from index &lt;code&gt;1&lt;/code&gt; to index &lt;code&gt;17&lt;/code&gt;. Index &lt;code&gt;17&lt;/code&gt; is the letter &lt;code&gt;e&lt;/code&gt; from the word &lt;code&gt;sentence&lt;/code&gt;, so we should cut the sentence to the closest space, in our case, &lt;code&gt;This is my new&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sentence_cut(&amp;quot;This is my new sentence&amp;quot;, 1, 17)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;This is my new &amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;A more complicated test using &lt;code&gt;I want my sentence to be cut where no word is still running&lt;/code&gt;. Let’s pick from index &lt;code&gt;19&lt;/code&gt;, which is the space between &lt;code&gt;sentence&lt;/code&gt; and &lt;code&gt;to&lt;/code&gt;, the index &lt;code&gt;27&lt;/code&gt;, which is the &lt;code&gt;u&lt;/code&gt; of &lt;code&gt;cut&lt;/code&gt;. Because the length to a space &lt;code&gt;-1 and +1&lt;/code&gt; is the same both ways, the function always picks the shortest length as a defensive mechanism to long titles.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sentence_cut(&amp;quot;I want my sentence to be cut where no word is still running&amp;quot;, 19, 27)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot; to be &amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now that we have the function ready, we have to automate the process so that the first line is cut, then the second line should start where the first line left off and so on.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;for (list_index in seq_along(list_excerpts)) {
+  
+  non_empty_list &amp;lt;- Filter(f = function(x) !(is_empty(x)), list_excerpts)
+  
+  # If this is the first line, the start should 1, otherwise the sum of all characters
+  # of previous lines
+  start &amp;lt;- ifelse(list_index == 1, 1, sum(map_dbl(non_empty_list, nchar)))
+  
+  # Because start gets updated every iteration, simply cut from start to start + cut
+  # The appropriate exceptions are added when its the first line of the plot.
+  list_excerpts[[list_index]] &amp;lt;-
+    sentence_cut(title_question, start, ifelse(list_index == 1, cut, start + cut))
+}
+
+final_title &amp;lt;- paste(list_excerpts, collapse = &amp;quot;\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The above loop gives you a list with the title separate into N lines based on the cutoff point. For the ggplot title, we finish by collapsing the separate titles with the &lt;code&gt;\n&lt;/code&gt; as the separator.&lt;/p&gt;
+&lt;p&gt;So, I wrapped all of this into this function:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;label_cutter &amp;lt;- function(variable_labels, cut) {
+  
+  variable_label &amp;lt;- unname(variable_labels)
+  
+  # This function accepts a sentence (or better, a title) and cuts it between
+  # the start and cutoff arguments ( just as substr). But if the cutoff is not an empty space
+  # it will search +-1 index by index from the cutoff point until it reaches
+  # the closest empty space. It will return from start to the new cutoff
+  sentence_cut &amp;lt;- function(sentence, start, cutoff) {
+    
+    if (nchar(sentence) &amp;lt;= cutoff) return(substr(sentence, start, cutoff))
+    
+    excerpt &amp;lt;- substr(sentence, start, cutoff)
+    actual_val &amp;lt;- cutoff
+    neg_val &amp;lt;- pos_val &amp;lt;- actual_val
+    
+    if (!substr(excerpt, actual_val, actual_val) == &amp;quot; &amp;quot;) {
+      
+      expr &amp;lt;- c(substr(sentence, neg_val, neg_val) == &amp;quot; &amp;quot;, substr(sentence, pos_val, pos_val) == &amp;quot; &amp;quot;)
+      
+      while (!any(expr)) {
+        neg_val &amp;lt;- neg_val - 1
+        pos_val &amp;lt;- pos_val + 1
+        
+        expr &amp;lt;- c(substr(sentence, neg_val, neg_val) == &amp;quot; &amp;quot;, substr(sentence, pos_val, pos_val) == &amp;quot; &amp;quot;)
+      }
+      
+      cutoff &amp;lt;- ifelse(which(expr) == 1, neg_val, pos_val)
+      excerpt &amp;lt;- substr(sentence, start, cutoff)
+      return(excerpt)
+      
+    } else {
+      
+      return(excerpt)
+      
+    }
+  }
+  
+  # How many lines should this new title have? Based on the cut off
+  sentence_vecs &amp;lt;- ceiling(nchar(variable_label) / cut)
+  
+  # Create an empty list with the amount of lines for the excerpts
+  # to be stored.
+  list_excerpts &amp;lt;- replicate(sentence_vecs, vector(&amp;quot;character&amp;quot;, 0))
+  
+  for (list_index in seq_along(list_excerpts)) {
+    
+    non_empty_list &amp;lt;- Filter(f = function(x) !(is_empty(x)), list_excerpts)
+    
+    # If this is the first line, the start should 1, otherwise the sum of all characters
+    # of previous lines
+    start &amp;lt;- ifelse(list_index == 1, 1, sum(map_dbl(non_empty_list, nchar)))
+    
+    # Because start gets updated every iteration, simply cut from start to start + cut
+    # The appropriate exceptions are added when its the first line of the plot.
+    list_excerpts[[list_index]] &amp;lt;-
+      sentence_cut(variable_label, start, ifelse(list_index == 1, cut, start + cut))
+  }
+  
+  final_title &amp;lt;- paste(list_excerpts, collapse = &amp;quot;\n&amp;quot;)
+  final_title
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The function accepts a string and a cut off point. It will automatically create new lines if needed and return the separated title based on the cutoff point. We apply this function over the title and the labels, to make sure everything is clean.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;final_title &amp;lt;- label_cutter(title_question, 60)
+labels &amp;lt;- map_chr(labels, label_cutter, 35)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Finally, as I’ve outlined above, each question should have less then four labels. I though that it might be a good idea if I created different graphs for different number of labels. For example, for the two label questions, I thought a simple dot plot might be a good idea —— the space between the dots will sum up to one making it quite intuitive. However, for three and four labels, I though of a cutomized dotplot.&lt;/p&gt;
+&lt;p&gt;At the time I was writing this bot I was learning object oriented programming, so I said to myself, why not create a generic function that generates different plots for different labels? First, I need to assign the data frame the appropriate class.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;label_class &amp;lt;-
+  c(&amp;quot;2&amp;quot; = &amp;quot;labeltwo&amp;quot;, &amp;#39;3&amp;#39; = &amp;quot;labelthree&amp;quot;, &amp;#39;4&amp;#39; = &amp;quot;labelfour&amp;quot;)[as.character(len_labels)]
+
+class(try_df) &amp;lt;- c(class(try_df), label_class)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The generic function, together with its cousin functions, are located in the &lt;code&gt;ggplot_funs.R&lt;/code&gt; script in the PISA bot repository linked in the beginning.&lt;/p&gt;
+&lt;p&gt;The idea is simple. Create a generic function that dispatches based on the class of the object.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;pisa_graph &amp;lt;- function(data, y_title, fill_var) UseMethod(&amp;quot;pisa_graph&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;pisa_graph.labeltwo &amp;lt;- function(data, y_title, fill_var) {
+  
+  dots &amp;lt;- setNames(list(interp(~ fct_reorder2(x, y, z),
+                               x = quote(cnt),
+                               y = as.name(fill_var),
+                               z = quote(Percentage))), &amp;quot;cnt&amp;quot;)
+  # To make sure we can randomly sample a number lower than the length
+  unique_cnt &amp;lt;- length(unique(data$cnt))
+  
+  data %&amp;gt;%
+    filter(cnt %in% sample(unique(cnt), ifelse(unique_cnt &amp;gt;= 15, 15, 10))) %&amp;gt;%
+    mutate_(.dots = dots) %&amp;gt;%
+    ggplot(aes(cnt, Percentage)) +
+    geom_point(aes_string(colour = fill_var)) +
+    labs(y = y_title, x = NULL) +
+    scale_colour_discrete(name = NULL) +
+    guides(colour = guide_legend(nrow = 1)) +
+    scale_y_continuous(limits = c(0, 100),
+                       breaks = seq(0, 100, 20),
+                       labels = paste0(seq(0, 100, 20), &amp;quot;%&amp;quot;)) +
+    coord_flip() +
+    theme_minimal() +
+    theme(legend.position = &amp;quot;top&amp;quot;)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This is the graph for the &lt;code&gt;labeltwo&lt;/code&gt; class. Using a work around for non-standard evaluation, I reorder the &lt;code&gt;x&lt;/code&gt; axis. This took me some time to understand but it’s very easy once you’ve written two or three expressions. Create a list with the formula (this might be for &lt;code&gt;mutate&lt;/code&gt;, &lt;code&gt;filter&lt;/code&gt; or whatever &lt;code&gt;tidyverse&lt;/code&gt; function) and &lt;strong&gt;rename&lt;/strong&gt; the placeholders in the formula with the appropriate names. Make sure to name that list object with the new variable name you want for this variable. So, for my example, we’re creating a new variable called &lt;code&gt;cnt&lt;/code&gt; that will be the same variable reordered by the &lt;code&gt;fill_var&lt;/code&gt; and the &lt;code&gt;Percentage&lt;/code&gt; variable.&lt;/p&gt;
+&lt;p&gt;After this, I just built a usual &lt;code&gt;ggplot2&lt;/code&gt; object (although notice that I used &lt;code&gt;mutate_&lt;/code&gt; instead of &lt;code&gt;mutate&lt;/code&gt; for the non-standard evaluation).&lt;/p&gt;
+&lt;p&gt;If you’re interested in learning more about standard and non-standard evaluation, I found these resources very useful (&lt;a href=&#34;http://www.carlboettiger.info/2015/02/06/fun-standardizing-non-standard-evaluation.html&#34;&gt;here&lt;/a&gt;, &lt;a href=&#34;http://adv-r.had.co.nz/Computing-on-the-language.html&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;https://cran.r-project.org/web/packages/lazyeval/vignettes/lazyeval.html&#34;&gt;here&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;The generic for &lt;code&gt;labelthree&lt;/code&gt; and &lt;code&gt;labelfour&lt;/code&gt; are pretty much the same as the previous plot but using a slightly different &lt;code&gt;geom&lt;/code&gt;. Have a look at the original file &lt;a href=&#34;https://raw.githubusercontent.com/cimentadaj/PISAfacts_twitterBot/master/ggplot_funs.R&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;We’ll, we’re almost there. After this, we simply, &lt;code&gt;source&lt;/code&gt; the &lt;code&gt;ggplot_funs.R&lt;/code&gt; script and produce the plot.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;source(&amp;quot;https://raw.githubusercontent.com/cimentadaj/PISAfacts_twitterBot/master/ggplot_funs.R&amp;quot;)
+pisa_graph(data = try_df,
+             y_title = final_title,
+             fill_var = var_name)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-24-1.png&#34; width=&#34;672&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;file &amp;lt;- tempfile()
+ggsave(file, device = &amp;quot;png&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;setting-the-twitter-bot&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Setting the twitter bot&lt;/h2&gt;
+&lt;p&gt;The final part is automating the twitter bot. I followed &lt;a href=&#34;https://www.r-bloggers.com/programming-a-twitter-bot-and-the-rescue-from-procrastination/&#34;&gt;this&lt;/a&gt; and &lt;a href=&#34;http://www.r-datacollection.com/blog/How-to-conduct-a-tombola-with-R/&#34;&gt;this&lt;/a&gt;. I won’t go into the specifics because I probably wouldn’t do justice to the the second post, but you have to create your account on Twitter, this will give you some keys that make sure you’re the right person. &lt;em&gt;You need to write these key-value pairs as environment variables&lt;/em&gt; (follow the second post) and then delete them from your R script (they’re secret! You shouldn’t keep them on your script but on some folder on your computer). Finally, make sure you identify your twitter account and make your first tweet!&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(twitteR) # devtools::install_github(&amp;quot;geoffjentry/twitteR&amp;quot;)
+setwd(&amp;quot;./folder_with_my_credentials/&amp;quot;)
+
+api_key             &amp;lt;- Sys.getenv(&amp;quot;twitter_api_key&amp;quot;)
+api_secret          &amp;lt;- Sys.getenv(&amp;quot;twitter_api_secret&amp;quot;)
+access_token        &amp;lt;- Sys.getenv(&amp;quot;twitter_access_token&amp;quot;)
+access_token_secret &amp;lt;- Sys.getenv(&amp;quot;twitter_access_token_secret&amp;quot;)
+setup_twitter_oauth(api_key, api_secret, access_token, access_token_secret)
+
+tweet(&amp;quot;&amp;quot;, mediaPath = file)
+unlink(file)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;That’s it! The last line should create the&lt;code&gt;tweet&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;automating-the-bot&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Automating the bot&lt;/h2&gt;
+&lt;p&gt;The only thing left to do is automate this to run every day. I’ll explain how I did it for OSx by following &lt;a href=&#34;http://www.techradar.com/how-to/computing/apple/terminal-101-creating-cron-jobs-1305651&#34;&gt;this&lt;/a&gt; tutorial. You can find a Windows explanation in step 3 &lt;a href=&#34;https://www.r-bloggers.com/programming-a-twitter-bot-and-the-rescue-from-procrastination/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;First, we need to figure out the specific time we want to schedule the script. We define the time by filling out five stars:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;*****&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The first asterisk is for specifying the minute of the run (0-59)&lt;/li&gt;
+&lt;li&gt;The second asterisk is for specifying the hour of the run (0-23)&lt;/li&gt;
+&lt;li&gt;The third asterisk is for specifying the day of the month for the run (1-31)&lt;/li&gt;
+&lt;li&gt;The fourth asterisk is for specifying the month of the run (1-12)&lt;/li&gt;
+&lt;li&gt;The fifth asterisk is for specifying the day of the week (where Sunday is equal to 0, up to Saturday is equal to 6)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Taken from &lt;a href=&#34;http://www.techradar.com/how-to/computing/apple/terminal-101-creating-cron-jobs-1305651&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;For example, let’s say we wanted to schedule the script for &lt;code&gt;3:00 pm&lt;/code&gt; every day, then the combination would be &lt;code&gt;0 15 * * *&lt;/code&gt;. If we wanted something every &lt;code&gt;15&lt;/code&gt; minutes, then &lt;code&gt;15 * * * *&lt;/code&gt; would do it. If we wanted to schedule the script for Mondays and Wednesdays at &lt;code&gt;15:00&lt;/code&gt; and &lt;code&gt;17:00&lt;/code&gt; respectively, then we would write &lt;code&gt;0 15,17 * * 1,3&lt;/code&gt;. In this last example the &lt;code&gt;* *&lt;/code&gt; are the placeholders for day of the month and month.&lt;/p&gt;
+&lt;p&gt;In my example, I want the script to run every weekday at &lt;code&gt;9:30&lt;/code&gt; am, so my equivalent would be &lt;code&gt;30 9 * * 1-5&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;To begin, we type &lt;code&gt;env EDITOR=nano crontab -e&lt;/code&gt; in the &lt;code&gt;terminal&lt;/code&gt; to initiate the &lt;code&gt;cron&lt;/code&gt; file that will run the script. Next, type our time schedule followed by the command that will run the script in R. The command is &lt;code&gt;RScript&lt;/code&gt;. However, because your terminal might not know where &lt;code&gt;RScript&lt;/code&gt; is we need to type the directory to where RScript is. Type &lt;code&gt;which RScript&lt;/code&gt; in the terminal and you shall get something like &lt;code&gt;/usr/local/bin/RScript&lt;/code&gt;. Then the expression would be something like &lt;code&gt;30 9 * * 1-5 /usr/local/bin/RScript path_to_your/script.R&lt;/code&gt;. See &lt;a href=&#34;https://support.rstudio.com/hc/en-us/articles/218012917-How-to-run-R-scripts-from-the-command-line&#34;&gt;here&lt;/a&gt; for the &lt;code&gt;RScript&lt;/code&gt; explanation.&lt;/p&gt;
+&lt;p&gt;The whole sequence would be like this:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;env EDITOR=nano crontab -e
+30 9 * * 1-5 /usr/local/bin/RScript path_to_your/script.R&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To save the file, press Control + O (to write out the file), then enter to accept the file name, then press Control + X (to exit nano). If all went well, then you should see “crontab: installing new crontab” without anything after that.&lt;/p&gt;
+&lt;p&gt;Aaaaaand that’s it! You now have a working script that will be run from Monday to Friday at 9:30 am. This script will read the PISA data, pick a random variable, make a graph and tweet it. You can follow this twitter account at &lt;span class=&#34;citation&#34;&gt;@DailyPISA_Facts&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;Hope this was useful!&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Cognitive inequality around the world – Shiny app</title>
+      <link>/hugo-goa-demo/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</link>
+      <pubDate>Mon, 12 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</guid>
+      <description>&lt;p&gt;For the last month I’ve been working on this massive dataset that combines all PISA, TIMSS and PIRLS surveys into one major database. It has over 3 million students and over 2,000 variables, including student background and school and teacher information. I started playing around with it and ending up doing this: &lt;a href=&#34;https://cimentadaj.shinyapps.io/shiny/&#34; class=&#34;uri&#34;&gt;https://cimentadaj.shinyapps.io/shiny/&lt;/a&gt;. Feel free to check it out and drop any comments below.&lt;/p&gt;
+&lt;p&gt;If you want to contribute, &lt;a href=&#34;https://github.com/cimentadaj/Inequality_Shinyapp&#34;&gt;this&lt;/a&gt; is the Github repository. I plan to keep adding some stuff to the app, including new surveys and automatic plot downloading, so don’t forget to check it out.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Fitting the wrong model</title>
+      <link>/hugo-goa-demo/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</link>
+      <pubDate>Thu, 10 Nov 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</guid>
+      <description>&lt;p&gt;These exercises are from the book &lt;a href=&#34;http://www.stat.columbia.edu/~gelman/arm/&#34;&gt;Data Analysis Using Regression and Multilevel/Hierarchical Models&lt;/a&gt;. I’ve really gotten into completing these exercises and I guess that by posting them I’ve found an excuse to keep doing it. This time I went back to chapter 8 which deals with simulations. I picked the first exercise, page 165 exercise 8.6.1, which says:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Fitting the wrong model: suppose you have 100 data points that arose from the following model: y = 3 + 0.1×1 + 0.5×2 + error, with errors having a t distribution with mean 0, scale 5, and 4 degrees of freedom.We shall explore the implications of fitting a standard linear regression to these data.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;The (a) section of the exercises says as follows:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;Simulate data from this model. For simplicity, suppose the values of x1 are simply the integers from 1 to 100, and that the values of x2 are random and equally likely to be 0 or 1. Fit a linear regression (with normal errors) to these data and see if the 68% confidence intervals for the regression coefficients (for each, the estimates ±1 standard error) cover the true values.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;This is simple enough. Simulate some linear model but change the error term to be t distributed with a set of characteristics. Here’s the code:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;suppressWarnings(suppressMessages({
+  library(arm)
+  library(broom)
+  library(hett)
+  }))
+
+set.seed(2131)
+x1 &amp;lt;- 1:100
+x2 &amp;lt;- rbinom(100, 1, 0.5)
+error1 &amp;lt;- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+                                              # with df 4, mean 0 and var 5
+
+y = 3 + 0.1*x1 + 0.5*x2 + error1
+
+display(lm(y ~ x1 + x2))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## lm(formula = y ~ x1 + x2)
+##             coef.est coef.se
+## (Intercept) 3.30     0.43   
+## x1          0.10     0.01   
+## x2          0.33     0.40   
+## ---
+## n = 100, k = 3
+## residual sd = 1.96, R-Squared = 0.67&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It looks like the true slope of x1 is contained in the 68% CI’s.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;c(upper = 0.10 + (1 * 0.01), lower = 0.10 + (-1 * 0.01))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## upper lower 
+##  0.11  0.09&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;For x2 it’s contained but the uncertainty is too high making the CI’s too wide.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;c(upper = 0.33 + (1 * 0.40), lower = 0.33 + (-1 * 0.40))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## upper lower 
+##  0.73 -0.07&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;blockquote&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;Put the above step in a loop and repeat 1000 times. Calculate the confidence coverage for the 68% intervals for each of the three coefficients in the model.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;coefs &amp;lt;- array(NA, c(3, 1000))
+se &amp;lt;- array(NA, c(3, 1000))
+
+# Naturally, these estimates will be different for anyone who runs this code
+# even if specifying set seed because the loop will loop new numbers each time.
+
+for (i in 1:ncol(coefs)) {
+  x1 &amp;lt;- 1:100
+  x2 &amp;lt;- rbinom(100, 1, 0.5)
+  error1 &amp;lt;- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+                                                # with df 4 and mean 0
+  y = 3 + 0.1*x1 + 0.5*x2 + error1
+  
+  mod1 &amp;lt;- summary(lm(y ~ x1 + x2))
+  coefs[1,i] &amp;lt;- tidy(mod1)[1,2]
+  coefs[2,i] &amp;lt;- tidy(mod1)[2,2]
+  coefs[3,i] &amp;lt;- tidy(mod1)[3,2]
+  
+  se[1,i] &amp;lt;- tidy(mod1)[1,3]
+  se[2,i] &amp;lt;- tidy(mod1)[2,3]
+  se[3,i] &amp;lt;- tidy(mod1)[3,3]
+}
+
+repl_coef &amp;lt;- rowMeans(coefs)
+repl_se &amp;lt;- rowMeans(se)
+
+cbind(repl_coef + (-1 * repl_se), repl_coef + (1 * repl_se))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##            [,1]      [,2]
+## [1,] 2.48215326 3.4808804
+## [2,] 0.09255549 0.1079026
+## [3,] 0.05919238 0.9495994&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Going back to previous block of code which contains the true parameters, the 68% interval for the intercept does contain 3, the 68% interval for x1 does contain 0.10 and both CI’s are quite precise. Finally, the confidence interval for x2 does contain 0.5 but the uncertainty is huge. What does this mean? The estimation of the slope for x2 does contain the true parameter but given that our error is too big and the normal distribution of &lt;code&gt;lm&lt;/code&gt; does not account for that, it presents much more uncertainty in the estimation of the slope. If we ran a t distributed &lt;code&gt;lm&lt;/code&gt; then it will certainly be more precise.&lt;/p&gt;
+&lt;p&gt;The last section of the exercise asks you to do exactly that. Repeat the previous loop but instead of using &lt;code&gt;lm&lt;/code&gt;, use &lt;code&gt;tlm&lt;/code&gt; from the hett package which accounts for a t-distributed error term. Compare the CI’s and coefficients. Let’s do it:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;Repeat this simulation, but instead fit the model using t errors (see Exercise 6.6). The only change here is defining error1 as a t distribution instead of normally distributed&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;coefs &amp;lt;- array(NA, c(3, 1000))
+se &amp;lt;- array(NA, c(3, 1000))
+
+for (i in 1:ncol(coefs)) {
+  x1 &amp;lt;- 1:100
+  x2 &amp;lt;- rbinom(100, 1, 0.5)
+  error1 &amp;lt;- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+  y = 3 + 0.1*x1 + 0.5*x2 + error1
+  
+  mod1 &amp;lt;- summary(tlm(y ~ x1 + x2))
+  coefs[1,i] &amp;lt;- mod1$loc.summary$coefficients[1,1]
+  coefs[2,i] &amp;lt;- mod1$loc.summary$coefficients[2,1]
+  coefs[3,i] &amp;lt;- mod1$loc.summary$coefficients[3,1]
+  
+  se[1,i] &amp;lt;- mod1$loc.summary$coefficients[1,2]
+  se[2,i] &amp;lt;- mod1$loc.summary$coefficients[2,2]
+  se[3,i] &amp;lt;- mod1$loc.summary$coefficients[3,2]
+}
+
+repl_coef &amp;lt;- rowMeans(coefs)
+repl_se &amp;lt;- rowMeans(se)
+
+cbind(repl_coef + (-1 * repl_se), repl_coef + (1 * repl_se))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##            [,1]      [,2]
+## [1,] 2.61212284 3.4265738
+## [2,] 0.09335461 0.1058854
+## [3,] 0.14971691 0.8769205&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Accounting for the t-distributed error (so the tails are much wider), the intervals for the intercept and x1 are quite similar (but narrower) and for x2 they’re certainly much more narrow. Note that the CI is still pretty big, reflecting the variance in the error term. But whenever this variance exceeds what a normal distribution can capture, we should account for it: it might help to reduce the uncertainty in the estimation. Note that, if you reran both simulations and compare the coefficients in &lt;code&gt;repl_coef&lt;/code&gt;, they’re practically the same. So the different estimations don’t affect the parameters, but rather the uncertainty with which we trust them.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Multilevel modeling – Part 1</title>
+      <link>/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-1/multilevel-modeling--part-1/</link>
+      <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-1/multilevel-modeling--part-1/</guid>
+      <description>&lt;p&gt;I’ve been reading Andrew Gelman’s and Jennifer Hill’s book again but this time concentrating on the multilevel section of the book. I finished the first chapter (chapter 12) and got fixed on the exercises 12.2, 12.3 and 12.4. I finally completed them and I thought I’d share the three exercises in two posts, mostly for me to come back to these in the future. The first exercise goes as follows:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;&lt;p&gt;Write a model predicting CD4 percentage as a function of time with varying intercepts across children. Fit using lmer() and interpret the coefficient for time.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Extend the model in (a) to include child-level predictors (that is, group-level predictors) for treatment and age at baseline. Fit using lmer() and interpret the coefficients on time, treatment, and age at baseline.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Investigate the change in partial pooling from (a) to (b) both graphically and numerically.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Compare results in (b) to those obtained in part (c).&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The data set they’re referring is called ‘CD4’ and as they authors explain in the book it measures ‘… CD4 percentages for a set of young children with HIV who were measured several times over a period of two years. The dataset also includes the ages of the children at each measurement..’. I’m not sure what CD4 means, but that shouldn’t stop us from at least interpreting the results and answering the questions. Let’s start with the exercises:&lt;/p&gt;
+&lt;hr /&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;Write a model predicting CD4 percentage as a function of time with varying intercepts across children. Fit using lmer() and interpret the coefficient for time. The data argument is excluding some NA’s because the next model is to be compared with this model and we need to have the same number of observations&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;suppressWarnings(suppressMessages(library(arm)))
+cd4 &amp;lt;- read.csv(&amp;quot;http://www.stat.columbia.edu/~gelman/arm/examples/cd4/allvar.csv&amp;quot;)
+
+head(cd4)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##   VISIT newpid       VDATE CD4PCT arv   visage treatmnt CD4CNT baseage
+## 1     1      1  6/29/1988      18   0 3.910000        1    323    3.91
+## 2     4      1  1/19/1989      37   0 4.468333        1    610    3.91
+## 3     7      1  4/13/1989      13   0 4.698333        1    324    3.91
+## 4    10      1                 NA   0 5.005000        1     NA    3.91
+## 5    13      1 11/30/1989      13   0 5.330833        1    626    3.91
+## 6    16      1                 NA  NA       NA        1    220    3.91&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Let&amp;#39;s transform the VDATE variable into date format
+cd4$VDATE &amp;lt;- as.Date(cd4$VDATE, format = &amp;quot;%m/%d/%Y&amp;quot;)
+
+mod1 &amp;lt;- lmer(CD4PCT ~
+               VDATE +
+               (1 | newpid),
+             data = subset(cd4, !is.na(treatmnt) &amp;amp; !is.na(baseage)))
+
+display(mod1)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## lmer(formula = CD4PCT ~ VDATE + (1 | newpid), data = subset(cd4, 
+##     !is.na(treatmnt) &amp;amp; !is.na(baseage)))
+##             coef.est coef.se
+## (Intercept) 66.04     9.48  
+## VDATE       -0.01     0.00  
+## 
+## Error terms:
+##  Groups   Name        Std.Dev.
+##  newpid   (Intercept) 11.65   
+##  Residual              7.31   
+## ---
+## number of obs: 1072, groups: newpid, 250
+## AIC = 7914, DIC = 7885.8
+## deviance = 7895.9&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The time coefficient simply means that as time increases the percentage of CD4 decreases by 0.01 percent for each child. The effect size is really small, although significant. We can also see that most of the variation in CD4 is between children rather than within children (that is between time because that’s the variation within each child)&lt;/p&gt;
+&lt;hr /&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;Extend the model in (a) to include child-level predictors (that is, group-level predictors) for treatment and age at baseline. Fit using lmer() and interpret the coefficients on time, treatment, and age at baseline.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mod2 &amp;lt;- lmer(CD4PCT ~
+               VDATE +
+               treatmnt +
+               baseage +
+               (1 | newpid),
+             data = cd4)
+
+display(mod2)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## lmer(formula = CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), 
+##     data = cd4)
+##             coef.est coef.se
+## (Intercept) 67.28     9.82  
+## VDATE       -0.01     0.00  
+## treatmnt     1.26     1.54  
+## baseage     -1.00     0.34  
+## 
+## Error terms:
+##  Groups   Name        Std.Dev.
+##  newpid   (Intercept) 11.45   
+##  Residual              7.32   
+## ---
+## number of obs: 1072, groups: newpid, 250
+## AIC = 7906.3, DIC = 7878.8
+## deviance = 7886.5&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The time coefficients is exactly the same so neither the treatment or the base age is correlated with the date in which the students were measured. Those who were treated have on average about 1.26% more CD4 than the non-treated. And finally, children which were older at the base measure have about 1% less CD4 than younger children at base. The between-child variance went down from 11.65 to 11.45, so either treatment, baseage or both explained some of the differences between children. The within child variation is practically the same.&lt;/p&gt;
+&lt;p&gt;The next exercises uses a term called ‘partial pooling’. This term took me some time to understand but it basically means that we’re neither running a regression ignoring any multilevel structure (complete pooling of the groups) or running a regression for each group separately (complete no-pooling). Running a partially pooled model means being able to have single parameters (like in a completely-pooled model), but estimated from separate regression models for each group(like in a complete-no-pooled model).&lt;/p&gt;
+&lt;p&gt;How we can investigate the changes in partial pooling? A completely pooled model runs perfectly when you have little to no variation between groups. Whenever a set of predictors shrinks the between group variation, we’re getting closer to a model with less and less between group variation ( so completely pooled). How can we measure this? In our case, because we’re modeling a varying intercept, we can compare the confidence intervals of the intercept of each group intercept and see if the estimation has become more certain. Numerically, we can check whether the between group variation has decreased, becoming closer to a completely-pooled model.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;Investigate the change in partial pooling from (a) to (b) both graphically and numerically.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;suppressMessages(suppressWarnings(library(ggplot2)))
+# Change in standard errors
+
+# First and second model intercepts
+df1 &amp;lt;- coef(mod1)$newpid[,1 , drop = F]
+df2 &amp;lt;- coef(mod2)$newpid[,1 , drop = F]
+names(df1) &amp;lt;- c(&amp;quot;int&amp;quot;)
+names(df2) &amp;lt;- c(&amp;quot;int&amp;quot;)
+
+# Confidence intervals for each intercept for both moels
+df1$ci_bottom &amp;lt;- df1$int + (-2 * se.ranef(mod1)$newpid[,1])
+df1$ci_upper &amp;lt;- df1$int + (2 * se.ranef(mod1)$newpid[,1])
+
+df2$ci_bottom &amp;lt;- df2$int + (-2 * se.ranef(mod2)$newpid[,1])
+df2$ci_upper &amp;lt;- df2$int + (2 * se.ranef(mod2)$newpid[,1])
+
+# Now we need to compare whether the CI&amp;#39;s shrunk from
+# the first to the second model
+
+# Calculate difference
+df1$diff &amp;lt;- df1$ci_upper - df1$ci_bottom
+df2$dff &amp;lt;- df2$ci_upper - df2$ci_bottom
+
+# Create a df with both differences
+df3 &amp;lt;- data.frame(cbind(df1$diff, df2$dff))
+
+# Create a difference out of that
+df3$diff &amp;lt;- df3$X1 - df3$X2
+
+# Graph it
+ggplot(df3, aes(diff)) + geom_histogram(bins = 100) +
+  xlim(0, 0.2)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-1/2016-11-06-multilevel-modeling--part-1_files/figure-html/fig.-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;It looks like the difference is always higher than zero which means that in the second model the difference between the upper and lower CI is smaller than in the first model. This suggests we have greater certainty of our estimation by including the two predictors in the model.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Numerically, the between-child variance in the first
+# model was:
+display(mod1)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## lmer(formula = CD4PCT ~ VDATE + (1 | newpid), data = subset(cd4, 
+##     !is.na(treatmnt) &amp;amp; !is.na(baseage)))
+##             coef.est coef.se
+## (Intercept) 66.04     9.48  
+## VDATE       -0.01     0.00  
+## 
+## Error terms:
+##  Groups   Name        Std.Dev.
+##  newpid   (Intercept) 11.65   
+##  Residual              7.31   
+## ---
+## number of obs: 1072, groups: newpid, 250
+## AIC = 7914, DIC = 7885.8
+## deviance = 7895.9&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;11.65 / (11.65 + 7.31)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 0.6144515&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# For the second model
+display(mod2)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## lmer(formula = CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), 
+##     data = cd4)
+##             coef.est coef.se
+## (Intercept) 67.28     9.82  
+## VDATE       -0.01     0.00  
+## treatmnt     1.26     1.54  
+## baseage     -1.00     0.34  
+## 
+## Error terms:
+##  Groups   Name        Std.Dev.
+##  newpid   (Intercept) 11.45   
+##  Residual              7.32   
+## ---
+## number of obs: 1072, groups: newpid, 250
+## AIC = 7906.3, DIC = 7878.8
+## deviance = 7886.5&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;11.45 / (11.45 + 7.32)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 0.610016&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The between variance went down JUST a little, in line with the tiny reduction in the standard errors of the intercept.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;The last question asks:&lt;/p&gt;
+&lt;p&gt;Compare results in (b) to those obtained in part (c).&lt;/p&gt;
+&lt;p&gt;It looks like from the results in (c) the second model a bit more certain in making estimations because it shrinks the partial pooling closer to complete-pooling. As Gelman and Hill explain in page 270, multilevel modeling is most effective when closest to complete-pooling because the estimation of individual group parameters can be done much more precisely, specially for groups with a small amount of observations.&lt;/p&gt;
+&lt;p&gt;In the next post we’ll cover exercises 12.3 and 12.4 which build on the models outlined here.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Multilevel modeling – Part 2</title>
+      <link>/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-2/multilevel-modeling--part-2/</link>
+      <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-2/multilevel-modeling--part-2/</guid>
+      <description>&lt;p&gt;This is a continuation of the multilevel exercise 12.2 from chapter 12 of Data Analysis Using Regression and Multilevel/Hierarchical Models. In the last post (link to previous post) we explored the basic interpretation of multilevel modeling with a varying intercept and delved into comparing models and understanding partial pooling.&lt;/p&gt;
+&lt;p&gt;This was all done by completing the exercise 12.2 from chapter 12 of the book Data Analysis Using Regression and Multilevel/Hierarchical Models. Exercises 12.3 and 12.4 continue using the same dataset and the same models, so I figured I’d post them here. Let’s start.&lt;/p&gt;
+&lt;p&gt;Exercise 12.3 asks:&lt;/p&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Predictions for new observations and new groups:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;&lt;p&gt;Use the model fit from Exercise 12.2 (b) to generate simulation of predicted CD4 percentages for each child in the dataset at a hypothetical next time point.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Use the same model fit to generate simulations of CD4 percentages at each of the time periods for a new child who was 4 years old at baseline.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Let’s start:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;suppressWarnings(suppressMessages(library(arm)))
+cd4 &amp;lt;- read.csv(&amp;quot;http://www.stat.columbia.edu/~gelman/arm/examples/cd4/allvar.csv&amp;quot;)
+
+# Let&amp;#39;s recreate the model from 12.2 (b)
+cd4$VDATE &amp;lt;- as.Date(cd4$VDATE, format = &amp;quot;%m/%d/%Y&amp;quot;)
+mod2 &amp;lt;- lmer(CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), data = cd4)&lt;/code&gt;&lt;/pre&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;Use the model fit from Exercise 12.2 (b) to generate simulation of predicted CD4 percentages for each child in the dataset at a hypothetical next time point.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;For this we have to create a hypothetical next time point. Let’s choose:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;pred_data &amp;lt;- subset(cd4, !is.na(treatmnt) &amp;amp; !is.na(baseage))
+pred_data$VDATE &amp;lt;- as.Date(&amp;quot;1989-01-01&amp;quot;)
+
+
+# Let&amp;#39;s select only the independent variables from the model
+pred_data &amp;lt;- pred_data[, -c(1, 4, 5, 6, 8)]
+
+# Now we have a dataset with a fixed new date for each child
+# but with the original values for all other variables.
+
+# Let&amp;#39;s estimate the predicted CD4 percentage for each child:
+newpred &amp;lt;- predict(mod2, newdata = pred_data)
+
+# That it! We have the predicted percentage of CD4 for a fixed date for every child.
+# Let&amp;#39;s look at the distribution
+hist(newpred)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;There’s quite some variation going from 0% to even 60%. It’d be nice to know what CD4 is.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;Question (b) is pretty similar but instead of asking for a new time point for each child, it asks to predict the CD4 percentage for a new child who was 4 years old at the baseline with a set of hypothetical time periods.&lt;/p&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;Use the same model fit to generate simulations of CD4 percentages at each of the time periods for a new child who was 4 years old at baseline.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;For that we have to first create the dataset with the hypothetical child:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# I&amp;#39;ll assume 7 hypothetical dates
+hyp_child &amp;lt;- data.frame(newpid = 120,
+                        VDATE = sample(cd4$VDATE[!is.na(cd4$VDATE)], 7),
+                        baseage = 4,
+                        treatmnt = 1)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The exercise doesn’t say anything about the treatment variable but I have to assign a value to it because it’s present in the previous model. I’ll assume this new child was in the treatment.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;year_pred &amp;lt;- predict(mod2, newdata = hyp_child)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;That’s it! Now we have the predicted CD4 percentage for different time points for a hypothetical child.&lt;/p&gt;
+&lt;p&gt;Finally, exercise 12.4 posits this question:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Posterior predictive checking: continuing the previous exercise, use the fitted model from Exercise 12.2 (b) to simulate a new dataset of CD4 percentages (with the same sample size and ages of the original dataset) for the final time point of the study, and record the average CD4 percentage in this sample. Repeat this process 1000 times and compare the simulated distribution to the observed CD4 percentage at the final time point for the actual data.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;This problem was a bit confusing because I don’t understand what they mean by the ‘final time point of the study’. Is it the last date in the VDATE variable? But that couldn’t be it because the sample size would be 1. I think what they mean is to take the original data and replace the VDATE variable with the final date available. Predict CD4 percentages for each child with this date (using the original ages of the data set) and calculate the mean of these predictions. After that, do the 1000 replications and compare the distribution with the actual CD4 percentage of the specific date. Let’s start.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Make the data similar to the model in mod2
+finaltime_data &amp;lt;- subset(cd4, !is.na(treatmnt) &amp;amp; !is.na(baseage))
+
+# Assign the final date to the date variable
+finaltime_data$VDATE &amp;lt;- as.Date(max(finaltime_data$VDATE, na.rm = T))
+
+# Only select the variables present in the model
+finaltime_data &amp;lt;- finaltime_data[, -c(1, 4, 5, 6, 8)]
+
+# Calculate the mean predicted CD4 percentage and it&amp;#39;s standard deviation
+mean_cd4 &amp;lt;- mean(predict(mod2, newdata = finaltime_data), na.rm = T)
+sd_cd4 &amp;lt;- sd(predict(mod2, newdata = finaltime_data), na.rm = T)
+
+# Simulate 1000 observations considering the uncertainty
+# and look at the distribution.
+set.seed(421)
+
+hist(rnorm(1000, mean_cd4, sd = sd_cd4))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;It’s incredibly wide and it even includes negative numbers, something impossible with percentages. But whats the actual CD4 percentage of that date?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cd4 &amp;lt;- subset(cd4, !is.na(VDATE))
+cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##      VISIT newpid      VDATE CD4PCT arv   visage treatmnt CD4CNT  baseage
+## 483     16     99 1991-01-14   39.0   1 1.497500        2    526 0.347500
+## 1208    19    237 1991-01-14   21.2   0 2.510833        2   1036 1.073333&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And the mean is:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mean(c(39.0, 21.2))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 30.1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;So our predictions are extremely uncertain. Over half our simulations are underestimating the date and a handful are overestimating the results. It looks like our model is terrible at predicting that final time point.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;Well that’s it. Hope you enjoyed it. I’ll be completing more exercises in the future so remember to check back. ```&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Los pobres no son los peores pero los ricos sí son los mejores: desigualdad educativa</title>
+      <link>/hugo-goa-demo/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</link>
+      <pubDate>Sat, 24 Sep 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</guid>
+      <description>&lt;p&gt;Hace poco escribí un artículo sobre la desigualdad educativa en países Latinoamericanos y describí como la República Dominicana no parece estar tan mal como creemos. Ofrecí dos posibles explicaciones de porque esto pudiera ser bueno o malo, dependiendo del enfoque con que se ve (missing link after the ‘,’ with this: &lt;a href=&#34;http://www.jorgecimentada.com/?p=137&#34; class=&#34;uri&#34;&gt;http://www.jorgecimentada.com/?p=137&lt;/a&gt;). Luego de escribirlo me quedé pensando en algo que di por sentado: ¿realmente los ‘peores’ estudiantes son los estudiantes pobres? ¿son los estudiantes pobres los ‘peores’ en las escuelas públicas y privadas? Y a raíz del artículo de &lt;a href=&#34;http://acento.com.do/2016/opinion/8377420-desigualdad-educativa-interpela-desafia/&#34;&gt;Dinorah Garcia&lt;/a&gt;, ¿existe desigualdad entre las zonas rurales y urbanas?&lt;/p&gt;
+&lt;p&gt;Estas preguntas no solo ayudan a diagnosticar el estado actual de la desigualdad, más que eso, permiten inferir de donde pudieran provenir las fuentes de desigualdad. Si encontramos una diferencia bastante amplia entre los ‘mejores’ y ‘peores’ estudiantes, pero la diferencia es menor entre escuelas públicas y privada, pues la causa no es necesariamente las diferencias en calidad entre las tipos de escuelas. Sin embargo, si existen diferencias similares entre los estudiantes de escuelas rurales y urbanas, pues la razón puede ser precisamente en temas como la calidad educativa entre sectores pobres y ricos. Lo interesante de estas preguntas es que son todas preguntas empíricas, y se pueden responder con bases de datos como las de TERCE.&lt;/p&gt;
+&lt;div id=&#34;realmente-los-peores-estudiantes-son-los-estudiantes-pobres&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;1. ¿realmente los ‘peores’ estudiantes son los estudiantes pobres?&lt;/h2&gt;
+&lt;!-- ![1stplot](img/inquality_grade_topic.png) --&gt;
+&lt;p&gt;&lt;img src=&#34;img/inquality_grade_topic.png&#34; alt=&#34;Drawing&#34; style=&#34;width: 600px;&#34;/&gt;&lt;/p&gt;
+&lt;p&gt;Este gráfico presente claramente que no lo son. Tanto en matemáticas y lenguaje, los estudiantes más pobres (barra azul) suelen tener una mejor puntuación que los ‘peores’ estudiantes (barra roja). Esto parecer ser el caso sin importar que sean de la zona rural o urbana. Sería informativo comparar estos resultados desagregados por tipo de escuela, es decir, privada o pública, para identificar si los ‘peores’ estudiantes son los de las escuelas públicas.&lt;/p&gt;
+&lt;p&gt;En contraste, los estudiantes ricos (barra morada) si tienen la misma puntuación que los ‘mejores’ estudiantes (barra verde). De hecho, en zonas rurales los estudiantes ricos se desempeñan tan bien que obtienen una puntuación más alta que los ‘mejores’ estudiantes. Este gráfico cuenta una historia muy interesante. En resumen, los estudiantes pobres no reflejan ser los ‘peores’ del sistema educativo. Y por otro lado, los estudiantes ricos sí son los mejores estudiantes en sus respectivas materias.&lt;/p&gt;
+&lt;p&gt;Desde un punto de vista más general, la distribución entre la zona rural y urbana es muy similar, sugiriendo que no existe una desigualdad muy marcada.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;son-los-estudiantes-pobres-los-peores-en-las-escuelas-publicas-y-privadas&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;2. ¿son los estudiantes pobres los ‘peores’ en las escuelas públicas y privadas?&lt;/h2&gt;
+&lt;!-- ![2ndplot](img/inquality_public_topic.png) --&gt;
+&lt;p&gt;&lt;img src=&#34;img/inquality_public_topic.png&#34; alt=&#34;Drawing&#34; style=&#34;width: 650px;&#34;/&gt;&lt;/p&gt;
+&lt;p&gt;En este gráfico el panorama es un poco diferente. Los estudiantes pobres (barra verde) sí se desempeñan peor que los estudiantes promedios (barra roja) en las escuelas privadas. Esto no significa que son los ‘peores’ ya que el punto de comparación es el estudiante promedio y no los ‘peores’ estudiantes de las escuelas privadas. No obstante, si se nota una estratificación bastante clara: los estudiantes pobres tienen puntuación más baja que los estudiantes promedio, mientras que los estudiantes ricos (barra azul) tienen mayor puntuación que el estudiante average.&lt;/p&gt;
+&lt;p&gt;Viendo la otra cara de la moneda, las escuelas públicas, los estudiantes pobres si tienen el mismo desempeño que el estudiante promedio. Esto no significa que han mejorado en comparación con la escuela privada. Todo lo contrario. Los estudiantes pobres tienen un desempeño similar tanto en las escuelas públicas y privadas; lo que pasa es que el estudiante promedio de la escuela pública (barra roja) tienen una puntuación mucho más baja que el mismo estudiante en la escuela privada. Esto sugiere que, en promedio, los estudiantes de escuelas públicas tienen un peor desempeño que los de las escuelas privadas. De hecho, los ricos son igual de buenos sin importar el tipo de escuela. Los pobres, por otro lado, tienen una puntuación similar entre escuelas públicas y privadas, pero tienen un desempeño ligeramente menor en las escuelas públicas.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;existe-desigualdad-entre-las-zonas-rurales-y-urbanas&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;3. ¿existe desigualdad entre las zonas rurales y urbanas?&lt;/h2&gt;
+&lt;!-- ![3rdplot](img/inquality_ruralidad_topic.png) --&gt;
+&lt;p&gt;&lt;img src=&#34;img/inquality_ruralidad_topic.png&#34; alt=&#34;Drawing&#34; style=&#34;width: 650px;&#34;/&gt;&lt;/p&gt;
+&lt;p&gt;Este gráfico presenta que tanta desigualdad existe entre los estudiantes en 3ro y 6to de primaria en matemática y lengua para las zonas rurales y urbanas. Empecemos con la lengua española, la sección con las puntuaciones en color rojo. Para los estudiantes de 3ro de primaria, resulta que hay una desigualdad mucho más grande en la zona urbana que en la zona rural. Pero esta desigualdad es en gran parte debido a que los ‘mejores’ estudiantes de la zona urbana son mucho mejor que los de la zona rural, mientras que los ‘peores’ estudiantes son prácticamente iguales. ¿Será este el efecto escuela privada? Para 6to de primaria la desigualdad se ha doblado entre ambas zonas. Esto es consistente con la teoría de capital humano propuesta por James Heckman, que sugiere que mientras más pasa el tiempo, más difícil se hace cerrar la brecha entre los ‘mejores’ y ‘peores’ estudiantes. Aquí se nota la gran brecha que existe entre las zonas urbanas y zonas rurales. En la sección de matemáticas (puntuaciones en color azul), la diferencia entre la zona rural y urbana es más pequeña, aunque se nota un patron claro: los estudiantes urbanos son mejores que los rurales. Cualquier persona que &lt;a href=&#34;http://linkis.com/www.listindiario.com/AG90F&#34;&gt;sabe los pocos recursos que se le asignan a las provincias fuera de Santiago y Santo Domingo&lt;/a&gt; no se sorprendería en encontrar estos resultados. No obstante, siempre es bueno confirmar las especulaciones con datos empíricos.&lt;/p&gt;
+&lt;div id=&#34;que-significa-todo-esto&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;¿Que significa todo esto?&lt;/h4&gt;
+&lt;p&gt;Realmente, toda la información presentada aquí es pura descripción. No podemos concluir que vivir en las zonas rurales o ir a una escuela pública hace que tengas un peor desempeño, por más que quisiera. La ciencia no funciona de esta manera. Aparentemente existen brechas importantes entre las zonas urbanas y rurales, y tal y como sugiere Ceara Hatton, la distribución del presupuesto nacional abarca en su mayoría a Santo Domingo y Santiago. Se podría empezar por priorizar el gasto educativo a los que más lo necesitan, que suelen ser las zonas rurales. Esto tampoco es una solución inmediata; hay que priorizar la calidad del gasto y no el monto.&lt;/p&gt;
+&lt;p&gt;Por otro lado, podemos ver que los estudiantes pobres si tienen un peor desempeño que los estudiantes ricos, tanto en las escuelas privadas como en las públicas. Sugerir que se debe mejorar la calidad educativa pública ya se sabe, y si esta fuera homogénea a lo largo de las escuelas esperaríamos que los estudiantes ricos tuvieran la misma puntuación que los pobres, algo que no es el caso. Me parece que una de las explicaciones puede estar en el hecho de que los pobres tienen una ‘racha’ o acumulación de malas experiencias educativas a lo largo de la vida. Al momento de llegar a 3ro o 6to de primaria ya están muy por detrás de sus compañeros de mayores recursos. &lt;a href=&#34;http://www.diariolibre.com/opinion/dialogo-libre/el-problema-es-que-la-economia-crece-pero-no-se-distribuye-la-riqueza-EE5262978&#34;&gt;El acceso a educación temprana, de muy alta calidad, de forma universal, puede ayudar a remediar este problema de inmovilidad social&lt;/a&gt;. Esto es algo que muchas personas ya han pedido en otros países y no es nuevo.&lt;/p&gt;
+&lt;p&gt;Para terminar en una nota buena, no nos debemos sentir tan mal por estos resultados: como dije aquí(poner link &lt;a href=&#34;http://www.jorgecimentada.com/?p=137&#34; class=&#34;uri&#34;&gt;http://www.jorgecimentada.com/?p=137&lt;/a&gt;), en comparación con cualquier otro país latinoamericano, tenemos mucha menor desigualdad, lo importante sería asegurarnos que no crezca, porque es muy difícil cerrarlo después.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;Notas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;La pobreza en este caso se mide como los estudiantes que vienen de familias donde sus padres no se graduaron de la escuela secundaria. Opuestamente, los ricos son los estudiantes que vienen de familias donde los padres han obtenido un grado universitario o más.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;El promedio de los ‘peores’ estudiantes es el promedio de todos los niños que están en el 25% de la parte inferior de la distribución, mientras que el promedio de los ‘mejores’ estudiantes es el promedio del 25% de la parte superior de la distribución.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Cualquier persona interesada en reproducir estos análisis, &lt;a href=&#34;https://github.com/cimentadaj/blog-articles/tree/master/private_public_schools&#34;&gt;aquí&lt;/a&gt; está el código&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Obtaining robust standard errors and odds ratios for logistic regression in R</title>
+      <link>/hugo-goa-demo/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</link>
+      <pubDate>Mon, 19 Sep 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</guid>
+      <description>&lt;p&gt;I’ve always found it frustrating how it’s so easy to produce robust standard errors in Stata and in R it’s so complicated. First, we have to estimate the standard errors separately and then replace the previous standard errors with the new ones. Second, if you want to estimate odds ratios instead of logit coefficients, then the robust standard errors need to be scaled. All of that is as simple as adding robust or in the Stata logit command.&lt;/p&gt;
+&lt;p&gt;I decided to make it as simple in R.&lt;/p&gt;
+&lt;p&gt;First, I have to give credit to &lt;a href=&#34;http://stackoverflow.com/users/4233642/achim-zeileis&#34;&gt;Achim Zeileis&lt;/a&gt; in this &lt;a href=&#34;http://stackoverflow.com/questions/27367974/different-robust-standard-errors-of-logit-regression-in-stata-and-r&#34;&gt;question&lt;/a&gt; because he provided part of code to generate the robust standard errors.&lt;/p&gt;
+&lt;p&gt;The function accepts a glm object and can return logit coefficients with robust standard errors, odd ratios with adjusted robust standard errors or probability scaled coefficients with adjusted robust standard errors.&lt;/p&gt;
+&lt;p&gt;Here’s the function:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# This function estimates robust standad error for glm objects and
+# returns coefficients as either logit, odd ratios or probabilities.
+# logits are default
+# argument x must be glm model.
+
+
+# Credit to Achim here:
+# http://stackoverflow.com/questions/27367974/
+# different-robust-standard-errors-of-logit-regression-in-stata-and-r
+# for the code in line 14 and 15
+
+robustse &amp;lt;- function(x, coef = c(&amp;quot;logit&amp;quot;, &amp;quot;odd.ratio&amp;quot;, &amp;quot;probs&amp;quot;)) {
+suppressMessages(suppressWarnings(library(lmtest)))
+suppressMessages(suppressWarnings(library(sandwich)))
+
+    sandwich1 &amp;lt;- function(object, ...) sandwich(object) *
+                                       nobs(object) / (nobs(object) - 1)
+    # Function calculates SE&amp;#39;s
+    mod1 &amp;lt;- coeftest(x, vcov = sandwich1) 
+    # apply the function over the variance-covariance matrix
+    
+    if (coef == &amp;quot;logit&amp;quot;) {
+    return(mod1) # return logit with robust SE&amp;#39;s
+    } else if (coef == &amp;quot;odd.ratio&amp;quot;) {
+    mod1[, 1] &amp;lt;- exp(mod1[, 1]) # return odd ratios with robust SE&amp;#39;s
+    mod1[, 2] &amp;lt;- mod1[, 1] * mod1[, 2]
+    return(mod1)
+    } else {
+    mod1[, 1] &amp;lt;- (mod1[, 1]/4) # return probabilites with robust SE&amp;#39;s
+    mod1[, 2] &amp;lt;- mod1[, 2]/4
+    return(mod1)
+    }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now let’s give it a try. Let’s estimate two models, one with logit coefficients and robust SE’s and the same for odds ratios. Just to make sure, let’s compare it with the Stata output.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# In R for logit coefficients and robust standard errors:
+suppressMessages(suppressWarnings(library(haven)))
+
+dat &amp;lt;- read_dta(&amp;quot;http://www.stata-press.com/data/r9/quad1.dta&amp;quot;)
+mod1 &amp;lt;- glm(z ~ x1 + x2 + x3, dat, family = binomial)
+robustse(mod1, coef = &amp;quot;logit&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## z test of coefficients:
+## 
+##             Estimate Std. Error z value  Pr(&amp;gt;|z|)    
+## (Intercept) 0.091740   0.025869  3.5464 0.0003905 ***
+## x1          0.024050   0.025869  0.9297 0.3525395    
+## x2          0.157143   0.089715  1.7516 0.0798448 .  
+## x3          0.190162   0.089418  2.1267 0.0334490 *  
+## ---
+## Signif. codes:  0 &amp;#39;***&amp;#39; 0.001 &amp;#39;**&amp;#39; 0.01 &amp;#39;*&amp;#39; 0.05 &amp;#39;.&amp;#39; 0.1 &amp;#39; &amp;#39; 1&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# In Stata for logit coefficients and robust standard errors:
+use http://www.stata-press.com/data/r9/quad1.dta, clear
+logit z x1 x2 x3, robust
+
+# ------------------------------------------------------------------------------
+#              |               Robust
+#            z |      Coef.   Std. Err.      z    P&amp;gt;|z|     [95% Conf. Interval]
+# -------------+----------------------------------------------------------------
+#           x1 |     .02405   .0258693     0.93   0.353    -.0266528    .0747529
+#           x2 |   .1571428   .0897145     1.75   0.080    -.0186944      .33298
+#           x3 |    .190162   .0894185     2.13   0.033      .014905    .3654189
+#        _cons |     .09174   .0258686     3.55   0.000     .0410386    .1424415
+# ------------------------------------------------------------------------------&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# In R for odd ratios with adjusted standard errors
+robustse(mod1, coef = &amp;quot;odd.ratio&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## z test of coefficients:
+## 
+##             Estimate Std. Error z value  Pr(&amp;gt;|z|)    
+## (Intercept) 1.096080   0.028354  3.5464 0.0003905 ***
+## x1          1.024342   0.026499  0.9297 0.3525395    
+## x2          1.170163   0.104981  1.7516 0.0798448 .  
+## x3          1.209445   0.108147  2.1267 0.0334490 *  
+## ---
+## Signif. codes:  0 &amp;#39;***&amp;#39; 0.001 &amp;#39;**&amp;#39; 0.01 &amp;#39;*&amp;#39; 0.05 &amp;#39;.&amp;#39; 0.1 &amp;#39; &amp;#39; 1&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# In Stata for odd ratios with adjusted standard errors
+logit z x1 x2 x3, robust or
+
+# ------------------------------------------------------------------------------
+#              |               Robust
+#            z | Odds Ratio   Std. Err.      z    P&amp;gt;|z|     [95% Conf. Interval]
+# -------------+----------------------------------------------------------------
+#           x1 |   1.024342    .026499     0.93   0.353     .9736992    1.077618
+#           x2 |   1.170163   .1049806     1.75   0.080     .9814792    1.395119
+#           x3 |   1.209445   .1081467     2.13   0.033     1.015017    1.441118
+#        _cons |    1.09608    .028354     3.55   0.000     1.041892    1.153086
+# ------------------------------------------------------------------------------&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can also use the &lt;code&gt;stargazer&lt;/code&gt; package to produce nicely formatted tables with these new estimates and it should be exactly the same.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;UPDATE: I’ve included this function my personal package which you can install with &lt;code&gt;devtools::install_github(&amp;quot;cimentadaj/cimentadaj&amp;quot;)&lt;/code&gt;. Feel free to make any pull requests in the github repo.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Simulations and model predictions in R</title>
+      <link>/hugo-goa-demo/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</link>
+      <pubDate>Tue, 13 Sep 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</guid>
+      <description>&lt;p&gt;I was on a flight from Asturias to Barcelona yesterday and I finally had some free time to open Gelman and Hill’s book and submerge in some studying. After finishing the chapter on simulations, I tried doing the first exercise and enjoyed it very much.&lt;/p&gt;
+&lt;p&gt;The exercise goes as follows:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Discrete probability simulation: suppose that a basketball player has a 60% chance of making a shot, and he keeps taking shots until he misses two in a row. Also assume his shots are independent (so that each shot has 60% probability of success, no matter what happened before).&lt;/em&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;&lt;p&gt;Write an R function to simulate this process.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Put the R function in a loop to simulate the process 1000 times. Use the simulation to estimate the mean, standard deviation, and distribution of the total number of shots that the player will take.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Using your simulations, make a scatterplot of the number of shots the player will take and the proportion of shots that are successes.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Below you can find my answer with some comments on how I did it:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# a)
+# The probs argument sets the probability of making a shot. In this case it&amp;#39;ll be 0.60
+thrower &amp;lt;- function(probs) {
+  vec &amp;lt;- replicate(2, rbinom(1, 1, probs)) 
+  # create a vector with two random numbers of either 1 or 0,
+  # with a probability of probs for 1
+  
+  # While the sum of the last and the second-last element is not 0
+  while ((vec[length(vec)] + vec[length(vec) - 1]) != 0) { 
+    
+      vec &amp;lt;- c(vec, rbinom(1, 1, probs))
+      # keep adding random shots with a probability of probs
+  }
+return(vec)
+}
+# The loop works because whenever the sum of the last two elements is 0,
+# then the last two elements must be 0 meaning that the player missed two
+# shots in a row.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# test
+thrower(0.6)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 1 1 1 0 0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# 0 1 0 1 0 0
+# Last two elements are always zero&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# b)
+attempts &amp;lt;- replicate(1000, thrower(0.60))
+mean(sapply(attempts, length)) &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 8.923&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# mean number of shots until two shots are missed in a row&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sd(sapply(attempts, length)) &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 7.628189&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# standard deviation of shots made
+# until two shots are missed in a row&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;hist(sapply(attempts, length)) # distribution of shots made&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2016-09-13-simulations-and-model-predictions-in-r/2016-09-13-simulations-and-model-predictions-in-r_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# c)
+df &amp;lt;- cbind(sapply(attempts, mean), sapply(attempts, length)) 
+# data frame with % of shots made and number of shots thrown
+plot(df[, 2], df[, 1])&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/hugo-goa-demo/hugo-goa-demo/blog/2016-09-13-simulations-and-model-predictions-in-r/2016-09-13-simulations-and-model-predictions-in-r_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;That was fun. I think the key take away here is that you can use these type of simulations to asses the accuracy of model predictions, for example. If you have the probability of being in either 1 or 0 in any dependent variable, then simulation can help determine its reliability by looking at the distribution of the replications.&lt;/p&gt;
+&lt;p&gt;Whenever I have some free time I’ll go back to the next exercises.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Children: public or private goods?</title>
+      <link>/hugo-goa-demo/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</link>
+      <pubDate>Mon, 29 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</guid>
+      <description>&lt;p&gt;The role of the welfare state, as agreed by many scholars, is to de-commodify its citizens. Some argue that this should be the way that the generosity of the state should be measured; instead of net public and private social expenditure, it should be the extent to which citizens are de-commodified by the services and transfers of the welfare state.&lt;/p&gt;
+&lt;p&gt;The aim of educational investment can be seen from different lenses, but today we’ll focus on the economic and social returns to education. An important share of the state budget is aimed at the formation and education of citizens through public education. In countries where there is a substantial investment, human capital, innovation and production are maximized creating a highly productive working population that can sustain the young and the elderly through pensions, health and child care; note that in some scenarios an uneducated workforce can sustain those who depend on them but it will possible be with more quantity of work (hours) and less quality [1]. Following this logic, it is arguable that because most of today’s workers will benefit from pensions, retirement schemes, care assistance and healthcare, they are to take care of their young population, the next generation’s workers. Covering kids’ education through higher taxes could be seen as loan: A young worker covers the expenses of a child, and that child, eventually, will cover the pension of that worker; this is a simplified version of the argument.&lt;/p&gt;
+&lt;p&gt;The scheme I just outlined is virtually widespread across western European countries. But it is important to note that in other countries, due to the intrinsic organization of the state, it is unimaginable to do so. In the counterfactual situation where you don’t have a strong welfare state, maybe it’s unfair to tax those who are not benefiting from the goods that the taxes are being spent on. In places like the United States, where the generosity of the welfare system is minimal, some people don’t find it reasonable to pay for everyone’s kids, even more, when you’re paying already, for instance, a private school for your own.&lt;/p&gt;
+&lt;p&gt;There’s also another important case: childless couples. Perhaps the exact reason why they didn’t have children was not to have to spend a big proportion of their lifelong income. So, why should they pay? According to their position it seems very unfair. Their long held argument can be synthesized in one sentence: those who want children should be the ones who pay for them.&lt;/p&gt;
+&lt;p&gt;After presenting very briefly the arguments of the positions in the debate, it is interesting then to posit the important question concerning it: Should children be a public or private good? I presume this question is easy to answer but not easy to apply; adjusting a state to this premise can take decades and it’s an expensive endeavor. So, evaluating this question must be accompanied by hard scientific thinking.&lt;/p&gt;
+&lt;p&gt;I will start off by stating my position on this dilemma. I support the notion of kids being a public good. I support it not just for the fact that they will pay or not for my pension schemes but because everyone deserves the same opportunities. And if we don’t provide them with equal opportunities, then the gap we see between poor and rich will be as it is today: very sizable. Despite that I sometimes question myself: can they entirely be a public good? Adopting the notion that the family is a private sphere, and at least the states considers it because it is reluctant to interfere within it, then children should not just be considered as a public good. If we pay attention to authors like McDonald (2000) and Lewis &amp;amp; Astrom (1992), we constantly see that the way the state promotes gender equality in the family is not through hands-on, direct implementation of intrusive policies like reeducating couples and telling them what’s right and what’s not. Instead, most of the family policies try to promote gender equality by integrating women into the labor force, reducing the gender wage gap and promoting female and male parental leave. Kids then can never be entirely public goods.&lt;/p&gt;
+&lt;p&gt;Nevertheless, do they contribute to society, meaning, are the interrelated with the “public”?&lt;/p&gt;
+&lt;p&gt;I think this question is rooted in the intrinsic dynamics of society. We are social animals and it is unfashionable to think that we are independent of each other. The most independent citizen living within society is never unattached of its surroundings. Everyone’s paths cross indirectly and directly with the decisions and actions of other people. It might be even irresponsible to think that one’s actions only affect themselves. The principal idea to take from this question is that those who think of themselves as independent actors of society are committing a fallacy that could be the exact reason why the levels and indexes of inequalities are so high nowadays.&lt;/p&gt;
+&lt;p&gt;The Nobel laureate James Heckman has been arguing for the past decade one of his most controversial findings: the first years of a child are the most important ones. Contrary to the long held thought of concentrating the bigger part of the educational budget on tertiary education, he finds that the return of investment of human beings are the highest in the early years and it decreases with time. This means that the first years should be the ones where the highest investment should be: be it monetary and emotional. With the evaluation of the Perry preschool program and the Abecedarian project, Heckman finds that you can trace inequalities between children as early as 22 months old. The principal reason being that some kids get better early childhood education than others. Among others, I think this an important reason to reflect why children should be a public good.&lt;/p&gt;
+&lt;p&gt;Inequalities are being reproduced from an early age, leading to a more polarized society where you have lucky and unlucky kids. Those that receive the better education will at the end, have better jobs, less odds of committing crime, more prone of a stable union (possibly due to the fact that they will have a stable job). Furthermore, and I think this is a key argument against those that don’t want to contribute, these educated children will in most of the cases, help society better than the ones who aren’t educated. This help can be manifested in direct and indirect ways: respecting traffic lights, avoiding corruption in public institutions, being fair, meritocratic, reporting robberies, not stealing, respecting others, among an endless number of thing. This point makes an important argument: the focus on which some of the parents and scholars are viewing the debate might be wrongly specified. As I have succinctly showed, the benefits of having an educated population are not only personal, but also public. I think that the principal reason why there is a strong opposition to this idea is because they evaluate it as taking care of someone else’s children when nobody is taking care of theirs; that is a strong point, but I urge everyone to see it with another lense. If you turned the coin around and you start seeing this as an investment towards societal problems, which in the short and long run affects us all, then it becomes a tax deduction, just as any other one.&lt;/p&gt;
+&lt;p&gt;As I argued before, we are all interrelated and it is our business what our fellow citizens do. So, someone who doesn’t have children, still participates in society, interacts within it, and is affected by criminality, public services, and private services. The problem with providing this argument for a country with a weak welfare state is that you won’t receive quality elderly care from this children when you retire. Conversely, in strong-welfare countries, the argument is the main (pragmatic) reason to do so. However, the second idea, that we should do it for everyone to have the same opportunities, is more than enough to warrant the changes. This would be an even more noble reason because you won’t be contributing to receive something but because everyone deserves the same opportunities. For the U.S, this is a reason to tackle one of the most debatable topics of the last 40 years: inequalities.&lt;/p&gt;
+&lt;p&gt;Now, if we were to delve more into the inequality problem, which shows itself to be the major issue when comparing educational opportunities, it is also important to think of the struggles of having children. Not particularly of the difficulties of childrearing, which are a consequence of the decision to child bear, but the fact that it is too hard to combine work and childrearing now a days. This is quite notorious in the lean welfare state countries and southern European ones.&lt;/p&gt;
+&lt;p&gt;The demands of the work space and the schedules that are imposed to parents and workers make it virtually impossible for men or women to dedicated high quality time to their children. The most common solution that we’ve seen is for women to quit their jobs or to sacrifice leisure time to take care of the child. So, in the end, this deems either the education of the future population or the ambitions and life course perspective of a mother.&lt;/p&gt;
+&lt;p&gt;Catherine Hakim’s preference theory, posits that women now have the preference of having a child but this was not entirely the case in the past where the bargaining power of the man was higher than hers. But a woman who has professional ambitions might also want to have a baby. Does this mean that she has to renounce her ambitions? This will certainly harm the tax system (less taxes paid) but it will help society because she will dedicate more time to the child (And if you acknowledge this, then you are implicitly arguing that children are indeed a public good). But as one of Esping-Andersen’s chapter from his book the Incomplete Revolution shows, permitting the woman to go back to work after parental leave, by providing free high quality childcare, will in the long run pay the costs of this childcare service and even produce a surplus for the welfare state. And that is why I think this is not an easy question to answer, conversely to what Paula England and Nancy Folbre imply. The implication of implementing this idea entails a complete reorganization and readjustment of the tax and welfare system, if there is one [2]. And also, what would be the consequences of this new regime besides the public childcare? Will the problem of inequalities be solved or others problems will arise as side effects?&lt;/p&gt;
+&lt;p&gt;And here I will talk about something that is intrinsically related to having healthy children: the labor perspectives of the mother. The Incomplete Revolution, book by Esping-Andersen, takes on the job of explaining the problem with many of today’s countries: the poor family policies that they implement (if any) when concerning women’s labor market inclusion and combination of working and childrearing. Specifically in two chapters he argues that children should be a public good because children benefit everyone, but furthermore, an important step is to include women in the labor market given that it will help the income prospects of the household and the egalitarianism in the family. How can this be related to children as being a public good, one may ask? This is a complex relation, on which everything is potentially endogenous, but all present evidence shows that if the mother goes back to work after the parental leave, it does not have an adverse effect on the development of the child. This is, assuming that the child is in early high quality childcare. This has important implications! It means that the inclusion of mothers into the labor force will increase the bargaining power of the women in the family, it will heighten the income of the family household, it will expand the human capital of the women; in short, it will not impose the opportunity costs that she will otherwise would’ve had to bear for the remaining part of her life if she would’ve stayed home. This will increase the chances of being in a more egalitarian family, thus the children will be exposed to more equal surroundings.&lt;/p&gt;
+&lt;p&gt;From the point of view that I see it, it’s about heightening the bar of educational attainment. Instead of having the two extremes that we see in the liberal welfare state regimes (excluding UK), extremely poor and uneducated groups and highly rich and educated group, you will set a bar of minimum education. By doing this you will inevitable give secureness to families, opportunities, possibly change the economic structure of the country by increasing the odds of turning it to a knowledge based economy (although this is way more complex then I suggest).&lt;/p&gt;
+&lt;p&gt;As a conclusion, I shall finish off with another question, which I think is as important as the one which initiated this essay. I have tried to argue that children are faring under the destiny that is imposed to them. There has been, since after the World War II, persistent inequalities between classes and all the evidence shows that they are not shrinking. In some countries, namely European ones, the decision to help children might be an economic one or an altruistic one. This is worrisome. Are children being taken care of in Europe because they are the payers of the pensioners or because of the noble argument of equal opportunities? I really don’t know the reason for which Europe or the U.S is doing it for. But should everyone take care of children for the economic benefits or for the equal opportunity argument?&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;[1] Let’s not get into the major changes that the quality of job production will have if the population is highly educated. For a book with interesting ideas, read The Race between Education and Technology by Claudia Goldin &amp;amp; Lawrence Katz.&lt;/p&gt;
+&lt;p&gt;[2] In the case where there is no welfare state, then this is another story.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Producing stargazer tables with odds ratios and standard errors in R</title>
+      <link>/hugo-goa-demo/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</link>
+      <pubDate>Mon, 22 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</guid>
+      <description>&lt;p&gt;Whoa, what a day. I’ve been using the stargazer package for producing my (beautiful) regression tables in R for a while now. Among all the arguments of its main function (&lt;code&gt;stargazer()&lt;/code&gt; ) are &lt;code&gt;apply.coef&lt;/code&gt;, &lt;code&gt;apply.se&lt;/code&gt;, &lt;code&gt;apply.ci&lt;/code&gt;, … and so on for all the other statistics of a regression output. Each of these arguments, if specified, applies a function over the specified statistic. So, for calculating the odds ratios I would simply apply the &lt;code&gt;exp()&lt;/code&gt; function over the set of log odds. It turns out that if you apply any function over the coefficients (or any other statistic), stargazer automatically recalculates t values with the new coefficients! This means that the significance of my model will depend on the new values and we surely wouldn’t want that.&lt;/p&gt;
+&lt;p&gt;Let’s show a reproducible example:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# install.packages(&amp;quot;stargazer&amp;quot;) # in case you don&amp;#39;t have this package
+suppressMessages(library(stargazer))
+
+m1 &amp;lt;- glm(mtcars$vs ~ mtcars$hp + mtcars$mpg)
+
+stargazer(m1, type = &amp;quot;text&amp;quot;) # Our standard log odds&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## =============================================
+##                       Dependent variable:    
+##                   ---------------------------
+##                               vs             
+## ---------------------------------------------
+## hp                         -0.004**          
+##                             (0.001)          
+##                                              
+## mpg                          0.022           
+##                             (0.017)          
+##                                              
+## Constant                     0.566           
+##                             (0.519)          
+##                                              
+## ---------------------------------------------
+## Observations                  32             
+## Log Likelihood              -11.217          
+## Akaike Inf. Crit.           28.434           
+## =============================================
+## Note:             *p&amp;lt;0.1; **p&amp;lt;0.05; ***p&amp;lt;0.01&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;stargazer(m1, apply.coef = exp, type = &amp;quot;text&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## =============================================
+##                       Dependent variable:    
+##                   ---------------------------
+##                               vs             
+## ---------------------------------------------
+## hp                         0.996***          
+##                             (0.001)          
+##                                              
+## mpg                        1.022***          
+##                             (0.017)          
+##                                              
+## Constant                   1.762***          
+##                             (0.519)          
+##                                              
+## ---------------------------------------------
+## Observations                  32             
+## Log Likelihood              -11.217          
+## Akaike Inf. Crit.           28.434           
+## =============================================
+## Note:             *p&amp;lt;0.1; **p&amp;lt;0.05; ***p&amp;lt;0.01&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The coefficients are correct, but look at the significance levels! Those are some really undesirable results. I was actually using this for quite some time without noticing. In light of this problem I decided to create a small function that extracted the statistics separately and applied the appropriate conversion when needed. It’s far from being a flexible function, but it can surely help you run some quick-and-dirty logistic regressions with odds ratios instead of log odds.&lt;/p&gt;
+&lt;p&gt;Here’s the function and an example:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;stargazer2 &amp;lt;- function(model, odd.ratio = F, ...) {
+  if(!(&amp;quot;list&amp;quot; %in% class(model))) model &amp;lt;- list(model)
+    
+  if (odd.ratio) {
+    coefOR2 &amp;lt;- lapply(model, function(x) exp(coef(x)))
+    seOR2 &amp;lt;- lapply(model, function(x) exp(coef(x)) * summary(x)$coef[, 2])
+    p2 &amp;lt;- lapply(model, function(x) summary(x)$coefficients[, 4])
+    stargazer(model, coef = coefOR2, se = seOR2, p = p2, ...)
+    
+  } else {
+    stargazer(model, ...)
+  }
+}
+
+stargazer(m1, type = &amp;quot;text&amp;quot;) # Our standard log odds&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## =============================================
+##                       Dependent variable:    
+##                   ---------------------------
+##                               vs             
+## ---------------------------------------------
+## hp                         -0.004**          
+##                             (0.001)          
+##                                              
+## mpg                          0.022           
+##                             (0.017)          
+##                                              
+## Constant                     0.566           
+##                             (0.519)          
+##                                              
+## ---------------------------------------------
+## Observations                  32             
+## Log Likelihood              -11.217          
+## Akaike Inf. Crit.           28.434           
+## =============================================
+## Note:             *p&amp;lt;0.1; **p&amp;lt;0.05; ***p&amp;lt;0.01&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;stargazer2(m1, odd.ratio = T, type = &amp;quot;text&amp;quot;) &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## =============================================
+##                       Dependent variable:    
+##                   ---------------------------
+##                               vs             
+## ---------------------------------------------
+## hp                          0.996**          
+##                             (0.001)          
+##                                              
+## mpg                          1.022           
+##                             (0.017)          
+##                                              
+## Constant                     1.762           
+##                             (0.915)          
+##                                              
+## ---------------------------------------------
+## Observations                  32             
+## Log Likelihood              -11.217          
+## Akaike Inf. Crit.           28.434           
+## =============================================
+## Note:             *p&amp;lt;0.1; **p&amp;lt;0.05; ***p&amp;lt;0.01&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Now the coefficients and significance is correct!&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# You can also use lists
+m1 &amp;lt;- glm(mtcars$vs ~ mtcars$mpg)
+m2 &amp;lt;- glm(mtcars$vs ~ mtcars$mpg + mtcars$hp)
+m3 &amp;lt;- glm(mtcars$vs ~ mtcars$mpg + mtcars$hp + mtcars$am)
+
+models &amp;lt;- list(m1, m2, m3)
+
+stargazer(models, type = &amp;quot;text&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## ===============================================
+##                        Dependent variable:     
+##                   -----------------------------
+##                                vs              
+##                      (1)        (2)      (3)   
+## -----------------------------------------------
+## mpg                0.056***    0.022    0.041* 
+##                    (0.011)    (0.017)  (0.022) 
+##                                                
+## hp                           -0.004**  -0.003* 
+##                               (0.001)  (0.002) 
+##                                                
+## am                                      -0.223 
+##                                        (0.173) 
+##                                                
+## Constant          -0.678***    0.566    0.141  
+##                    (0.239)    (0.519)  (0.611) 
+##                                                
+## -----------------------------------------------
+## Observations          32        32        32   
+## Log Likelihood     -14.669    -11.217  -10.299 
+## Akaike Inf. Crit.   33.338    28.434    28.599 
+## ===============================================
+## Note:               *p&amp;lt;0.1; **p&amp;lt;0.05; ***p&amp;lt;0.01&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;stargazer2(models, odd.ratio = T, type = &amp;quot;text&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## ===============================================
+##                        Dependent variable:     
+##                   -----------------------------
+##                                vs              
+##                      (1)        (2)      (3)   
+## -----------------------------------------------
+## mpg                1.057***    1.022    1.042* 
+##                    (0.012)    (0.017)  (0.023) 
+##                                                
+## hp                            0.996**   0.997* 
+##                               (0.001)  (0.002) 
+##                                                
+## am                                      0.800  
+##                                        (0.139) 
+##                                                
+## Constant           0.508***    1.762    1.151  
+##                    (0.121)    (0.915)  (0.703) 
+##                                                
+## -----------------------------------------------
+## Observations          32        32        32   
+## Log Likelihood     -14.669    -11.217  -10.299 
+## Akaike Inf. Crit.   33.338    28.434    28.599 
+## ===============================================
+## Note:               *p&amp;lt;0.1; **p&amp;lt;0.05; ***p&amp;lt;0.01&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Same significance but different coefficients and SE&amp;#39;s&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Caveats:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;It only accepts one model or one list containing several models. I did this because I didn’t want to get into distinguishing between several separate models. If you want to improve it, &lt;a href=&#34;https://github.com/cimentadaj/cimentadaj/blob/master/R/stargazer2.R&#34;&gt;here’s&lt;/a&gt; the Github website, submit a pull request!&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;It doesn’t calculate confidence intervals as the formula is more complicated and I didn’t need them for now.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;p&gt;Update: I included this function in my personal package which you can install like this:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# install.packages(&amp;quot;devtools&amp;quot;)
+devtools::install_github(&amp;quot;cimentadaj/cimentadaj&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>T-tests, regression (and ANOVA): They&#39;re all the same!</title>
+      <link>/hugo-goa-demo/blog/2016-08-20-ttests-regression-and-anova-theyre-all-the-same/ttests-regression-and-anova-theyre-all-the-same/</link>
+      <pubDate>Sat, 20 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/blog/2016-08-20-ttests-regression-and-anova-theyre-all-the-same/ttests-regression-and-anova-theyre-all-the-same/</guid>
+      <description>&lt;p&gt;Upon reading “How Not To Lie with Statistics: Avoiding Common Mistakes in Quantitative Political Science” from Gary King, I stumbled into a section which proved that t-tests, ANOVA and Linear Regression are intimately related, both conceptually and algebraically. As a late-comer in statistics, one usually does not pay attention to these nuances. I decided to make a short simulation in R just to make sure my intuition was right.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(1)
+
+income &amp;lt;- sample(1000:5000, 100, replace = T)
+gender &amp;lt;- rep(c(1, 0), 50)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;t &amp;lt;- t.test(income ~ gender)
+unname(t$estimate[2] - t$estimate[1])&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 201.46&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;coef(model &amp;lt;- lm(income ~ gender))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## (Intercept)      gender 
+##     2970.64      201.46&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# The ANOVA model is actually computed through the lm
+# call but we can use the anova() function to check if
+# the differences are significant as well.
+
+anova(model)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Analysis of Variance Table
+## 
+## Response: income
+##           Df    Sum Sq Mean Sq F value Pr(&amp;gt;F)
+## gender     1   1014653 1014653  0.8842 0.3494
+## Residuals 98 112463658 1147588&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It’s fun to find out about these things and prove that they make sense. However, the strength of linear models is that you can ‘adjust’ for other important variables and get an adjusted estimated difference. Let’s add another variable called kids with the number of children per person and see how the difference changes.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;kids &amp;lt;- sample(1:4, 100, replace = T)
+lm(income ~ gender + kids)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Call:
+## lm(formula = income ~ gender + kids)
+## 
+## Coefficients:
+## (Intercept)       gender         kids  
+##    2945.911      200.471        9.891&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Well, we can now say that the difference in income between male and females is of about 200 adjusted for the number of children per person.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>/hugo-goa-demo/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/about/</guid>
+      <description>&lt;p&gt;&lt;center&gt;&lt;img src=&#34;/hugo-goa-demo/img/headshot.jpg&#34; alt=&#34;Drawing&#34; style=&#34;width: 200px;&#34;/&gt;&lt;/center&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+
+&lt;p&gt;Hi, I’m Jorge Cimentada and I’m a PhD candidate in Sociology at Pompeu Fabra University in Barcelona, Spain. I belong to the &lt;a href=&#34;https://www.upf.edu/web/survey&#34;&gt;Research and Expertise Centre for Survey Methodology (RECSM)&lt;/a&gt; and my main research interests are the study of achievement inequality, the role of schools in reproducing these inequalities and early education as a remedy to achievement inequalities. I’m also working in a project related to class mobility and how it has changed over time in industrialized countries in the &lt;a href=&#34;https://www.upf.edu/web/demosoc&#34;&gt;DEMOSOC&lt;/a&gt; research group.&lt;/p&gt;
+
+&lt;p&gt;I am very passionate about statistical programming with R , data visualization, statistics and drums. In fact, this blog is kindly linked to the amazing &lt;a href=&#34;https://www.r-bloggers.com/&#34;&gt;R-bloggers&lt;/a&gt; website. You should check it out!&lt;/p&gt;
+
+&lt;p&gt;If you wish to contact me send me an email to &lt;code&gt;cimentadaj@gmail.com&lt;/code&gt;. I’m also on &lt;a href=&#34;https://github.com/cimentadaj&#34;&gt;Github&lt;/a&gt; and &lt;a href=&#34;https://www.linkedin.com/in/jorge-cimentada-1740877a/&#34;&gt;Linkedin&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Curriculum Vitae</title>
+      <link>/hugo-goa-demo/vitae/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/vitae/</guid>
+      <description>
+
+&lt;p&gt;You can download my CV from &lt;a href=&#34;/hugo-goa-demo/vitae/Jorge_Cimentada_CV.pdf&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Here’s a brief summary:&lt;/p&gt;
+
+&lt;h3 id=&#34;education&#34;&gt;Education&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Ph.D., in Sociology 2016 - expected 2018 -&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Pompeu Fabra University, Barcelona, Spain&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;M.S.c., in Research in Sociology and Demography 2014-2015&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Pompeu Fabra University, Barcelona, Spain&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;B.A., Market Research 2009-2013&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PUCMM University, Santo Domingo, Dominican Republic.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;work-experience&#34;&gt;Work experience&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Pompeu Fabra University - Research assistant – 2016/present&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Project: Stratified Family Dynamics: Polarizing trends in couple behaviour and parenting&lt;/li&gt;
+&lt;li&gt;Principal Investigator: Gøsta Esping-Andersen&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Pompeu Fabra University - Research assistant – &lt;sup&gt;2015&lt;/sup&gt;&amp;frasl;&lt;sub&gt;2016&lt;/sub&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Project: Creating Economic and Social Indicators – Fundación Obra Social LaCaixa&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Population Services International - Statistical consultant – July/August 2014&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Project: Measuring the impact of preventive HIV campaigns in the Military forces of the Dominican Republic&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Newlink Research - Quantitative analyst – 2013&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Projects: Public opinion polls, Electoral turnouts, Market research Skills&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;skills&#34;&gt;Skills&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Languages: Spanish (native), English (fluent)&lt;/li&gt;
+&lt;li&gt;Computer skills: R, Git, LaTeX, Shiny, Markdown, Stata, SPSS.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>/hugo-goa-demo/projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/hugo-goa-demo/projects/</guid>
+      <description>&lt;p&gt;&lt;p&gt;
+&lt;div style=&#34;width: auto&#34;&gt;
+&lt;img src=&#34;img/teaching_r.jpg&#34; alt=&#34;Me.&#34; style=&#34;float: center; width: 100%;max-height: 130%; PADDING-LEFT: 30px&#34;/&gt;
+&lt;p&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;center&gt;&lt;i&gt; Teaching R! &lt;/i&gt; &lt;/center&gt;
+&lt;br&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;p&gt;In this section you can find bits of material I&amp;rsquo;ve written over time and some of my personal projects, mainly concentrated on the R programming software&lt;p&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;b&gt; Data analysis &lt;/b&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/index.html&#34;&gt;Analyzing &amp;ldquo;How I Met Your Mother&amp;rdquo;&lt;/a&gt;: In this blog post I scraped and analyzed the scripts of the American TV series &amp;ldquo;How I Met Your Mother&amp;rdquo;.&lt;/p&gt;
+
+&lt;p&gt;&lt;b&gt; R packages &lt;/b&gt;&lt;/p&gt;
+
+&lt;p&gt;perccalc (&lt;a href=&#34;https://cran.r-project.org/web/packages/perccalc/index.html&#34;&gt;CRAN&lt;/a&gt;, &lt;a href=&#34;https://github.com/cimentadaj/perccalc&#34;&gt;Github&lt;/a&gt;): An implementation of two functions that estimate values for percentiles from an ordered categorical variable as described by Reardon (2011, isbn:978-0-87154-372-1).&lt;/p&gt;
+
+&lt;p&gt;ess (&lt;a href=&#34;https://cran.r-project.org/web/packages/ess/index.html&#34;&gt;CRAN&lt;/a&gt;, &lt;a href=&#34;https://github.com/cimentadaj/ess&#34;&gt;Github&lt;/a&gt;): Download data from the European Social Survey directly into R from their website &lt;a href=&#34;http://www.europeansocialsurvey.org/&#34;&gt;http://www.europeansocialsurvey.org/&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;cimentadaj (&lt;a href=&#34;https://github.com/cimentadaj/cimentadaj&#34;&gt;Github&lt;/a&gt;): My personal package&lt;/p&gt;
+
+&lt;p&gt;&lt;b&gt; Miscellaneous &lt;/b&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/index.html&#34;&gt;My PISA twitter bot&lt;/a&gt;: I programmed a Twitter bot that tweets graphs from the &lt;a href=&#34;http://www.oecd.org/pisa/&#34;&gt;PISA&lt;/a&gt; database. Follow &lt;a href=&#34;https://twitter.com/DailyPISA_Facts&#34;&gt;@DailyPISA_Facts&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://cimentadaj.shinyapps.io/shiny/&#34;&gt;Educational Inequality around the world&lt;/a&gt;: Visualize educational inequality for over 70 countries from 2000 to 2015 using this Shinyapp.&lt;/p&gt;
+
+&lt;p&gt;I translated some Stata code to R for the &lt;a href = &#34;https://www.povertyactionlab.org/&#34; target = &#34;_blank&#34;&gt; The Abdul Latif Jameel Poverty Action Lab (J-PAL) &lt;/a&gt; and was featured on their &lt;a href = &#34;https://www.povertyactionlab.org/research-resources/software-and-tools&#34; target = &#34;_blank&#34;&gt; website&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;b&gt; Teaching R &lt;/b&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;In April 2016, together with &lt;a href = &#34;https://sites.google.com/site/brunoarpino/&#34; target = &#34;_blank&#34;&gt;Bruno Arpino&lt;/a&gt; and some colleagues from the &lt;a href = &#34;https://www.upf.edu/survey/&#34; target = &#34;_blank&#34;&gt; RECSM&lt;/a&gt;, I organized a seminar series introducing  R at Pompeu Fabra University. As part of the lectures I programmed some interactive lessons which can help get you started. These lessons assume that you have never used R and are self-standing lessons. Go to the &lt;a href = &#34;https://github.com/cimentadaj/Rseminars&#34; target = &#34;_blank&#34;&gt; Github&lt;/a&gt; repository: follow the instructions and you&amp;rsquo;ll be able to install everything and follow the courses.  &lt;i&gt;Note: Ignore the first lesson since it was a live presentation.&lt;/i&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;I gave a short course at Pompeu Fabra University introducing the &lt;a href=&#34;https://www.tidyverse.org/&#34;&gt;tidyverse&lt;/a&gt;. I uploaded the syllabus online (program, slides and exercises) in my &lt;a href=&#34;https://github.com/cimentadaj/tidyverse_seminars&#34;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;I gave a talk at &lt;a href=&#34;https://pydata.org/barcelona2017/&#34;&gt;PyData 2017&lt;/a&gt; to introduce the tidyverse to follow data analysts. If you&amp;rsquo;re interested, I uploaded the material in my &lt;a href=&#34;https://github.com/cimentadaj/PyData_2017&#34;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

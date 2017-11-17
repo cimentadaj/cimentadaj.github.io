@@ -1,0 +1,293 @@
+---
+title: "Scraping and visualizing How I Met Your Mother"
+author: Jorge Cimentada
+date: '2017-10-16'
+slug: scraping-and-visualizing-how-i-met-your-mother
+tags: ['scraping', 'R', 'EDA', 'projects']
+---
+
+
+
+<p>How I Met Your Mother (HIMYM from here after) is a television series very similar to the classical ‘Friends’ series from the 90’s. Following the release of the <a href="http://tidytextmining.com/">tidy text</a> book I was looking for a project in which I could apply these skills. I decided I would scrape all the transcripts from HIMYM and analyze patterns between characters. This post really took me to the limit in terms of web scraping and pattern matching, which was specifically what I wanted to improve in the first place. Let’s begin!</p>
+<p>My first task was whether there was any consistency in the URL’s that stored the transcripts. If you ever watched HIMYM, we know there’s around nine seasons, each one with about 22 episodes. This makes about 200 episodes give or take. It would be a big pain to manually write down 200 complicated URL’s. Luckily, there is a way of finding the 200 links without writing them down manually.</p>
+<p>First, we create the links for the 9 websites that contain all episodes (1 through season 9)</p>
+<pre class="r"><code>library(rvest)
+library(tidyverse)
+library(stringr)
+library(tidytext)
+
+main_url &lt;- &quot;http://transcripts.foreverdreaming.org&quot;
+all_pages &lt;- paste0(&quot;http://transcripts.foreverdreaming.org/viewforum.php?f=177&amp;start=&quot;, seq(0, 200, 25))
+characters &lt;- c(&quot;ted&quot;, &quot;lily&quot;, &quot;marshall&quot;, &quot;barney&quot;, &quot;robin&quot;)</code></pre>
+<p>Each of the URL’s of <code>all_pages</code> contains all episodes for that season (so around 22 URL’s). I also picked the characters we’re gonna concentrate for now. From here the job is very easy. We create a function that reads each link and parses the section containing all links for that season. We can do that using <a href="http://selectorgadget.com/.">SelectorGadget</a> to find the section we’re interested in. We then search for the <code>href</code> attribute to grab all links in that attribute and finally create a tibble with each episode together with it’s link.</p>
+<pre class="r"><code>episode_getter &lt;- function(link) {
+  title_reference &lt;-
+    link %&gt;%
+    read_html() %&gt;%
+    html_nodes(&quot;.topictitle&quot;) # Get the html node name with &#39;selector gadget&#39;
+  
+  episode_links &lt;-
+    title_reference %&gt;%
+    html_attr(&quot;href&quot;) %&gt;%
+    gsub(&quot;^.&quot;, &quot;&quot;, .) %&gt;%
+    paste0(main_url, .) %&gt;%
+    setNames(title_reference %&gt;% html_text()) %&gt;%
+    enframe(name = &quot;episode_name&quot;, value = &quot;link&quot;)
+  
+  episode_links
+}
+
+all_episodes &lt;- map_df(all_pages, episode_getter) # loop over all seasons and get all episode links
+all_episodes$id &lt;- 1:nrow(all_episodes)</code></pre>
+<p>There we go! Now we have a very organized <code>tibble</code>.</p>
+<pre class="r"><code>all_episodes
+# # A tibble: 208 x 3
+#                      episode_name
+#                             &lt;chr&gt;
+#  1                  01x01 - Pilot
+#  2         01x02 - Purple Giraffe
+#  3 01x03 - Sweet Taste of Liberty
+#  4    01x04 - Return of the Shirt
+#  5           01x05 - Okay Awesome
+#  6         01x06 - Slutty Pumpkin
+#  7             01x07 - Matchmaker
+#  8               01x08 - The Duel
+#  9   01x09 - Belly Full of Turkey
+# 10 01x10 - The Pineapple Incident
+# # ... with 198 more rows, and 2 more variables: link &lt;chr&gt;, id &lt;int&gt;</code></pre>
+<p>The remaining part is to actually scrape the text from each episode. We can work that out for a single episode and then turn that into a function and apply for all episodes.</p>
+<pre class="r"><code>episode_fun &lt;- function(file) {
+  
+  file %&gt;%
+    read_html() %&gt;%
+    html_nodes(&quot;.postbody&quot;) %&gt;%
+    html_text() %&gt;%
+    str_split(&quot;\n|\t&quot;) %&gt;%
+    .[[1]] %&gt;%
+    data_frame(text = .) %&gt;%
+    filter(str_detect(text, &quot;&quot;), # Lots of empty spaces
+           !str_detect(text, &quot;^\\t&quot;), # Lots of lines with \t to delete
+           !str_detect(text, &quot;^\\[.*\\]$&quot;), # Text that start with brackets
+           !str_detect(text, &quot;^\\(.*\\)$&quot;), # Text that starts with parenthesis
+           str_detect(text, &quot;^*.:&quot;), # I want only lines with start with dialogue (:)
+           !str_detect(text, &quot;^ad&quot;)) # Remove lines that start with ad (for &#39;ads&#39;, the link of google ads)
+}</code></pre>
+<p>The above function reads each episode, turns the html text into a data frame and organizes it clearly for text analysis. For example:</p>
+<pre class="r"><code>episode_fun(all_episodes$link[15])
+# # A tibble: 195 x 1
+#                                                                           text
+#                                                                          &lt;chr&gt;
+#  1 Ted from 2030: Kids, something you might not know about your Uncle Marshall
+#  2                  &quot;Ted: You don&#39;t have to shout out \&quot;poker\&quot; when you win.&quot;
+#  3                                     Marshall: I know. It&#39;s just fun to say.
+#  4 &quot;Ted from 2030: We all finally agreed Marshall should be running our game n
+#  5 &quot;Marshall: It&#39;s called \&quot;Marsh-gammon.\&quot; It combines all the best features 
+#  6                                               Robin: Backgammon, obviously.
+#  7 &quot;Marshall: No. Backgammon sucks. I took the only good part of backgammon, t
+#  8                                     Lily: I&#39;m so excited Victoria&#39;s coming.
+#  9                                   Robin: I&#39;m going to go get another round.
+# 10 Ted: Okay, I want to lay down some ground rules for tonight. Barney, I actu
+# # ... with 185 more rows</code></pre>
+<p>We now have a data frame with only dialogue for each character. We need to apply that function to each episode and <code>bind</code> everything together. We first apply the function to every episode.</p>
+<pre class="r"><code>all_episodes$text &lt;- map(all_episodes$link, episode_fun)</code></pre>
+<p>The <code>text</code> list-column is an organized list with text for each episode. However, manual inspection of some episodes actually denotes a small error that limits our analysis greatly. Among the main interests of this document is to study relationships and presence between characters. For that, we need each line of text to be accompanied by the character who said it. Unfortunately, some of these scripts don’t have that.</p>
+<p>For example, check any episode from season <a href="http://transcripts.foreverdreaming.org/viewforum.php?f=177&amp;start=175">8</a> and <a href="http://transcripts.foreverdreaming.org/viewforum.php?f=177&amp;start=200">9</a>. The writer didn’t write the dialogue and just rewrote the lines. There’s nothing we can do so far to improve that and we’ll be excluding these episodes. This pattern is also present in random episodes like in season 4 or season 6. We can exclude chapters based on the number of lines we parsed. On average, each of these episodes has about 200 lines of dialogue. Anything significantly lower, like 30 or 50 lines, is an episode which doesn’t have a lot of dialogue.</p>
+<pre class="r"><code>all_episodes$count &lt;- map_dbl(all_episodes$text, nrow)</code></pre>
+<p>We can extend the previous <code>tibble</code> to be a big more organized by separating the episode-season column into separate season and episo numbers.</p>
+<pre class="r"><code>all_episodes &lt;-
+  all_episodes %&gt;%
+  separate(episode_name, c(&quot;season&quot;, &quot;episode&quot;), &quot;-&quot;, extra = &quot;merge&quot;) %&gt;%
+  separate(season, c(&quot;season&quot;, &quot;episode_number&quot;), sep = &quot;x&quot;)</code></pre>
+<p>Great! We now have a very organized <code>tibble</code> with all the information we need. Next step is to actually break down the lines into words and start looking for general patterns. We can do that by looping through all episodes that have over 100 lines (just an arbitrary threshold) and unnesting each line for each <strong>valid</strong> character.</p>
+<pre class="r"><code>lines_characters &lt;-
+  map(filter(all_episodes, count &gt; 100) %&gt;% pull(text), ~ { 
+    # only loop over episodes that have over 100 lines
+    .x %&gt;%
+      separate(text, c(&quot;character&quot;, &quot;text&quot;), sep = &quot;:&quot;, extra = &#39;merge&#39;) %&gt;%
+      # separate character dialogue from actual dialogo
+      unnest_tokens(character, character) %&gt;%
+      filter(str_detect(character, paste0(paste0(&quot;^&quot;, characters, &quot;$&quot;), collapse = &quot;|&quot;))) %&gt;%
+      # only count the lines of our chosen characters
+      mutate(episode_lines_id = 1:nrow(.))
+  }) %&gt;%
+  setNames(filter(all_episodes, count &gt; 100) %&gt;% # name according to episode
+             unite(season_episode, season, episode_number, sep = &quot;x&quot;) %&gt;%
+             pull(season_episode)) %&gt;%
+  enframe() %&gt;%
+  unnest() %&gt;%
+  mutate(all_lines_id = 1:nrow(.))</code></pre>
+<p>Ok, our text is sort of ready. Let’s remove some bad words.</p>
+<pre class="r"><code>words_per_character &lt;-
+  lines_characters %&gt;%
+  unnest_tokens(word, text) %&gt;% # expand all sentences into words
+  anti_join(stop_words) %&gt;% # remove bad words
+  filter(!word %in% characters) %&gt;% # only select characters we&#39;re interested
+  arrange(name) %&gt;%
+  separate(name, c(&quot;season&quot;, &quot;episode&quot;), sep = &quot;x&quot;, remove = FALSE) %&gt;%
+  mutate(name = factor(name, ordered = TRUE),
+         season = factor(season, ordered = TRUE),
+         episode = factor(episode, ordered = TRUE)) %&gt;%
+  filter(season != &quot;07&quot;)</code></pre>
+<p>Just to make sure, let’s look at the <code>tibble</code>.</p>
+<pre class="r"><code>words_per_character
+# # A tibble: 88,174 x 7
+#      name season episode character episode_lines_id all_lines_id      word
+#     &lt;ord&gt;  &lt;ord&gt;   &lt;ord&gt;     &lt;chr&gt;            &lt;int&gt;        &lt;int&gt;     &lt;chr&gt;
+#  1 01x01      01     01   marshall                1            1      ring
+#  2 01x01      01     01   marshall                1            1     marry
+#  3 01x01      01     01        ted                2            2   perfect
+#  4 01x01      01     01        ted                2            2   engaged
+#  5 01x01      01     01        ted                2            2       pop
+#  6 01x01      01     01        ted                2            2 champagne
+#  7 01x01      01     01        ted                2            2     drink
+#  8 01x01      01     01        ted                2            2     toast
+#  9 01x01      01     01        ted                2            2   kitchen
+# 10 01x01      01     01        ted                2            2     floor
+# # ... with 88,164 more rows</code></pre>
+<p>Perfect! One row per word, per character, per episode with the id of the line of the word.</p>
+<p>Alright, let’s get our hands dirty. First, let visualize the presence of each character in terms of words over time.</p>
+<pre class="r"><code># Filtering position of first episode of all seasons to
+# position the X axis in the next plot.
+first_episodes &lt;-
+  all_episodes %&gt;%
+  filter(count &gt; 100, episode_number == &quot;01 &quot;) %&gt;%
+  pull(id)
+
+words_per_character %&gt;%
+  split(.$name) %&gt;%
+  setNames(1:length(.)) %&gt;%
+  enframe(name = &quot;episode_id&quot;) %&gt;%
+  unnest() %&gt;%
+  count(episode_id, character) %&gt;%
+  group_by(episode_id) %&gt;%
+  mutate(total_n = sum(n),
+         perc = round(n / total_n, 2)) %&gt;%
+  ggplot(aes(as.numeric(episode_id), perc, group = character, colour = character)) +
+  geom_line() +
+  geom_smooth(method = &quot;lm&quot;) +
+  scale_colour_discrete(guide = FALSE) +
+  scale_x_continuous(name = &quot;Seasons&quot;,
+                     breaks = first_episodes, labels = paste0(&quot;S&quot;, 1:7)) +
+  scale_y_continuous(name = &quot;Percentage of words per episode&quot;) +
+  theme_minimal() +
+  facet_wrap(~ character, ncol = 3)</code></pre>
+<p><img src="/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-13-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>Ted is clearly the character with the highest number of words per episode followed by Barney. Lily and Robin, the only two women have very low presence compared to the men. In fact, if one looks closely, Lily seemed to have decreased slightly over time, having an all time low in season 4. Marshall, Lily’s partner in the show, does have much lower presence than both Barney and Ted but he has been catching up over time.</p>
+<p>We also see an interesting pattern where Barney has a lot of peaks, suggesting that in some specific episodes he gains predominance, where Ted has an overall higher level of words per episode. And when Ted has peaks, it’s usually below its trend-line.</p>
+<p>Looking at the distribution:</p>
+<pre class="r"><code># devtools::install_github(&quot;clauswilke/ggjoy&quot;)
+library(ggjoy)
+
+words_per_character %&gt;%
+  split(.$name) %&gt;%
+  setNames(1:length(.)) %&gt;%
+  enframe(name = &quot;episode_id&quot;) %&gt;%
+  unnest() %&gt;%
+  count(season, episode_id, character) %&gt;%
+  group_by(episode_id) %&gt;%
+  mutate(total_n = sum(n),
+         perc = round(n / total_n, 2)) %&gt;%
+  ggplot(aes(x = perc, y = character, fill = character)) +
+  geom_joy(scale = 0.85) +
+  scale_fill_discrete(guide = F) +
+  scale_y_discrete(name = NULL, expand=c(0.01, 0)) +
+  scale_x_continuous(name = &quot;Percentage of words&quot;, expand=c(0.01, 0)) +
+  ggtitle(&quot;Percentage of words per season&quot;) +
+  facet_wrap(~ season, ncol = 7) +
+  theme_minimal()</code></pre>
+<p><img src="/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>we see the differences much clearer. For example, we see Barney’s peaks through out every season with Season 6 seeing a clear peak of 40%. On the other hand, we see that their distributions don’t change that much over time! Suggesting that the presence of each character is very similar in all seasons. Don’t get me wrong, there are differences like Lily in Season 2 and then in Season 6, but in overall terms the previous plot suggests no increase over seasons, and this plot suggests that between seasons, there’s not a lot of change in their distributions that affects the overall mean.</p>
+<p>If you’ve watched the TV series, you’ll remember Barney always repeating one similar trademark word: legendary! Although it is a bit cumbersome for us to count the number of occurrences of that sentence once we unnested each sentence, we can at least count the number of words per character and see whether some characters have particular words.</p>
+<pre class="r"><code>count_words &lt;-
+  words_per_character %&gt;%
+  filter(!word %in% characters) %&gt;%
+  count(character, word, sort = TRUE)
+
+count_words %&gt;%
+  group_by(character) %&gt;%
+  top_n(20) %&gt;%
+  ggplot(aes(reorder(word, n), n)) +
+  geom_col(alpha = 0.8) +
+  coord_flip() +
+  facet_wrap(~ character, scales = &quot;free_y&quot;)</code></pre>
+<p><img src="/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Here we see that a lot of the words we capture are actually nouns or expressions which are common to everyone, such as ‘yeah’, ‘hey’ or ‘time’. We can weight down commonly used words for other words which are important but don’t get repeated a lot. We can exclude those words using <code>bind_tf_idf()</code>, which for each character decreases the weight for commonly used words and increases the weight for words that are not used very much in a collection or corpus of documents (see 3.3 in <a href="http://tidytextmining.com/tfidf.html" class="uri">http://tidytextmining.com/tfidf.html</a>).</p>
+<pre class="r"><code>count_words %&gt;%
+  bind_tf_idf(word, character, n) %&gt;%
+  arrange(desc(tf_idf)) %&gt;%
+  group_by(character) %&gt;%
+  top_n(20) %&gt;%
+  ggplot(aes(reorder(word, n), n)) +
+  geom_col(alpha = 0.8) +
+  coord_flip() +
+  facet_wrap(~ character, scales = &quot;free_y&quot;)</code></pre>
+<p><img src="/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Now Barney has a very distinctive word usage, one particularly sexist with words such as couger, bang and tits. Also, we see the word legendary as the thirdly repeated word, something we were expecting! On the other hand, we see Ted with things like professor (him), aunt (because of aunt Lily and such).</p>
+<p>Knowing that Ted is the main character in the series is no surprise. To finish off, we’re interested in knowing which characters are related to each other. First, let’s turn the data frame into a suitable format.</p>
+<p>Here we turn all lines to lower case and check which characters are present in the text of each dialogue. The loop will return a vector of logicals whether there was a mention of any of the characters. For simplicity I exclude all lines where there is more than 1 mention of a character, that is, 2 or more characters.</p>
+<pre class="r"><code>lines_characters &lt;-
+  lines_characters %&gt;%
+  mutate(text = str_to_lower(text))
+
+rows_fil &lt;-
+  map(characters, ~ str_detect(lines_characters$text, .x)) %&gt;%
+  reduce(`+`) %&gt;%
+  ifelse(. &gt;= 2, 0, .) # excluding sentences which have 2 or more mentions for now
+  # ideally we would want to choose to count the number of mentions
+  # per line or randomly choose another a person that was mentioned.</code></pre>
+<p>Now that we have the rows that have a mention of another character, we subset only those rows. Then we want know which character was mentioned in which line. I loop through each line and test which character is present in that specific dialogue line. The loop returns the actual character name for each dialogue. Because we already filtered lines that <strong>have</strong> a character name mentioned, the loop should return a vector of the same length.</p>
+<pre class="r"><code>character_relation &lt;-
+  lines_characters %&gt;%
+  filter(as.logical(rows_fil)) %&gt;%
+  mutate(who_said_what =
+           map_chr(.$text, ~ { # loop over all each line
+             who_said_what &lt;- map_lgl(characters, function(.y) str_detect(.x, .y))
+             # loop over each character and check whether he/she was mentioned
+             # in that line
+             characters[who_said_what]
+             # subset the character that matched
+           }))
+</code></pre>
+<p>Finally, we plot the relationship using the <code>ggraph</code> package.</p>
+<pre class="r"><code>library(ggraph)
+library(igraph)
+
+character_relation %&gt;%
+  count(character, who_said_what) %&gt;%
+  graph_from_data_frame() %&gt;%
+  ggraph(layout = &quot;linear&quot;, circular = TRUE) +
+  geom_edge_arc(aes(edge_alpha = n, edge_width = n),
+                width = 2.5, show.legend = FALSE) +
+  geom_node_text(aes(label = name), repel = TRUE) +
+  theme_void()</code></pre>
+<p><img src="/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>A very clear pattern emerges. There is a strong relationship between Robin and Barney towards Ted. In fact, their direct relationship is very weak, but both are very well connected to Ted. On the other hand, Marshall and Lily are also reasonably connected to Ted but with a weaker link. Both of them are indeed very connected, as should be expected since they were a couple in the TV series.</p>
+<p>We also see that the weakest members of the group are Robin and Barney with only strong bonds toward Ted but no strong relationship with the other from the group. Overall, there seems to be a division: Marshall and Lily hold a somewhat close relationship with each other and towards Ted and Barney and Robin tend to be related to Ted but no one else.</p>
+<p>As a follow-up question, is this pattern of relationships the same across all seasons? We can do that very quickly by filtering each season using the previous plot.</p>
+<pre class="r"><code>library(cowplot)
+
+# Loop through each season
+seasons &lt;- paste0(0, 1:7)
+
+all_season_plots &lt;- lapply(seasons, function(season_num) {
+
+  set.seed(2131)
+  
+  character_relation %&gt;%
+    # Extract the season number from the `name` column
+    mutate(season = str_replace_all(character_relation$name, &quot;x(.*)$&quot;, &quot;&quot;)) %&gt;%
+    filter(season == season_num) %&gt;%
+    count(character, who_said_what) %&gt;%
+    graph_from_data_frame() %&gt;%
+    ggraph(layout = &quot;linear&quot;, circular = TRUE) +
+    geom_edge_arc(aes(edge_alpha = n, edge_width = n),
+                  width = 2.5, show.legend = FALSE) +
+    geom_node_text(aes(label = name), repel = TRUE) +
+    theme_void()
+})
+
+# Plot all graphs side-by-side
+cowplot::plot_grid(plotlist = all_season_plots, labels = seasons)</code></pre>
+<p><img src="/hugo-goa-demo/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/2017-10-16-scraping-and-visualizing-how-i-met-your-mother_files/figure-html/unnamed-chunk-20-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>There are reasonable changes for all non-Ted relationship! For example, for season 2 the relationship Marshall-Lily-Ted becomes much stronger and it disappears in season 3. Let’s remember that these results might be affected by the fact that I excluded some episodes because of low number of dialogue lines. Keeping that in mind, we also see that for season 7 the Robin-Barney relationship became much stronger (is this the season the started dating?). All in all, the relationships don’t look dramatically different from the previous plot. Everyone seems to be strongly related to Ted. The main difference is the changes in relationship between the other members of the cast.</p>
+<p>This dataset has a lot of potential and I’m sure I’ve scratched the surface of what one can do with this data. I encourage anyone interested in the topic to use the code to analyze the data further. One idea I might explore in the future is to build a model that attempts to predict who said what for all dialogue lines that didn’t have a character member. This can be done by extracting features from all sentences and using these patterns try to classify which. Any feedback is welcome, so feel free to message me at <a href="mailto:cimentadaj@gmail.com">cimentadaj@gmail.com</a></p>
