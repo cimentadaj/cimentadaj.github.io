@@ -125,17 +125,17 @@ write_lines(new_var, path = &amp;quot;./all_variables.txt&amp;quot;, append = T)
   pisa.table(var_name, data = ., by = &amp;quot;cnt&amp;quot;) %&amp;gt;%
   filter(complete.cases(.))&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Let’s check out the contents of &lt;code&gt;try_df&lt;/code&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;##          cnt st094q01na Freq Percentage Std.err.
-## 1    Algeria          1  583      11.05        0
-## 2    Algeria          2  633      12.00        0
-## 3    Algeria          3 2939      55.69        0
-## 4    Algeria          4 1122      21.26        0
-## 5  Australia          1 1843      14.63        0
-## 6  Australia          2 2753      21.86        0
-## 7  Australia          3 6040      47.96        0
-## 8  Australia          4 1958      15.55        0
-## 9    Austria          1 1364      21.09        0
-## 10   Austria          2 1630      25.21        0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##          cnt ec022q09na Freq Percentage Std.err.
+## 1  Australia          1 4441      80.88        0
+## 2  Australia          2 1050      19.12        0
+## 3    Belgium          1 1143      86.59        0
+## 4    Belgium          2  177      13.41        0
+## 5   Bulgaria          1 2804      76.86        0
+## 6   Bulgaria          2  844      23.14        0
+## 7    Croatia          1 2332      86.43        0
+## 8    Croatia          2  366      13.57        0
+## 9    Denmark          1  920      84.71        0
+## 10   Denmark          2  166      15.29        0&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Great! To finish with the data, we simply need one more thing: to recode the value labels with the &lt;code&gt;labels&lt;/code&gt; vector.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;try_df[var_name] &amp;lt;- labels[try_df[, var_name]]&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Awesome. We have the data ready, more or less. Let’s produce a dirty plot to check how long the title is.&lt;/p&gt;
@@ -362,7 +362,7 @@ unlink(file)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;env EDITOR=nano crontab -e
 30 9 * * 1-5 /usr/local/bin/RScript path_to_your/script.R&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;To save the file, press Control + O (to write out the file), then enter to accept the file name, then press Control + X (to exit nano). If all went well, then you should see “crontab: installing new crontab” without anything after that.&lt;/p&gt;
-&lt;p&gt;Aaaaaand that’s it! You now have a working script that will be run from Monday to Friday at 9:30 am. This script will read the PISA data, pick a random variable, make a graph and tweet it. You can follow this twitter account at &lt;span class=&#34;citation&#34;&gt;@DailyPISA_Facts&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;Aaaaaand that’s it! You now have a working script that will be run from Monday to Friday at 9:30 am. This script will read the PISA data, pick a random variable, make a graph and tweet it. You can follow this twitter account at &lt;span class=&#34;citation&#34;&gt;[@DailyPISA_Facts]&lt;/span&gt;(&lt;a href=&#34;https://twitter.com/DailyPISA_Facts&#34; class=&#34;uri&#34;&gt;https://twitter.com/DailyPISA_Facts&lt;/a&gt;).&lt;/p&gt;
 &lt;p&gt;Hope this was useful!&lt;/p&gt;
 &lt;/div&gt;
 </description>
