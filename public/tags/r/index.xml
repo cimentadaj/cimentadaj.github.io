@@ -6,10 +6,96 @@
     <description>Recent content in R on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Tue, 24 Oct 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 18 Nov 2017 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/tags/r/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>1..2..3..check!</title>
+      <link>/blog/2017-11-18-123check/1-2-3-check/</link>
+      <pubDate>Sat, 18 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2017-11-18-123check/1-2-3-check/</guid>
+      <description>&lt;p&gt;1..2..3..check! This is my first post using &lt;a href=&#34;https://cran.r-project.org/web/packages/blogdown/index.html&#34;&gt;blogdown&lt;/a&gt;. I migrated my website from &lt;code&gt;Jekyll&lt;/code&gt; to &lt;code&gt;Hugo&lt;/code&gt; and although it took me around 2 days to tweak everything to where I wanted it, the process wasn’t so bad after all. As a celebration, I though of doing a quick analysis!&lt;/p&gt;
+&lt;p&gt;I live in Barcelona, a city known for sunny weather, great football and for wanting to become an independent state. In fact, just recently there was an unsuccessful attempt to break parts with the Spanish nation. Without delving too much into it, I searched for any question related to nationalism into the European Social Survey and downloaded the last available wave using the &lt;a href=&#34;https://cran.r-project.org/web/packages/ess/index.html&#34;&gt;ess&lt;/a&gt; package.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ess)
+library(cimentadaj)
+library(tidyverse)
+
+spain_df &amp;lt;- ess_country(&amp;quot;Spain&amp;quot;, 7, &amp;quot;your_email@gmail.com&amp;quot;)[[1]]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;spain_df&lt;/code&gt; is now a data frame containing the 7th ESS round. Next we have to recode the autonomous communities which are in a ESS format. We’re interested in two variables, &lt;code&gt;region&lt;/code&gt; and &lt;code&gt;fclcntr&lt;/code&gt;, the second one asking whether the person feels closer to Spain.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Note: did you notice the comunidades &lt;code&gt;tibble&lt;/code&gt; there? I pasted that with no effort with &lt;a href=&#34;https://cran.r-project.org/web/packages/datapasta/index.html&#34;&gt;datapasta&lt;/a&gt;! If you’re using Rstudio, just copy the table from your source and use Shift + CMD + T (on a mac) to paste it as a very nice tibble.&lt;/strong&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;comunidades &amp;lt;- tibble::tribble(
+  ~ round,                      ~ country,
+  &amp;quot;ES11&amp;quot;,                      &amp;quot;Galicia&amp;quot;,
+  &amp;quot;ES12&amp;quot;,      &amp;quot;Asturias&amp;quot;,
+  &amp;quot;ES13&amp;quot;,                   &amp;quot;Cantabria&amp;quot;,
+  &amp;quot;ES21&amp;quot;,                  &amp;quot;País Vasco&amp;quot;,
+  &amp;quot;ES22&amp;quot;,  &amp;quot;Navarra&amp;quot;,
+  &amp;quot;ES23&amp;quot;,                    &amp;quot;La Rioja&amp;quot;,
+  &amp;quot;ES24&amp;quot;,                      &amp;quot;Aragón&amp;quot;,
+  &amp;quot;ES30&amp;quot;,         &amp;quot;Madrid&amp;quot;,
+  &amp;quot;ES41&amp;quot;,             &amp;quot;Castilla y León&amp;quot;,
+  &amp;quot;ES42&amp;quot;,          &amp;quot;Castilla-La Mancha&amp;quot;,
+  &amp;quot;ES43&amp;quot;,                 &amp;quot;Extremadura&amp;quot;,
+  &amp;quot;ES51&amp;quot;,                    &amp;quot;Cataluña&amp;quot;,
+  &amp;quot;ES52&amp;quot;,        &amp;quot;Valenciana&amp;quot;,
+  &amp;quot;ES53&amp;quot;,               &amp;quot;Illes Balears&amp;quot;,
+  &amp;quot;ES61&amp;quot;,                   &amp;quot;Andalucía&amp;quot;,
+  &amp;quot;ES62&amp;quot;,            &amp;quot;Región de Murcia&amp;quot;,
+  &amp;quot;ES63&amp;quot;,    &amp;quot;Ceuta&amp;quot;,
+  &amp;quot;ES64&amp;quot;,  &amp;quot;Melilla&amp;quot;,
+  &amp;quot;ES70&amp;quot;,                    &amp;quot;Canarias&amp;quot;
+)
+
+var_recode &amp;lt;- reverse_name(attr(spain_df$fclcntr, &amp;quot;labels&amp;quot;))
+
+ready_df &amp;lt;-
+  spain_df %&amp;gt;%
+  transmute(com_aut = deframe(comunidades)[region],
+         close_cnt = factor(var_recode[fclcntr],
+                            levels = var_recode[1:4],
+                            ordered = TRUE))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Next up we calculate the percentage of respondents within each category and within each region and visualize it.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_table &amp;lt;-
+  ready_df %&amp;gt;%
+  count(com_aut, close_cnt) %&amp;gt;%
+  group_by(com_aut) %&amp;gt;%
+  mutate(perc = (n / n())) %&amp;gt;%
+  filter(!is.na(com_aut), !is.na(close_cnt))
+
+
+perc_table %&amp;gt;%
+  ggplot(aes(close_cnt, perc)) +
+  geom_col() +
+  facet_wrap(~ com_aut) +
+  labs(
+    x = &amp;quot;How close do you feel to Spain?&amp;quot;,
+    y = &amp;quot;Percentage&amp;quot;
+  ) +
+  ggtitle(label = &amp;quot;Closeness to Spain by autonomous communities&amp;quot;) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90),
+    plot.title = element_text(size = 16, family = &amp;quot;Arial-BoldMT&amp;quot;),
+    plot.subtitle = element_text(size = 14, color = &amp;quot;#666666&amp;quot;),
+    plot.caption = element_text(size = 10, color = &amp;quot;#666666&amp;quot;)
+  ) +
+  coord_flip()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-11-18-123check/2017-11-18-1-2-3-check_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Catalonia does seem to be the region with the highest share of respondents saying that they don’t feel close to Spain, although the vast majority does say they feel very or just close to Spain. On the other hand, Andalucia does comply with stereotypes! They certainly feel very close to the Spanish identity.&lt;/p&gt;
+&lt;p&gt;My &lt;code&gt;blogdown&lt;/code&gt; workflow is very easy:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Create a post with my function &lt;code&gt;cimentadaj::my_new_post&lt;/code&gt; which is a wrapper around &lt;code&gt;blogdown::new_post&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Run &lt;code&gt;blogdown::serve_site&lt;/code&gt; to have a realtime visual of how my blog post is being rendered&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Write blogpost&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Run &lt;code&gt;blogdown::build_site&lt;/code&gt;. This can take long if you posts that takea long time to compile&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Push to github (although this is more complicated because I have two branches, one for developing content and the other for pushing to the website. Maybe I’ll write a post about this once)&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Bloggin with &lt;code&gt;blogdown&lt;/code&gt; was so easy that I think I’m gonna start bloggin more now…&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>PhD thesis template with Sweave and knitr</title>

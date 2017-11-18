@@ -1,0 +1,88 @@
+---
+title: 1..2..3..check!
+author: Jorge Cimentada
+date: '2017-11-18'
+slug: 1-2-3-check
+categories: []
+tags: ['R', 'EDA']
+---
+
+
+
+<p>1..2..3..check! This is my first post using <a href="https://cran.r-project.org/web/packages/blogdown/index.html">blogdown</a>. I migrated my website from <code>Jekyll</code> to <code>Hugo</code> and although it took me around 2 days to tweak everything to where I wanted it, the process wasn’t so bad after all. As a celebration, I though of doing a quick analysis!</p>
+<p>I live in Barcelona, a city known for sunny weather, great football and for wanting to become an independent state. In fact, just recently there was an unsuccessful attempt to break parts with the Spanish nation. Without delving too much into it, I searched for any question related to nationalism into the European Social Survey and downloaded the last available wave using the <a href="https://cran.r-project.org/web/packages/ess/index.html">ess</a> package.</p>
+<pre class="r"><code>library(ess)
+library(cimentadaj)
+library(tidyverse)
+
+spain_df &lt;- ess_country(&quot;Spain&quot;, 7, &quot;your_email@gmail.com&quot;)[[1]]</code></pre>
+<p><code>spain_df</code> is now a data frame containing the 7th ESS round. Next we have to recode the autonomous communities which are in a ESS format. We’re interested in two variables, <code>region</code> and <code>fclcntr</code>, the second one asking whether the person feels closer to Spain.</p>
+<p><strong>Note: did you notice the comunidades <code>tibble</code> there? I pasted that with no effort with <a href="https://cran.r-project.org/web/packages/datapasta/index.html">datapasta</a>! If you’re using Rstudio, just copy the table from your source and use Shift + CMD + T (on a mac) to paste it as a very nice tibble.</strong></p>
+<pre class="r"><code>comunidades &lt;- tibble::tribble(
+  ~ round,                      ~ country,
+  &quot;ES11&quot;,                      &quot;Galicia&quot;,
+  &quot;ES12&quot;,      &quot;Asturias&quot;,
+  &quot;ES13&quot;,                   &quot;Cantabria&quot;,
+  &quot;ES21&quot;,                  &quot;País Vasco&quot;,
+  &quot;ES22&quot;,  &quot;Navarra&quot;,
+  &quot;ES23&quot;,                    &quot;La Rioja&quot;,
+  &quot;ES24&quot;,                      &quot;Aragón&quot;,
+  &quot;ES30&quot;,         &quot;Madrid&quot;,
+  &quot;ES41&quot;,             &quot;Castilla y León&quot;,
+  &quot;ES42&quot;,          &quot;Castilla-La Mancha&quot;,
+  &quot;ES43&quot;,                 &quot;Extremadura&quot;,
+  &quot;ES51&quot;,                    &quot;Cataluña&quot;,
+  &quot;ES52&quot;,        &quot;Valenciana&quot;,
+  &quot;ES53&quot;,               &quot;Illes Balears&quot;,
+  &quot;ES61&quot;,                   &quot;Andalucía&quot;,
+  &quot;ES62&quot;,            &quot;Región de Murcia&quot;,
+  &quot;ES63&quot;,    &quot;Ceuta&quot;,
+  &quot;ES64&quot;,  &quot;Melilla&quot;,
+  &quot;ES70&quot;,                    &quot;Canarias&quot;
+)
+
+var_recode &lt;- reverse_name(attr(spain_df$fclcntr, &quot;labels&quot;))
+
+ready_df &lt;-
+  spain_df %&gt;%
+  transmute(com_aut = deframe(comunidades)[region],
+         close_cnt = factor(var_recode[fclcntr],
+                            levels = var_recode[1:4],
+                            ordered = TRUE))</code></pre>
+<p>Next up we calculate the percentage of respondents within each category and within each region and visualize it.</p>
+<pre class="r"><code>perc_table &lt;-
+  ready_df %&gt;%
+  count(com_aut, close_cnt) %&gt;%
+  group_by(com_aut) %&gt;%
+  mutate(perc = (n / n())) %&gt;%
+  filter(!is.na(com_aut), !is.na(close_cnt))
+
+
+perc_table %&gt;%
+  ggplot(aes(close_cnt, perc)) +
+  geom_col() +
+  facet_wrap(~ com_aut) +
+  labs(
+    x = &quot;How close do you feel to Spain?&quot;,
+    y = &quot;Percentage&quot;
+  ) +
+  ggtitle(label = &quot;Closeness to Spain by autonomous communities&quot;) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90),
+    plot.title = element_text(size = 16, family = &quot;Arial-BoldMT&quot;),
+    plot.subtitle = element_text(size = 14, color = &quot;#666666&quot;),
+    plot.caption = element_text(size = 10, color = &quot;#666666&quot;)
+  ) +
+  coord_flip()</code></pre>
+<p><img src="/blog/2017-11-18-123check/2017-11-18-1-2-3-check_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Catalonia does seem to be the region with the highest share of respondents saying that they don’t feel close to Spain, although the vast majority does say they feel very or just close to Spain. On the other hand, Andalucia does comply with stereotypes! They certainly feel very close to the Spanish identity.</p>
+<p>My <code>blogdown</code> workflow is very easy:</p>
+<ol style="list-style-type: decimal">
+<li><p>Create a post with my function <code>cimentadaj::my_new_post</code> which is a wrapper around <code>blogdown::new_post</code></p></li>
+<li><p>Run <code>blogdown::serve_site</code> to have a realtime visual of how my blog post is being rendered</p></li>
+<li><p>Write blogpost</p></li>
+<li><p>Run <code>blogdown::build_site</code>. This can take long if you posts that takea long time to compile</p></li>
+<li><p>Push to github (although this is more complicated because I have two branches, one for developing content and the other for pushing to the website. Maybe I’ll write a post about this once)</p></li>
+</ol>
+<p>Bloggin with <code>blogdown</code> was so easy that I think I’m gonna start bloggin more now…</p>
