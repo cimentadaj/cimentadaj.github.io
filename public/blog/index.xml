@@ -6,10 +6,91 @@
     <description>Recent content in Blogs on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sat, 18 Nov 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 23 Nov 2017 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>An introduction to the ess package</title>
+      <link>/blog/2017-11-23-an-introduction-to-the-ess-package/an-introduction-to-the-ess-package/</link>
+      <pubDate>Thu, 23 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2017-11-23-an-introduction-to-the-ess-package/an-introduction-to-the-ess-package/</guid>
+      <description>&lt;p&gt;The &lt;code&gt;ess&lt;/code&gt; package is designed to download the ESS data as easily as possible. It has a few helper functions to download rounds, rounds for a selected country and to show which rounds/countries are available. In this tutorial I will walk you through how these functions work.&lt;/p&gt;
+&lt;p&gt;Before using the package it is necessary for you to sign up at &lt;a href=&#34;http://www.europeansocialsurvey.org/&#34; class=&#34;uri&#34;&gt;http://www.europeansocialsurvey.org/&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Let’s do it together.&lt;/p&gt;
+&lt;p&gt;When you enter the website go the to topmost left corner and click on &lt;code&gt;Sign in/Register&lt;/code&gt;. Under the email box, click on &lt;code&gt;New user?&lt;/code&gt; and fill out your personal information. Click on &lt;code&gt;Register&lt;/code&gt; and check your email inbox. You should’ve received an email from the ESS with an activation link. Click on that link and voila! We’re ready to go.&lt;/p&gt;
+&lt;p&gt;We can install and load the package with this code:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;quot;ess&amp;quot;, dependencies = TRUE)
+library(ess)&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;download-country-rounds&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Download country rounds&lt;/h2&gt;
+&lt;p&gt;First things first, do we know if Spain participated in the European Social Survey? &lt;code&gt;ess&lt;/code&gt; has &lt;code&gt;show_countries()&lt;/code&gt; that automatically searchers for all countries that participated. The nice thing is that these (an all other functions from the package) interactively check this information on the website, so any changes should be also visible immediately in R.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;show_countries()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Spain is there! But which rounds did Spain participate? For that, the usual way would be to visit &lt;a href=&#34;http://www.europeansocialsurvey.org/data/country_index.html&#34; class=&#34;uri&#34;&gt;http://www.europeansocialsurvey.org/data/country_index.html&lt;/a&gt; and look for it. &lt;code&gt;ess&lt;/code&gt; provides the function &lt;code&gt;show_country_rounds()&lt;/code&gt; which returns all the available rounds from that website.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;show_country_rounds(&amp;quot;Spain&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Remember to type exactly the same name provided by &lt;code&gt;show_countries()&lt;/code&gt; because these functions are case sensitive. How do we download this data?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;your_email &amp;lt;- &amp;quot;your email here&amp;quot;
+
+spain_seven &amp;lt;- ess_country(
+  country = &amp;quot;Spain&amp;quot;,
+  rounds = 7,
+  your_email = your_email
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;That easy! Now you have &lt;code&gt;spain_seven&lt;/code&gt; with the 7th round for Spain. If you wanted to download more rounds, you can specify them in the rounds section.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;spain_three &amp;lt;- ess_country(
+  country = &amp;quot;Spain&amp;quot;,
+  rounds = c(1, 3, 5),
+  your_email = your_email
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you’re interested in downloading all available waves from the start, use &lt;code&gt;ess_all_cntrounds()&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ess_all_cntrounds(&amp;quot;Spain&amp;quot;, your_email)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;download-complete-rounds&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Download complete rounds&lt;/h2&gt;
+&lt;p&gt;What about specific rounds for all countries? &lt;code&gt;ess&lt;/code&gt; provides the same set of functions: &lt;code&gt;show_rounds()&lt;/code&gt; for available rounds, &lt;code&gt;ess_rounds()&lt;/code&gt; for specific rounds and &lt;code&gt;ess_all_rounds()&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;show_rounds()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Let’s grab the first three rounds, although this might take a bit more time than for country rounds!&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;three_rounds &amp;lt;-
+  ess_rounds(
+  c(1, 3),
+  your_email
+)
+
+three_rounds[[1]]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Finally, you can download all available rounds with:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_rounds &amp;lt;- ess_all_rounds(your_email)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;download-for-stata&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Download for Stata&lt;/h2&gt;
+&lt;p&gt;To download Stata files you can use:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ess_country(
+  &amp;quot;Spain&amp;quot;,
+  1:2,
+  your_email,
+  only_download = TRUE,
+  output_dir = &amp;quot;./ess&amp;quot;
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;only_download&lt;/code&gt; argument makes sure that it won’t return anything in R, and &lt;code&gt;output_dir&lt;/code&gt; will be where the data is saved. If you supply a non existent directory it will create it on the fly.&lt;/p&gt;
+&lt;p&gt;rounds can be downloaded in the same way with:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ess_rounds(
+  1:2,
+  your_email,
+  only_download = TRUE,
+  output_dir = &amp;quot;./ess&amp;quot;
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;That easy! &lt;code&gt;ess&lt;/code&gt; will continue to evolve in the future and there are some of the features already in the to-do list.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Add a &lt;code&gt;*_themes()&lt;/code&gt; family of function for topics; see &lt;a href=&#34;http://www.europeansocialsurvey.org/data/module-index.html&#34;&gt;here&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Download data in SPSS and SAS format&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Stata files (as well as SPSS and SAS) need to be pre-processed before reading into R (ex: run a do file before reading into R)&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The repository and development version of the package can be found at &lt;a href=&#34;https://github.com/cimentadaj/ess&#34; class=&#34;uri&#34;&gt;https://github.com/cimentadaj/ess&lt;/a&gt; and please report any bugs/issues/improvements &lt;a href=&#34;https://github.com/cimentadaj/ess/issues&#34;&gt;here&lt;/a&gt;!&lt;/p&gt;
+&lt;p&gt;Thanks.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
     
     <item>
       <title>1..2..3..check!</title>

@@ -1,0 +1,137 @@
+---
+title: An introduction to the ess package
+author: Jorge Cimentada
+date: '2017-11-23'
+slug: an-introduction-to-the-ess-package
+categories: []
+tags: ["R", "packages"]
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+The `ess` package is designed to download the ESS data as easily as possible. It has a few helper functions to download rounds, rounds for a selected country and to show which rounds/countries are available. In this tutorial I will walk you through how these functions work.
+
+Before using the package it is necessary for you to sign up at http://www.europeansocialsurvey.org/.
+
+Let's do it together.
+
+When you enter the website go the to topmost left corner and click on `Sign in/Register`. Under the email box, click on `New user?` and fill out your personal information. Click on `Register` and check your email inbox. You should've received an email from the ESS with an activation link. Click on that link and voila! We're ready to go.
+
+We can install and load the package with this code:
+
+```{r, eval = FALSE}
+install.packages("ess", dependencies = TRUE)
+library(ess)
+```
+
+```{r, echo = FALSE}
+library(ess)
+```
+
+## Download country rounds
+
+First things first, do we know if Spain participated in the European Social Survey? `ess` has `show_countries()` that automatically searchers for all countries that participated. The nice thing is that these (an all other functions from the package) interactively check this information on the website, so any changes should be also visible immediately in R.
+
+```{r}
+show_countries()
+```
+
+Spain is there! But which rounds did Spain participate? For that, the usual way would be to visit http://www.europeansocialsurvey.org/data/country_index.html and look for it. `ess` provides the function `show_country_rounds()` which returns all the available rounds from that website.
+
+```{r}
+show_country_rounds("Spain")
+```
+
+Remember to type exactly the same name provided by `show_countries()` because these functions are case sensitive. How do we download this data?
+
+```{r, eval = FALSE}
+your_email <- "your email here"
+
+spain_seven <- ess_country(
+  country = "Spain",
+  rounds = 7,
+  your_email = your_email
+)
+```
+
+That easy! Now you have `spain_seven` with the 7th round for Spain. If you wanted to download more rounds, you can specify them in the rounds section.
+
+```{r, eval = FALSE}
+spain_three <- ess_country(
+  country = "Spain",
+  rounds = c(1, 3, 5),
+  your_email = your_email
+)
+```
+
+If you're interested in downloading all available waves from the start, use `ess_all_cntrounds()`.
+
+```{r, eval = FALSE}
+ess_all_cntrounds("Spain", your_email)
+```
+
+## Download complete rounds
+
+What about specific rounds for all countries? `ess` provides the same set of functions: `show_rounds()` for available rounds, `ess_rounds()` for specific rounds and `ess_all_rounds()`.
+
+```{r}
+show_rounds()
+```
+
+Let's grab the first three rounds, although this might take a bit more time than for country rounds!
+
+```{r, eval = FALSE}
+three_rounds <-
+  ess_rounds(
+  c(1, 3),
+  your_email
+)
+
+three_rounds[[1]]
+```
+
+Finally, you can download all available rounds with:
+```{r, eval = FALSE}
+all_rounds <- ess_all_rounds(your_email)
+```
+
+## Download for Stata
+
+To download Stata files you can use:
+
+```{r, eval = FALSE}
+ess_country(
+  "Spain",
+  1:2,
+  your_email,
+  only_download = TRUE,
+  output_dir = "./ess"
+)
+```
+
+The `only_download` argument makes sure that it won't return anything in R, and `output_dir` will be where the data is saved. If you supply a non existent directory it will create it on the fly.
+
+rounds can be downloaded in the same way with:
+
+```{r, eval = FALSE}
+ess_rounds(
+  1:2,
+  your_email,
+  only_download = TRUE,
+  output_dir = "./ess"
+)
+```
+
+That easy! `ess` will continue to evolve in the future and there are some of the features already in the to-do list.
+
+- Add a `*_themes()` family of function for topics; see [here](http://www.europeansocialsurvey.org/data/module-index.html)
+
+- Download data in SPSS and SAS format
+
+- Stata files (as well as SPSS and SAS) need to be pre-processed before reading into R (ex: run a do file before reading into R)
+
+The repository and development version of the package can be found at https://github.com/cimentadaj/ess and please report any bugs/issues/improvements [here](https://github.com/cimentadaj/ess/issues)!
+
+Thanks.
