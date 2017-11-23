@@ -2,7 +2,7 @@ cd /Users/cimentadaj/Downloads/gitrepo/cimentadaj.github.io
 
 git add .
 
-git commit -m “New blog post”
+git commit -m 'New blog post'
 
 git push
 
@@ -24,7 +24,7 @@ rm -rf ../tempfolder
 
 git add .
 
-git commit -m “New blog post”
+git commit -m 'New blog post'
 
 git push
 

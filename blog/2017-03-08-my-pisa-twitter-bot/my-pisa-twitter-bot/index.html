@@ -178,17 +178,17 @@ write_lines(new_var, path = &quot;./all_variables.txt&quot;, append = T)
   pisa.table(var_name, data = ., by = &quot;cnt&quot;) %&gt;%
   filter(complete.cases(.))</code></pre>
 <p>Let’s check out the contents of <code>try_df</code>:</p>
-<pre><code>##          cnt st123q03na Freq Percentage Std.err.
-## 1  Australia          1  327       2.34        0
-## 2  Australia          2  962       6.90        0
-## 3  Australia          3 5681      40.73        0
-## 4  Australia          4 6979      50.03        0
-## 5    Austria          1  151       2.18        0
-## 6    Austria          2  391       5.65        0
-## 7    Austria          3 1532      22.13        0
-## 8    Austria          4 4849      70.04        0
-## 9    Belgium          1  168       1.82        0
-## 10   Belgium          2  568       6.15        0</code></pre>
+<pre><code>##          cnt ec015q08na Freq Percentage Std.err.
+## 1  Australia          1 4750      84.15        0
+## 2  Australia          2  895      15.85        0
+## 3    Belgium          1 1204      88.53        0
+## 4    Belgium          2  156      11.47        0
+## 5   Bulgaria          1 2850      77.01        0
+## 6   Bulgaria          2  851      22.99        0
+## 7    Croatia          1 2232      82.30        0
+## 8    Croatia          2  480      17.70        0
+## 9    Denmark          1  897      81.99        0
+## 10   Denmark          2  197      18.01        0</code></pre>
 <p>Great! To finish with the data, we simply need one more thing: to recode the value labels with the <code>labels</code> vector.</p>
 <pre class="r"><code>try_df[var_name] &lt;- labels[try_df[, var_name]]</code></pre>
 <p>Awesome. We have the data ready, more or less. Let’s produce a dirty plot to check how long the title is.</p>
