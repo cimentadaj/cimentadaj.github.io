@@ -85,8 +85,10 @@ hljs.initHighlightingOnLoad();
 cd4 &lt;- read.csv(&quot;http://www.stat.columbia.edu/~gelman/arm/examples/cd4/allvar.csv&quot;)
 
 # Let&#39;s recreate the model from 12.2 (b)
-cd4$VDATE &lt;- as.Date(cd4$VDATE, format = &quot;%m/%d/%Y&quot;)
-mod2 &lt;- lmer(CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), data = cd4)</code></pre>
+cd4$VDATE &lt;- as.Date(cd4$VDATE, format = &quot;%m/%d/%Y&quot;)</code></pre>
+<pre><code>## Warning in strptime(x, format, tz = &quot;GMT&quot;): unknown timezone &#39;default/
+## Europe/Madrid&#39;</code></pre>
+<pre class="r"><code>mod2 &lt;- lmer(CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), data = cd4)</code></pre>
 <ol style="list-style-type: lower-alpha">
 <li>Use the model fit from Exercise 12.2 (b) to generate simulation of predicted CD4 percentages for each child in the dataset at a hypothetical next time point.</li>
 </ol>
