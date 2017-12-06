@@ -1,0 +1,75 @@
+---
+title: How long should I wait for my bike?
+author: Jorge Cimentada
+date: '2017-12-01'
+slug: how-long-should-i-wait-for-my-bike
+categories: []
+tags: ["scraping", "projects"]
+---
+
+
+
+<p>I’ve just started a project which I’m very excited about. Everyday I take my bike to work and most days I have one of two problems. First, whenever I get to my station there are no bikes available; no problem, there’s an app that shows the closest stations with bikes available. The problem is that these stations might be far and sometimes I’m relucant to walk that much. I’d love for bicing to give me some time estimation until a new bike arrives.</p>
+<p>Second, whenever you’re trying to return a bike the station might not have any parking spaces available. Similarly, it would be very cool if bicing (the public bicycle company) gave me an estimate of how much time I should wait until a new bike will be taken. I started thinking on how I could implement this and started looking for bicing data online. To my surprise, bicing actually releases their <strong>live</strong> data as a json! But for this type of estimation I need historical data. I want to know the pattern usage of the station and use that information for the prediction.</p>
+<p>With that idea in mind, I got to work. I needed to set up my Virtual Private Server (VPS) to pull the data from the bicing API everyday. Because this is still a work in progress, I will only describe here how I set my VPS to scrape the bicing API everyday and how I set <code>cron</code> to send me an email after every scrape.</p>
+<p>I have a VPS from <a href="https://www.digitalocean.com/">Digital Ocean</a> with an Ubuntu OS and 512 mb of RAM and 2 GB of hard disk. That’s enough for this task because the data should not be very big, even in the long run. In any case you can adjust for your VPS to have more memory/ram without losing information. Assuming you have <a href="https://www.digitalocean.com/community/tutorials/how-to-install-r-on-ubuntu-16-04-2">R installed in your Ubuntu VPS</a> with your favorite packages, then make sure your script works by running <code>Rscript path/to/your/script.R</code>. It might be better to type <code>which Rscript</code> in the terminal and paste the path to the executable, similar to <code>/usr/bin/Rscript path/to/your/script.R</code></p>
+<p>My workflow is as follows: I first create an empty dataset saved as <code>.rds</code> and my script reads the data, scrapes the bicing data and then saves the data by appending both the empty and the scraped data. It finishes by saving the same <code>.rds</code> for a later scrape. I tested this very thoroughly to make sure the script wouldn’t fail and I always get the expected data.</p>
+<p>All good so far, right? This took me no time. The hard problem came when setting the <code>cron</code> job, which is a way of scheduling tasks in OSx and Ubuntu. For an explanation of how <code>cron</code> works, check out how I set <a href="blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/index.html">my PISA twitter bot</a>.</p>
+<p>First, make sure you have <code>cron</code> <a href="https://www.digitalocean.com/community/tutorials/how-to-use-cron-to-automate-tasks-on-a-vps">installed</a>. I followed <strong>a lot</strong> of tutorials and dispered information. What worked for me perhaps does not work for you, but here it is.</p>
+<p>Type <code>crontab -e</code> and the cron interface should appear. The lines starting with <code>#</code> are coments, so scroll down until the end of the comments. First we have to set a few environmental variables that <code>cron</code> uses to execute your script. I followed <a href="http://krisjordan.com/essays/timesaving-crontab-tips">these tips</a>.</p>
+<p>When I finished my crontab looked like this:</p>
+<pre class="bash"><code>SHELL=/bin/bash
+PATH=/home/cimentadaj/bin:/home/cimentadaj/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+HOME=/home/cimentadaj/bicycle
+MAILTO=my_email # set email here!
+15,50 16  * * * /usr/bin/Rscript scrape_bicing.R</code></pre>
+<ul>
+<li><p>SHELL is the path to the pre-determined program to run on the cron job. Be default I set it to bash (but it could be anything else you want).</p></li>
+<li><p>PATH I’m not sure what’s for but I pasted the output of <code>echo $PATH</code>, as the tips suggested.</p></li>
+<li><p>HOME is the root directory where the script will be executed, I set it to where the script is (or where your project is at).</p></li>
+<li><p>MAILTO is the email where I will get the cron job alert when it finishes.</p></li>
+<li><p><code>15,50 16  * * * /usr/bin/Rscript scrape_bicing.R</code> is the schedule, program and script to run. Here I set arbitrary times, so the the script is scheduled to run at <code>16:15</code> and <code>16:50</code> every day, every month and every year. I will run using <code>Rscript</code> and the name of the script to run.</p></li>
+</ul>
+<p><strong>WARNING:</strong> remember that the <code>cron</code> is set relative to the time of where your server is. Mine did not have the same timezone of where I lived, so I had to set the <code>cron</code> one hour before of my actual time. Use <code>date</code> to print the time of your VPS.</p>
+<p>Even after this, the <code>cron</code> job was still not running. Nothing, no email, no log, no change in the data. I then figured out that Ubuntu systems have some <a href="https://serverfault.com/a/754104">pecularities</a> when it comes to <code>cron</code>. So I went to <code>./etc/</code> and renamed every <code>cron.</code> file for <code>cron-</code> with <code>rename 's/cron./cron-/g' *</code>, thanks to this <a href="https://stackoverflow.com/a/20657563/3617958">answer</a>.</p>
+<p>Run again and it worked! Great. However, I didn’t receive an email stating that the <code>cron</code> job finished. I looked up many solutions and ended up installing <code>ssmtp</code> which is a library for sending emails from terminal. I won’t bore you with the details. Here are the steps I took:</p>
+<ul>
+<li>Install <code>ssmtp</code> with <code>sudo apt-get update</code> and <code>sudo apt-get install ssmtp</code>.</li>
+<li>Edit <code>ssmtp.conf</code> with <code>sudo nano /etc/ssmtp/ssmtp.conf</code></li>
+</ul>
+<p>Here’s the config that worked for me using <code>gmail</code>:</p>
+<pre class="bash"><code># Config file for sSMTP sendmail
+#
+# The person who gets all mail for userids &lt; 1000
+# Make this empty to disable rewriting.
+root=your_email@gmail.com
+
+# The place where the mail goes. The actual machine name is required no 
+# MX records are consulted. Commonly mailhosts are named mail.domain.com
+mailhub=smtp.gmail.com:587
+
+AuthUser=your_email@gmail.com
+AuthPass=your_password
+UseTLS=YES
+UseSTARTTLS=yes
+TLS_CA_FILE=/etc/ssl/certs/ca-certificates.crt
+
+# Where will the mail seem to come from?
+#rewriteDomain=gmail.com
+
+# The full hostname
+hostname=your_host_name
+
+# Are users allowed to set their own From: address?
+# YES - Allow the user to specify their own From: address
+# NO - Use the system generated From: address
+#FromLineOverride=YES</code></pre>
+<p>Three caveats that took me a lot of time to figure out.</p>
+<ul>
+<li><p>First, <a href="https://www.digitalocean.com/community/tutorials/how-to-use-google-s-smtp-server">some docs</a> say you should use another port in <code>mailhub</code>, but <code>587</code> worked for me.</p></li>
+<li><p><code>TLS_CA_FILE</code>: make sure that <a href="https://askubuntu.com/questions/342484/etc-pki-tls-certs-ca-bundle-crt-not-found">this file exists</a>! For Ubuntu/Debian the file is at <code>/etc/ssl/certs/ca-certificates.crt</code> while on other platforms it might be in <code>/etc/pki/tls/certs/ca-bundle.crt</code>. Note the different file names!</p></li>
+<li><p><code>hostname</code> should be the result of typing <code>hostname</code> in your server.</p></li>
+</ul>
+<p>Lastly, I also added the line <code>root:your_EMAIL_@gmail.com:smtp.gmail.com:587</code> with <code>sudo nano /etc/ssmtp/revaliases</code>.</p>
+<p>After an entire day figuring out all this information, the <code>cron</code> job worked! I now set my <code>cron</code> job and whenever it finished I receive an email directly showing the log of the script.</p>
+<p>I wrote this primarily for me not to forget any of this, but it might be useful for other people.</p>
