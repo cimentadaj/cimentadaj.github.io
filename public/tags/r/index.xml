@@ -104,7 +104,7 @@ three_rounds[[1]]&lt;/code&gt;&lt;/pre&gt;
 library(cimentadaj)
 library(tidyverse)
 
-spain_df &amp;lt;- ess_country(&amp;quot;Spain&amp;quot;, 7, &amp;quot;your_email@gmail.com&amp;quot;)[[1]]&lt;/code&gt;&lt;/pre&gt;
+spain_df &amp;lt;- ess_country(&amp;quot;Spain&amp;quot;, 7, &amp;quot;your_email@gmail.com&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;code&gt;spain_df&lt;/code&gt; is now a data frame containing the 7th ESS round. Next we have to recode the autonomous communities which are in a ESS format. We’re interested in two variables, &lt;code&gt;region&lt;/code&gt; and &lt;code&gt;fclcntr&lt;/code&gt;, the second one asking whether the person feels closer to Spain.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Note: did you notice the comunidades &lt;code&gt;tibble&lt;/code&gt; there? I pasted that with no effort with &lt;a href=&#34;https://cran.r-project.org/web/packages/datapasta/index.html&#34;&gt;datapasta&lt;/a&gt;! If you’re using Rstudio, just copy the table from your source and use Shift + CMD + T (on a mac) to paste it as a very nice tibble.&lt;/strong&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;comunidades &amp;lt;- tibble::tribble(
@@ -761,7 +761,7 @@ dataset_ready &amp;lt;-
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;quot;perccalc&amp;quot;, repo = &amp;quot;https://cran.rediris.es/&amp;quot;)
 ## 
 ## The downloaded binary packages are in
-##  /var/folders/w0/pscnb7zx5y9g_qf13cxhl0_r0000gn/T//RtmpvDBTCT/downloaded_packages
+##  /var/folders/w0/pscnb7zx5y9g_qf13cxhl0_r0000gn/T//Rtmpg2CkGi/downloaded_packages
 library(perccalc)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The package has two functions, which I’ll show some examples. The first one is called &lt;code&gt;perc_diff&lt;/code&gt; and it’s very easy to use, we just specify the data, the name of the categorical and continuous variable and the percentile difference we want.&lt;/p&gt;
 &lt;p&gt;Let’s put it to use!&lt;/p&gt;
@@ -1116,17 +1116,17 @@ write_lines(new_var, path = &amp;quot;./all_variables.txt&amp;quot;, append = T)
   pisa.table(var_name, data = ., by = &amp;quot;cnt&amp;quot;) %&amp;gt;%
   filter(complete.cases(.))&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Let’s check out the contents of &lt;code&gt;try_df&lt;/code&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;##        cnt pa004q01na Freq Percentage Std.err.
-## 1  Belgium          1   17       0.36        0
-## 2  Belgium          2   49       1.04        0
-## 3  Belgium          3 1603      34.16        0
-## 4  Belgium          4 3024      64.44        0
-## 5    Chile          1   67       1.06        0
-## 6    Chile          2   52       0.82        0
-## 7    Chile          3 1816      28.70        0
-## 8    Chile          4 4392      69.42        0
-## 9  Croatia          1   12       0.22        0
-## 10 Croatia          2   33       0.61        0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##                   cnt pa020q01na Freq Percentage Std.err.
+## 1             Belgium          1 2010      98.58        0
+## 2             Belgium          2   29       1.42        0
+## 3               Chile          1 2356      98.00        0
+## 4               Chile          2   48       2.00        0
+## 5             Croatia          1 1689      94.20        0
+## 6             Croatia          2  104       5.80        0
+## 7  Dominican Republic          1 1278      87.90        0
+## 8  Dominican Republic          2  176      12.10        0
+## 9              France          1 2536      97.46        0
+## 10             France          2   66       2.54        0&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Great! To finish with the data, we simply need one more thing: to recode the value labels with the &lt;code&gt;labels&lt;/code&gt; vector.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;try_df[var_name] &amp;lt;- labels[try_df[, var_name]]&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Awesome. We have the data ready, more or less. Let’s produce a dirty plot to check how long the title is.&lt;/p&gt;
@@ -1903,16 +1903,16 @@ return(vec)
 # shots in a row.&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# test
 thrower(0.6)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  [1] 1 1 1 1 1 0 1 1 1 0 0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 1 0 0&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# 0 1 0 1 0 0
 # Last two elements are always zero&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# b)
 attempts &amp;lt;- replicate(1000, thrower(0.60))
 mean(sapply(attempts, length)) &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 8.639&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 8.899&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# mean number of shots until two shots are missed in a row&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sd(sapply(attempts, length)) &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 7.760858&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 7.231119&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# standard deviation of shots made
 # until two shots are missed in a row&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;hist(sapply(attempts, length)) # distribution of shots made&lt;/code&gt;&lt;/pre&gt;

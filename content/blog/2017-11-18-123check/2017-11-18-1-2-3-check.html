@@ -15,7 +15,7 @@ tags: ['R', 'EDA']
 library(cimentadaj)
 library(tidyverse)
 
-spain_df &lt;- ess_country(&quot;Spain&quot;, 7, &quot;your_email@gmail.com&quot;)[[1]]</code></pre>
+spain_df &lt;- ess_country(&quot;Spain&quot;, 7, &quot;your_email@gmail.com&quot;)</code></pre>
 <p><code>spain_df</code> is now a data frame containing the 7th ESS round. Next we have to recode the autonomous communities which are in a ESS format. We’re interested in two variables, <code>region</code> and <code>fclcntr</code>, the second one asking whether the person feels closer to Spain.</p>
 <p><strong>Note: did you notice the comunidades <code>tibble</code> there? I pasted that with no effort with <a href="https://cran.r-project.org/web/packages/datapasta/index.html">datapasta</a>! If you’re using Rstudio, just copy the table from your source and use Shift + CMD + T (on a mac) to paste it as a very nice tibble.</strong></p>
 <pre class="r"><code>comunidades &lt;- tibble::tribble(
