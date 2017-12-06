@@ -25,7 +25,7 @@ library(ess)
 library(cimentadaj)
 library(tidyverse)
 
-spain_df <- ess_country("Spain", 7, "your_email@gmail.com")[[1]]
+spain_df <- ess_country("Spain", 7, "your_email@gmail.com")
 ```
 
 ```{r, results = 'hide', echo = FALSE}

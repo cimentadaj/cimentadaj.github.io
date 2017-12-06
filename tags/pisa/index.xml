@@ -125,17 +125,17 @@ write_lines(new_var, path = &amp;quot;./all_variables.txt&amp;quot;, append = T)
   pisa.table(var_name, data = ., by = &amp;quot;cnt&amp;quot;) %&amp;gt;%
   filter(complete.cases(.))&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Let’s check out the contents of &lt;code&gt;try_df&lt;/code&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;##        cnt pa004q01na Freq Percentage Std.err.
-## 1  Belgium          1   17       0.36        0
-## 2  Belgium          2   49       1.04        0
-## 3  Belgium          3 1603      34.16        0
-## 4  Belgium          4 3024      64.44        0
-## 5    Chile          1   67       1.06        0
-## 6    Chile          2   52       0.82        0
-## 7    Chile          3 1816      28.70        0
-## 8    Chile          4 4392      69.42        0
-## 9  Croatia          1   12       0.22        0
-## 10 Croatia          2   33       0.61        0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##                   cnt pa020q01na Freq Percentage Std.err.
+## 1             Belgium          1 2010      98.58        0
+## 2             Belgium          2   29       1.42        0
+## 3               Chile          1 2356      98.00        0
+## 4               Chile          2   48       2.00        0
+## 5             Croatia          1 1689      94.20        0
+## 6             Croatia          2  104       5.80        0
+## 7  Dominican Republic          1 1278      87.90        0
+## 8  Dominican Republic          2  176      12.10        0
+## 9              France          1 2536      97.46        0
+## 10             France          2   66       2.54        0&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Great! To finish with the data, we simply need one more thing: to recode the value labels with the &lt;code&gt;labels&lt;/code&gt; vector.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;try_df[var_name] &amp;lt;- labels[try_df[, var_name]]&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Awesome. We have the data ready, more or less. Let’s produce a dirty plot to check how long the title is.&lt;/p&gt;
