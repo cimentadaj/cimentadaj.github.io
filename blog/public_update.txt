@@ -28,4 +28,4 @@ git commit -m 'New blog post'
 
 git push
 
-
+git checkout root

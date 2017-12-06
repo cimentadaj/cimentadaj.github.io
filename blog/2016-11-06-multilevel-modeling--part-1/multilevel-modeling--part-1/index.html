@@ -95,8 +95,8 @@ head(cd4)</code></pre>
 ## 6    16      1                 NA  NA       NA        1    220    3.91</code></pre>
 <pre class="r"><code># Let&#39;s transform the VDATE variable into date format
 cd4$VDATE &lt;- as.Date(cd4$VDATE, format = &quot;%m/%d/%Y&quot;)</code></pre>
-<pre><code>## Warning in strptime(x, format, tz = &quot;GMT&quot;): unknown timezone &#39;default/
-## Europe/Madrid&#39;</code></pre>
+<pre><code>## Warning in strptime(x, format, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/
+## 2017c.1.0/zoneinfo/Europe/Madrid&#39;</code></pre>
 <pre class="r"><code>mod1 &lt;- lmer(CD4PCT ~
                VDATE +
                (1 | newpid),
