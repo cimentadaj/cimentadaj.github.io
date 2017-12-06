@@ -6,10 +6,83 @@
     <description>Recent content in Scraping on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Mon, 16 Oct 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 01 Dec 2017 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/tags/scraping/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>How long should I wait for my bike?</title>
+      <link>/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/</link>
+      <pubDate>Fri, 01 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/</guid>
+      <description>&lt;p&gt;I’ve just started a project which I’m very excited about. Everyday I take my bike to work and most days I have one of two problems. First, whenever I get to my station there are no bikes available; no problem, there’s an app that shows the closest stations with bikes available. The problem is that these stations might be far and sometimes I’m relucant to walk that much. I’d love for bicing to give me some time estimation until a new bike arrives.&lt;/p&gt;
+&lt;p&gt;Second, whenever you’re trying to return a bike the station might not have any parking spaces available. Similarly, it would be very cool if bicing (the public bicycle company) gave me an estimate of how much time I should wait until a new bike will be taken. I started thinking on how I could implement this and started looking for bicing data online. To my surprise, bicing actually releases their &lt;strong&gt;live&lt;/strong&gt; data as a json! But for this type of estimation I need historical data. I want to know the pattern usage of the station and use that information for the prediction.&lt;/p&gt;
+&lt;p&gt;With that idea in mind, I got to work. I needed to set up my Virtual Private Server (VPS) to pull the data from the bicing API everyday. Because this is still a work in progress, I will only describe here how I set my VPS to scrape the bicing API everyday and how I set &lt;code&gt;cron&lt;/code&gt; to send me an email after every scrape.&lt;/p&gt;
+&lt;p&gt;I have a VPS from &lt;a href=&#34;https://www.digitalocean.com/&#34;&gt;Digital Ocean&lt;/a&gt; with an Ubuntu OS and 512 mb of RAM and 2 GB of hard disk. That’s enough for this task because the data should not be very big, even in the long run. In any case you can adjust for your VPS to have more memory/ram without losing information. Assuming you have &lt;a href=&#34;https://www.digitalocean.com/community/tutorials/how-to-install-r-on-ubuntu-16-04-2&#34;&gt;R installed in your Ubuntu VPS&lt;/a&gt; with your favorite packages, then make sure your script works by running &lt;code&gt;Rscript path/to/your/script.R&lt;/code&gt;. It might be better to type &lt;code&gt;which Rscript&lt;/code&gt; in the terminal and paste the path to the executable, similar to &lt;code&gt;/usr/bin/Rscript path/to/your/script.R&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;My workflow is as follows: I first create an empty dataset saved as &lt;code&gt;.rds&lt;/code&gt; and my script reads the data, scrapes the bicing data and then saves the data by appending both the empty and the scraped data. It finishes by saving the same &lt;code&gt;.rds&lt;/code&gt; for a later scrape. I tested this very thoroughly to make sure the script wouldn’t fail and I always get the expected data.&lt;/p&gt;
+&lt;p&gt;All good so far, right? This took me no time. The hard problem came when setting the &lt;code&gt;cron&lt;/code&gt; job, which is a way of scheduling tasks in OSx and Ubuntu. For an explanation of how &lt;code&gt;cron&lt;/code&gt; works, check out how I set &lt;a href=&#34;blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/index.html&#34;&gt;my PISA twitter bot&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;First, make sure you have &lt;code&gt;cron&lt;/code&gt; &lt;a href=&#34;https://www.digitalocean.com/community/tutorials/how-to-use-cron-to-automate-tasks-on-a-vps&#34;&gt;installed&lt;/a&gt;. I followed &lt;strong&gt;a lot&lt;/strong&gt; of tutorials and dispered information. What worked for me perhaps does not work for you, but here it is.&lt;/p&gt;
+&lt;p&gt;Type &lt;code&gt;crontab -e&lt;/code&gt; and the cron interface should appear. The lines starting with &lt;code&gt;#&lt;/code&gt; are coments, so scroll down until the end of the comments. First we have to set a few environmental variables that &lt;code&gt;cron&lt;/code&gt; uses to execute your script. I followed &lt;a href=&#34;http://krisjordan.com/essays/timesaving-crontab-tips&#34;&gt;these tips&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;When I finished my crontab looked like this:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;SHELL=/bin/bash
+PATH=/home/cimentadaj/bin:/home/cimentadaj/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+HOME=/home/cimentadaj/bicycle
+MAILTO=my_email # set email here!
+15,50 16  * * * /usr/bin/Rscript scrape_bicing.R&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;SHELL is the path to the pre-determined program to run on the cron job. Be default I set it to bash (but it could be anything else you want).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;PATH I’m not sure what’s for but I pasted the output of &lt;code&gt;echo $PATH&lt;/code&gt;, as the tips suggested.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;HOME is the root directory where the script will be executed, I set it to where the script is (or where your project is at).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;MAILTO is the email where I will get the cron job alert when it finishes.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;15,50 16  * * * /usr/bin/Rscript scrape_bicing.R&lt;/code&gt; is the schedule, program and script to run. Here I set arbitrary times, so the the script is scheduled to run at &lt;code&gt;16:15&lt;/code&gt; and &lt;code&gt;16:50&lt;/code&gt; every day, every month and every year. I will run using &lt;code&gt;Rscript&lt;/code&gt; and the name of the script to run.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;WARNING:&lt;/strong&gt; remember that the &lt;code&gt;cron&lt;/code&gt; is set relative to the time of where your server is. Mine did not have the same timezone of where I lived, so I had to set the &lt;code&gt;cron&lt;/code&gt; one hour before of my actual time. Use &lt;code&gt;date&lt;/code&gt; to print the time of your VPS.&lt;/p&gt;
+&lt;p&gt;Even after this, the &lt;code&gt;cron&lt;/code&gt; job was still not running. Nothing, no email, no log, no change in the data. I then figured out that Ubuntu systems have some &lt;a href=&#34;https://serverfault.com/a/754104&#34;&gt;pecularities&lt;/a&gt; when it comes to &lt;code&gt;cron&lt;/code&gt;. So I went to &lt;code&gt;./etc/&lt;/code&gt; and renamed every &lt;code&gt;cron.&lt;/code&gt; file for &lt;code&gt;cron-&lt;/code&gt; with &lt;code&gt;rename &#39;s/cron./cron-/g&#39; *&lt;/code&gt;, thanks to this &lt;a href=&#34;https://stackoverflow.com/a/20657563/3617958&#34;&gt;answer&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Run again and it worked! Great. However, I didn’t receive an email stating that the &lt;code&gt;cron&lt;/code&gt; job finished. I looked up many solutions and ended up installing &lt;code&gt;ssmtp&lt;/code&gt; which is a library for sending emails from terminal. I won’t bore you with the details. Here are the steps I took:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Install &lt;code&gt;ssmtp&lt;/code&gt; with &lt;code&gt;sudo apt-get update&lt;/code&gt; and &lt;code&gt;sudo apt-get install ssmtp&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Edit &lt;code&gt;ssmtp.conf&lt;/code&gt; with &lt;code&gt;sudo nano /etc/ssmtp/ssmtp.conf&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Here’s the config that worked for me using &lt;code&gt;gmail&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;# Config file for sSMTP sendmail
+#
+# The person who gets all mail for userids &amp;lt; 1000
+# Make this empty to disable rewriting.
+root=your_email@gmail.com
+
+# The place where the mail goes. The actual machine name is required no 
+# MX records are consulted. Commonly mailhosts are named mail.domain.com
+mailhub=smtp.gmail.com:587
+
+AuthUser=your_email@gmail.com
+AuthPass=your_password
+UseTLS=YES
+UseSTARTTLS=yes
+TLS_CA_FILE=/etc/ssl/certs/ca-certificates.crt
+
+# Where will the mail seem to come from?
+#rewriteDomain=gmail.com
+
+# The full hostname
+hostname=your_host_name
+
+# Are users allowed to set their own From: address?
+# YES - Allow the user to specify their own From: address
+# NO - Use the system generated From: address
+#FromLineOverride=YES&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Three caveats that took me a lot of time to figure out.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;First, &lt;a href=&#34;https://www.digitalocean.com/community/tutorials/how-to-use-google-s-smtp-server&#34;&gt;some docs&lt;/a&gt; say you should use another port in &lt;code&gt;mailhub&lt;/code&gt;, but &lt;code&gt;587&lt;/code&gt; worked for me.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;TLS_CA_FILE&lt;/code&gt;: make sure that &lt;a href=&#34;https://askubuntu.com/questions/342484/etc-pki-tls-certs-ca-bundle-crt-not-found&#34;&gt;this file exists&lt;/a&gt;! For Ubuntu/Debian the file is at &lt;code&gt;/etc/ssl/certs/ca-certificates.crt&lt;/code&gt; while on other platforms it might be in &lt;code&gt;/etc/pki/tls/certs/ca-bundle.crt&lt;/code&gt;. Note the different file names!&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;hostname&lt;/code&gt; should be the result of typing &lt;code&gt;hostname&lt;/code&gt; in your server.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Lastly, I also added the line &lt;code&gt;root:your_EMAIL_@gmail.com:smtp.gmail.com:587&lt;/code&gt; with &lt;code&gt;sudo nano /etc/ssmtp/revaliases&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;After an entire day figuring out all this information, the &lt;code&gt;cron&lt;/code&gt; job worked! I now set my &lt;code&gt;cron&lt;/code&gt; job and whenever it finished I receive an email directly showing the log of the script.&lt;/p&gt;
+&lt;p&gt;I wrote this primarily for me not to forget any of this, but it might be useful for other people.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Scraping and visualizing How I Met Your Mother</title>

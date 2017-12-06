@@ -33,7 +33,7 @@ library(ess)
 library(cimentadaj)
 library(tidyverse)
 
-spain_df <- ess_country("Spain", 7, "cimentadaj@gmail.com")[[1]]
+spain_df <- ess_country("Spain", 7, "cimentadaj@gmail.com")
 ```
 
 `spain_df` is now a data frame containing the 7th ESS round. Next we have to recode the autonomous communities which are in a ESS format. We're interested in two variables, `region` and `fclcntr`, the second one asking whether the person feels closer to Spain.

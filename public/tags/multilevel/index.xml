@@ -42,8 +42,8 @@ head(cd4)&lt;/code&gt;&lt;/pre&gt;
 ## 6    16      1                 NA  NA       NA        1    220    3.91&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Let&amp;#39;s transform the VDATE variable into date format
 cd4$VDATE &amp;lt;- as.Date(cd4$VDATE, format = &amp;quot;%m/%d/%Y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in strptime(x, format, tz = &amp;quot;GMT&amp;quot;): unknown timezone &amp;#39;default/
-## Europe/Madrid&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning in strptime(x, format, tz = &amp;quot;GMT&amp;quot;): unknown timezone &amp;#39;zone/tz/
+## 2017c.1.0/zoneinfo/Europe/Madrid&amp;#39;&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mod1 &amp;lt;- lmer(CD4PCT ~
                VDATE +
                (1 | newpid),
@@ -204,8 +204,8 @@ cd4 &amp;lt;- read.csv(&amp;quot;http://www.stat.columbia.edu/~gelman/arm/exampl
 
 # Let&amp;#39;s recreate the model from 12.2 (b)
 cd4$VDATE &amp;lt;- as.Date(cd4$VDATE, format = &amp;quot;%m/%d/%Y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in strptime(x, format, tz = &amp;quot;GMT&amp;quot;): unknown timezone &amp;#39;default/
-## Europe/Madrid&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning in strptime(x, format, tz = &amp;quot;GMT&amp;quot;): unknown timezone &amp;#39;zone/tz/
+## 2017c.1.0/zoneinfo/Europe/Madrid&amp;#39;&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mod2 &amp;lt;- lmer(CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), data = cd4)&lt;/code&gt;&lt;/pre&gt;
 &lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
 &lt;li&gt;Use the model fit from Exercise 12.2 (b) to generate simulation of predicted CD4 percentages for each child in the dataset at a hypothetical next time point.&lt;/li&gt;
