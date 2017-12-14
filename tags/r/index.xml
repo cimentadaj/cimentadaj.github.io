@@ -6,10 +6,176 @@
     <description>Recent content in R on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Thu, 23 Nov 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 14 Dec 2017 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/tags/r/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Brief Analysis of Independent/Unionist Vote in Catalonia</title>
+      <link>/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/brief-analysis-of-independent-unionist-vote-in-catalonia/</link>
+      <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/brief-analysis-of-independent-unionist-vote-in-catalonia/</guid>
+      <description>&lt;div id=&#34;catalan-elections&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Catalan elections&lt;/h2&gt;
+&lt;p&gt;On a train from Barcelona-Madrid I started working with an &lt;code&gt;R&lt;/code&gt; package called &lt;code&gt;ggrides&lt;/code&gt;. To my surprise, the package contains one dataset that documents the change in independent/unionist vote for all Catalan municipalities from 1980 to 2015. This is very cool! Needless to say, I left what I was doing and started to dive into the dataset.&lt;/p&gt;
+&lt;p&gt;The data looks like this:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggridges)
+Catalan_elections&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 20,764 x 4
+##          Municipality  Year Option Percent
+##                 &amp;lt;chr&amp;gt; &amp;lt;int&amp;gt;  &amp;lt;chr&amp;gt;   &amp;lt;dbl&amp;gt;
+##  1 Abella de la Conca  1980   Indy   68.42
+##  2 Abella de la Conca  1984   Indy   95.71
+##  3 Abella de la Conca  1988   Indy   89.36
+##  4 Abella de la Conca  1992   Indy   81.67
+##  5 Abella de la Conca  1995   Indy   80.00
+##  6 Abella de la Conca  1999   Indy   74.70
+##  7 Abella de la Conca  2003   Indy   84.42
+##  8 Abella de la Conca  2006   Indy   73.24
+##  9 Abella de la Conca  2010   Indy   75.90
+## 10 Abella de la Conca  2012   Indy   83.95
+## # ... with 20,754 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Very straight forward. It’s the ‘Indy’ or Independent vote and the ‘Unionist’ vote from 1980 until 2015. The data is complete for nearly all Municipalities, meaning that the data is available for all years. Only a handful (~ 40) do not have data starting from 1980.&lt;/p&gt;
+&lt;p&gt;Basically, I wanted to answer one question: has the indepence vote grown over time? This question is of general interest considering that the topic is being hotly debated in the media and next week new Catalan elections will be held in a scenario never seen before; after independent parties proclaimed unilateral independece and the government seized control of Catalunya. The elections are predicted to be very contested with Independent parties losing some votes.&lt;/p&gt;
+&lt;p&gt;With that said, let’s dive into the data!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;analysis&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Analysis&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Load my libraries
+library(scales)
+library(tidyverse)
+
+# Change abbreviated Indy and Unionist to long names
+Catalan_elections$Option &amp;lt;- with(Catalan_elections, ifelse(Option == &amp;quot;Indy&amp;quot;, &amp;quot;Independent&amp;quot;, &amp;quot;Unionist&amp;quot;))
+
+
+# Summarize the median independence/unionist vote for
+# all municipalities on the first/last year recorded
+avg_pl &amp;lt;-
+  Catalan_elections %&amp;gt;%
+  group_by(Municipality, Option) %&amp;gt;%
+  summarize(first_year = first(Percent, Year),
+            last_year = last(Percent, Year)) %&amp;gt;%
+  group_by(Option) %&amp;gt;%
+  summarize(first_year = median(first_year, na.rm = TRUE),
+            last_year = median(last_year, na.rm = TRUE)) %&amp;gt;%
+  mutate(id = 1:nrow(.)) %&amp;gt;%
+  gather(year, value, -id, -Option)
+
+# Summarize the indy/unionist vote for
+# the first/last year for Barcelona
+bcn_pl &amp;lt;-
+  Catalan_elections %&amp;gt;%
+  filter(Municipality == &amp;quot;Barcelona&amp;quot;) %&amp;gt;%
+  group_by(Municipality, Option) %&amp;gt;%
+  summarize(first_year = first(Percent, Year),
+            last_year = last(Percent, Year)) %&amp;gt;%
+  mutate(id = 1:nrow(.)) %&amp;gt;%
+  gather(year, value, ends_with(&amp;quot;year&amp;quot;))
+
+# Create a base parallel plot with both
+# unionist/independence votes pooled
+base_plot &amp;lt;-
+  Catalan_elections %&amp;gt;%
+  group_by(Municipality, Option) %&amp;gt;%
+  summarize(first_year = first(Percent, Year),
+            last_year = last(Percent, Year)) %&amp;gt;%
+  mutate(id = paste0(Municipality, &amp;quot;_&amp;quot;, Option)) %&amp;gt;%
+  gather(year, value, ends_with(&amp;quot;year&amp;quot;)) %&amp;gt;%
+  ggplot(aes(year, value)) +
+  geom_point(alpha = 0.1, size = 2) +
+  geom_line(aes(group = id), alpha = 0.1)
+
+# Add the median summary line for both indy/unionist
+median_plot &amp;lt;-
+  base_plot +
+  geom_point(data = avg_pl, aes(year, value),
+            colour = &amp;quot;red&amp;quot;, alpha = 0.5, size = 2) +
+  geom_line(data = avg_pl, aes(year, value, group = id),
+            colour = &amp;quot;red&amp;quot;, alpha = 0.5, size = 2)
+
+# Add the change of Barcelona for both indy/unionist vote
+bcn_plot &amp;lt;-
+  median_plot +
+  geom_point(data = bcn_pl, aes(year, value),
+             colour = &amp;quot;blue&amp;quot;, alpha = 0.5, size = 2) +
+  geom_line(data = bcn_pl, aes(year, value, group = id),
+            colour = &amp;quot;blue&amp;quot;, alpha = 0.5, size = 2)
+
+
+# Separate the plot for indy/unionist in different
+# panels and add pretty options
+pretty_plot &amp;lt;-
+  bcn_plot +
+  scale_x_discrete(name = NULL,
+                   labels = c(&amp;quot;1980&amp;quot;,
+                              &amp;quot;2015&amp;quot;)) +
+  scale_y_continuous(name = &amp;quot;% of votes in favour of:&amp;quot;,
+                     breaks = seq(0, 100, 20),
+                     labels = percent(seq(0, 1, 0.2))) +
+  facet_wrap(~ Option, strip.position = &amp;quot;bottom&amp;quot;) +
+  labs(
+    title = &amp;quot;Independence/Unionist vote in Catalonia in three decades&amp;quot;,
+    subtitle = &amp;quot;Red line is the median change for all municipalities - Blue line is Barcelona&amp;quot;,
+    caption = &amp;quot;Data collected by @marcbeldata - Plot and analisis by @cimentadaj&amp;quot;
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, family = &amp;quot;Arial-BoldMT&amp;quot;),
+    plot.subtitle = element_text(size = 12, color = &amp;quot;#666666&amp;quot;),
+    plot.caption = element_text(size = 12, color = &amp;quot;#666666&amp;quot;),
+    strip.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 16),
+    axis.text.y = element_text(size = 12),
+    axis.text.x = element_text(size = 14)
+  )
+# Final plot
+pretty_plot&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/2017-12-14-brief-analysis-of-independent-unionist-vote-in-catalonia_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;I was very surprised with this plot. On the left panel we can see the increase of independence votes in the last 35 years. The red line is the median change for all municipalities. There is a huge average increase from around 49% to over 70%. In fact, it’s not just an artificar of mean/median with big variance. If we look at the bulk of the distribution on the right line and then the left line, we see an upwards shift in the whole distribution.&lt;/p&gt;
+&lt;p&gt;On the other hand, the unionist vote seems to have decreased! The left/right distributions seem to be very similar (but it looks like the distribution of the right line has some outliers shifting upwards). But remember something: these are all municipalities. Municipalities might have 1000 citizen or even less! Consider the lonely town in a mountain with 50 people voting for independent parties: that’s also a municipality.&lt;/p&gt;
+&lt;p&gt;It is for this reason that we need to pay attention to places like Barcelona, which have over 1 million residents and definately weigh in more in proportion. And that’s where the interesting thing about this plot arises: the Barcelona change is practically the same. Not only have the votes increased very very similarly for both sides, but they’re also at the same level of support. Both blue lines look pretty much identical.&lt;/p&gt;
+&lt;p&gt;Don’t forget: small differences &lt;strong&gt;can&lt;/strong&gt; make a difference, specially in elections. Perhaps they &lt;strong&gt;are&lt;/strong&gt; different but we need to take a closer look.&lt;/p&gt;
+&lt;p&gt;Let’s plot the independence/unionist evolution only for Barcelona.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Plot for indy/unionist vote over time only for Barcelona
+Catalan_elections %&amp;gt;%
+  filter(Municipality == &amp;quot;Barcelona&amp;quot;) %&amp;gt;%
+  ggplot(aes(Year, Percent, group = Option, colour = Option)) +
+  geom_line(alpha = 0.5, size = 2) +
+  scale_x_continuous(name = NULL) +
+  scale_colour_discrete(name = NULL) +
+  scale_y_continuous(name = &amp;quot;% of votes in favour of:&amp;quot;,
+                     lim = c(0, 100),
+                     breaks = seq(0, 100, 20),
+                     labels = percent(seq(0, 1, 0.2))) +
+  labs(
+    title = &amp;quot;Overtime votes for independence/unionist in Barcelona&amp;quot;,
+    caption = &amp;quot;Data collected by @marcbeldata - Plot and analisis by @cimentadaj&amp;quot;
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, family = &amp;quot;Arial-BoldMT&amp;quot;),
+    plot.subtitle = element_text(size = 12, color = &amp;quot;#666666&amp;quot;),
+    plot.caption = element_text(size = 12, color = &amp;quot;#666666&amp;quot;),
+    legend.position = &amp;quot;top&amp;quot;,
+    legend.text = element_text(size = 14),
+    strip.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 16),
+    axis.text.y = element_text(size = 12),
+    axis.text.x = element_text(size = 14)
+  )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/2017-12-14-brief-analysis-of-independent-unionist-vote-in-catalonia_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Despite most municipalities are for independence, Barcelona, by only a small margin, has a majority of people voting for unionist parties. Be aware that these votes are not ‘referendums’ carried out every year. These are votes towards independence/unionist parties, which is a different thing. Also note that these are not predictions/forecasts, so they don’t have uncertainty intervals or margins of errors. This is empirical data from voter turnout.&lt;/p&gt;
+&lt;p&gt;I also tried other big municipalities such as Sabadell and found that unionism trumps over independence much strongly. Yet in others like Lleida, Independence seems to be on top. For a look at specific municipalities, &lt;a href=&#34;http://marcbeldata.github.io/ggjoy-Catalan-vote-2015/&#34;&gt;check the post by Marc Belzunces&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;a-note-on-next-weeks-elections&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;A note on next week’s elections&lt;/h2&gt;
+&lt;p&gt;This data takes us as far as 2015. Catalonia has suffered dramatic changes since 2015 specially due to the independence movement. These data are most likely not a good representation of what’s gonna happen next week. Big municipalities have usually been majority unionists according to polls, but the differences are tiny and we’ve seen dramatic changes with independence parties proclaiming unilateral independence. There are good attempts at predicting catalan elections (&lt;a href=&#34;https://politica.elpais.com/politica/2017/12/07/ratio/1512647178_322229.html&#34;&gt;in Spanish&lt;/a&gt;) so tune in next week to see what happens.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
     
     <item>
       <title>An introduction to the ess package</title>
@@ -761,7 +927,7 @@ dataset_ready &amp;lt;-
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;quot;perccalc&amp;quot;, repo = &amp;quot;https://cran.rediris.es/&amp;quot;)
 ## 
 ## The downloaded binary packages are in
-##  /var/folders/w0/pscnb7zx5y9g_qf13cxhl0_r0000gn/T//Rtmpg2CkGi/downloaded_packages
+##  /var/folders/w0/pscnb7zx5y9g_qf13cxhl0_r0000gn/T//Rtmphlh1k0/downloaded_packages
 library(perccalc)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The package has two functions, which I’ll show some examples. The first one is called &lt;code&gt;perc_diff&lt;/code&gt; and it’s very easy to use, we just specify the data, the name of the categorical and continuous variable and the percentile difference we want.&lt;/p&gt;
 &lt;p&gt;Let’s put it to use!&lt;/p&gt;
@@ -1116,17 +1282,17 @@ write_lines(new_var, path = &amp;quot;./all_variables.txt&amp;quot;, append = T)
   pisa.table(var_name, data = ., by = &amp;quot;cnt&amp;quot;) %&amp;gt;%
   filter(complete.cases(.))&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Let’s check out the contents of &lt;code&gt;try_df&lt;/code&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;##                   cnt pa020q01na Freq Percentage Std.err.
-## 1             Belgium          1 2010      98.58        0
-## 2             Belgium          2   29       1.42        0
-## 3               Chile          1 2356      98.00        0
-## 4               Chile          2   48       2.00        0
-## 5             Croatia          1 1689      94.20        0
-## 6             Croatia          2  104       5.80        0
-## 7  Dominican Republic          1 1278      87.90        0
-## 8  Dominican Republic          2  176      12.10        0
-## 9              France          1 2536      97.46        0
-## 10             France          2   66       2.54        0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##          cnt ec020q11na Freq Percentage Std.err.
+## 1  Australia          1 1180      29.91        0
+## 2  Australia          2 2336      59.21        0
+## 3  Australia          3  429      10.87        0
+## 4    Belgium          1  207      25.03        0
+## 5    Belgium          2  487      58.89        0
+## 6    Belgium          3  133      16.08        0
+## 7   Bulgaria          1  826      30.11        0
+## 8   Bulgaria          2 1402      51.11        0
+## 9   Bulgaria          3  515      18.78        0
+## 10   Croatia          1  593      26.05        0&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Great! To finish with the data, we simply need one more thing: to recode the value labels with the &lt;code&gt;labels&lt;/code&gt; vector.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;try_df[var_name] &amp;lt;- labels[try_df[, var_name]]&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Awesome. We have the data ready, more or less. Let’s produce a dirty plot to check how long the title is.&lt;/p&gt;
@@ -1903,16 +2069,16 @@ return(vec)
 # shots in a row.&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# test
 thrower(0.6)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 1 0 0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 1 0 1 1 1 1 0 0&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# 0 1 0 1 0 0
 # Last two elements are always zero&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# b)
 attempts &amp;lt;- replicate(1000, thrower(0.60))
 mean(sapply(attempts, length)) &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 8.899&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 8.756&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# mean number of shots until two shots are missed in a row&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sd(sapply(attempts, length)) &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 7.231119&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 7.338823&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# standard deviation of shots made
 # until two shots are missed in a row&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;hist(sapply(attempts, length)) # distribution of shots made&lt;/code&gt;&lt;/pre&gt;

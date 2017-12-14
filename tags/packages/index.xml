@@ -150,7 +150,7 @@ dataset_ready &amp;lt;-
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;quot;perccalc&amp;quot;, repo = &amp;quot;https://cran.rediris.es/&amp;quot;)
 ## 
 ## The downloaded binary packages are in
-##  /var/folders/w0/pscnb7zx5y9g_qf13cxhl0_r0000gn/T//Rtmpg2CkGi/downloaded_packages
+##  /var/folders/w0/pscnb7zx5y9g_qf13cxhl0_r0000gn/T//Rtmphlh1k0/downloaded_packages
 library(perccalc)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The package has two functions, which I’ll show some examples. The first one is called &lt;code&gt;perc_diff&lt;/code&gt; and it’s very easy to use, we just specify the data, the name of the categorical and continuous variable and the percentile difference we want.&lt;/p&gt;
 &lt;p&gt;Let’s put it to use!&lt;/p&gt;
