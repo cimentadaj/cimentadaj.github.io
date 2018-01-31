@@ -113,7 +113,7 @@
     <item>
       <title>R</title>
       <link>/tags/r/</link>
-      <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 31 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/r/</guid>
       <description></description>
@@ -122,7 +122,7 @@
     <item>
       <title>Scraping</title>
       <link>/tags/scraping/</link>
-      <pubDate>Fri, 01 Dec 2017 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 31 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/scraping/</guid>
       <description></description>
@@ -143,6 +143,15 @@
       <pubDate>Thu, 07 Sep 2017 00:00:00 +0000</pubDate>
       
       <guid>/tags/simulation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Sql</title>
+      <link>/tags/sql/</link>
+      <pubDate>Wed, 31 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/sql/</guid>
       <description></description>
     </item>
     
