@@ -6,10 +6,275 @@
     <description>Recent content on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Thu, 14 Dec 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 31 Jan 2018 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Scraping at scale: daily scraping to your database</title>
+      <link>/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/</link>
+      <pubDate>Wed, 31 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/</guid>
+      <description>&lt;p&gt;I’ve been working on a personal project to gather daily data from public bicycles in Barcelona to create a historical timeline of a few stations. Since the data is only available live, I had to scrape the data and store in a database daily. This is a short tutorial showing the steps I had to take to setup a database on my remote server and connect both from my local computer as well as from my server. I also show the R script that scrapes data, connects to the server and appends the information every day for a certain amouint of time.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Note: This worked for my Digital Ocean droplet 512 MB and 20 GB disk with Ubuntu 16.04.3 x64.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Let’s get to it. It’s better to do &lt;em&gt;ALL&lt;/em&gt; of this as a user in your server but remember to append &lt;code&gt;sudo&lt;/code&gt; to everything. Nonetheless, beware of problems like the ones I encountered. For example, when installing R packages that where ran by &lt;code&gt;cron&lt;/code&gt; in a script, if installed through a non-root user the packages were said to be &lt;code&gt;&#39;not installed&#39;&lt;/code&gt; (when I fact running the script separately was fine). However, when I installed the packages logged in as root the packages were installed successfully.&lt;/p&gt;
+&lt;div id=&#34;setting-up-the-data-base&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Setting up the data base&lt;/h2&gt;
+&lt;p&gt;All steps:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.digitalocean.com/community/tutorials/how-to-install-r-on-ubuntu-16-04-2&#34;&gt;Install R&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.digitalocean.com/community/tutorials/how-to-install-mysql-on-ubuntu-16-04&#34;&gt;Install MySQL&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Type &lt;code&gt;mysql -u root -p&lt;/code&gt; to log in to MySQL&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Follow these steps to create an empty table within a database&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;sql&#34;&gt;&lt;code&gt;CREATE DATABASE bicing;
+USE bicing;
+CREATE TABLE bicing_station (id VARCHAR(30), slots VARCHAR(30), bikes VARCHAR(30), status VARCHAR(30), time VARCHAR(30), error VARCHAR(30));&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.digitalocean.com/community/tutorials/how-to-set-up-a-remote-database-to-optimize-site-performance-with-mysql&#34;&gt;This&lt;/a&gt; is an outdated guide by Digital Ocean which might be helpful. Some of the steps below are taken from that guide.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Alter &lt;code&gt;sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf&lt;/code&gt; and change &lt;code&gt;bind-address&lt;/code&gt; to have the ‘0.0.0.0’ This is so your server can listen to IP’s from outside the localhost network.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Create two users to access the data base: a user from your local computer and a user from your server.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;mysql -u root -p # Log in to MySQL. -u stands for user and -p for password&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;sql&#34;&gt;&lt;code&gt;/* Create user for local computer. Note that when username and ip are in &amp;#39;&amp;#39; they need to be in those quotes. Also, the ip address you can find easily by writing what&amp;#39;s my ip in Google*/
+
+CREATE USER &amp;#39;username&amp;#39;@&amp;#39;ip_address_of_your_computer&amp;#39; IDENTIFIED BY &amp;#39;password&amp;#39;;
+GRANT ALL ON bicing.* TO username@ip_address_of_your_computer;
+
+/* Create user for server. For this user don&amp;#39;t change localhost as that already specifies that it belongs to the same computer. */
+
+CREATE USER &amp;#39;username&amp;#39;@&amp;#39;localhost&amp;#39; IDENTIFIED BY &amp;#39;password&amp;#39;;
+GRANT ALL ON bicing.* TO username@localhost;
+
+/* Make sure the privileges are isntalled */
+FLUSH PRIVILEGES;
+
+quit /* To quit MySQL*/&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Test whether the access worked for both users&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;# Login from your server. Replace username for your username 
+# -u stands for user and -p will ask for your password 
+mysql -u username -h localhost -p
+
+
+# Login from your LOCAL computer. Replace username for your username and your_server_ip from the server&amp;#39;s IP
+mysql -u username -h your_server_ip -p&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Now install &lt;code&gt;odbc&lt;/code&gt; in your Ubuntu server. I follow &lt;a href=&#34;I%20followed%20this:%20https://askubuntu.com/questions/800216/installing-ubuntu-16-04-lts-how-to-install-odbc&#34;&gt;this&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;sudo mkdir mysql &amp;amp;&amp;amp; cd mysql
+
+# Download odbc in mysql folder
+sudo wget https://dev.mysql.com/get/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.9-linux-ubuntu16.04-x86-64bit.tar.gz
+
+# Unzip it and copy it somewhere.
+sudo tar -xvf mysql-connector-odbc-5.3.9-linux-ubuntu16.04-x86-64bit.tar.gz 
+sudo cp mysql/mysql-connector-odbc-5.3.9-linux-ubuntu16.04-x86-64bit/lib/libmyodbc5a.so /usr/lib/x86_64-linux-gnu/odbc/
+# If the odbc folder doesn&amp;#39;t exists, create it with mkdir /usr/lib/x86_64-linux-gnu/odbc/&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note: you might need to change the url’s and directories to a &lt;strong&gt;newer&lt;/strong&gt; version of &lt;code&gt;odbc&lt;/code&gt; so don’t simply copy and paste the links from below.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Create and update the &lt;code&gt;odbc&lt;/code&gt; settings.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;sudo touch /etc/odbcinst.ini
+
+sudo nano /etc/odbcinst.ini
+
+# And add
+
+[MySQL Driver]
+Description = MySQL
+Driver = /usr/lib/x86_64-linux-gnu/odbc/libmyodbc5a.so
+Setup = /usr/lib/x86_64-linux-gnu/odbc/libodbcmyS.so
+FileUsage = 1
+
+# close the nano
+# And continue
+
+sudo touch /etc/odbc.ini
+
+sudo nano /etc/odbc.ini
+
+# and add
+
+[MySQL]
+Description           = MySQL connection to database
+Driver                = MySQL Driver
+Database              = dbname
+Server                = 127.0.0.1
+User                  = root
+Password              = password
+Port                  = 3306
+Socket                = /var/run/mysqld/mysqld.sock
+
+# Change Database to your database name
+# The password to your root password
+
+# Finally, run
+
+sudo ln -s /var/run/mysqld/mysqld.sock /tmp/mysql.sock
+
+# to move the socket to the folder where the DBI pkgs
+# search for it
+
+# Finish by
+
+sudo service mysql restart;
+
+# to restart mysql server&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;connecting-to-the-database-locally-and-remotely&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Connecting to the database locally and remotely&lt;/h2&gt;
+&lt;p&gt;From my local computer:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(DBI)
+library(RMySQL)
+
+con &amp;lt;- dbConnect(MySQL(), # If the database changed, change this
+                 host = your_server_ip, # in &amp;quot;&amp;quot; quotes.
+                 dbname = &amp;quot;bicing&amp;quot;,
+                 user = username, # remember to change to your username (in quotes)
+                 password = password, # remember to change to your password (in quotes)
+                 port = 3306)
+
+dbListTables(con)
+
+bike_stations &amp;lt;- dbReadTable(con, &amp;quot;bicing_station&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;From R in the server&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;con &amp;lt;- dbConnect(RMySQL::MySQL(),
+                 dbname = &amp;quot;bicing&amp;quot;,
+                 user = username, # remember to change to your username (in quotes)
+                 password = password, # remember to change to your password (in quotes)
+                 port = 3306)
+
+dbListTables(con)
+
+bike_stations &amp;lt;- dbReadTable(con, &amp;quot;bicing_station&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;That did it for me. Now I could connect to the database from R from my local computer and from the server itself.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;scraping-automatically&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Scraping automatically&lt;/h2&gt;
+&lt;p&gt;So far you should have a database in your server which you can connect locally and remotely. I assume you have a working script that can actually add/retrieve information from the remote database. Here I will explain how to set up the scraping to run automatically as a &lt;code&gt;cron&lt;/code&gt; job and get a final email with the summary of the scrape.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Create a text file to save the output of the scraping with &lt;code&gt;sudo touch scrape_log.txt&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Write &lt;code&gt;cron -e&lt;/code&gt; logged in as your non-root user.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;At the bottom of the interactive &lt;code&gt;cron&lt;/code&gt; specify these options:&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;SHELL=/bin/bash # the path to the predetermined program to run cron jobs. Default bash
+
+PATH=bla/bla/bla # PATH I’m not sure what’s for but I pasted the output of echo $PATH.
+
+HOME= your/dr/ofinteres # Path to the directory where the scripts will be executed (where the script is)
+
+MAILTO=&amp;quot;your@email.com&amp;quot; # Your email to receive emails
+
+# The actual cron jobs. Below each job I explain them
+30-59 11 * * * /usr/bin/Rscript scrape_bicing.R &amp;gt;&amp;gt;scrape_log.txt 2&amp;gt;&amp;amp;1
+
+# Run this cron job from 11:30 to 11:59 every day (*), every month (*), every year(*): 30-59 11 * * *
+
+# Use R to run the script: /usr/bin/Rscript
+# You can find this directory with which Rscript
+
+# Execute the file scrape_bicing.R (which is looked for in the HOME variable specified above)
+# &amp;gt;&amp;gt;scrape_log.txt 2&amp;gt;&amp;amp;1: Save the output to scrape_log.txt (which we created) and DON&amp;#39;T send an email
+# because we don&amp;#39;t want to received 29 emails.
+
+00 12 * * * /bin/bash sql_query.sh
+# Instead of receiving 29 emails, run a query the minute after the scraping ends
+# to filter how many rows were added between 11:30 and 11:59
+# By default it will send the result of the query to your email&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Great but what does &lt;code&gt;scrape_bicing.R&lt;/code&gt; have?&lt;/p&gt;
+&lt;p&gt;The script should do something along the lines of:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Load libraries
+library(httr)
+library(DBI)
+library(RMySQL)
+
+# The url of your api
+api_url &amp;lt;- &amp;quot;bla/bla&amp;quot;
+
+# Wrap GET so that whenever the request fails it returns an R error
+my_GET &amp;lt;- function(x, config = list(), ...) {
+  stop_for_status(GET(url = x, config = config, ...))
+}
+
+# If it can&amp;#39;t connect to the API will throw an R error
+test_bike &amp;lt;- my_GET(api_url)
+
+
+## Do API calls here
+## I assume the result is a data.frame or something like that
+## It should have the same column names as the SQL database.
+
+# Establish the connection to the database.
+# This script is run within the server, so the connection
+# should not specify the server ip, it assumes it&amp;#39;s
+# the localhost
+
+con &amp;lt;- dbConnect(MySQL(),
+                 dbname = database_name, # in &amp;quot;&amp;quot; quotes
+                 user = your_user, # in &amp;quot;&amp;quot; quotes
+                 password = your_password, # in &amp;quot;&amp;quot; quotes
+                 port = 3306)
+
+# Append the table
+write_success &amp;lt;-
+  dbWriteTable(conn = con, # connection from above
+              &amp;quot;table name&amp;quot;, # name of the table to append (in quotes)
+              api output, # data frame from the API output
+              append = TRUE, row.names = FALSE) # to append instead of overwrite and ignore row.names
+
+# Write your results to the database. In my API call
+# I considered many possible errors and coded the request
+# very defensively, running the script many times under certain
+# scenarios (no internet, getting different results).
+# If you get unexpected results from your API request then this step will
+# not succeed.
+
+
+# If the append was successfull, write_success should be TRUE
+if (write_success) print(&amp;quot;Append success&amp;quot;) else print(&amp;quot;No success&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Something to keep in mind, by default you can connect from the your local computer to the remote DB by port 3306. This port can be closed if you’re in a public internet network or a network connection from a university. If you can’t connect, make you sort this out with the personnel from that network (it happened to me with my university network).&lt;/p&gt;
+&lt;p&gt;What does &lt;code&gt;sql_query.sh&lt;/code&gt; have?&lt;/p&gt;
+&lt;p&gt;A very simple SQL query:&lt;/p&gt;
+&lt;pre class=&#34;sql&#34;&gt;&lt;code&gt;read PASS &amp;lt; pw.txt /* Read the password from a pw.txt file you create with your user pasword*/
+
+mysql -uroot -p$PASS database_name -e &amp;quot;SELECT id, error_msg, COUNT(*) AS count FROM bicing_station WHERE time &amp;gt;= CONCAT(CURDATE(),&amp;#39; &amp;#39;,&amp;#39;11:30:00&amp;#39;) AND time &amp;lt;= CONCAT(CURDATE(),&amp;#39; &amp;#39;,&amp;#39;12:00:00&amp;#39;) GROUP BY id, error_msg;&amp;quot;
+
+/*
+mysql: run mysql
+
+-uroot: specify your mysql username (note there are no spaces)
+
+-p$PASS: -p is for password and $PASS is the variable with the password
+
+database_name: is the data base name
+
+-e: is short for -execute a query
+
+The remaining is the query to execute. I would make sure the query
+works by running this same line in the server interactively.
+
+What this query means is to get the counts of the id and error messages
+where the time is between the scheduele cron of the API request.
+
+This way I get a summary of the error messages and how many lines were
+appended between the time the script should&amp;#39;ve started and should&amp;#39;ve ended
+*/
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As stated in the first line of the code chunk, create a text file with your password. You can do so with &lt;code&gt;echo &amp;quot;Your SQL username password&amp;quot; &amp;gt;&amp;gt; pw.txt&lt;/code&gt;. That should allow PASS to read in the password just fine.&lt;/p&gt;
+&lt;p&gt;And that should be it! Make sure you run each of these steps separately so that they work on it’s own and you don’get weird errors. This workflow will now run &lt;code&gt;cron&lt;/code&gt; jobs at whatever time you set it, return the output to a text file (in case something bad happens and you want to look at the log) and run a query after it finishes so that you only get one email with a summary of API requests.&lt;/p&gt;
+&lt;p&gt;Hope this was helpful!&lt;/p&gt;
+&lt;p&gt;PS:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.digitalocean.com/community/tutorials/a-basic-mysql-tutorial&#34;&gt;Basic MySQL tutorial&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;I use SQL Workbench to run queries from my local computer&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</description>
+    </item>
     
     <item>
       <title>Brief Analysis of Independent/Unionist Vote in Catalonia</title>
@@ -2223,35 +2488,6 @@ plot(df[, 2], df[, 1])&lt;/code&gt;&lt;/pre&gt;
     </item>
     
     <item>
-      <title>Children: public or private goods?</title>
-      <link>/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</link>
-      <pubDate>Mon, 29 Aug 2016 00:00:00 +0000</pubDate>
-      
-      <guid>/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</guid>
-      <description>&lt;p&gt;The role of the welfare state, as agreed by many scholars, is to de-commodify its citizens. Some argue that this should be the way that the generosity of the state should be measured; instead of net public and private social expenditure, it should be the extent to which citizens are de-commodified by the services and transfers of the welfare state.&lt;/p&gt;
-&lt;p&gt;The aim of educational investment can be seen from different lenses, but today we’ll focus on the economic and social returns to education. An important share of the state budget is aimed at the formation and education of citizens through public education. In countries where there is a substantial investment, human capital, innovation and production are maximized creating a highly productive working population that can sustain the young and the elderly through pensions, health and child care; note that in some scenarios an uneducated workforce can sustain those who depend on them but it will possible be with more quantity of work (hours) and less quality [1]. Following this logic, it is arguable that because most of today’s workers will benefit from pensions, retirement schemes, care assistance and healthcare, they are to take care of their young population, the next generation’s workers. Covering kids’ education through higher taxes could be seen as loan: A young worker covers the expenses of a child, and that child, eventually, will cover the pension of that worker; this is a simplified version of the argument.&lt;/p&gt;
-&lt;p&gt;The scheme I just outlined is virtually widespread across western European countries. But it is important to note that in other countries, due to the intrinsic organization of the state, it is unimaginable to do so. In the counterfactual situation where you don’t have a strong welfare state, maybe it’s unfair to tax those who are not benefiting from the goods that the taxes are being spent on. In places like the United States, where the generosity of the welfare system is minimal, some people don’t find it reasonable to pay for everyone’s kids, even more, when you’re paying already, for instance, a private school for your own.&lt;/p&gt;
-&lt;p&gt;There’s also another important case: childless couples. Perhaps the exact reason why they didn’t have children was not to have to spend a big proportion of their lifelong income. So, why should they pay? According to their position it seems very unfair. Their long held argument can be synthesized in one sentence: those who want children should be the ones who pay for them.&lt;/p&gt;
-&lt;p&gt;After presenting very briefly the arguments of the positions in the debate, it is interesting then to posit the important question concerning it: Should children be a public or private good? I presume this question is easy to answer but not easy to apply; adjusting a state to this premise can take decades and it’s an expensive endeavor. So, evaluating this question must be accompanied by hard scientific thinking.&lt;/p&gt;
-&lt;p&gt;I will start off by stating my position on this dilemma. I support the notion of kids being a public good. I support it not just for the fact that they will pay or not for my pension schemes but because everyone deserves the same opportunities. And if we don’t provide them with equal opportunities, then the gap we see between poor and rich will be as it is today: very sizable. Despite that I sometimes question myself: can they entirely be a public good? Adopting the notion that the family is a private sphere, and at least the states considers it because it is reluctant to interfere within it, then children should not just be considered as a public good. If we pay attention to authors like McDonald (2000) and Lewis &amp;amp; Astrom (1992), we constantly see that the way the state promotes gender equality in the family is not through hands-on, direct implementation of intrusive policies like reeducating couples and telling them what’s right and what’s not. Instead, most of the family policies try to promote gender equality by integrating women into the labor force, reducing the gender wage gap and promoting female and male parental leave. Kids then can never be entirely public goods.&lt;/p&gt;
-&lt;p&gt;Nevertheless, do they contribute to society, meaning, are the interrelated with the “public”?&lt;/p&gt;
-&lt;p&gt;I think this question is rooted in the intrinsic dynamics of society. We are social animals and it is unfashionable to think that we are independent of each other. The most independent citizen living within society is never unattached of its surroundings. Everyone’s paths cross indirectly and directly with the decisions and actions of other people. It might be even irresponsible to think that one’s actions only affect themselves. The principal idea to take from this question is that those who think of themselves as independent actors of society are committing a fallacy that could be the exact reason why the levels and indexes of inequalities are so high nowadays.&lt;/p&gt;
-&lt;p&gt;The Nobel laureate James Heckman has been arguing for the past decade one of his most controversial findings: the first years of a child are the most important ones. Contrary to the long held thought of concentrating the bigger part of the educational budget on tertiary education, he finds that the return of investment of human beings are the highest in the early years and it decreases with time. This means that the first years should be the ones where the highest investment should be: be it monetary and emotional. With the evaluation of the Perry preschool program and the Abecedarian project, Heckman finds that you can trace inequalities between children as early as 22 months old. The principal reason being that some kids get better early childhood education than others. Among others, I think this an important reason to reflect why children should be a public good.&lt;/p&gt;
-&lt;p&gt;Inequalities are being reproduced from an early age, leading to a more polarized society where you have lucky and unlucky kids. Those that receive the better education will at the end, have better jobs, less odds of committing crime, more prone of a stable union (possibly due to the fact that they will have a stable job). Furthermore, and I think this is a key argument against those that don’t want to contribute, these educated children will in most of the cases, help society better than the ones who aren’t educated. This help can be manifested in direct and indirect ways: respecting traffic lights, avoiding corruption in public institutions, being fair, meritocratic, reporting robberies, not stealing, respecting others, among an endless number of thing. This point makes an important argument: the focus on which some of the parents and scholars are viewing the debate might be wrongly specified. As I have succinctly showed, the benefits of having an educated population are not only personal, but also public. I think that the principal reason why there is a strong opposition to this idea is because they evaluate it as taking care of someone else’s children when nobody is taking care of theirs; that is a strong point, but I urge everyone to see it with another lense. If you turned the coin around and you start seeing this as an investment towards societal problems, which in the short and long run affects us all, then it becomes a tax deduction, just as any other one.&lt;/p&gt;
-&lt;p&gt;As I argued before, we are all interrelated and it is our business what our fellow citizens do. So, someone who doesn’t have children, still participates in society, interacts within it, and is affected by criminality, public services, and private services. The problem with providing this argument for a country with a weak welfare state is that you won’t receive quality elderly care from this children when you retire. Conversely, in strong-welfare countries, the argument is the main (pragmatic) reason to do so. However, the second idea, that we should do it for everyone to have the same opportunities, is more than enough to warrant the changes. This would be an even more noble reason because you won’t be contributing to receive something but because everyone deserves the same opportunities. For the U.S, this is a reason to tackle one of the most debatable topics of the last 40 years: inequalities.&lt;/p&gt;
-&lt;p&gt;Now, if we were to delve more into the inequality problem, which shows itself to be the major issue when comparing educational opportunities, it is also important to think of the struggles of having children. Not particularly of the difficulties of childrearing, which are a consequence of the decision to child bear, but the fact that it is too hard to combine work and childrearing now a days. This is quite notorious in the lean welfare state countries and southern European ones.&lt;/p&gt;
-&lt;p&gt;The demands of the work space and the schedules that are imposed to parents and workers make it virtually impossible for men or women to dedicated high quality time to their children. The most common solution that we’ve seen is for women to quit their jobs or to sacrifice leisure time to take care of the child. So, in the end, this deems either the education of the future population or the ambitions and life course perspective of a mother.&lt;/p&gt;
-&lt;p&gt;Catherine Hakim’s preference theory, posits that women now have the preference of having a child but this was not entirely the case in the past where the bargaining power of the man was higher than hers. But a woman who has professional ambitions might also want to have a baby. Does this mean that she has to renounce her ambitions? This will certainly harm the tax system (less taxes paid) but it will help society because she will dedicate more time to the child (And if you acknowledge this, then you are implicitly arguing that children are indeed a public good). But as one of Esping-Andersen’s chapter from his book the Incomplete Revolution shows, permitting the woman to go back to work after parental leave, by providing free high quality childcare, will in the long run pay the costs of this childcare service and even produce a surplus for the welfare state. And that is why I think this is not an easy question to answer, conversely to what Paula England and Nancy Folbre imply. The implication of implementing this idea entails a complete reorganization and readjustment of the tax and welfare system, if there is one [2]. And also, what would be the consequences of this new regime besides the public childcare? Will the problem of inequalities be solved or others problems will arise as side effects?&lt;/p&gt;
-&lt;p&gt;And here I will talk about something that is intrinsically related to having healthy children: the labor perspectives of the mother. The Incomplete Revolution, book by Esping-Andersen, takes on the job of explaining the problem with many of today’s countries: the poor family policies that they implement (if any) when concerning women’s labor market inclusion and combination of working and childrearing. Specifically in two chapters he argues that children should be a public good because children benefit everyone, but furthermore, an important step is to include women in the labor market given that it will help the income prospects of the household and the egalitarianism in the family. How can this be related to children as being a public good, one may ask? This is a complex relation, on which everything is potentially endogenous, but all present evidence shows that if the mother goes back to work after the parental leave, it does not have an adverse effect on the development of the child. This is, assuming that the child is in early high quality childcare. This has important implications! It means that the inclusion of mothers into the labor force will increase the bargaining power of the women in the family, it will heighten the income of the family household, it will expand the human capital of the women; in short, it will not impose the opportunity costs that she will otherwise would’ve had to bear for the remaining part of her life if she would’ve stayed home. This will increase the chances of being in a more egalitarian family, thus the children will be exposed to more equal surroundings.&lt;/p&gt;
-&lt;p&gt;From the point of view that I see it, it’s about heightening the bar of educational attainment. Instead of having the two extremes that we see in the liberal welfare state regimes (excluding UK), extremely poor and uneducated groups and highly rich and educated group, you will set a bar of minimum education. By doing this you will inevitable give secureness to families, opportunities, possibly change the economic structure of the country by increasing the odds of turning it to a knowledge based economy (although this is way more complex then I suggest).&lt;/p&gt;
-&lt;p&gt;As a conclusion, I shall finish off with another question, which I think is as important as the one which initiated this essay. I have tried to argue that children are faring under the destiny that is imposed to them. There has been, since after the World War II, persistent inequalities between classes and all the evidence shows that they are not shrinking. In some countries, namely European ones, the decision to help children might be an economic one or an altruistic one. This is worrisome. Are children being taken care of in Europe because they are the payers of the pensioners or because of the noble argument of equal opportunities? I really don’t know the reason for which Europe or the U.S is doing it for. But should everyone take care of children for the economic benefits or for the equal opportunity argument?&lt;/p&gt;
-&lt;hr /&gt;
-&lt;p&gt;[1] Let’s not get into the major changes that the quality of job production will have if the population is highly educated. For a book with interesting ideas, read The Race between Education and Technology by Claudia Goldin &amp;amp; Lawrence Katz.&lt;/p&gt;
-&lt;p&gt;[2] In the case where there is no welfare state, then this is another story.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
       <title>Producing stargazer tables with odds ratios and standard errors in R</title>
       <link>/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</link>
       <pubDate>Mon, 22 Aug 2016 00:00:00 +0000</pubDate>
@@ -2480,6 +2716,39 @@ lm(income ~ gender + kids)&lt;/code&gt;&lt;/pre&gt;
 ## (Intercept)       gender         kids  
 ##    2945.911      200.471        9.891&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Well, we can now say that the difference in income between male and females is of about 200 adjusted for the number of children per person.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/blog/2016-08-29-children-public-or-private-goods/2016-08-29-children-public-or-private-goods/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2016-08-29-children-public-or-private-goods/2016-08-29-children-public-or-private-goods/</guid>
+      <description>&lt;!-- BLOGDOWN-HEAD --&gt;
+&lt;!-- /BLOGDOWN-HEAD --&gt;
+
+
+&lt;p&gt;The role of the welfare state, as agreed by many scholars, is to de-commodify its citizens. Some argue that this should be the way that the generosity of the state should be measured; instead of net public and private social expenditure, it should be the extent to which citizens are de-commodified by the services and transfers of the welfare state.&lt;/p&gt;
+&lt;p&gt;The aim of educational investment can be seen from different lenses, but today we’ll focus on the economic and social returns to education. An important share of the state budget is aimed at the formation and education of citizens through public education. In countries where there is a substantial investment, human capital, innovation and production are maximized creating a highly productive working population that can sustain the young and the elderly through pensions, health and child care; note that in some scenarios an uneducated workforce can sustain those who depend on them but it will possible be with more quantity of work (hours) and less quality [1]. Following this logic, it is arguable that because most of today’s workers will benefit from pensions, retirement schemes, care assistance and healthcare, they are to take care of their young population, the next generation’s workers. Covering kids’ education through higher taxes could be seen as loan: A young worker covers the expenses of a child, and that child, eventually, will cover the pension of that worker; this is a simplified version of the argument.&lt;/p&gt;
+&lt;p&gt;The scheme I just outlined is virtually widespread across western European countries. But it is important to note that in other countries, due to the intrinsic organization of the state, it is unimaginable to do so. In the counterfactual situation where you don’t have a strong welfare state, maybe it’s unfair to tax those who are not benefiting from the goods that the taxes are being spent on. In places like the United States, where the generosity of the welfare system is minimal, some people don’t find it reasonable to pay for everyone’s kids, even more, when you’re paying already, for instance, a private school for your own.&lt;/p&gt;
+&lt;p&gt;There’s also another important case: childless couples. Perhaps the exact reason why they didn’t have children was not to have to spend a big proportion of their lifelong income. So, why should they pay? According to their position it seems very unfair. Their long held argument can be synthesized in one sentence: those who want children should be the ones who pay for them.&lt;/p&gt;
+&lt;p&gt;After presenting very briefly the arguments of the positions in the debate, it is interesting then to posit the important question concerning it: Should children be a public or private good? I presume this question is easy to answer but not easy to apply; adjusting a state to this premise can take decades and it’s an expensive endeavor. So, evaluating this question must be accompanied by hard scientific thinking.&lt;/p&gt;
+&lt;p&gt;I will start off by stating my position on this dilemma. I support the notion of kids being a public good. I support it not just for the fact that they will pay or not for my pension schemes but because everyone deserves the same opportunities. And if we don’t provide them with equal opportunities, then the gap we see between poor and rich will be as it is today: very sizable. Despite that I sometimes question myself: can they entirely be a public good? Adopting the notion that the family is a private sphere, and at least the states considers it because it is reluctant to interfere within it, then children should not just be considered as a public good. If we pay attention to authors like McDonald (2000) and Lewis &amp;amp; Astrom (1992), we constantly see that the way the state promotes gender equality in the family is not through hands-on, direct implementation of intrusive policies like reeducating couples and telling them what’s right and what’s not. Instead, most of the family policies try to promote gender equality by integrating women into the labor force, reducing the gender wage gap and promoting female and male parental leave. Kids then can never be entirely public goods.&lt;/p&gt;
+&lt;p&gt;Nevertheless, do they contribute to society, meaning, are the interrelated with the “public”?&lt;/p&gt;
+&lt;p&gt;I think this question is rooted in the intrinsic dynamics of society. We are social animals and it is unfashionable to think that we are independent of each other. The most independent citizen living within society is never unattached of its surroundings. Everyone’s paths cross indirectly and directly with the decisions and actions of other people. It might be even irresponsible to think that one’s actions only affect themselves. The principal idea to take from this question is that those who think of themselves as independent actors of society are committing a fallacy that could be the exact reason why the levels and indexes of inequalities are so high nowadays.&lt;/p&gt;
+&lt;p&gt;The Nobel laureate James Heckman has been arguing for the past decade one of his most controversial findings: the first years of a child are the most important ones. Contrary to the long held thought of concentrating the bigger part of the educational budget on tertiary education, he finds that the return of investment of human beings are the highest in the early years and it decreases with time. This means that the first years should be the ones where the highest investment should be: be it monetary and emotional. With the evaluation of the Perry preschool program and the Abecedarian project, Heckman finds that you can trace inequalities between children as early as 22 months old. The principal reason being that some kids get better early childhood education than others. Among others, I think this an important reason to reflect why children should be a public good.&lt;/p&gt;
+&lt;p&gt;Inequalities are being reproduced from an early age, leading to a more polarized society where you have lucky and unlucky kids. Those that receive the better education will at the end, have better jobs, less odds of committing crime, more prone of a stable union (possibly due to the fact that they will have a stable job). Furthermore, and I think this is a key argument against those that don’t want to contribute, these educated children will in most of the cases, help society better than the ones who aren’t educated. This help can be manifested in direct and indirect ways: respecting traffic lights, avoiding corruption in public institutions, being fair, meritocratic, reporting robberies, not stealing, respecting others, among an endless number of thing. This point makes an important argument: the focus on which some of the parents and scholars are viewing the debate might be wrongly specified. As I have succinctly showed, the benefits of having an educated population are not only personal, but also public. I think that the principal reason why there is a strong opposition to this idea is because they evaluate it as taking care of someone else’s children when nobody is taking care of theirs; that is a strong point, but I urge everyone to see it with another lense. If you turned the coin around and you start seeing this as an investment towards societal problems, which in the short and long run affects us all, then it becomes a tax deduction, just as any other one.&lt;/p&gt;
+&lt;p&gt;As I argued before, we are all interrelated and it is our business what our fellow citizens do. So, someone who doesn’t have children, still participates in society, interacts within it, and is affected by criminality, public services, and private services. The problem with providing this argument for a country with a weak welfare state is that you won’t receive quality elderly care from this children when you retire. Conversely, in strong-welfare countries, the argument is the main (pragmatic) reason to do so. However, the second idea, that we should do it for everyone to have the same opportunities, is more than enough to warrant the changes. This would be an even more noble reason because you won’t be contributing to receive something but because everyone deserves the same opportunities. For the U.S, this is a reason to tackle one of the most debatable topics of the last 40 years: inequalities.&lt;/p&gt;
+&lt;p&gt;Now, if we were to delve more into the inequality problem, which shows itself to be the major issue when comparing educational opportunities, it is also important to think of the struggles of having children. Not particularly of the difficulties of childrearing, which are a consequence of the decision to child bear, but the fact that it is too hard to combine work and childrearing now a days. This is quite notorious in the lean welfare state countries and southern European ones.&lt;/p&gt;
+&lt;p&gt;The demands of the work space and the schedules that are imposed to parents and workers make it virtually impossible for men or women to dedicated high quality time to their children. The most common solution that we’ve seen is for women to quit their jobs or to sacrifice leisure time to take care of the child. So, in the end, this deems either the education of the future population or the ambitions and life course perspective of a mother.&lt;/p&gt;
+&lt;p&gt;Catherine Hakim’s preference theory, posits that women now have the preference of having a child but this was not entirely the case in the past where the bargaining power of the man was higher than hers. But a woman who has professional ambitions might also want to have a baby. Does this mean that she has to renounce her ambitions? This will certainly harm the tax system (less taxes paid) but it will help society because she will dedicate more time to the child (And if you acknowledge this, then you are implicitly arguing that children are indeed a public good). But as one of Esping-Andersen’s chapter from his book the Incomplete Revolution shows, permitting the woman to go back to work after parental leave, by providing free high quality childcare, will in the long run pay the costs of this childcare service and even produce a surplus for the welfare state. And that is why I think this is not an easy question to answer, conversely to what Paula England and Nancy Folbre imply. The implication of implementing this idea entails a complete reorganization and readjustment of the tax and welfare system, if there is one [2]. And also, what would be the consequences of this new regime besides the public childcare? Will the problem of inequalities be solved or others problems will arise as side effects?&lt;/p&gt;
+&lt;p&gt;And here I will talk about something that is intrinsically related to having healthy children: the labor perspectives of the mother. The Incomplete Revolution, book by Esping-Andersen, takes on the job of explaining the problem with many of today’s countries: the poor family policies that they implement (if any) when concerning women’s labor market inclusion and combination of working and childrearing. Specifically in two chapters he argues that children should be a public good because children benefit everyone, but furthermore, an important step is to include women in the labor market given that it will help the income prospects of the household and the egalitarianism in the family. How can this be related to children as being a public good, one may ask? This is a complex relation, on which everything is potentially endogenous, but all present evidence shows that if the mother goes back to work after the parental leave, it does not have an adverse effect on the development of the child. This is, assuming that the child is in early high quality childcare. This has important implications! It means that the inclusion of mothers into the labor force will increase the bargaining power of the women in the family, it will heighten the income of the family household, it will expand the human capital of the women; in short, it will not impose the opportunity costs that she will otherwise would’ve had to bear for the remaining part of her life if she would’ve stayed home. This will increase the chances of being in a more egalitarian family, thus the children will be exposed to more equal surroundings.&lt;/p&gt;
+&lt;p&gt;From the point of view that I see it, it’s about heightening the bar of educational attainment. Instead of having the two extremes that we see in the liberal welfare state regimes (excluding UK), extremely poor and uneducated groups and highly rich and educated group, you will set a bar of minimum education. By doing this you will inevitable give secureness to families, opportunities, possibly change the economic structure of the country by increasing the odds of turning it to a knowledge based economy (although this is way more complex then I suggest).&lt;/p&gt;
+&lt;p&gt;As a conclusion, I shall finish off with another question, which I think is as important as the one which initiated this essay. I have tried to argue that children are faring under the destiny that is imposed to them. There has been, since after the World War II, persistent inequalities between classes and all the evidence shows that they are not shrinking. In some countries, namely European ones, the decision to help children might be an economic one or an altruistic one. This is worrisome. Are children being taken care of in Europe because they are the payers of the pensioners or because of the noble argument of equal opportunities? I really don’t know the reason for which Europe or the U.S is doing it for. But should everyone take care of children for the economic benefits or for the equal opportunity argument?&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;[1] Let’s not get into the major changes that the quality of job production will have if the population is highly educated. For a book with interesting ideas, read The Race between Education and Technology by Claudia Goldin &amp;amp; Lawrence Katz.&lt;/p&gt;
+&lt;p&gt;[2] In the case where there is no welfare state, then this is another story.&lt;/p&gt;
 </description>
     </item>
     
