@@ -1,0 +1,264 @@
+---
+title: Cleaning in-door positioning data
+author: Jorge Cimentada
+date: '2018-02-03'
+slug: predicting-location-via-indoor-positioning-systems
+tags: ['R', 'projects']
+---
+
+
+
+<p>I’ve just started reading the wonderful book <a href="http://rdatasciencecases.org/">Data Science in R: A Case Studies Approach to Computational Reasoning and Problem Solving</a>. I’ve just begun the first chapter and I wanted to document some of the things I found interesting. In this post I’ll walkthrough the example on how to transform a text file with GPS locations into a well formatted rectangular dataset. For a detailed explanation see their book, which I highly recommend buying.</p>
+<p>Note: When it makes senses/it’s possible, I always try to find an equivalent tidyverse solution to everything they do in the book.</p>
+<p>This is the data.</p>
+<pre class="r"><code>library(tidyverse)
+
+ex_file &lt;- read_lines(&quot;http://rdatasciencecases.org/Data/offline.final.trace.txt&quot;)
+ex_file[1:4]</code></pre>
+<pre><code>## [1] &quot;# timestamp=2006-02-11 08:31:58&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                 
+## [2] &quot;# usec=250&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+## [3] &quot;# minReadings=110&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                               
+## [4] &quot;t=1139643118358;id=00:02:2D:21:0F:33;pos=0.0,0.0,0.0;degree=0.0;00:14:bf:b1:97:8a=-38,2437000000,3;00:14:bf:b1:97:90=-56,2427000000,3;00:0f:a3:39:e1:c0=-53,2462000000,3;00:14:bf:b1:97:8d=-65,2442000000,3;00:14:bf:b1:97:81=-65,2422000000,3;00:14:bf:3b:c7:c6=-66,2432000000,3;00:0f:a3:39:dd:cd=-75,2412000000,3;00:0f:a3:39:e0:4b=-78,2462000000,3;00:0f:a3:39:e2:10=-87,2437000000,3;02:64:fb:68:52:e6=-88,2447000000,1;02:00:42:55:31:00=-84,2457000000,1&quot;</code></pre>
+<p>Some lines are comments and the 4th line is the actual data. Basically, everything that is <code>something=</code> is the name of the column and columns are separated by a <code>;</code>. Now, within each column there can also be several values like in the column <code>pos</code> where numbers are separated by a comma.</p>
+<p>First, let’s separate everything now that we know all of the delimiters.</p>
+<pre class="r"><code>tokens &lt;- str_split(ex_file[4], pattern = &quot;[;=,]&quot;)[[1]]</code></pre>
+<p>From the documentation we know that the first 4 columns are constant in every line. The remaining columns can vary by each line, which is why they decide to transform the data into stacked/long format. So each unique <code>id</code> will be repeate the number of times that there’s MAC columns (the columns that vary).</p>
+<pre class="r"><code>tmp &lt;- matrix(tokens[-(1:10)], ncol = 4, byrow = TRUE)
+# We got the MAC in a long format, now we have to get unique id
+# of each of the macs (along with time and other vars) to be repeated
+# the number of rows that tmp has
+
+
+# There we go
+tmp_two &lt;- matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, byrow = TRUE)
+
+mat &lt;- cbind(tmp_two, tmp)
+mat</code></pre>
+<pre><code>##       [,1]            [,2]                [,3]  [,4]  [,5]  [,6] 
+##  [1,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+##  [2,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+##  [3,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+##  [4,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+##  [5,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+##  [6,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+##  [7,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+##  [8,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+##  [9,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+## [10,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+## [11,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+##       [,7]                [,8]  [,9]         [,10]
+##  [1,] &quot;00:14:bf:b1:97:8a&quot; &quot;-38&quot; &quot;2437000000&quot; &quot;3&quot;  
+##  [2,] &quot;00:14:bf:b1:97:90&quot; &quot;-56&quot; &quot;2427000000&quot; &quot;3&quot;  
+##  [3,] &quot;00:0f:a3:39:e1:c0&quot; &quot;-53&quot; &quot;2462000000&quot; &quot;3&quot;  
+##  [4,] &quot;00:14:bf:b1:97:8d&quot; &quot;-65&quot; &quot;2442000000&quot; &quot;3&quot;  
+##  [5,] &quot;00:14:bf:b1:97:81&quot; &quot;-65&quot; &quot;2422000000&quot; &quot;3&quot;  
+##  [6,] &quot;00:14:bf:3b:c7:c6&quot; &quot;-66&quot; &quot;2432000000&quot; &quot;3&quot;  
+##  [7,] &quot;00:0f:a3:39:dd:cd&quot; &quot;-75&quot; &quot;2412000000&quot; &quot;3&quot;  
+##  [8,] &quot;00:0f:a3:39:e0:4b&quot; &quot;-78&quot; &quot;2462000000&quot; &quot;3&quot;  
+##  [9,] &quot;00:0f:a3:39:e2:10&quot; &quot;-87&quot; &quot;2437000000&quot; &quot;3&quot;  
+## [10,] &quot;02:64:fb:68:52:e6&quot; &quot;-88&quot; &quot;2447000000&quot; &quot;1&quot;  
+## [11,] &quot;02:00:42:55:31:00&quot; &quot;-84&quot; &quot;2457000000&quot; &quot;1&quot;</code></pre>
+<p>There we go. We have a stacked matrix with all the variables we need. Let’s wrap the line maker into a function:</p>
+<pre class="r"><code>processLine &lt;- function(x) {
+  tokens &lt;- str_split(x, pattern = &quot;[;=,]&quot;)[[1]]
+  
+  # We got the MAC in a long format, now we have to get unique id
+  # of each of the macs (along with time and other vars) to be repeated
+  # the number of rows that tmp has
+  tmp &lt;- matrix(tokens[-(1:10)], ncol = 4, byrow = TRUE)
+  
+  # There we go
+  tmp_two &lt;- matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, byrow = TRUE)
+  
+  mat &lt;- cbind(tmp_two, tmp)
+  mat
+}</code></pre>
+<p>Let’s apply it to a few sample rows:</p>
+<pre class="r"><code>tmp &lt;- map(ex_file[4:20], processLine)
+
+offline &lt;- as.data.frame(do.call(&quot;rbind&quot;, tmp))
+head(offline)</code></pre>
+<pre><code>##              V1                V2  V3  V4  V5  V6                V7  V8
+## 1 1139643118358 00:02:2D:21:0F:33 0.0 0.0 0.0 0.0 00:14:bf:b1:97:8a -38
+## 2 1139643118358 00:02:2D:21:0F:33 0.0 0.0 0.0 0.0 00:14:bf:b1:97:90 -56
+## 3 1139643118358 00:02:2D:21:0F:33 0.0 0.0 0.0 0.0 00:0f:a3:39:e1:c0 -53
+## 4 1139643118358 00:02:2D:21:0F:33 0.0 0.0 0.0 0.0 00:14:bf:b1:97:8d -65
+## 5 1139643118358 00:02:2D:21:0F:33 0.0 0.0 0.0 0.0 00:14:bf:b1:97:81 -65
+## 6 1139643118358 00:02:2D:21:0F:33 0.0 0.0 0.0 0.0 00:14:bf:3b:c7:c6 -66
+##           V9 V10
+## 1 2437000000   3
+## 2 2427000000   3
+## 3 2462000000   3
+## 4 2442000000   3
+## 5 2422000000   3
+## 6 2432000000   3</code></pre>
+<p>Good! Now we can apply it to all lines, excluding of course the ones which are commented out!</p>
+<pre class="r"><code>tmp &lt;- map(ex_file[!str_sub(ex_file, 1, 1) == &quot;#&quot;], processLine)</code></pre>
+<pre><code>## Warning in matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, :
+## data length exceeds size of matrix
+
+## Warning in matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, :
+## data length exceeds size of matrix
+
+## Warning in matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, :
+## data length exceeds size of matrix
+
+## Warning in matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, :
+## data length exceeds size of matrix
+
+## Warning in matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, :
+## data length exceeds size of matrix
+
+## Warning in matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, :
+## data length exceeds size of matrix</code></pre>
+<p>Aha.. so there’s a few warnings? What’s happening? If we ran the previous with <code>options(error, warn = 2)</code> we would see that it looks like there are some anomalous cases where there’s no MAC information. We either fill out those values with NA’s or we simply exclude them. Because working with the MAC’s is of utmost importance for the analysis, we drop it to save memory. We redefine our function so that if there’s only the 10 starting values it returns a NULL.</p>
+<pre class="r"><code>processLine &lt;- function(x) {
+  tokens &lt;- str_split(x, pattern = &quot;[;=,]&quot;)[[1]]
+  
+  # We exclude rows where there&#39;s no MAC information
+  if (length(tokens) == 10) return(NULL)
+  
+  # We got the MAC in a long format, now we have to get unique id
+  # of each of the macs (along with time and other vars) to be repeated
+  # the number of rows that tmp has
+  tmp &lt;- matrix(tokens[-(1:10)], ncol = 4, byrow = TRUE)
+  
+  # There we go
+  tmp_two &lt;- matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, byrow = TRUE)
+  
+  mat &lt;- cbind(tmp_two, tmp)
+  mat
+}</code></pre>
+<p>And apply it now..</p>
+<pre class="r"><code>tmp &lt;- map(ex_file[!str_sub(ex_file, 1, 1) == &quot;#&quot;], processLine)
+
+offline &lt;- as_tibble(do.call(&quot;rbind&quot;, tmp))</code></pre>
+<p>Good, let’s set warnings back: <code>options(error = recover, warn = 1)</code></p>
+<p>To finish off let’s set some names.</p>
+<pre class="r"><code>names(offline) &lt;- c(&quot;time&quot;, &quot;scanMac&quot;, &quot;posX&quot;, &quot;posY&quot;, &quot;posZ&quot;,
+                    &quot;orientation&quot;, &quot;mac&quot;, &quot;signal&quot;, &quot;channel&quot;, &quot;type&quot;)
+
+offline</code></pre>
+<pre><code>## # A tibble: 1,181,628 x 10
+##    time   scanMac posX  posY  posZ  orientation mac   signal channel type 
+##    &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;
+##  1 11396… 00:02:… 0.0   0.0   0.0   0.0         00:1… -38    243700… 3    
+##  2 11396… 00:02:… 0.0   0.0   0.0   0.0         00:1… -56    242700… 3    
+##  3 11396… 00:02:… 0.0   0.0   0.0   0.0         00:0… -53    246200… 3    
+##  4 11396… 00:02:… 0.0   0.0   0.0   0.0         00:1… -65    244200… 3    
+##  5 11396… 00:02:… 0.0   0.0   0.0   0.0         00:1… -65    242200… 3    
+##  6 11396… 00:02:… 0.0   0.0   0.0   0.0         00:1… -66    243200… 3    
+##  7 11396… 00:02:… 0.0   0.0   0.0   0.0         00:0… -75    241200… 3    
+##  8 11396… 00:02:… 0.0   0.0   0.0   0.0         00:0… -78    246200… 3    
+##  9 11396… 00:02:… 0.0   0.0   0.0   0.0         00:0… -87    243700… 3    
+## 10 11396… 00:02:… 0.0   0.0   0.0   0.0         02:6… -88    244700… 1    
+## # ... with 1,181,618 more rows</code></pre>
+<p>— <strong>BONUS</strong> —</p>
+<p>Just wanted to try to get the data in a wide format where each MAC indicator is a column rather than stacked.</p>
+<pre class="r"><code># Define the MAC colums as wide. Because each MAC columns
+# has three associated values, I stack them up so there should
+# be three rows pero every MAC column
+right_col &lt;- tokens[-(1:10)]
+
+right_names &lt;- seq(1, length(right_col), by = 4)
+
+mac_tibble &lt;-
+  matrix(right_col[-right_names], nrow = 3, ncol = length(right_names),
+         dimnames = list(NULL, right_col[right_names])) %&gt;%
+  as_tibble() %&gt;%
+  add_column(mac_indicators = c(&quot;signal&quot;, &quot;chanel&quot;, &quot;type&quot;),
+             .before = 1)
+
+# Define the first four columns
+left_col &lt;- tokens[1:10]
+
+left_names &lt;- seq(1, length(left_col), by = 2)
+
+left_tibble &lt;-
+  matrix(left_col[-left_names], nrow = 3, ncol = length(left_names), byrow = TRUE,
+         dimnames = list(NULL, left_col[left_names])) %&gt;%
+  as_tibble()
+
+# Bind both dfs
+mat &lt;- bind_cols(left_tibble, mac_tibble)
+mat</code></pre>
+<pre><code>## # A tibble: 3 x 17
+##   t         id         pos   `0.0` degree mac_indicators `00:14:bf:b1:97:…
+##   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;          &lt;chr&gt;            
+## 1 11396431… 00:02:2D:… 0.0   0.0   0.0    signal         -38              
+## 2 11396431… 00:02:2D:… 0.0   0.0   0.0    chanel         2437000000       
+## 3 11396431… 00:02:2D:… 0.0   0.0   0.0    type           3                
+## # ... with 10 more variables: `00:14:bf:b1:97:90` &lt;chr&gt;,
+## #   `00:0f:a3:39:e1:c0` &lt;chr&gt;, `00:14:bf:b1:97:8d` &lt;chr&gt;,
+## #   `00:14:bf:b1:97:81` &lt;chr&gt;, `00:14:bf:3b:c7:c6` &lt;chr&gt;,
+## #   `00:0f:a3:39:dd:cd` &lt;chr&gt;, `00:0f:a3:39:e0:4b` &lt;chr&gt;,
+## #   `00:0f:a3:39:e2:10` &lt;chr&gt;, `02:64:fb:68:52:e6` &lt;chr&gt;,
+## #   `02:00:42:55:31:00` &lt;chr&gt;</code></pre>
+<p>Let’s wrap it into a function excluding those which dont have MAC values.</p>
+<pre class="r"><code>processLine &lt;- function(x) {
+  tokens &lt;- str_split(x, pattern = &quot;[;=,]&quot;)[[1]]
+  
+  if (length(tokens) == 10) return(NULL) # exclude non-MAC lines
+  
+  right_col &lt;- tokens[-(1:10)]
+  
+  right_names &lt;- seq(1, length(right_col), by = 4)
+  
+  mac_tibble &lt;-
+    matrix(right_col[-right_names], nrow = 3, ncol = length(right_names),
+           dimnames = list(NULL, right_col[right_names]))
+
+  # Define the first four columns
+  left_col &lt;- tokens[1:10]
+  
+  left_names &lt;- seq(1, length(left_col), by = 2)
+  
+  left_tibble &lt;-
+    matrix(left_col[-left_names], nrow = 3, ncol = length(left_names), byrow = TRUE,
+           dimnames = list(NULL, left_col[left_names]))
+
+  # Bind both dfs
+  mat &lt;- cbind(left_tibble, mac_tibble)
+  mat
+}</code></pre>
+<p>Let’s apply it to each line:</p>
+<pre class="r"><code>tmp &lt;- map(ex_file[!str_sub(ex_file, 1, 1) == &quot;#&quot;], processLine)
+
+# Interestingly, applying as_tibble instead of as.data.frame is
+# very slow. So I opt for data frame and then convert the binded
+# df to a tibble
+final_data &lt;-
+  bind_rows(map(tmp, as.data.frame, stringsAsFactors = FALSE)) %&gt;%
+  as_tibble() %&gt;%
+  add_column(mac_indicators = rep(c(&quot;signal&quot;, &quot;chanel&quot;, &quot;type&quot;), length(unique(.$t))),
+             .after = &quot;degree&quot;)
+
+final_data</code></pre>
+<pre><code>## # A tibble: 438,222 x 40
+##    t         id        pos   `0.0` degree mac_indicators `00:14:bf:b1:97:…
+##    &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;          &lt;chr&gt;            
+##  1 11396431… 00:02:2D… 0.0   0.0   0.0    signal         -38              
+##  2 11396431… 00:02:2D… 0.0   0.0   0.0    chanel         2437000000       
+##  3 11396431… 00:02:2D… 0.0   0.0   0.0    type           3                
+##  4 11396431… 00:02:2D… 0.0   0.0   0.0    signal         -38              
+##  5 11396431… 00:02:2D… 0.0   0.0   0.0    chanel         2437000000       
+##  6 11396431… 00:02:2D… 0.0   0.0   0.0    type           3                
+##  7 11396431… 00:02:2D… 0.0   0.0   0.0    signal         -38              
+##  8 11396431… 00:02:2D… 0.0   0.0   0.0    chanel         2437000000       
+##  9 11396431… 00:02:2D… 0.0   0.0   0.0    type           3                
+## 10 11396431… 00:02:2D… 0.0   0.0   0.0    signal         -38              
+## # ... with 438,212 more rows, and 33 more variables:
+## #   `00:14:bf:b1:97:90` &lt;chr&gt;, `00:0f:a3:39:e1:c0` &lt;chr&gt;,
+## #   `00:14:bf:b1:97:8d` &lt;chr&gt;, `00:14:bf:b1:97:81` &lt;chr&gt;,
+## #   `00:14:bf:3b:c7:c6` &lt;chr&gt;, `00:0f:a3:39:dd:cd` &lt;chr&gt;,
+## #   `00:0f:a3:39:e0:4b` &lt;chr&gt;, `00:0f:a3:39:e2:10` &lt;chr&gt;,
+## #   `02:64:fb:68:52:e6` &lt;chr&gt;, `02:00:42:55:31:00` &lt;chr&gt;,
+## #   `00:04:0e:5c:23:fc` &lt;chr&gt;, `00:30:bd:f8:7f:c5` &lt;chr&gt;, `1.0` &lt;chr&gt;,
+## #   `2.0` &lt;chr&gt;, `3.0` &lt;chr&gt;, `4.0` &lt;chr&gt;, `5.0` &lt;chr&gt;, `6.0` &lt;chr&gt;,
+## #   `7.0` &lt;chr&gt;, `8.0` &lt;chr&gt;, `9.0` &lt;chr&gt;, `10.0` &lt;chr&gt;, `11.0` &lt;chr&gt;,
+## #   `12.0` &lt;chr&gt;, `13.0` &lt;chr&gt;, `00:e0:63:82:8b:a9` &lt;chr&gt;,
+## #   `02:37:fd:3b:54:b5` &lt;chr&gt;, `02:2e:58:22:f1:ac` &lt;chr&gt;,
+## #   `02:42:1c:4e:b5:c0` &lt;chr&gt;, `02:0a:3d:06:94:88` &lt;chr&gt;,
+## #   `02:5c:e0:50:49:de` &lt;chr&gt;, `02:4f:99:43:30:cd` &lt;chr&gt;,
+## #   `02:b7:00:bb:a9:35` &lt;chr&gt;</code></pre>
+<p>There we go! It’s a bit refreshing to work on datasets that are not pre-cleaned for you.</p>
