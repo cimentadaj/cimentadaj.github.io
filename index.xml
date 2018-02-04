@@ -6,10 +6,273 @@
     <description>Recent content on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Wed, 31 Jan 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 03 Feb 2018 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Cleaning in-door positioning data</title>
+      <link>/blog/2018-02-03-predicting-location-via-indoor-positioning-systems/predicting-location-via-indoor-positioning-systems/</link>
+      <pubDate>Sat, 03 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018-02-03-predicting-location-via-indoor-positioning-systems/predicting-location-via-indoor-positioning-systems/</guid>
+      <description>&lt;p&gt;I’ve just started reading the wonderful book &lt;a href=&#34;http://rdatasciencecases.org/&#34;&gt;Data Science in R: A Case Studies Approach to Computational Reasoning and Problem Solving&lt;/a&gt;. I’ve just begun the first chapter and I wanted to document some of the things I found interesting. In this post I’ll walkthrough the example on how to transform a text file with GPS locations into a well formatted rectangular dataset. For a detailed explanation see their book, which I highly recommend buying.&lt;/p&gt;
+&lt;p&gt;Note: When it makes senses/it’s possible, I always try to find an equivalent tidyverse solution to everything they do in the book.&lt;/p&gt;
+&lt;p&gt;This is the data.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+
+ex_file &amp;lt;- read_lines(&amp;quot;http://rdatasciencecases.org/Data/offline.final.trace.txt&amp;quot;)
+ex_file[1:4]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;# timestamp=2006-02-11 08:31:58&amp;quot;                                                                                                                                                                                                                                                                                                                                                                                                                                 
+## [2] &amp;quot;# usec=250&amp;quot;                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+## [3] &amp;quot;# minReadings=110&amp;quot;                                                                                                                                                                                                                                                                                                                                                                                                                                               
+## [4] &amp;quot;t=1139643118358;id=00:02:2D:21:0F:33;pos=0.0,0.0,0.0;degree=0.0;00:14:bf:b1:97:8a=-38,2437000000,3;00:14:bf:b1:97:90=-56,2427000000,3;00:0f:a3:39:e1:c0=-53,2462000000,3;00:14:bf:b1:97:8d=-65,2442000000,3;00:14:bf:b1:97:81=-65,2422000000,3;00:14:bf:3b:c7:c6=-66,2432000000,3;00:0f:a3:39:dd:cd=-75,2412000000,3;00:0f:a3:39:e0:4b=-78,2462000000,3;00:0f:a3:39:e2:10=-87,2437000000,3;02:64:fb:68:52:e6=-88,2447000000,1;02:00:42:55:31:00=-84,2457000000,1&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Some lines are comments and the 4th line is the actual data. Basically, everything that is &lt;code&gt;something=&lt;/code&gt; is the name of the column and columns are separated by a &lt;code&gt;;&lt;/code&gt;. Now, within each column there can also be several values like in the column &lt;code&gt;pos&lt;/code&gt; where numbers are separated by a comma.&lt;/p&gt;
+&lt;p&gt;First, let’s separate everything now that we know all of the delimiters.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tokens &amp;lt;- str_split(ex_file[4], pattern = &amp;quot;[;=,]&amp;quot;)[[1]]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;From the documentation we know that the first 4 columns are constant in every line. The remaining columns can vary by each line, which is why they decide to transform the data into stacked/long format. So each unique &lt;code&gt;id&lt;/code&gt; will be repeate the number of times that there’s MAC columns (the columns that vary).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tmp &amp;lt;- matrix(tokens[-(1:10)], ncol = 4, byrow = TRUE)
+# We got the MAC in a long format, now we have to get unique id
+# of each of the macs (along with time and other vars) to be repeated
+# the number of rows that tmp has
+
+
+# There we go
+tmp_two &amp;lt;- matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, byrow = TRUE)
+
+mat &amp;lt;- cbind(tmp_two, tmp)
+mat&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##       [,1]            [,2]                [,3]  [,4]  [,5]  [,6] 
+##  [1,] &amp;quot;1139643118358&amp;quot; &amp;quot;00:02:2D:21:0F:33&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot;
+##  [2,] &amp;quot;1139643118358&amp;quot; &amp;quot;00:02:2D:21:0F:33&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot;
+##  [3,] &amp;quot;1139643118358&amp;quot; &amp;quot;00:02:2D:21:0F:33&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot;
+##  [4,] &amp;quot;1139643118358&amp;quot; &amp;quot;00:02:2D:21:0F:33&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot;
+##  [5,] &amp;quot;1139643118358&amp;quot; &amp;quot;00:02:2D:21:0F:33&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot;
+##  [6,] &amp;quot;1139643118358&amp;quot; &amp;quot;00:02:2D:21:0F:33&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot;
+##  [7,] &amp;quot;1139643118358&amp;quot; &amp;quot;00:02:2D:21:0F:33&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot;
+##  [8,] &amp;quot;1139643118358&amp;quot; &amp;quot;00:02:2D:21:0F:33&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot;
+##  [9,] &amp;quot;1139643118358&amp;quot; &amp;quot;00:02:2D:21:0F:33&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot;
+## [10,] &amp;quot;1139643118358&amp;quot; &amp;quot;00:02:2D:21:0F:33&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot;
+## [11,] &amp;quot;1139643118358&amp;quot; &amp;quot;00:02:2D:21:0F:33&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot; &amp;quot;0.0&amp;quot;
+##       [,7]                [,8]  [,9]         [,10]
+##  [1,] &amp;quot;00:14:bf:b1:97:8a&amp;quot; &amp;quot;-38&amp;quot; &amp;quot;2437000000&amp;quot; &amp;quot;3&amp;quot;  
+##  [2,] &amp;quot;00:14:bf:b1:97:90&amp;quot; &amp;quot;-56&amp;quot; &amp;quot;2427000000&amp;quot; &amp;quot;3&amp;quot;  
+##  [3,] &amp;quot;00:0f:a3:39:e1:c0&amp;quot; &amp;quot;-53&amp;quot; &amp;quot;2462000000&amp;quot; &amp;quot;3&amp;quot;  
+##  [4,] &amp;quot;00:14:bf:b1:97:8d&amp;quot; &amp;quot;-65&amp;quot; &amp;quot;2442000000&amp;quot; &amp;quot;3&amp;quot;  
+##  [5,] &amp;quot;00:14:bf:b1:97:81&amp;quot; &amp;quot;-65&amp;quot; &amp;quot;2422000000&amp;quot; &amp;quot;3&amp;quot;  
+##  [6,] &amp;quot;00:14:bf:3b:c7:c6&amp;quot; &amp;quot;-66&amp;quot; &amp;quot;2432000000&amp;quot; &amp;quot;3&amp;quot;  
+##  [7,] &amp;quot;00:0f:a3:39:dd:cd&amp;quot; &amp;quot;-75&amp;quot; &amp;quot;2412000000&amp;quot; &amp;quot;3&amp;quot;  
+##  [8,] &amp;quot;00:0f:a3:39:e0:4b&amp;quot; &amp;quot;-78&amp;quot; &amp;quot;2462000000&amp;quot; &amp;quot;3&amp;quot;  
+##  [9,] &amp;quot;00:0f:a3:39:e2:10&amp;quot; &amp;quot;-87&amp;quot; &amp;quot;2437000000&amp;quot; &amp;quot;3&amp;quot;  
+## [10,] &amp;quot;02:64:fb:68:52:e6&amp;quot; &amp;quot;-88&amp;quot; &amp;quot;2447000000&amp;quot; &amp;quot;1&amp;quot;  
+## [11,] &amp;quot;02:00:42:55:31:00&amp;quot; &amp;quot;-84&amp;quot; &amp;quot;2457000000&amp;quot; &amp;quot;1&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There we go. We have a stacked matrix with all the variables we need. Let’s wrap the line maker into a function:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;processLine &amp;lt;- function(x) {
+  tokens &amp;lt;- str_split(x, pattern = &amp;quot;[;=,]&amp;quot;)[[1]]
+  
+  # We got the MAC in a long format, now we have to get unique id
+  # of each of the macs (along with time and other vars) to be repeated
+  # the number of rows that tmp has
+  tmp &amp;lt;- matrix(tokens[-(1:10)], ncol = 4, byrow = TRUE)
+  
+  # There we go
+  tmp_two &amp;lt;- matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, byrow = TRUE)
+  
+  mat &amp;lt;- cbind(tmp_two, tmp)
+  mat
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Let’s apply it to a few sample rows:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tmp &amp;lt;- map(ex_file[4:20], processLine)
+
+offline &amp;lt;- as.data.frame(do.call(&amp;quot;rbind&amp;quot;, tmp))
+head(offline)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##              V1                V2  V3  V4  V5  V6                V7  V8
+## 1 1139643118358 00:02:2D:21:0F:33 0.0 0.0 0.0 0.0 00:14:bf:b1:97:8a -38
+## 2 1139643118358 00:02:2D:21:0F:33 0.0 0.0 0.0 0.0 00:14:bf:b1:97:90 -56
+## 3 1139643118358 00:02:2D:21:0F:33 0.0 0.0 0.0 0.0 00:0f:a3:39:e1:c0 -53
+## 4 1139643118358 00:02:2D:21:0F:33 0.0 0.0 0.0 0.0 00:14:bf:b1:97:8d -65
+## 5 1139643118358 00:02:2D:21:0F:33 0.0 0.0 0.0 0.0 00:14:bf:b1:97:81 -65
+## 6 1139643118358 00:02:2D:21:0F:33 0.0 0.0 0.0 0.0 00:14:bf:3b:c7:c6 -66
+##           V9 V10
+## 1 2437000000   3
+## 2 2427000000   3
+## 3 2462000000   3
+## 4 2442000000   3
+## 5 2422000000   3
+## 6 2432000000   3&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Good! Now we can apply it to all lines, excluding of course the ones which are commented out!&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tmp &amp;lt;- map(ex_file[!str_sub(ex_file, 1, 1) == &amp;quot;#&amp;quot;], processLine)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning in matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, :
+## data length exceeds size of matrix
+
+## Warning in matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, :
+## data length exceeds size of matrix
+
+## Warning in matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, :
+## data length exceeds size of matrix
+
+## Warning in matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, :
+## data length exceeds size of matrix
+
+## Warning in matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, :
+## data length exceeds size of matrix
+
+## Warning in matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, :
+## data length exceeds size of matrix&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Aha.. so there’s a few warnings? What’s happening? If we ran the previous with &lt;code&gt;options(error, warn = 2)&lt;/code&gt; we would see that it looks like there are some anomalous cases where there’s no MAC information. We either fill out those values with NA’s or we simply exclude them. Because working with the MAC’s is of utmost importance for the analysis, we drop it to save memory. We redefine our function so that if there’s only the 10 starting values it returns a NULL.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;processLine &amp;lt;- function(x) {
+  tokens &amp;lt;- str_split(x, pattern = &amp;quot;[;=,]&amp;quot;)[[1]]
+  
+  # We exclude rows where there&amp;#39;s no MAC information
+  if (length(tokens) == 10) return(NULL)
+  
+  # We got the MAC in a long format, now we have to get unique id
+  # of each of the macs (along with time and other vars) to be repeated
+  # the number of rows that tmp has
+  tmp &amp;lt;- matrix(tokens[-(1:10)], ncol = 4, byrow = TRUE)
+  
+  # There we go
+  tmp_two &amp;lt;- matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, byrow = TRUE)
+  
+  mat &amp;lt;- cbind(tmp_two, tmp)
+  mat
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And apply it now..&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tmp &amp;lt;- map(ex_file[!str_sub(ex_file, 1, 1) == &amp;quot;#&amp;quot;], processLine)
+
+offline &amp;lt;- as_tibble(do.call(&amp;quot;rbind&amp;quot;, tmp))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Good, let’s set warnings back: &lt;code&gt;options(error = recover, warn = 1)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;To finish off let’s set some names.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;names(offline) &amp;lt;- c(&amp;quot;time&amp;quot;, &amp;quot;scanMac&amp;quot;, &amp;quot;posX&amp;quot;, &amp;quot;posY&amp;quot;, &amp;quot;posZ&amp;quot;,
+                    &amp;quot;orientation&amp;quot;, &amp;quot;mac&amp;quot;, &amp;quot;signal&amp;quot;, &amp;quot;channel&amp;quot;, &amp;quot;type&amp;quot;)
+
+offline&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 1,181,628 x 10
+##    time   scanMac posX  posY  posZ  orientation mac   signal channel type 
+##    &amp;lt;chr&amp;gt;  &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt;       &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt;  &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;
+##  1 11396… 00:02:… 0.0   0.0   0.0   0.0         00:1… -38    243700… 3    
+##  2 11396… 00:02:… 0.0   0.0   0.0   0.0         00:1… -56    242700… 3    
+##  3 11396… 00:02:… 0.0   0.0   0.0   0.0         00:0… -53    246200… 3    
+##  4 11396… 00:02:… 0.0   0.0   0.0   0.0         00:1… -65    244200… 3    
+##  5 11396… 00:02:… 0.0   0.0   0.0   0.0         00:1… -65    242200… 3    
+##  6 11396… 00:02:… 0.0   0.0   0.0   0.0         00:1… -66    243200… 3    
+##  7 11396… 00:02:… 0.0   0.0   0.0   0.0         00:0… -75    241200… 3    
+##  8 11396… 00:02:… 0.0   0.0   0.0   0.0         00:0… -78    246200… 3    
+##  9 11396… 00:02:… 0.0   0.0   0.0   0.0         00:0… -87    243700… 3    
+## 10 11396… 00:02:… 0.0   0.0   0.0   0.0         02:6… -88    244700… 1    
+## # ... with 1,181,618 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;— &lt;strong&gt;BONUS&lt;/strong&gt; —&lt;/p&gt;
+&lt;p&gt;Just wanted to try to get the data in a wide format where each MAC indicator is a column rather than stacked.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Define the MAC colums as wide. Because each MAC columns
+# has three associated values, I stack them up so there should
+# be three rows pero every MAC column
+right_col &amp;lt;- tokens[-(1:10)]
+
+right_names &amp;lt;- seq(1, length(right_col), by = 4)
+
+mac_tibble &amp;lt;-
+  matrix(right_col[-right_names], nrow = 3, ncol = length(right_names),
+         dimnames = list(NULL, right_col[right_names])) %&amp;gt;%
+  as_tibble() %&amp;gt;%
+  add_column(mac_indicators = c(&amp;quot;signal&amp;quot;, &amp;quot;chanel&amp;quot;, &amp;quot;type&amp;quot;),
+             .before = 1)
+
+# Define the first four columns
+left_col &amp;lt;- tokens[1:10]
+
+left_names &amp;lt;- seq(1, length(left_col), by = 2)
+
+left_tibble &amp;lt;-
+  matrix(left_col[-left_names], nrow = 3, ncol = length(left_names), byrow = TRUE,
+         dimnames = list(NULL, left_col[left_names])) %&amp;gt;%
+  as_tibble()
+
+# Bind both dfs
+mat &amp;lt;- bind_cols(left_tibble, mac_tibble)
+mat&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 3 x 17
+##   t         id         pos   `0.0` degree mac_indicators `00:14:bf:b1:97:…
+##   &amp;lt;chr&amp;gt;     &amp;lt;chr&amp;gt;      &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt;  &amp;lt;chr&amp;gt;          &amp;lt;chr&amp;gt;            
+## 1 11396431… 00:02:2D:… 0.0   0.0   0.0    signal         -38              
+## 2 11396431… 00:02:2D:… 0.0   0.0   0.0    chanel         2437000000       
+## 3 11396431… 00:02:2D:… 0.0   0.0   0.0    type           3                
+## # ... with 10 more variables: `00:14:bf:b1:97:90` &amp;lt;chr&amp;gt;,
+## #   `00:0f:a3:39:e1:c0` &amp;lt;chr&amp;gt;, `00:14:bf:b1:97:8d` &amp;lt;chr&amp;gt;,
+## #   `00:14:bf:b1:97:81` &amp;lt;chr&amp;gt;, `00:14:bf:3b:c7:c6` &amp;lt;chr&amp;gt;,
+## #   `00:0f:a3:39:dd:cd` &amp;lt;chr&amp;gt;, `00:0f:a3:39:e0:4b` &amp;lt;chr&amp;gt;,
+## #   `00:0f:a3:39:e2:10` &amp;lt;chr&amp;gt;, `02:64:fb:68:52:e6` &amp;lt;chr&amp;gt;,
+## #   `02:00:42:55:31:00` &amp;lt;chr&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Let’s wrap it into a function excluding those which dont have MAC values.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;processLine &amp;lt;- function(x) {
+  tokens &amp;lt;- str_split(x, pattern = &amp;quot;[;=,]&amp;quot;)[[1]]
+  
+  if (length(tokens) == 10) return(NULL) # exclude non-MAC lines
+  
+  right_col &amp;lt;- tokens[-(1:10)]
+  
+  right_names &amp;lt;- seq(1, length(right_col), by = 4)
+  
+  mac_tibble &amp;lt;-
+    matrix(right_col[-right_names], nrow = 3, ncol = length(right_names),
+           dimnames = list(NULL, right_col[right_names]))
+
+  # Define the first four columns
+  left_col &amp;lt;- tokens[1:10]
+  
+  left_names &amp;lt;- seq(1, length(left_col), by = 2)
+  
+  left_tibble &amp;lt;-
+    matrix(left_col[-left_names], nrow = 3, ncol = length(left_names), byrow = TRUE,
+           dimnames = list(NULL, left_col[left_names]))
+
+  # Bind both dfs
+  mat &amp;lt;- cbind(left_tibble, mac_tibble)
+  mat
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Let’s apply it to each line:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tmp &amp;lt;- map(ex_file[!str_sub(ex_file, 1, 1) == &amp;quot;#&amp;quot;], processLine)
+
+# Interestingly, applying as_tibble instead of as.data.frame is
+# very slow. So I opt for data frame and then convert the binded
+# df to a tibble
+final_data &amp;lt;-
+  bind_rows(map(tmp, as.data.frame, stringsAsFactors = FALSE)) %&amp;gt;%
+  as_tibble() %&amp;gt;%
+  add_column(mac_indicators = rep(c(&amp;quot;signal&amp;quot;, &amp;quot;chanel&amp;quot;, &amp;quot;type&amp;quot;), length(unique(.$t))),
+             .after = &amp;quot;degree&amp;quot;)
+
+final_data&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 438,222 x 40
+##    t         id        pos   `0.0` degree mac_indicators `00:14:bf:b1:97:…
+##    &amp;lt;chr&amp;gt;     &amp;lt;chr&amp;gt;     &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt;  &amp;lt;chr&amp;gt;          &amp;lt;chr&amp;gt;            
+##  1 11396431… 00:02:2D… 0.0   0.0   0.0    signal         -38              
+##  2 11396431… 00:02:2D… 0.0   0.0   0.0    chanel         2437000000       
+##  3 11396431… 00:02:2D… 0.0   0.0   0.0    type           3                
+##  4 11396431… 00:02:2D… 0.0   0.0   0.0    signal         -38              
+##  5 11396431… 00:02:2D… 0.0   0.0   0.0    chanel         2437000000       
+##  6 11396431… 00:02:2D… 0.0   0.0   0.0    type           3                
+##  7 11396431… 00:02:2D… 0.0   0.0   0.0    signal         -38              
+##  8 11396431… 00:02:2D… 0.0   0.0   0.0    chanel         2437000000       
+##  9 11396431… 00:02:2D… 0.0   0.0   0.0    type           3                
+## 10 11396431… 00:02:2D… 0.0   0.0   0.0    signal         -38              
+## # ... with 438,212 more rows, and 33 more variables:
+## #   `00:14:bf:b1:97:90` &amp;lt;chr&amp;gt;, `00:0f:a3:39:e1:c0` &amp;lt;chr&amp;gt;,
+## #   `00:14:bf:b1:97:8d` &amp;lt;chr&amp;gt;, `00:14:bf:b1:97:81` &amp;lt;chr&amp;gt;,
+## #   `00:14:bf:3b:c7:c6` &amp;lt;chr&amp;gt;, `00:0f:a3:39:dd:cd` &amp;lt;chr&amp;gt;,
+## #   `00:0f:a3:39:e0:4b` &amp;lt;chr&amp;gt;, `00:0f:a3:39:e2:10` &amp;lt;chr&amp;gt;,
+## #   `02:64:fb:68:52:e6` &amp;lt;chr&amp;gt;, `02:00:42:55:31:00` &amp;lt;chr&amp;gt;,
+## #   `00:04:0e:5c:23:fc` &amp;lt;chr&amp;gt;, `00:30:bd:f8:7f:c5` &amp;lt;chr&amp;gt;, `1.0` &amp;lt;chr&amp;gt;,
+## #   `2.0` &amp;lt;chr&amp;gt;, `3.0` &amp;lt;chr&amp;gt;, `4.0` &amp;lt;chr&amp;gt;, `5.0` &amp;lt;chr&amp;gt;, `6.0` &amp;lt;chr&amp;gt;,
+## #   `7.0` &amp;lt;chr&amp;gt;, `8.0` &amp;lt;chr&amp;gt;, `9.0` &amp;lt;chr&amp;gt;, `10.0` &amp;lt;chr&amp;gt;, `11.0` &amp;lt;chr&amp;gt;,
+## #   `12.0` &amp;lt;chr&amp;gt;, `13.0` &amp;lt;chr&amp;gt;, `00:e0:63:82:8b:a9` &amp;lt;chr&amp;gt;,
+## #   `02:37:fd:3b:54:b5` &amp;lt;chr&amp;gt;, `02:2e:58:22:f1:ac` &amp;lt;chr&amp;gt;,
+## #   `02:42:1c:4e:b5:c0` &amp;lt;chr&amp;gt;, `02:0a:3d:06:94:88` &amp;lt;chr&amp;gt;,
+## #   `02:5c:e0:50:49:de` &amp;lt;chr&amp;gt;, `02:4f:99:43:30:cd` &amp;lt;chr&amp;gt;,
+## #   `02:b7:00:bb:a9:35` &amp;lt;chr&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There we go! It’s a bit refreshing to work on datasets that are not pre-cleaned for you.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Scraping at scale: daily scraping to your database</title>
@@ -277,168 +540,184 @@ appended between the time the script should&amp;#39;ve started and should&amp;#3
     </item>
     
     <item>
-      <title>Brief Analysis of Independent/Unionist Vote in Catalonia</title>
-      <link>/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/brief-analysis-of-independent-unionist-vote-in-catalonia/</link>
-      <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
+      <title>Forecasting independence: the catalan case</title>
+      <link>/blog/2017-12-31-forecasting-independence-the-catalan-case/forecasting-independence-the-catalan-case/</link>
+      <pubDate>Sun, 31 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/brief-analysis-of-independent-unionist-vote-in-catalonia/</guid>
-      <description>&lt;div id=&#34;catalan-elections&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Catalan elections&lt;/h2&gt;
-&lt;p&gt;On a train from Barcelona-Madrid I started working with an &lt;code&gt;R&lt;/code&gt; package called &lt;code&gt;ggrides&lt;/code&gt;. To my surprise, the package contains one dataset that documents the change in independent/unionist vote for all Catalan municipalities from 1980 to 2015. This is very cool! Needless to say, I left what I was doing and started to dive into the dataset.&lt;/p&gt;
-&lt;p&gt;The data looks like this:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggridges)
-Catalan_elections&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 20,764 x 4
-##          Municipality  Year Option Percent
-##                 &amp;lt;chr&amp;gt; &amp;lt;int&amp;gt;  &amp;lt;chr&amp;gt;   &amp;lt;dbl&amp;gt;
-##  1 Abella de la Conca  1980   Indy   68.42
-##  2 Abella de la Conca  1984   Indy   95.71
-##  3 Abella de la Conca  1988   Indy   89.36
-##  4 Abella de la Conca  1992   Indy   81.67
-##  5 Abella de la Conca  1995   Indy   80.00
-##  6 Abella de la Conca  1999   Indy   74.70
-##  7 Abella de la Conca  2003   Indy   84.42
-##  8 Abella de la Conca  2006   Indy   73.24
-##  9 Abella de la Conca  2010   Indy   75.90
-## 10 Abella de la Conca  2012   Indy   83.95
-## # ... with 20,754 more rows&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Very straight forward. It’s the ‘Indy’ or Independent vote and the ‘Unionist’ vote from 1980 until 2015. The data is complete for nearly all Municipalities, meaning that the data is available for all years. Only a handful (~ 40) do not have data starting from 1980.&lt;/p&gt;
-&lt;p&gt;Basically, I wanted to answer one question: has the indepence vote grown over time? This question is of general interest considering that the topic is being hotly debated in the media and next week new Catalan elections will be held in a scenario never seen before; after independent parties proclaimed unilateral independece and the government seized control of Catalunya. The elections are predicted to be very contested with Independent parties losing some votes.&lt;/p&gt;
-&lt;p&gt;With that said, let’s dive into the data!&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;analysis&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Analysis&lt;/h2&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Load my libraries
-library(scales)
+      <guid>/blog/2017-12-31-forecasting-independence-the-catalan-case/forecasting-independence-the-catalan-case/</guid>
+      <description>&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rvest)
+library(janitor)
+library(stringr)
+library(lubridate)
 library(tidyverse)
 
-# Change abbreviated Indy and Unionist to long names
-Catalan_elections$Option &amp;lt;- with(Catalan_elections, ifelse(Option == &amp;quot;Indy&amp;quot;, &amp;quot;Independent&amp;quot;, &amp;quot;Unionist&amp;quot;))
+read_web &amp;lt;- read_html(&amp;quot;https://en.wikipedia.org/wiki/Catalan_independence_movement&amp;quot;)
 
+indp_time &amp;lt;-
+  read_web %&amp;gt;%
+  html_nodes(xpath = &amp;#39;//table&amp;#39;) %&amp;gt;%
+  .[[3]] %&amp;gt;%
+  html_table() %&amp;gt;%
+  as_tibble() %&amp;gt;%
+  clean_names()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;example_path &amp;lt;-
+  read_web %&amp;gt;%
+  html_nodes(&amp;quot;.references-column-width&amp;quot;) %&amp;gt;% # go to the references
+  xml_children() %&amp;gt;% # dive into the referneces
+  xml_children() %&amp;gt;%
+  xml_path() %&amp;gt;% # get the xpath
+  .[[1]] %&amp;gt;% # and extract one sample
+  str_replace_all(&amp;quot;\\[[0-9]\\]$&amp;quot;, &amp;quot;&amp;quot;) # replace the last [1]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;code_dates &amp;lt;- str_extract_all(indp_time$date, &amp;quot;\\[[0-9]{3,3}\\]$&amp;quot;)
+end_paths &amp;lt;- unlist(code_dates)
+complete_paths &amp;lt;- paste0(example_path, end_paths)
+all_nodes &amp;lt;- map(complete_paths, ~ html_node(read_web, xpath =  .x)) %&amp;gt;% setNames(end_paths)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;extract_gencat &amp;lt;- function(node) {
+  int_node &amp;lt;-
+    node %&amp;gt;%
+    xml_children() %&amp;gt;%
+    xml_children() %&amp;gt;%
+    xml_children()
+  
+  node_href &amp;lt;- int_node[xml_has_attr(int_node, &amp;quot;rel&amp;quot;)]
+  
+  xml_attr(node_href, &amp;quot;href&amp;quot;)
+}
 
-# Summarize the median independence/unionist vote for
-# all municipalities on the first/last year recorded
-avg_pl &amp;lt;-
-  Catalan_elections %&amp;gt;%
-  group_by(Municipality, Option) %&amp;gt;%
-  summarize(first_year = first(Percent, Year),
-            last_year = last(Percent, Year)) %&amp;gt;%
-  group_by(Option) %&amp;gt;%
-  summarize(first_year = median(first_year, na.rm = TRUE),
-            last_year = median(last_year, na.rm = TRUE)) %&amp;gt;%
-  mutate(id = 1:nrow(.)) %&amp;gt;%
-  gather(year, value, -id, -Option)
+all_links &amp;lt;-
+  map(all_nodes, extract_gencat) %&amp;gt;%
+  discard(~ any(grepl(&amp;quot;.pdf$&amp;quot;, .x)) || length(.x) &amp;gt; 1)
+# remove links where it ends with a pdf or where there&amp;#39;s 2 links
+# 2 links means that the page is not there anymore and they
+# have an archived link that downloads a file, so no webpage!
 
-# Summarize the indy/unionist vote for
-# the first/last year for Barcelona
-bcn_pl &amp;lt;-
-  Catalan_elections %&amp;gt;%
-  filter(Municipality == &amp;quot;Barcelona&amp;quot;) %&amp;gt;%
-  group_by(Municipality, Option) %&amp;gt;%
-  summarize(first_year = first(Percent, Year),
-            last_year = last(Percent, Year)) %&amp;gt;%
-  mutate(id = 1:nrow(.)) %&amp;gt;%
-  gather(year, value, ends_with(&amp;quot;year&amp;quot;))
+grab_date &amp;lt;- function(link) {
+  link %&amp;gt;%
+    read_html() %&amp;gt;%
+    html_node(xpath = &amp;quot;//*[@id=&amp;#39;contingutPrincipal&amp;#39;]/div[1]/div[3]/p[3]&amp;quot;) %&amp;gt;%
+    xml_text() %&amp;gt;%
+    str_extract(&amp;quot;[0-9]{2,}-[0-9]{2,}-[0-9]{4,}&amp;quot;) # grabe the date in dd-mm-yyyy format
+}
 
-# Create a base parallel plot with both
-# unionist/independence votes pooled
-base_plot &amp;lt;-
-  Catalan_elections %&amp;gt;%
-  group_by(Municipality, Option) %&amp;gt;%
-  summarize(first_year = first(Percent, Year),
-            last_year = last(Percent, Year)) %&amp;gt;%
-  mutate(id = paste0(Municipality, &amp;quot;_&amp;quot;, Option)) %&amp;gt;%
-  gather(year, value, ends_with(&amp;quot;year&amp;quot;)) %&amp;gt;%
-  ggplot(aes(year, value)) +
-  geom_point(alpha = 0.1, size = 2) +
-  geom_line(aes(group = id), alpha = 0.1)
+all_dates &amp;lt;- map_chr(all_links, grab_date)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lookup &amp;lt;- as.character(code_dates)
+col_date &amp;lt;- ifelse(lookup == &amp;quot;character(0)&amp;quot;, NA, lookup)
 
-# Add the median summary line for both indy/unionist
-median_plot &amp;lt;-
-  base_plot +
-  geom_point(data = avg_pl, aes(year, value),
-            colour = &amp;quot;red&amp;quot;, alpha = 0.5, size = 2) +
-  geom_line(data = avg_pl, aes(year, value, group = id),
-            colour = &amp;quot;red&amp;quot;, alpha = 0.5, size = 2)
+# this is slow, but this is very short
+rem_dates &amp;lt;- as.character(dmy(all_dates[col_date]))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning in as.POSIXlt.POSIXct(x, tz): unknown timezone &amp;#39;zone/tz/2017c.1.0/
+## zoneinfo/Europe/Madrid&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;int_date &amp;lt;- indp_time$date
+normal_d &amp;lt;- grepl(&amp;quot;[0-9]{4,}$&amp;quot;, int_date)
 
-# Add the change of Barcelona for both indy/unionist vote
-bcn_plot &amp;lt;-
-  median_plot +
-  geom_point(data = bcn_pl, aes(year, value),
-             colour = &amp;quot;blue&amp;quot;, alpha = 0.5, size = 2) +
-  geom_line(data = bcn_pl, aes(year, value, group = id),
-            colour = &amp;quot;blue&amp;quot;, alpha = 0.5, size = 2)
+int_date[normal_d] &amp;lt;- as.character(dmy(paste0(&amp;quot;1 &amp;quot;, int_date[normal_d])))
 
+other_dates &amp;lt;- int_date[is.na(rem_dates) &amp;amp; grepl(&amp;quot;series&amp;quot;, int_date)]
 
-# Separate the plot for indy/unionist in different
-# panels and add pretty options
-pretty_plot &amp;lt;-
-  bcn_plot +
-  scale_x_discrete(name = NULL,
-                   labels = c(&amp;quot;1980&amp;quot;,
-                              &amp;quot;2015&amp;quot;)) +
-  scale_y_continuous(name = &amp;quot;% of votes in favour of:&amp;quot;,
-                     breaks = seq(0, 100, 20),
-                     labels = percent(seq(0, 1, 0.2))) +
-  facet_wrap(~ Option, strip.position = &amp;quot;bottom&amp;quot;) +
-  labs(
-    title = &amp;quot;Independence/Unionist vote in Catalonia in three decades&amp;quot;,
-    subtitle = &amp;quot;Red line is the median change for all municipalities - Blue line is Barcelona&amp;quot;,
-    caption = &amp;quot;Data collected by @marcbeldata - Plot and analisis by @cimentadaj&amp;quot;
-  ) +
+int_date[is.na(rem_dates) &amp;amp; grepl(&amp;quot;series&amp;quot;, int_date)] &amp;lt;- 
+  str_replace(other_dates, &amp;quot;\\sseries(.*)$&amp;quot;, &amp;quot;&amp;quot;) %&amp;gt;%
+  gsub(&amp;quot;1st&amp;quot;, &amp;quot;January&amp;quot;, .) %&amp;gt;%
+  gsub(&amp;quot;2nd&amp;quot;, &amp;quot;April&amp;quot;, .) %&amp;gt;%
+  gsub(&amp;quot;3rd&amp;quot;, &amp;quot;August&amp;quot;, .) %&amp;gt;%
+  gsub(&amp;quot;4th&amp;quot;, &amp;quot;November&amp;quot;, .) %&amp;gt;%
+  paste0(&amp;quot; 1&amp;quot;) %&amp;gt;%
+  ymd() %&amp;gt;%
+  as.character()
+
+final_date &amp;lt;- unname(ifelse(!is.na(rem_dates), rem_dates, int_date))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rdy_data &amp;lt;-
+  indp_time %&amp;gt;%
+  transmute(date,
+            new_date = ymd(final_date),
+            independent = independent_state_percent,
+            aut_c = autonomous_community_percent) %&amp;gt;%
+  gather(cat, val, -(1:2))
+
+rdy_data %&amp;gt;%
+  ggplot(aes(new_date, val, colour = cat)) +
+  geom_point(alpha = 0.4, size = 1) +
+  geom_line() +
   theme_minimal() +
-  theme(
-    plot.title = element_text(size = 16, family = &amp;quot;Arial-BoldMT&amp;quot;),
-    plot.subtitle = element_text(size = 12, color = &amp;quot;#666666&amp;quot;),
-    plot.caption = element_text(size = 12, color = &amp;quot;#666666&amp;quot;),
-    strip.text.x = element_text(size = 14),
-    axis.title.y = element_text(size = 16),
-    axis.text.y = element_text(size = 12),
-    axis.text.x = element_text(size = 14)
-  )
-# Final plot
-pretty_plot&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/2017-12-14-brief-analysis-of-independent-unionist-vote-in-catalonia_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;I was very surprised with this plot. On the left panel we can see the increase of independence votes in the last 35 years. The red line is the median change for all municipalities. There is a huge average increase from around 49% to over 70%. In fact, it’s not just an artifact of mean/median with big variance. If we look at the bulk of the distribution on the right line and then the left line, we see an upwards shift in the whole distribution.&lt;/p&gt;
-&lt;p&gt;On the other hand, the unionist vote seems to have decreased! The left/right distributions seem to be very similar (but it looks like the distribution of the right line has some outliers shifting upwards). But remember something: these are all municipalities. Municipalities might have 1000 citizen or even less! Consider the lonely town in a mountain with 50 people voting for independent parties: that’s also a municipality.&lt;/p&gt;
-&lt;p&gt;It is for this reason that we need to pay attention to places like Barcelona, which have over 1 million residents and definately weigh in more in proportion. And that’s where the interesting thing about this plot arises: the Barcelona change is practically the same. Not only have the votes increased very very similarly for both sides, but they’re also at the same level of support. Both blue lines look pretty much identical.&lt;/p&gt;
-&lt;p&gt;Don’t forget: small differences &lt;strong&gt;can&lt;/strong&gt; make a difference, specially in elections. Perhaps they &lt;strong&gt;are&lt;/strong&gt; different but we need to take a closer look.&lt;/p&gt;
-&lt;p&gt;Let’s plot the independence/unionist evolution only for Barcelona.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Plot for indy/unionist vote over time only for Barcelona
-Catalan_elections %&amp;gt;%
-  filter(Municipality == &amp;quot;Barcelona&amp;quot;) %&amp;gt;%
-  ggplot(aes(Year, Percent, group = Option, colour = Option)) +
-  geom_line(alpha = 0.5, size = 2) +
-  scale_x_continuous(name = NULL) +
-  scale_colour_discrete(name = NULL) +
-  scale_y_continuous(name = &amp;quot;% of votes in favour of:&amp;quot;,
-                     lim = c(0, 100),
-                     breaks = seq(0, 100, 20),
-                     labels = percent(seq(0, 1, 0.2))) +
-  labs(
-    title = &amp;quot;Overtime votes for independence/unionist in Barcelona&amp;quot;,
-    caption = &amp;quot;Data collected by @marcbeldata - Plot and analisis by @cimentadaj&amp;quot;
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 16, family = &amp;quot;Arial-BoldMT&amp;quot;),
-    plot.subtitle = element_text(size = 12, color = &amp;quot;#666666&amp;quot;),
-    plot.caption = element_text(size = 12, color = &amp;quot;#666666&amp;quot;),
-    legend.position = &amp;quot;top&amp;quot;,
-    legend.text = element_text(size = 14),
-    strip.text.x = element_text(size = 14),
-    axis.title.y = element_text(size = 16),
-    axis.text.y = element_text(size = 12),
-    axis.text.x = element_text(size = 14)
-  )&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/2017-12-14-brief-analysis-of-independent-unionist-vote-in-catalonia_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Despite most municipalities are for independence, Barcelona, by only a small margin, has a majority of people voting for unionist parties. Be aware that these votes are not ‘referendums’ carried out every year. These are votes towards independence/unionist parties, which is a different thing. Also note that these are not predictions/forecasts, so they don’t have uncertainty intervals or margins of errors. This is empirical data from voter turnout.&lt;/p&gt;
-&lt;p&gt;I also tried other big municipalities such as Sabadell and found that unionism trumps over independence much strongly. Yet in others like Lleida, Independence seems to be on top. For a look at specific municipalities, &lt;a href=&#34;http://marcbeldata.github.io/ggjoy-Catalan-vote-2015/&#34;&gt;check the post by Marc Belzunces&lt;/a&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;a-note-on-next-weeks-elections&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;A note on next week’s elections&lt;/h2&gt;
-&lt;p&gt;This data takes us as far as 2015. Catalonia has suffered dramatic changes since 2015 specially due to the independence movement. These data are most likely not a good representation of what’s gonna happen next week. Big municipalities have usually been majority unionists according to polls, but the differences are tiny and we’ve seen dramatic changes with independence parties proclaiming unilateral independence. There are good attempts at predicting catalan elections (&lt;a href=&#34;https://politica.elpais.com/politica/2017/12/07/ratio/1512647178_322229.html&#34;&gt;in Spanish&lt;/a&gt;) so tune in next week to see what happens.&lt;/p&gt;
-&lt;/div&gt;
+  ylim(c(0, 100))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(prophet)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Loading required package: Rcpp&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: package &amp;#39;Rcpp&amp;#39; was built under R version 3.4.3&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df &amp;lt;-
+  rdy_data %&amp;gt;%
+  spread(cat, val) %&amp;gt;%
+  select(new_date, independent) %&amp;gt;%
+  rename(ds = new_date,
+         y = independent)
+
+ph_df &amp;lt;-
+  df %&amp;gt;%
+  filter(ds &amp;lt;= &amp;quot;2008-01-01&amp;quot;) %&amp;gt;%
+  prophet()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Disabling weekly seasonality. Run prophet with weekly.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## n.changepoints greater than number of observations. Using 7&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Initial log joint probability = -2.04896
+## Optimization terminated normally: 
+##   Convergence detected: absolute parameter change was below tolerance&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ph_df %&amp;gt;%
+  make_future_dataframe(periods = 40, freq = &amp;quot;month&amp;quot;, include_history = TRUE) %&amp;gt;%
+  predict(ph_df, .) %&amp;gt;%
+  plot(ph_df, .)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_roll &amp;lt;-
+  list(zoo::rollmean, zoo::rollmedian) %&amp;gt;%
+  setNames(c(&amp;quot;rollmean&amp;quot;, &amp;quot;rollmedian&amp;quot;)) %&amp;gt;%
+  map_dfc(~ .x(df$y, 3, fill = NA)) %&amp;gt;%
+  bind_cols(df, .)
+
+df_gather &amp;lt;-
+  df_roll %&amp;gt;%
+  gather(roll, values, -(1:2))
+
+df_roll %&amp;gt;%
+  ggplot(aes(ds, y)) +
+  geom_point() +
+  geom_line(data = df_gather, aes(x = ds, y = values, colour = roll))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_roll %&amp;gt;%
+  ggplot(aes(ds, y)) +
+  geom_point() +
+  geom_smooth(span = 2)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## `geom_smooth()` using method = &amp;#39;loess&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;roll_ph &amp;lt;-
+  df_roll %&amp;gt;%
+  select(ds, rollmedian) %&amp;gt;%
+  rename(y = rollmedian) %&amp;gt;%
+  filter(ds &amp;lt;= &amp;quot;2009-01-01&amp;quot;) %&amp;gt;% # change this to 2009 and the relationship dissapears
+  prophet()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Disabling weekly seasonality. Run prophet with weekly.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## n.changepoints greater than number of observations. Using 9&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Initial log joint probability = -2.0766
+## Optimization terminated normally: 
+##   Convergence detected: absolute parameter change was below tolerance&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;roll_ph %&amp;gt;%
+  make_future_dataframe(periods = 40, freq = &amp;quot;month&amp;quot;, include_history = TRUE) %&amp;gt;%
+  predict(roll_ph, .) %&amp;gt;%
+  plot(roll_ph, .)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This forecast would always predict that the independence vote would increase&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ph_df &amp;lt;-
+  df %&amp;gt;%
+  # filter(ds &amp;lt;= &amp;quot;2008-01-01&amp;quot;) %&amp;gt;%
+  prophet()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Disabling weekly seasonality. Run prophet with weekly.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Initial log joint probability = -2.36096
+## Optimization terminated normally: 
+##   Convergence detected: absolute parameter change was below tolerance&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ph_df %&amp;gt;%
+  make_future_dataframe(periods = 40, freq = &amp;quot;month&amp;quot;, include_history = TRUE) %&amp;gt;%
+  predict(ph_df, .) %&amp;gt;%
+  plot(ph_df, .)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 </description>
     </item>
     
@@ -2463,16 +2742,16 @@ return(vec)
 # shots in a row.&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# test
 thrower(0.6)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 1 0 1 1 1 1 0 0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 1 0 1 0 0&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# 0 1 0 1 0 0
 # Last two elements are always zero&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# b)
 attempts &amp;lt;- replicate(1000, thrower(0.60))
 mean(sapply(attempts, length)) &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 8.756&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 8.977&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# mean number of shots until two shots are missed in a row&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sd(sapply(attempts, length)) &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 7.338823&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 7.613569&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# standard deviation of shots made
 # until two shots are missed in a row&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;hist(sapply(attempts, length)) # distribution of shots made&lt;/code&gt;&lt;/pre&gt;
@@ -2484,6 +2763,35 @@ plot(df[, 2], df[, 1])&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;/blog/2016-09-13-simulations-and-model-predictions-in-r/2016-09-13-simulations-and-model-predictions-in-r_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;That was fun. I think the key take away here is that you can use these type of simulations to asses the accuracy of model predictions, for example. If you have the probability of being in either 1 or 0 in any dependent variable, then simulation can help determine its reliability by looking at the distribution of the replications.&lt;/p&gt;
 &lt;p&gt;Whenever I have some free time I’ll go back to the next exercises.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Children: public or private goods?</title>
+      <link>/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</link>
+      <pubDate>Mon, 29 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</guid>
+      <description>&lt;p&gt;The role of the welfare state, as agreed by many scholars, is to de-commodify its citizens. Some argue that this should be the way that the generosity of the state should be measured; instead of net public and private social expenditure, it should be the extent to which citizens are de-commodified by the services and transfers of the welfare state.&lt;/p&gt;
+&lt;p&gt;The aim of educational investment can be seen from different lenses, but today we’ll focus on the economic and social returns to education. An important share of the state budget is aimed at the formation and education of citizens through public education. In countries where there is a substantial investment, human capital, innovation and production are maximized creating a highly productive working population that can sustain the young and the elderly through pensions, health and child care; note that in some scenarios an uneducated workforce can sustain those who depend on them but it will possible be with more quantity of work (hours) and less quality [1]. Following this logic, it is arguable that because most of today’s workers will benefit from pensions, retirement schemes, care assistance and healthcare, they are to take care of their young population, the next generation’s workers. Covering kids’ education through higher taxes could be seen as loan: A young worker covers the expenses of a child, and that child, eventually, will cover the pension of that worker; this is a simplified version of the argument.&lt;/p&gt;
+&lt;p&gt;The scheme I just outlined is virtually widespread across western European countries. But it is important to note that in other countries, due to the intrinsic organization of the state, it is unimaginable to do so. In the counterfactual situation where you don’t have a strong welfare state, maybe it’s unfair to tax those who are not benefiting from the goods that the taxes are being spent on. In places like the United States, where the generosity of the welfare system is minimal, some people don’t find it reasonable to pay for everyone’s kids, even more, when you’re paying already, for instance, a private school for your own.&lt;/p&gt;
+&lt;p&gt;There’s also another important case: childless couples. Perhaps the exact reason why they didn’t have children was not to have to spend a big proportion of their lifelong income. So, why should they pay? According to their position it seems very unfair. Their long held argument can be synthesized in one sentence: those who want children should be the ones who pay for them.&lt;/p&gt;
+&lt;p&gt;After presenting very briefly the arguments of the positions in the debate, it is interesting then to posit the important question concerning it: Should children be a public or private good? I presume this question is easy to answer but not easy to apply; adjusting a state to this premise can take decades and it’s an expensive endeavor. So, evaluating this question must be accompanied by hard scientific thinking.&lt;/p&gt;
+&lt;p&gt;I will start off by stating my position on this dilemma. I support the notion of kids being a public good. I support it not just for the fact that they will pay or not for my pension schemes but because everyone deserves the same opportunities. And if we don’t provide them with equal opportunities, then the gap we see between poor and rich will be as it is today: very sizable. Despite that I sometimes question myself: can they entirely be a public good? Adopting the notion that the family is a private sphere, and at least the states considers it because it is reluctant to interfere within it, then children should not just be considered as a public good. If we pay attention to authors like McDonald (2000) and Lewis &amp;amp; Astrom (1992), we constantly see that the way the state promotes gender equality in the family is not through hands-on, direct implementation of intrusive policies like reeducating couples and telling them what’s right and what’s not. Instead, most of the family policies try to promote gender equality by integrating women into the labor force, reducing the gender wage gap and promoting female and male parental leave. Kids then can never be entirely public goods.&lt;/p&gt;
+&lt;p&gt;Nevertheless, do they contribute to society, meaning, are the interrelated with the “public”?&lt;/p&gt;
+&lt;p&gt;I think this question is rooted in the intrinsic dynamics of society. We are social animals and it is unfashionable to think that we are independent of each other. The most independent citizen living within society is never unattached of its surroundings. Everyone’s paths cross indirectly and directly with the decisions and actions of other people. It might be even irresponsible to think that one’s actions only affect themselves. The principal idea to take from this question is that those who think of themselves as independent actors of society are committing a fallacy that could be the exact reason why the levels and indexes of inequalities are so high nowadays.&lt;/p&gt;
+&lt;p&gt;The Nobel laureate James Heckman has been arguing for the past decade one of his most controversial findings: the first years of a child are the most important ones. Contrary to the long held thought of concentrating the bigger part of the educational budget on tertiary education, he finds that the return of investment of human beings are the highest in the early years and it decreases with time. This means that the first years should be the ones where the highest investment should be: be it monetary and emotional. With the evaluation of the Perry preschool program and the Abecedarian project, Heckman finds that you can trace inequalities between children as early as 22 months old. The principal reason being that some kids get better early childhood education than others. Among others, I think this an important reason to reflect why children should be a public good.&lt;/p&gt;
+&lt;p&gt;Inequalities are being reproduced from an early age, leading to a more polarized society where you have lucky and unlucky kids. Those that receive the better education will at the end, have better jobs, less odds of committing crime, more prone of a stable union (possibly due to the fact that they will have a stable job). Furthermore, and I think this is a key argument against those that don’t want to contribute, these educated children will in most of the cases, help society better than the ones who aren’t educated. This help can be manifested in direct and indirect ways: respecting traffic lights, avoiding corruption in public institutions, being fair, meritocratic, reporting robberies, not stealing, respecting others, among an endless number of thing. This point makes an important argument: the focus on which some of the parents and scholars are viewing the debate might be wrongly specified. As I have succinctly showed, the benefits of having an educated population are not only personal, but also public. I think that the principal reason why there is a strong opposition to this idea is because they evaluate it as taking care of someone else’s children when nobody is taking care of theirs; that is a strong point, but I urge everyone to see it with another lense. If you turned the coin around and you start seeing this as an investment towards societal problems, which in the short and long run affects us all, then it becomes a tax deduction, just as any other one.&lt;/p&gt;
+&lt;p&gt;As I argued before, we are all interrelated and it is our business what our fellow citizens do. So, someone who doesn’t have children, still participates in society, interacts within it, and is affected by criminality, public services, and private services. The problem with providing this argument for a country with a weak welfare state is that you won’t receive quality elderly care from this children when you retire. Conversely, in strong-welfare countries, the argument is the main (pragmatic) reason to do so. However, the second idea, that we should do it for everyone to have the same opportunities, is more than enough to warrant the changes. This would be an even more noble reason because you won’t be contributing to receive something but because everyone deserves the same opportunities. For the U.S, this is a reason to tackle one of the most debatable topics of the last 40 years: inequalities.&lt;/p&gt;
+&lt;p&gt;Now, if we were to delve more into the inequality problem, which shows itself to be the major issue when comparing educational opportunities, it is also important to think of the struggles of having children. Not particularly of the difficulties of childrearing, which are a consequence of the decision to child bear, but the fact that it is too hard to combine work and childrearing now a days. This is quite notorious in the lean welfare state countries and southern European ones.&lt;/p&gt;
+&lt;p&gt;The demands of the work space and the schedules that are imposed to parents and workers make it virtually impossible for men or women to dedicated high quality time to their children. The most common solution that we’ve seen is for women to quit their jobs or to sacrifice leisure time to take care of the child. So, in the end, this deems either the education of the future population or the ambitions and life course perspective of a mother.&lt;/p&gt;
+&lt;p&gt;Catherine Hakim’s preference theory, posits that women now have the preference of having a child but this was not entirely the case in the past where the bargaining power of the man was higher than hers. But a woman who has professional ambitions might also want to have a baby. Does this mean that she has to renounce her ambitions? This will certainly harm the tax system (less taxes paid) but it will help society because she will dedicate more time to the child (And if you acknowledge this, then you are implicitly arguing that children are indeed a public good). But as one of Esping-Andersen’s chapter from his book the Incomplete Revolution shows, permitting the woman to go back to work after parental leave, by providing free high quality childcare, will in the long run pay the costs of this childcare service and even produce a surplus for the welfare state. And that is why I think this is not an easy question to answer, conversely to what Paula England and Nancy Folbre imply. The implication of implementing this idea entails a complete reorganization and readjustment of the tax and welfare system, if there is one [2]. And also, what would be the consequences of this new regime besides the public childcare? Will the problem of inequalities be solved or others problems will arise as side effects?&lt;/p&gt;
+&lt;p&gt;And here I will talk about something that is intrinsically related to having healthy children: the labor perspectives of the mother. The Incomplete Revolution, book by Esping-Andersen, takes on the job of explaining the problem with many of today’s countries: the poor family policies that they implement (if any) when concerning women’s labor market inclusion and combination of working and childrearing. Specifically in two chapters he argues that children should be a public good because children benefit everyone, but furthermore, an important step is to include women in the labor market given that it will help the income prospects of the household and the egalitarianism in the family. How can this be related to children as being a public good, one may ask? This is a complex relation, on which everything is potentially endogenous, but all present evidence shows that if the mother goes back to work after the parental leave, it does not have an adverse effect on the development of the child. This is, assuming that the child is in early high quality childcare. This has important implications! It means that the inclusion of mothers into the labor force will increase the bargaining power of the women in the family, it will heighten the income of the family household, it will expand the human capital of the women; in short, it will not impose the opportunity costs that she will otherwise would’ve had to bear for the remaining part of her life if she would’ve stayed home. This will increase the chances of being in a more egalitarian family, thus the children will be exposed to more equal surroundings.&lt;/p&gt;
+&lt;p&gt;From the point of view that I see it, it’s about heightening the bar of educational attainment. Instead of having the two extremes that we see in the liberal welfare state regimes (excluding UK), extremely poor and uneducated groups and highly rich and educated group, you will set a bar of minimum education. By doing this you will inevitable give secureness to families, opportunities, possibly change the economic structure of the country by increasing the odds of turning it to a knowledge based economy (although this is way more complex then I suggest).&lt;/p&gt;
+&lt;p&gt;As a conclusion, I shall finish off with another question, which I think is as important as the one which initiated this essay. I have tried to argue that children are faring under the destiny that is imposed to them. There has been, since after the World War II, persistent inequalities between classes and all the evidence shows that they are not shrinking. In some countries, namely European ones, the decision to help children might be an economic one or an altruistic one. This is worrisome. Are children being taken care of in Europe because they are the payers of the pensioners or because of the noble argument of equal opportunities? I really don’t know the reason for which Europe or the U.S is doing it for. But should everyone take care of children for the economic benefits or for the equal opportunity argument?&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;[1] Let’s not get into the major changes that the quality of job production will have if the population is highly educated. For a book with interesting ideas, read The Race between Education and Technology by Claudia Goldin &amp;amp; Lawrence Katz.&lt;/p&gt;
+&lt;p&gt;[2] In the case where there is no welfare state, then this is another story.&lt;/p&gt;
 </description>
     </item>
     
@@ -2716,39 +3024,6 @@ lm(income ~ gender + kids)&lt;/code&gt;&lt;/pre&gt;
 ## (Intercept)       gender         kids  
 ##    2945.911      200.471        9.891&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Well, we can now say that the difference in income between male and females is of about 200 adjusted for the number of children per person.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>/blog/2016-08-29-children-public-or-private-goods/2016-08-29-children-public-or-private-goods/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/blog/2016-08-29-children-public-or-private-goods/2016-08-29-children-public-or-private-goods/</guid>
-      <description>&lt;!-- BLOGDOWN-HEAD --&gt;
-&lt;!-- /BLOGDOWN-HEAD --&gt;
-
-
-&lt;p&gt;The role of the welfare state, as agreed by many scholars, is to de-commodify its citizens. Some argue that this should be the way that the generosity of the state should be measured; instead of net public and private social expenditure, it should be the extent to which citizens are de-commodified by the services and transfers of the welfare state.&lt;/p&gt;
-&lt;p&gt;The aim of educational investment can be seen from different lenses, but today we’ll focus on the economic and social returns to education. An important share of the state budget is aimed at the formation and education of citizens through public education. In countries where there is a substantial investment, human capital, innovation and production are maximized creating a highly productive working population that can sustain the young and the elderly through pensions, health and child care; note that in some scenarios an uneducated workforce can sustain those who depend on them but it will possible be with more quantity of work (hours) and less quality [1]. Following this logic, it is arguable that because most of today’s workers will benefit from pensions, retirement schemes, care assistance and healthcare, they are to take care of their young population, the next generation’s workers. Covering kids’ education through higher taxes could be seen as loan: A young worker covers the expenses of a child, and that child, eventually, will cover the pension of that worker; this is a simplified version of the argument.&lt;/p&gt;
-&lt;p&gt;The scheme I just outlined is virtually widespread across western European countries. But it is important to note that in other countries, due to the intrinsic organization of the state, it is unimaginable to do so. In the counterfactual situation where you don’t have a strong welfare state, maybe it’s unfair to tax those who are not benefiting from the goods that the taxes are being spent on. In places like the United States, where the generosity of the welfare system is minimal, some people don’t find it reasonable to pay for everyone’s kids, even more, when you’re paying already, for instance, a private school for your own.&lt;/p&gt;
-&lt;p&gt;There’s also another important case: childless couples. Perhaps the exact reason why they didn’t have children was not to have to spend a big proportion of their lifelong income. So, why should they pay? According to their position it seems very unfair. Their long held argument can be synthesized in one sentence: those who want children should be the ones who pay for them.&lt;/p&gt;
-&lt;p&gt;After presenting very briefly the arguments of the positions in the debate, it is interesting then to posit the important question concerning it: Should children be a public or private good? I presume this question is easy to answer but not easy to apply; adjusting a state to this premise can take decades and it’s an expensive endeavor. So, evaluating this question must be accompanied by hard scientific thinking.&lt;/p&gt;
-&lt;p&gt;I will start off by stating my position on this dilemma. I support the notion of kids being a public good. I support it not just for the fact that they will pay or not for my pension schemes but because everyone deserves the same opportunities. And if we don’t provide them with equal opportunities, then the gap we see between poor and rich will be as it is today: very sizable. Despite that I sometimes question myself: can they entirely be a public good? Adopting the notion that the family is a private sphere, and at least the states considers it because it is reluctant to interfere within it, then children should not just be considered as a public good. If we pay attention to authors like McDonald (2000) and Lewis &amp;amp; Astrom (1992), we constantly see that the way the state promotes gender equality in the family is not through hands-on, direct implementation of intrusive policies like reeducating couples and telling them what’s right and what’s not. Instead, most of the family policies try to promote gender equality by integrating women into the labor force, reducing the gender wage gap and promoting female and male parental leave. Kids then can never be entirely public goods.&lt;/p&gt;
-&lt;p&gt;Nevertheless, do they contribute to society, meaning, are the interrelated with the “public”?&lt;/p&gt;
-&lt;p&gt;I think this question is rooted in the intrinsic dynamics of society. We are social animals and it is unfashionable to think that we are independent of each other. The most independent citizen living within society is never unattached of its surroundings. Everyone’s paths cross indirectly and directly with the decisions and actions of other people. It might be even irresponsible to think that one’s actions only affect themselves. The principal idea to take from this question is that those who think of themselves as independent actors of society are committing a fallacy that could be the exact reason why the levels and indexes of inequalities are so high nowadays.&lt;/p&gt;
-&lt;p&gt;The Nobel laureate James Heckman has been arguing for the past decade one of his most controversial findings: the first years of a child are the most important ones. Contrary to the long held thought of concentrating the bigger part of the educational budget on tertiary education, he finds that the return of investment of human beings are the highest in the early years and it decreases with time. This means that the first years should be the ones where the highest investment should be: be it monetary and emotional. With the evaluation of the Perry preschool program and the Abecedarian project, Heckman finds that you can trace inequalities between children as early as 22 months old. The principal reason being that some kids get better early childhood education than others. Among others, I think this an important reason to reflect why children should be a public good.&lt;/p&gt;
-&lt;p&gt;Inequalities are being reproduced from an early age, leading to a more polarized society where you have lucky and unlucky kids. Those that receive the better education will at the end, have better jobs, less odds of committing crime, more prone of a stable union (possibly due to the fact that they will have a stable job). Furthermore, and I think this is a key argument against those that don’t want to contribute, these educated children will in most of the cases, help society better than the ones who aren’t educated. This help can be manifested in direct and indirect ways: respecting traffic lights, avoiding corruption in public institutions, being fair, meritocratic, reporting robberies, not stealing, respecting others, among an endless number of thing. This point makes an important argument: the focus on which some of the parents and scholars are viewing the debate might be wrongly specified. As I have succinctly showed, the benefits of having an educated population are not only personal, but also public. I think that the principal reason why there is a strong opposition to this idea is because they evaluate it as taking care of someone else’s children when nobody is taking care of theirs; that is a strong point, but I urge everyone to see it with another lense. If you turned the coin around and you start seeing this as an investment towards societal problems, which in the short and long run affects us all, then it becomes a tax deduction, just as any other one.&lt;/p&gt;
-&lt;p&gt;As I argued before, we are all interrelated and it is our business what our fellow citizens do. So, someone who doesn’t have children, still participates in society, interacts within it, and is affected by criminality, public services, and private services. The problem with providing this argument for a country with a weak welfare state is that you won’t receive quality elderly care from this children when you retire. Conversely, in strong-welfare countries, the argument is the main (pragmatic) reason to do so. However, the second idea, that we should do it for everyone to have the same opportunities, is more than enough to warrant the changes. This would be an even more noble reason because you won’t be contributing to receive something but because everyone deserves the same opportunities. For the U.S, this is a reason to tackle one of the most debatable topics of the last 40 years: inequalities.&lt;/p&gt;
-&lt;p&gt;Now, if we were to delve more into the inequality problem, which shows itself to be the major issue when comparing educational opportunities, it is also important to think of the struggles of having children. Not particularly of the difficulties of childrearing, which are a consequence of the decision to child bear, but the fact that it is too hard to combine work and childrearing now a days. This is quite notorious in the lean welfare state countries and southern European ones.&lt;/p&gt;
-&lt;p&gt;The demands of the work space and the schedules that are imposed to parents and workers make it virtually impossible for men or women to dedicated high quality time to their children. The most common solution that we’ve seen is for women to quit their jobs or to sacrifice leisure time to take care of the child. So, in the end, this deems either the education of the future population or the ambitions and life course perspective of a mother.&lt;/p&gt;
-&lt;p&gt;Catherine Hakim’s preference theory, posits that women now have the preference of having a child but this was not entirely the case in the past where the bargaining power of the man was higher than hers. But a woman who has professional ambitions might also want to have a baby. Does this mean that she has to renounce her ambitions? This will certainly harm the tax system (less taxes paid) but it will help society because she will dedicate more time to the child (And if you acknowledge this, then you are implicitly arguing that children are indeed a public good). But as one of Esping-Andersen’s chapter from his book the Incomplete Revolution shows, permitting the woman to go back to work after parental leave, by providing free high quality childcare, will in the long run pay the costs of this childcare service and even produce a surplus for the welfare state. And that is why I think this is not an easy question to answer, conversely to what Paula England and Nancy Folbre imply. The implication of implementing this idea entails a complete reorganization and readjustment of the tax and welfare system, if there is one [2]. And also, what would be the consequences of this new regime besides the public childcare? Will the problem of inequalities be solved or others problems will arise as side effects?&lt;/p&gt;
-&lt;p&gt;And here I will talk about something that is intrinsically related to having healthy children: the labor perspectives of the mother. The Incomplete Revolution, book by Esping-Andersen, takes on the job of explaining the problem with many of today’s countries: the poor family policies that they implement (if any) when concerning women’s labor market inclusion and combination of working and childrearing. Specifically in two chapters he argues that children should be a public good because children benefit everyone, but furthermore, an important step is to include women in the labor market given that it will help the income prospects of the household and the egalitarianism in the family. How can this be related to children as being a public good, one may ask? This is a complex relation, on which everything is potentially endogenous, but all present evidence shows that if the mother goes back to work after the parental leave, it does not have an adverse effect on the development of the child. This is, assuming that the child is in early high quality childcare. This has important implications! It means that the inclusion of mothers into the labor force will increase the bargaining power of the women in the family, it will heighten the income of the family household, it will expand the human capital of the women; in short, it will not impose the opportunity costs that she will otherwise would’ve had to bear for the remaining part of her life if she would’ve stayed home. This will increase the chances of being in a more egalitarian family, thus the children will be exposed to more equal surroundings.&lt;/p&gt;
-&lt;p&gt;From the point of view that I see it, it’s about heightening the bar of educational attainment. Instead of having the two extremes that we see in the liberal welfare state regimes (excluding UK), extremely poor and uneducated groups and highly rich and educated group, you will set a bar of minimum education. By doing this you will inevitable give secureness to families, opportunities, possibly change the economic structure of the country by increasing the odds of turning it to a knowledge based economy (although this is way more complex then I suggest).&lt;/p&gt;
-&lt;p&gt;As a conclusion, I shall finish off with another question, which I think is as important as the one which initiated this essay. I have tried to argue that children are faring under the destiny that is imposed to them. There has been, since after the World War II, persistent inequalities between classes and all the evidence shows that they are not shrinking. In some countries, namely European ones, the decision to help children might be an economic one or an altruistic one. This is worrisome. Are children being taken care of in Europe because they are the payers of the pensioners or because of the noble argument of equal opportunities? I really don’t know the reason for which Europe or the U.S is doing it for. But should everyone take care of children for the economic benefits or for the equal opportunity argument?&lt;/p&gt;
-&lt;hr /&gt;
-&lt;p&gt;[1] Let’s not get into the major changes that the quality of job production will have if the population is highly educated. For a book with interesting ideas, read The Race between Education and Technology by Claudia Goldin &amp;amp; Lawrence Katz.&lt;/p&gt;
-&lt;p&gt;[2] In the case where there is no welfare state, then this is another story.&lt;/p&gt;
 </description>
     </item>
     
