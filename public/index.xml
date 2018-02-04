@@ -540,184 +540,168 @@ appended between the time the script should&amp;#39;ve started and should&amp;#3
     </item>
     
     <item>
-      <title>Forecasting independence: the catalan case</title>
-      <link>/blog/2017-12-31-forecasting-independence-the-catalan-case/forecasting-independence-the-catalan-case/</link>
-      <pubDate>Sun, 31 Dec 2017 00:00:00 +0000</pubDate>
+      <title>Brief Analysis of Independent/Unionist Vote in Catalonia</title>
+      <link>/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/brief-analysis-of-independent-unionist-vote-in-catalonia/</link>
+      <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-12-31-forecasting-independence-the-catalan-case/forecasting-independence-the-catalan-case/</guid>
-      <description>&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rvest)
-library(janitor)
-library(stringr)
-library(lubridate)
+      <guid>/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/brief-analysis-of-independent-unionist-vote-in-catalonia/</guid>
+      <description>&lt;div id=&#34;catalan-elections&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Catalan elections&lt;/h2&gt;
+&lt;p&gt;On a train from Barcelona-Madrid I started working with an &lt;code&gt;R&lt;/code&gt; package called &lt;code&gt;ggrides&lt;/code&gt;. To my surprise, the package contains one dataset that documents the change in independent/unionist vote for all Catalan municipalities from 1980 to 2015. This is very cool! Needless to say, I left what I was doing and started to dive into the dataset.&lt;/p&gt;
+&lt;p&gt;The data looks like this:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggridges)
+Catalan_elections&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 20,764 x 4
+##          Municipality  Year Option Percent
+##                 &amp;lt;chr&amp;gt; &amp;lt;int&amp;gt;  &amp;lt;chr&amp;gt;   &amp;lt;dbl&amp;gt;
+##  1 Abella de la Conca  1980   Indy   68.42
+##  2 Abella de la Conca  1984   Indy   95.71
+##  3 Abella de la Conca  1988   Indy   89.36
+##  4 Abella de la Conca  1992   Indy   81.67
+##  5 Abella de la Conca  1995   Indy   80.00
+##  6 Abella de la Conca  1999   Indy   74.70
+##  7 Abella de la Conca  2003   Indy   84.42
+##  8 Abella de la Conca  2006   Indy   73.24
+##  9 Abella de la Conca  2010   Indy   75.90
+## 10 Abella de la Conca  2012   Indy   83.95
+## # ... with 20,754 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Very straight forward. It’s the ‘Indy’ or Independent vote and the ‘Unionist’ vote from 1980 until 2015. The data is complete for nearly all Municipalities, meaning that the data is available for all years. Only a handful (~ 40) do not have data starting from 1980.&lt;/p&gt;
+&lt;p&gt;Basically, I wanted to answer one question: has the indepence vote grown over time? This question is of general interest considering that the topic is being hotly debated in the media and next week new Catalan elections will be held in a scenario never seen before; after independent parties proclaimed unilateral independece and the government seized control of Catalunya. The elections are predicted to be very contested with Independent parties losing some votes.&lt;/p&gt;
+&lt;p&gt;With that said, let’s dive into the data!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;analysis&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Analysis&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Load my libraries
+library(scales)
 library(tidyverse)
 
-read_web &amp;lt;- read_html(&amp;quot;https://en.wikipedia.org/wiki/Catalan_independence_movement&amp;quot;)
+# Change abbreviated Indy and Unionist to long names
+Catalan_elections$Option &amp;lt;- with(Catalan_elections, ifelse(Option == &amp;quot;Indy&amp;quot;, &amp;quot;Independent&amp;quot;, &amp;quot;Unionist&amp;quot;))
 
-indp_time &amp;lt;-
-  read_web %&amp;gt;%
-  html_nodes(xpath = &amp;#39;//table&amp;#39;) %&amp;gt;%
-  .[[3]] %&amp;gt;%
-  html_table() %&amp;gt;%
-  as_tibble() %&amp;gt;%
-  clean_names()&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;example_path &amp;lt;-
-  read_web %&amp;gt;%
-  html_nodes(&amp;quot;.references-column-width&amp;quot;) %&amp;gt;% # go to the references
-  xml_children() %&amp;gt;% # dive into the referneces
-  xml_children() %&amp;gt;%
-  xml_path() %&amp;gt;% # get the xpath
-  .[[1]] %&amp;gt;% # and extract one sample
-  str_replace_all(&amp;quot;\\[[0-9]\\]$&amp;quot;, &amp;quot;&amp;quot;) # replace the last [1]&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;code_dates &amp;lt;- str_extract_all(indp_time$date, &amp;quot;\\[[0-9]{3,3}\\]$&amp;quot;)
-end_paths &amp;lt;- unlist(code_dates)
-complete_paths &amp;lt;- paste0(example_path, end_paths)
-all_nodes &amp;lt;- map(complete_paths, ~ html_node(read_web, xpath =  .x)) %&amp;gt;% setNames(end_paths)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;extract_gencat &amp;lt;- function(node) {
-  int_node &amp;lt;-
-    node %&amp;gt;%
-    xml_children() %&amp;gt;%
-    xml_children() %&amp;gt;%
-    xml_children()
-  
-  node_href &amp;lt;- int_node[xml_has_attr(int_node, &amp;quot;rel&amp;quot;)]
-  
-  xml_attr(node_href, &amp;quot;href&amp;quot;)
-}
 
-all_links &amp;lt;-
-  map(all_nodes, extract_gencat) %&amp;gt;%
-  discard(~ any(grepl(&amp;quot;.pdf$&amp;quot;, .x)) || length(.x) &amp;gt; 1)
-# remove links where it ends with a pdf or where there&amp;#39;s 2 links
-# 2 links means that the page is not there anymore and they
-# have an archived link that downloads a file, so no webpage!
+# Summarize the median independence/unionist vote for
+# all municipalities on the first/last year recorded
+avg_pl &amp;lt;-
+  Catalan_elections %&amp;gt;%
+  group_by(Municipality, Option) %&amp;gt;%
+  summarize(first_year = first(Percent, Year),
+            last_year = last(Percent, Year)) %&amp;gt;%
+  group_by(Option) %&amp;gt;%
+  summarize(first_year = median(first_year, na.rm = TRUE),
+            last_year = median(last_year, na.rm = TRUE)) %&amp;gt;%
+  mutate(id = 1:nrow(.)) %&amp;gt;%
+  gather(year, value, -id, -Option)
 
-grab_date &amp;lt;- function(link) {
-  link %&amp;gt;%
-    read_html() %&amp;gt;%
-    html_node(xpath = &amp;quot;//*[@id=&amp;#39;contingutPrincipal&amp;#39;]/div[1]/div[3]/p[3]&amp;quot;) %&amp;gt;%
-    xml_text() %&amp;gt;%
-    str_extract(&amp;quot;[0-9]{2,}-[0-9]{2,}-[0-9]{4,}&amp;quot;) # grabe the date in dd-mm-yyyy format
-}
+# Summarize the indy/unionist vote for
+# the first/last year for Barcelona
+bcn_pl &amp;lt;-
+  Catalan_elections %&amp;gt;%
+  filter(Municipality == &amp;quot;Barcelona&amp;quot;) %&amp;gt;%
+  group_by(Municipality, Option) %&amp;gt;%
+  summarize(first_year = first(Percent, Year),
+            last_year = last(Percent, Year)) %&amp;gt;%
+  mutate(id = 1:nrow(.)) %&amp;gt;%
+  gather(year, value, ends_with(&amp;quot;year&amp;quot;))
 
-all_dates &amp;lt;- map_chr(all_links, grab_date)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lookup &amp;lt;- as.character(code_dates)
-col_date &amp;lt;- ifelse(lookup == &amp;quot;character(0)&amp;quot;, NA, lookup)
+# Create a base parallel plot with both
+# unionist/independence votes pooled
+base_plot &amp;lt;-
+  Catalan_elections %&amp;gt;%
+  group_by(Municipality, Option) %&amp;gt;%
+  summarize(first_year = first(Percent, Year),
+            last_year = last(Percent, Year)) %&amp;gt;%
+  mutate(id = paste0(Municipality, &amp;quot;_&amp;quot;, Option)) %&amp;gt;%
+  gather(year, value, ends_with(&amp;quot;year&amp;quot;)) %&amp;gt;%
+  ggplot(aes(year, value)) +
+  geom_point(alpha = 0.1, size = 2) +
+  geom_line(aes(group = id), alpha = 0.1)
 
-# this is slow, but this is very short
-rem_dates &amp;lt;- as.character(dmy(all_dates[col_date]))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in as.POSIXlt.POSIXct(x, tz): unknown timezone &amp;#39;zone/tz/2017c.1.0/
-## zoneinfo/Europe/Madrid&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;int_date &amp;lt;- indp_time$date
-normal_d &amp;lt;- grepl(&amp;quot;[0-9]{4,}$&amp;quot;, int_date)
+# Add the median summary line for both indy/unionist
+median_plot &amp;lt;-
+  base_plot +
+  geom_point(data = avg_pl, aes(year, value),
+            colour = &amp;quot;red&amp;quot;, alpha = 0.5, size = 2) +
+  geom_line(data = avg_pl, aes(year, value, group = id),
+            colour = &amp;quot;red&amp;quot;, alpha = 0.5, size = 2)
 
-int_date[normal_d] &amp;lt;- as.character(dmy(paste0(&amp;quot;1 &amp;quot;, int_date[normal_d])))
+# Add the change of Barcelona for both indy/unionist vote
+bcn_plot &amp;lt;-
+  median_plot +
+  geom_point(data = bcn_pl, aes(year, value),
+             colour = &amp;quot;blue&amp;quot;, alpha = 0.5, size = 2) +
+  geom_line(data = bcn_pl, aes(year, value, group = id),
+            colour = &amp;quot;blue&amp;quot;, alpha = 0.5, size = 2)
 
-other_dates &amp;lt;- int_date[is.na(rem_dates) &amp;amp; grepl(&amp;quot;series&amp;quot;, int_date)]
 
-int_date[is.na(rem_dates) &amp;amp; grepl(&amp;quot;series&amp;quot;, int_date)] &amp;lt;- 
-  str_replace(other_dates, &amp;quot;\\sseries(.*)$&amp;quot;, &amp;quot;&amp;quot;) %&amp;gt;%
-  gsub(&amp;quot;1st&amp;quot;, &amp;quot;January&amp;quot;, .) %&amp;gt;%
-  gsub(&amp;quot;2nd&amp;quot;, &amp;quot;April&amp;quot;, .) %&amp;gt;%
-  gsub(&amp;quot;3rd&amp;quot;, &amp;quot;August&amp;quot;, .) %&amp;gt;%
-  gsub(&amp;quot;4th&amp;quot;, &amp;quot;November&amp;quot;, .) %&amp;gt;%
-  paste0(&amp;quot; 1&amp;quot;) %&amp;gt;%
-  ymd() %&amp;gt;%
-  as.character()
-
-final_date &amp;lt;- unname(ifelse(!is.na(rem_dates), rem_dates, int_date))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rdy_data &amp;lt;-
-  indp_time %&amp;gt;%
-  transmute(date,
-            new_date = ymd(final_date),
-            independent = independent_state_percent,
-            aut_c = autonomous_community_percent) %&amp;gt;%
-  gather(cat, val, -(1:2))
-
-rdy_data %&amp;gt;%
-  ggplot(aes(new_date, val, colour = cat)) +
-  geom_point(alpha = 0.4, size = 1) +
-  geom_line() +
+# Separate the plot for indy/unionist in different
+# panels and add pretty options
+pretty_plot &amp;lt;-
+  bcn_plot +
+  scale_x_discrete(name = NULL,
+                   labels = c(&amp;quot;1980&amp;quot;,
+                              &amp;quot;2015&amp;quot;)) +
+  scale_y_continuous(name = &amp;quot;% of votes in favour of:&amp;quot;,
+                     breaks = seq(0, 100, 20),
+                     labels = percent(seq(0, 1, 0.2))) +
+  facet_wrap(~ Option, strip.position = &amp;quot;bottom&amp;quot;) +
+  labs(
+    title = &amp;quot;Independence/Unionist vote in Catalonia in three decades&amp;quot;,
+    subtitle = &amp;quot;Red line is the median change for all municipalities - Blue line is Barcelona&amp;quot;,
+    caption = &amp;quot;Data collected by @marcbeldata - Plot and analisis by @cimentadaj&amp;quot;
+  ) +
   theme_minimal() +
-  ylim(c(0, 100))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(prophet)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Loading required package: Rcpp&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning: package &amp;#39;Rcpp&amp;#39; was built under R version 3.4.3&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df &amp;lt;-
-  rdy_data %&amp;gt;%
-  spread(cat, val) %&amp;gt;%
-  select(new_date, independent) %&amp;gt;%
-  rename(ds = new_date,
-         y = independent)
-
-ph_df &amp;lt;-
-  df %&amp;gt;%
-  filter(ds &amp;lt;= &amp;quot;2008-01-01&amp;quot;) %&amp;gt;%
-  prophet()&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Disabling weekly seasonality. Run prophet with weekly.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## n.changepoints greater than number of observations. Using 7&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Initial log joint probability = -2.04896
-## Optimization terminated normally: 
-##   Convergence detected: absolute parameter change was below tolerance&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ph_df %&amp;gt;%
-  make_future_dataframe(periods = 40, freq = &amp;quot;month&amp;quot;, include_history = TRUE) %&amp;gt;%
-  predict(ph_df, .) %&amp;gt;%
-  plot(ph_df, .)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_roll &amp;lt;-
-  list(zoo::rollmean, zoo::rollmedian) %&amp;gt;%
-  setNames(c(&amp;quot;rollmean&amp;quot;, &amp;quot;rollmedian&amp;quot;)) %&amp;gt;%
-  map_dfc(~ .x(df$y, 3, fill = NA)) %&amp;gt;%
-  bind_cols(df, .)
-
-df_gather &amp;lt;-
-  df_roll %&amp;gt;%
-  gather(roll, values, -(1:2))
-
-df_roll %&amp;gt;%
-  ggplot(aes(ds, y)) +
-  geom_point() +
-  geom_line(data = df_gather, aes(x = ds, y = values, colour = roll))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_roll %&amp;gt;%
-  ggplot(aes(ds, y)) +
-  geom_point() +
-  geom_smooth(span = 2)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## `geom_smooth()` using method = &amp;#39;loess&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;roll_ph &amp;lt;-
-  df_roll %&amp;gt;%
-  select(ds, rollmedian) %&amp;gt;%
-  rename(y = rollmedian) %&amp;gt;%
-  filter(ds &amp;lt;= &amp;quot;2009-01-01&amp;quot;) %&amp;gt;% # change this to 2009 and the relationship dissapears
-  prophet()&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Disabling weekly seasonality. Run prophet with weekly.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## n.changepoints greater than number of observations. Using 9&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Initial log joint probability = -2.0766
-## Optimization terminated normally: 
-##   Convergence detected: absolute parameter change was below tolerance&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;roll_ph %&amp;gt;%
-  make_future_dataframe(periods = 40, freq = &amp;quot;month&amp;quot;, include_history = TRUE) %&amp;gt;%
-  predict(roll_ph, .) %&amp;gt;%
-  plot(roll_ph, .)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;This forecast would always predict that the independence vote would increase&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ph_df &amp;lt;-
-  df %&amp;gt;%
-  # filter(ds &amp;lt;= &amp;quot;2008-01-01&amp;quot;) %&amp;gt;%
-  prophet()&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Disabling weekly seasonality. Run prophet with weekly.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Initial log joint probability = -2.36096
-## Optimization terminated normally: 
-##   Convergence detected: absolute parameter change was below tolerance&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ph_df %&amp;gt;%
-  make_future_dataframe(periods = 40, freq = &amp;quot;month&amp;quot;, include_history = TRUE) %&amp;gt;%
-  predict(ph_df, .) %&amp;gt;%
-  plot(ph_df, .)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+  theme(
+    plot.title = element_text(size = 16, family = &amp;quot;Arial-BoldMT&amp;quot;),
+    plot.subtitle = element_text(size = 12, color = &amp;quot;#666666&amp;quot;),
+    plot.caption = element_text(size = 12, color = &amp;quot;#666666&amp;quot;),
+    strip.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 16),
+    axis.text.y = element_text(size = 12),
+    axis.text.x = element_text(size = 14)
+  )
+# Final plot
+pretty_plot&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/2017-12-14-brief-analysis-of-independent-unionist-vote-in-catalonia_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;I was very surprised with this plot. On the left panel we can see the increase of independence votes in the last 35 years. The red line is the median change for all municipalities. There is a huge average increase from around 49% to over 70%. In fact, it’s not just an artifact of mean/median with big variance. If we look at the bulk of the distribution on the right line and then the left line, we see an upwards shift in the whole distribution.&lt;/p&gt;
+&lt;p&gt;On the other hand, the unionist vote seems to have decreased! The left/right distributions seem to be very similar (but it looks like the distribution of the right line has some outliers shifting upwards). But remember something: these are all municipalities. Municipalities might have 1000 citizen or even less! Consider the lonely town in a mountain with 50 people voting for independent parties: that’s also a municipality.&lt;/p&gt;
+&lt;p&gt;It is for this reason that we need to pay attention to places like Barcelona, which have over 1 million residents and definately weigh in more in proportion. And that’s where the interesting thing about this plot arises: the Barcelona change is practically the same. Not only have the votes increased very very similarly for both sides, but they’re also at the same level of support. Both blue lines look pretty much identical.&lt;/p&gt;
+&lt;p&gt;Don’t forget: small differences &lt;strong&gt;can&lt;/strong&gt; make a difference, specially in elections. Perhaps they &lt;strong&gt;are&lt;/strong&gt; different but we need to take a closer look.&lt;/p&gt;
+&lt;p&gt;Let’s plot the independence/unionist evolution only for Barcelona.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Plot for indy/unionist vote over time only for Barcelona
+Catalan_elections %&amp;gt;%
+  filter(Municipality == &amp;quot;Barcelona&amp;quot;) %&amp;gt;%
+  ggplot(aes(Year, Percent, group = Option, colour = Option)) +
+  geom_line(alpha = 0.5, size = 2) +
+  scale_x_continuous(name = NULL) +
+  scale_colour_discrete(name = NULL) +
+  scale_y_continuous(name = &amp;quot;% of votes in favour of:&amp;quot;,
+                     lim = c(0, 100),
+                     breaks = seq(0, 100, 20),
+                     labels = percent(seq(0, 1, 0.2))) +
+  labs(
+    title = &amp;quot;Overtime votes for independence/unionist in Barcelona&amp;quot;,
+    caption = &amp;quot;Data collected by @marcbeldata - Plot and analisis by @cimentadaj&amp;quot;
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, family = &amp;quot;Arial-BoldMT&amp;quot;),
+    plot.subtitle = element_text(size = 12, color = &amp;quot;#666666&amp;quot;),
+    plot.caption = element_text(size = 12, color = &amp;quot;#666666&amp;quot;),
+    legend.position = &amp;quot;top&amp;quot;,
+    legend.text = element_text(size = 14),
+    strip.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 16),
+    axis.text.y = element_text(size = 12),
+    axis.text.x = element_text(size = 14)
+  )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/2017-12-14-brief-analysis-of-independent-unionist-vote-in-catalonia_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Despite most municipalities are for independence, Barcelona, by only a small margin, has a majority of people voting for unionist parties. Be aware that these votes are not ‘referendums’ carried out every year. These are votes towards independence/unionist parties, which is a different thing. Also note that these are not predictions/forecasts, so they don’t have uncertainty intervals or margins of errors. This is empirical data from voter turnout.&lt;/p&gt;
+&lt;p&gt;I also tried other big municipalities such as Sabadell and found that unionism trumps over independence much strongly. Yet in others like Lleida, Independence seems to be on top. For a look at specific municipalities, &lt;a href=&#34;http://marcbeldata.github.io/ggjoy-Catalan-vote-2015/&#34;&gt;check the post by Marc Belzunces&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;a-note-on-next-weeks-elections&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;A note on next week’s elections&lt;/h2&gt;
+&lt;p&gt;This data takes us as far as 2015. Catalonia has suffered dramatic changes since 2015 specially due to the independence movement. These data are most likely not a good representation of what’s gonna happen next week. Big municipalities have usually been majority unionists according to polls, but the differences are tiny and we’ve seen dramatic changes with independence parties proclaiming unilateral independence. There are good attempts at predicting catalan elections (&lt;a href=&#34;https://politica.elpais.com/politica/2017/12/07/ratio/1512647178_322229.html&#34;&gt;in Spanish&lt;/a&gt;) so tune in next week to see what happens.&lt;/p&gt;
+&lt;/div&gt;
 </description>
     </item>
     
