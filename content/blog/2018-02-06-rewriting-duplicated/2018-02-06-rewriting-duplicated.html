@@ -1,0 +1,40 @@
+---
+title: Rewriting duplicated
+author: Jorge Cimentada
+date: '2018-02-06'
+slug: rewriting-duplicated
+tags: ['R']
+---
+
+
+
+<p>Lightning post. I got very confused earlier today on how to use <code>duplicated</code>. Basically, I didn’t know if it was picking only one duplicate or many of the duplicates at the same time. I figure it out but I still was a bit confused so I decided to rewrite the function from scratch. Below you can see it. Please post any other solutions or feedback.</p>
+<pre class="r"><code>dupl_identifier &lt;- function(vec, where) {
+  intm &lt;- x %in% vec
+  pos &lt;- which(intm)
+  intm[where(pos)] &lt;- FALSE
+  intm
+}
+
+my_duplicated &lt;- function(x, fromLast = FALSE) {
+  
+  where &lt;- ifelse(!fromLast, min, max)
+  repeated &lt;- names(which(table(x) &gt; 1))
+  
+  if (length(repeated) == 0) return(rep(FALSE, length(x)))
+  
+  val &lt;- lapply(repeated, dupl_identifier, where)
+  final &lt;- as.logical(Reduce(`+`, val))
+  
+  final
+}</code></pre>
+<pre class="r"><code>x &lt;- sample(1:10, 100, replace = TRUE)
+
+identical(my_duplicated(x),
+          duplicated(x))</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>x &lt;- sample(c(1:100, NA), 100, replace = TRUE)
+
+identical(my_duplicated(x),
+          duplicated(x))</code></pre>
+<pre><code>## [1] TRUE</code></pre>
