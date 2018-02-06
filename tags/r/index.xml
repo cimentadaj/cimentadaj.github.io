@@ -6,10 +6,49 @@
     <description>Recent content in R on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sat, 03 Feb 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 06 Feb 2018 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/tags/r/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Rewriting duplicated</title>
+      <link>/blog/2018-02-06-rewriting-duplicated/rewriting-duplicated/</link>
+      <pubDate>Tue, 06 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018-02-06-rewriting-duplicated/rewriting-duplicated/</guid>
+      <description>&lt;p&gt;Lightning post. I got very confused earlier today on how to use &lt;code&gt;duplicated&lt;/code&gt;. Basically, I didn’t know if it was picking only one duplicate or many of the duplicates at the same time. I figure it out but I still was a bit confused so I decided to rewrite the function from scratch. Below you can see it. Please post any other solutions or feedback.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dupl_identifier &amp;lt;- function(vec, where) {
+  intm &amp;lt;- x %in% vec
+  pos &amp;lt;- which(intm)
+  intm[where(pos)] &amp;lt;- FALSE
+  intm
+}
+
+my_duplicated &amp;lt;- function(x, fromLast = FALSE) {
+  
+  where &amp;lt;- ifelse(!fromLast, min, max)
+  repeated &amp;lt;- names(which(table(x) &amp;gt; 1))
+  
+  if (length(repeated) == 0) return(rep(FALSE, length(x)))
+  
+  val &amp;lt;- lapply(repeated, dupl_identifier, where)
+  final &amp;lt;- as.logical(Reduce(`+`, val))
+  
+  final
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;x &amp;lt;- sample(1:10, 100, replace = TRUE)
+
+identical(my_duplicated(x),
+          duplicated(x))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;x &amp;lt;- sample(c(1:100, NA), 100, replace = TRUE)
+
+identical(my_duplicated(x),
+          duplicated(x))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] TRUE&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>Cleaning in-door positioning data</title>
