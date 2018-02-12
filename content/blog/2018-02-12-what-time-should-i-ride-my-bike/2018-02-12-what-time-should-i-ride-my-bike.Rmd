@@ -1,0 +1,141 @@
+---
+title: What time should I ride my bike?
+author: Jorge Cimentada
+date: '2018-02-12'
+slug: what-time-should-i-ride-my-bike
+tags: ['R', 'project']
+---
+
+```{r}
+library(DBI)
+library(RMySQL)
+library(caret)
+library(tidyverse)
+
+con <- dbConnect(MySQL(),
+                 dbname = "bicing", # in "" quotes
+                 host = "82.196.1.229",
+                 user = "cimentadaj", # in "" quotes
+                 password = rstudioapi::askForPassword())
+
+
+query <- glue::glue(
+"SELECT slots, bikes, status, time
+ FROM bicing_station
+ WHERE hour(time) IN ('7', '8', '9', '10', '18', '19', '20')
+ AND error_msg IS NULL;")
+
+bicing <-
+  as_tibble(dbGetQuery(con, query)) %>%
+  mutate(time = lubridate::ymd_hms(time),
+         slots = as.numeric(slots),
+         bikes = as.numeric(slots))
+```
+
+
+The station was always open.
+
+```{r}
+bicing %>%
+  filter(status != "OPN")
+```
+
+In the morning there seem's to be more bikes than in the evening
+```{r}
+bicing %>%
+  mutate(hour = as.factor(lubridate::hour(time))) %>%
+  ggplot(aes(hour, bikes)) +
+  geom_boxplot()
+```
+
+Does this differ by day?
+
+```{r}
+bicing %>%
+  mutate(hour = lubridate::hour(time),
+         day = lubridate::wday(time, label = TRUE),
+         morning_evening = ifelse(hour <= 10, "Morning", "Evening")) %>%
+  ggplot(aes(day, bikes, fill = morning_evening)) +
+  geom_col(position = "fill")
+```
+
+There we can see the Friday effect
+
+What's the rate at which bicycles are being taken out by hour? At which time is the station emptying out quicker?
+
+```{r}
+intm_df <-
+  bicing %>%
+  mutate(hour = lubridate::hour(time)) %>%
+  group_by(hour) %>%
+  mutate(future_bike = lag(bikes)) %>%
+  summarize(avg_movement = mean(bikes != future_bike, na.rm = TRUE)) %>%
+  ungroup()
+```
+
+Even though there are more bikes in the morning, bike activity is the same in th evening as in the early morning.
+
+```{r}
+intm_df <-
+  bicing %>%
+  mutate(hour = lubridate::hour(time),
+         day = lubridate::wday(time, label = TRUE)) %>%
+  group_by(hour, day) %>%
+  mutate(future_bike = lag(bikes)) %>%
+  summarize(avg_movement = mean(bikes != future_bike, na.rm = TRUE)) %>%
+  ungroup()
+
+intm_df %>%
+  top_n(10, avg_movement) %>%
+  unite(hour_day, hour, day, sep = " - ") %>%
+  ggplot(aes(hour_day, avg_movement)) +
+  geom_col() +
+  ylim(c(0, 1))
+
+```
+Wednesdays at 9 AM seems to be the worst moment to pick/drop off a bike given that in 40% of the hour there's movement. An interesting pattern is that most of the activity is concentrate on Wednesdays and Tuesdays and not only in the mornings.
+
+When are the moments when the station is empty? When should I look for it?
+
+```{r}
+bicing %>%
+  filter(bikes == 0) %>%
+  count(hour = lubridate::hour(time), day = lubridate::wday(time, label = TRUE)) %>%
+  arrange(day, hour) %>%
+  ggplot(aes(hour, n)) +
+  geom_col() +
+  facet_wrap(~ day, ncol = 3)
+```
+
+Bicing people probably prepare very well because it's mostly empty in the evenings
+
+Can I predict whether the station will be empty?
+
+```{r}
+empty_bicycle <-
+  mutate(bicing,
+         empty = ifelse(bikes == 0, 1, 0),
+         hour = as.character(lubridate::hour(time)),
+         # morning = ifelse(time <= 10, 1, 0),
+         day = lubridate::wday(time),
+         # weekend = ifelse(between(day, 6, 7), 1, 0),
+         day = as.character(day)) %>%
+  select(-(1:4))
+
+training_rows <- createDataPartition(empty_bicycle$empty, 1, p = 0.8)[[1]]
+
+training <- empty_bicycle[training_rows, ]
+test <- empty_bicycle[-training_rows, ]
+
+mod1 <- glm(empty ~ . + day:hour, data = training, family = "binomial")
+
+pred1 <- predict(mod1, newdata = test, type = 'response')
+
+pred_empty <- rbinom(length(pred1), 1, prob = pred1)
+
+confusionMatrix(test$empty, pred_empty, positive = "1")
+```
+
+This model is terrible at predicting the emptyness of the stations.
+
+A model is as good as the data that's being fit.
