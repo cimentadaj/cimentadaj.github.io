@@ -1,10 +1,17 @@
 ---
-title: What time should I ride my bike?
-author: Jorge Cimentada
+title: "What time should I ride my bike?"
+author: "Jorge Cimentada"
 date: '2018-02-12'
+tags:
+- R
+- project
 slug: what-time-should-i-ride-my-bike
-tags: ['R', 'project']
 ---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+```
+
 
 ```{r}
 library(DBI)

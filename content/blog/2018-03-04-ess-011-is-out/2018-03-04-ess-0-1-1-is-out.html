@@ -1,0 +1,88 @@
+---
+title: ess 0.1.1 is out!
+author: Jorge Cimentada
+date: '2018-03-04'
+slug: ess-0-1-1-is-out
+tags: ['R', 'packages']
+---
+
+
+
+<p>The new version of the ess package is out! <code>ess 0.1.1</code> fixes some bugs and inconsistencies across the package and has one important new feature and a change that breaks backward compatibility. You can see all changes <a href="https://cimentadaj.github.io/ess/news/index.html">here</a>.</p>
+<p>Install the latest version <code>0.1.1</code> from CRAN with <code>install.packages(&quot;ess&quot;)</code>.</p>
+<div id="new-features" class="section level2">
+<h2>New features</h2>
+<p>When downloading any round(s) from the European Social Survey the files are always accompanied by a script that recodes values like 6, 7, 8 and 9 or 96, 97, 98 and 99 to missings, depending on the question. This is a bit tricky because a question with a scale from 1 to 5 will have 6 to 9 as missing values and a question with a scale from 1 to 10 will have the missing values set as 96 to 99. The new <code>remove_missings()</code> function removes all missing values from all questions.</p>
+<p>For example…</p>
+<pre class="r"><code>library(tidyverse)
+library(ess)
+
+clean_df &lt;-
+  ess_rounds(1, &quot;your_email@gmail.com&quot;) %&gt;%
+  recode_missings()</code></pre>
+<p>… will set all the missing categories to NA. That is, the 6 to 9 and 96 to 99 categories on the specific questions. It gives you flexibility in recoding specific categories such as ‘Don’t Know’, ‘Refusal’ or both.</p>
+<pre class="r"><code>another_clean_df &lt;-
+  ess_rounds(1, &quot;your_email@gmail.com&quot;) %&gt;%
+  recode_missings(c(&quot;Refusal&quot;, &quot;No answer&quot;))</code></pre>
+<p>See <code>?recode_missings</code> for the missing categories that are available for recode.</p>
+<p>However, I do not advise recoding missing values right away if you’re exploring the dataset. If you want to manually recode missing values you can use the <code>recode_numeric_missing()</code> and <code>recode_strings_missing</code> correspondingly on numeric and string variables. They work the same as <code>recode_missings</code> but accept a vector of class labelled, the class of each of the columns that returns the <code>ess_*</code> functions.</p>
+<p>For example</p>
+<pre class="r"><code>another_clean_df$tvtot &lt;-
+  recode_numeric_missing(
+    another_clean_df$tvtot,
+    &quot;Don&#39;t know&quot;
+    )</code></pre>
+<p>works for recoding the “Don’t know” category. By default all missing values are chosen.</p>
+<p>Note that both sets of functions <strong>only</strong> work with labelled numeric vectors from the <code>haven</code> package. If you use the <code>ess</code> package that’s taken care of. If you download the data manually, you must read it with the <code>haven</code> package for these functions to work.</p>
+<p>There are also two new <code>show_*</code> functions, namely <code>show_themes</code> and <code>show_rounds_country</code>.</p>
+<p>The first one returns all available themes…</p>
+<pre class="r"><code>show_themes()</code></pre>
+<pre><code>##  [1] &quot;Ageism&quot;                            
+##  [2] &quot;Citizen involvement&quot;               
+##  [3] &quot;Democracy&quot;                         
+##  [4] &quot;Economic morality&quot;                 
+##  [5] &quot;Family work and well-being&quot;        
+##  [6] &quot;Gender, Household&quot;                 
+##  [7] &quot;Health and care&quot;                   
+##  [8] &quot;Human values&quot;                      
+##  [9] &quot;Immigration&quot;                       
+## [10] &quot;Justice&quot;                           
+## [11] &quot;Media and social trust&quot;            
+## [12] &quot;Personal ... well-being&quot;           
+## [13] &quot;Politics&quot;                          
+## [14] &quot;Public attitudes to climate change&quot;
+## [15] &quot;Social inequalities in health&quot;     
+## [16] &quot;Socio demographics&quot;                
+## [17] &quot;Subjective well-being...&quot;          
+## [18] &quot;Timing of life&quot;                    
+## [19] &quot;Welfare attitudes&quot;</code></pre>
+<p>… but doesn’t haven a corresponding <code>ess_*</code> function. This means that it works purely for descriptive purposes.</p>
+<p>Additionaly, <code>show_rounds_country</code> returns all countries that participated in a give round.</p>
+<pre class="r"><code>show_rounds_country(rounds = 2)</code></pre>
+<pre><code>##  [1] &quot;Austria&quot;        &quot;Belgium&quot;        &quot;Czech Republic&quot; &quot;Denmark&quot;       
+##  [5] &quot;Estonia&quot;        &quot;Finland&quot;        &quot;France&quot;         &quot;Germany&quot;       
+##  [9] &quot;Greece&quot;         &quot;Hungary&quot;        &quot;Iceland&quot;        &quot;Ireland&quot;       
+## [13] &quot;Italy&quot;          &quot;Luxembourg&quot;     &quot;Netherlands&quot;    &quot;Norway&quot;        
+## [17] &quot;Poland&quot;         &quot;Portugal&quot;       &quot;Slovakia&quot;       &quot;Slovenia&quot;      
+## [21] &quot;Spain&quot;          &quot;Sweden&quot;         &quot;Switzerland&quot;    &quot;Turkey&quot;        
+## [25] &quot;Ukraine&quot;        &quot;United Kingdom&quot;</code></pre>
+<p>You could use this to see which countries participated in all rounds. For example..</p>
+<pre class="r"><code>all_countries &lt;-
+  map(show_rounds(), ~ show_rounds_country(.x)) %&gt;%
+  reduce(intersect)
+
+all_countries</code></pre>
+<pre><code>##  [1] &quot;Belgium&quot;        &quot;Finland&quot;        &quot;France&quot;         &quot;Germany&quot;       
+##  [5] &quot;Ireland&quot;        &quot;Netherlands&quot;    &quot;Norway&quot;         &quot;Poland&quot;        
+##  [9] &quot;Slovenia&quot;       &quot;Sweden&quot;         &quot;Switzerland&quot;    &quot;United Kingdom&quot;</code></pre>
+</div>
+<div id="breaking-changes" class="section level2">
+<h2>Breaking changes</h2>
+<p>Finally, there is one change that breaks backward compatability. All the <code>ess_*</code> functions always used to return a list, regardless of the number of rounds that were requested. Now, <code>ess_*</code> functions return a <code>tibble</code> whenever it is request only one round and a list when more than one round is requested.</p>
+<p>For example</p>
+<pre class="r"><code>ess_rounds(1, &quot;your_email@gmail.com&quot;)</code></pre>
+<p>will return a tibble but…</p>
+<pre class="r"><code>ess_rounds(1:3, &quot;your_email@gmail.com&quot;)</code></pre>
+<p>…will return a list with each tibble in a slot.</p>
+<p>For more concrete examples check out the new website of the ess <a href="https://cimentadaj.github.io/ess/">here</a>. If you have any ideas for features or find a bug, please report <a href="https://github.com/cimentadaj/ess/issues">here</a>.</p>
+</div>

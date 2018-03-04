@@ -6,10 +6,204 @@
     <description>Recent content on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Tue, 06 Feb 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 04 Mar 2018 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>ess 0.1.1 is out!</title>
+      <link>/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/</link>
+      <pubDate>Sun, 04 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/</guid>
+      <description>&lt;p&gt;The new version of the ess package is out! &lt;code&gt;ess 0.1.1&lt;/code&gt; fixes some bugs and inconsistencies across the package and has one important new feature and a change that breaks backward compatibility. You can see all changes &lt;a href=&#34;https://cimentadaj.github.io/ess/news/index.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Install the latest version &lt;code&gt;0.1.1&lt;/code&gt; from CRAN with &lt;code&gt;install.packages(&amp;quot;ess&amp;quot;)&lt;/code&gt;.&lt;/p&gt;
+&lt;div id=&#34;new-features&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;New features&lt;/h2&gt;
+&lt;p&gt;When downloading any round(s) from the European Social Survey the files are always accompanied by a script that recodes values like 6, 7, 8 and 9 or 96, 97, 98 and 99 to missings, depending on the question. This is a bit tricky because a question with a scale from 1 to 5 will have 6 to 9 as missing values and a question with a scale from 1 to 10 will have the missing values set as 96 to 99. The new &lt;code&gt;remove_missings()&lt;/code&gt; function removes all missing values from all questions.&lt;/p&gt;
+&lt;p&gt;For example…&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+library(ess)
+
+clean_df &amp;lt;-
+  ess_rounds(1, &amp;quot;your_email@gmail.com&amp;quot;) %&amp;gt;%
+  recode_missings()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;… will set all the missing categories to NA. That is, the 6 to 9 and 96 to 99 categories on the specific questions. It gives you flexibility in recoding specific categories such as ‘Don’t Know’, ‘Refusal’ or both.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;another_clean_df &amp;lt;-
+  ess_rounds(1, &amp;quot;your_email@gmail.com&amp;quot;) %&amp;gt;%
+  recode_missings(c(&amp;quot;Refusal&amp;quot;, &amp;quot;No answer&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;See &lt;code&gt;?recode_missings&lt;/code&gt; for the missing categories that are available for recode.&lt;/p&gt;
+&lt;p&gt;However, I do not advise recoding missing values right away if you’re exploring the dataset. If you want to manually recode missing values you can use the &lt;code&gt;recode_numeric_missing()&lt;/code&gt; and &lt;code&gt;recode_strings_missing&lt;/code&gt; correspondingly on numeric and string variables. They work the same as &lt;code&gt;recode_missings&lt;/code&gt; but accept a vector of class labelled, the class of each of the columns that returns the &lt;code&gt;ess_*&lt;/code&gt; functions.&lt;/p&gt;
+&lt;p&gt;For example&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;another_clean_df$tvtot &amp;lt;-
+  recode_numeric_missing(
+    another_clean_df$tvtot,
+    &amp;quot;Don&amp;#39;t know&amp;quot;
+    )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;works for recoding the “Don’t know” category. By default all missing values are chosen.&lt;/p&gt;
+&lt;p&gt;Note that both sets of functions &lt;strong&gt;only&lt;/strong&gt; work with labelled numeric vectors from the &lt;code&gt;haven&lt;/code&gt; package. If you use the &lt;code&gt;ess&lt;/code&gt; package that’s taken care of. If you download the data manually, you must read it with the &lt;code&gt;haven&lt;/code&gt; package for these functions to work.&lt;/p&gt;
+&lt;p&gt;There are also two new &lt;code&gt;show_*&lt;/code&gt; functions, namely &lt;code&gt;show_themes&lt;/code&gt; and &lt;code&gt;show_rounds_country&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The first one returns all available themes…&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;show_themes()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;Ageism&amp;quot;                            
+##  [2] &amp;quot;Citizen involvement&amp;quot;               
+##  [3] &amp;quot;Democracy&amp;quot;                         
+##  [4] &amp;quot;Economic morality&amp;quot;                 
+##  [5] &amp;quot;Family work and well-being&amp;quot;        
+##  [6] &amp;quot;Gender, Household&amp;quot;                 
+##  [7] &amp;quot;Health and care&amp;quot;                   
+##  [8] &amp;quot;Human values&amp;quot;                      
+##  [9] &amp;quot;Immigration&amp;quot;                       
+## [10] &amp;quot;Justice&amp;quot;                           
+## [11] &amp;quot;Media and social trust&amp;quot;            
+## [12] &amp;quot;Personal ... well-being&amp;quot;           
+## [13] &amp;quot;Politics&amp;quot;                          
+## [14] &amp;quot;Public attitudes to climate change&amp;quot;
+## [15] &amp;quot;Social inequalities in health&amp;quot;     
+## [16] &amp;quot;Socio demographics&amp;quot;                
+## [17] &amp;quot;Subjective well-being...&amp;quot;          
+## [18] &amp;quot;Timing of life&amp;quot;                    
+## [19] &amp;quot;Welfare attitudes&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;… but doesn’t haven a corresponding &lt;code&gt;ess_*&lt;/code&gt; function. This means that it works purely for descriptive purposes.&lt;/p&gt;
+&lt;p&gt;Additionaly, &lt;code&gt;show_rounds_country&lt;/code&gt; returns all countries that participated in a give round.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;show_rounds_country(rounds = 2)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;Austria&amp;quot;        &amp;quot;Belgium&amp;quot;        &amp;quot;Czech Republic&amp;quot; &amp;quot;Denmark&amp;quot;       
+##  [5] &amp;quot;Estonia&amp;quot;        &amp;quot;Finland&amp;quot;        &amp;quot;France&amp;quot;         &amp;quot;Germany&amp;quot;       
+##  [9] &amp;quot;Greece&amp;quot;         &amp;quot;Hungary&amp;quot;        &amp;quot;Iceland&amp;quot;        &amp;quot;Ireland&amp;quot;       
+## [13] &amp;quot;Italy&amp;quot;          &amp;quot;Luxembourg&amp;quot;     &amp;quot;Netherlands&amp;quot;    &amp;quot;Norway&amp;quot;        
+## [17] &amp;quot;Poland&amp;quot;         &amp;quot;Portugal&amp;quot;       &amp;quot;Slovakia&amp;quot;       &amp;quot;Slovenia&amp;quot;      
+## [21] &amp;quot;Spain&amp;quot;          &amp;quot;Sweden&amp;quot;         &amp;quot;Switzerland&amp;quot;    &amp;quot;Turkey&amp;quot;        
+## [25] &amp;quot;Ukraine&amp;quot;        &amp;quot;United Kingdom&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You could use this to see which countries participated in all rounds. For example..&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_countries &amp;lt;-
+  map(show_rounds(), ~ show_rounds_country(.x)) %&amp;gt;%
+  reduce(intersect)
+
+all_countries&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;Belgium&amp;quot;        &amp;quot;Finland&amp;quot;        &amp;quot;France&amp;quot;         &amp;quot;Germany&amp;quot;       
+##  [5] &amp;quot;Ireland&amp;quot;        &amp;quot;Netherlands&amp;quot;    &amp;quot;Norway&amp;quot;         &amp;quot;Poland&amp;quot;        
+##  [9] &amp;quot;Slovenia&amp;quot;       &amp;quot;Sweden&amp;quot;         &amp;quot;Switzerland&amp;quot;    &amp;quot;United Kingdom&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;breaking-changes&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Breaking changes&lt;/h2&gt;
+&lt;p&gt;Finally, there is one change that breaks backward compatability. All the &lt;code&gt;ess_*&lt;/code&gt; functions always used to return a list, regardless of the number of rounds that were requested. Now, &lt;code&gt;ess_*&lt;/code&gt; functions return a &lt;code&gt;tibble&lt;/code&gt; whenever it is request only one round and a list when more than one round is requested.&lt;/p&gt;
+&lt;p&gt;For example&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ess_rounds(1, &amp;quot;your_email@gmail.com&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;will return a tibble but…&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ess_rounds(1:3, &amp;quot;your_email@gmail.com&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;…will return a list with each tibble in a slot.&lt;/p&gt;
+&lt;p&gt;For more concrete examples check out the new website of the ess &lt;a href=&#34;https://cimentadaj.github.io/ess/&#34;&gt;here&lt;/a&gt;. If you have any ideas for features or find a bug, please report &lt;a href=&#34;https://github.com/cimentadaj/ess/issues&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>What time should I ride my bike?</title>
+      <link>/blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/</link>
+      <pubDate>Mon, 12 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/</guid>
+      <description>&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(DBI)
+library(RMySQL)
+library(caret)
+library(tidyverse)
+
+con &amp;lt;- dbConnect(MySQL(),
+                 dbname = &amp;quot;bicing&amp;quot;, # in &amp;quot;&amp;quot; quotes
+                 host = &amp;quot;82.196.1.229&amp;quot;,
+                 user = &amp;quot;cimentadaj&amp;quot;, # in &amp;quot;&amp;quot; quotes
+                 password = rstudioapi::askForPassword())
+
+
+query &amp;lt;- glue::glue(
+&amp;quot;SELECT slots, bikes, status, time
+ FROM bicing_station
+ WHERE hour(time) IN (&amp;#39;7&amp;#39;, &amp;#39;8&amp;#39;, &amp;#39;9&amp;#39;, &amp;#39;10&amp;#39;, &amp;#39;18&amp;#39;, &amp;#39;19&amp;#39;, &amp;#39;20&amp;#39;)
+ AND error_msg IS NULL;&amp;quot;)
+
+bicing &amp;lt;-
+  as_tibble(dbGetQuery(con, query)) %&amp;gt;%
+  mutate(time = lubridate::ymd_hms(time),
+         slots = as.numeric(slots),
+         bikes = as.numeric(slots))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The station was always open.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bicing %&amp;gt;%
+  filter(status != &amp;quot;OPN&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In the morning there seem’s to be more bikes than in the evening&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bicing %&amp;gt;%
+  mutate(hour = as.factor(lubridate::hour(time))) %&amp;gt;%
+  ggplot(aes(hour, bikes)) +
+  geom_boxplot()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Does this differ by day?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bicing %&amp;gt;%
+  mutate(hour = lubridate::hour(time),
+         day = lubridate::wday(time, label = TRUE),
+         morning_evening = ifelse(hour &amp;lt;= 10, &amp;quot;Morning&amp;quot;, &amp;quot;Evening&amp;quot;)) %&amp;gt;%
+  ggplot(aes(day, bikes, fill = morning_evening)) +
+  geom_col(position = &amp;quot;fill&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There we can see the Friday effect&lt;/p&gt;
+&lt;p&gt;What’s the rate at which bicycles are being taken out by hour? At which time is the station emptying out quicker?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;intm_df &amp;lt;-
+  bicing %&amp;gt;%
+  mutate(hour = lubridate::hour(time)) %&amp;gt;%
+  group_by(hour) %&amp;gt;%
+  mutate(future_bike = lag(bikes)) %&amp;gt;%
+  summarize(avg_movement = mean(bikes != future_bike, na.rm = TRUE)) %&amp;gt;%
+  ungroup()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Even though there are more bikes in the morning, bike activity is the same in th evening as in the early morning.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;intm_df &amp;lt;-
+  bicing %&amp;gt;%
+  mutate(hour = lubridate::hour(time),
+         day = lubridate::wday(time, label = TRUE)) %&amp;gt;%
+  group_by(hour, day) %&amp;gt;%
+  mutate(future_bike = lag(bikes)) %&amp;gt;%
+  summarize(avg_movement = mean(bikes != future_bike, na.rm = TRUE)) %&amp;gt;%
+  ungroup()
+
+intm_df %&amp;gt;%
+  top_n(10, avg_movement) %&amp;gt;%
+  unite(hour_day, hour, day, sep = &amp;quot; - &amp;quot;) %&amp;gt;%
+  ggplot(aes(hour_day, avg_movement)) +
+  geom_col() +
+  ylim(c(0, 1))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Wednesdays at 9 AM seems to be the worst moment to pick/drop off a bike given that in 40% of the hour there’s movement. An interesting pattern is that most of the activity is concentrate on Wednesdays and Tuesdays and not only in the mornings.&lt;/p&gt;
+&lt;p&gt;When are the moments when the station is empty? When should I look for it?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bicing %&amp;gt;%
+  filter(bikes == 0) %&amp;gt;%
+  count(hour = lubridate::hour(time), day = lubridate::wday(time, label = TRUE)) %&amp;gt;%
+  arrange(day, hour) %&amp;gt;%
+  ggplot(aes(hour, n)) +
+  geom_col() +
+  facet_wrap(~ day, ncol = 3)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Bicing people probably prepare very well because it’s mostly empty in the evenings&lt;/p&gt;
+&lt;p&gt;Can I predict whether the station will be empty?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;empty_bicycle &amp;lt;-
+  mutate(bicing,
+         empty = ifelse(bikes == 0, 1, 0),
+         hour = as.character(lubridate::hour(time)),
+         # morning = ifelse(time &amp;lt;= 10, 1, 0),
+         day = lubridate::wday(time),
+         # weekend = ifelse(between(day, 6, 7), 1, 0),
+         day = as.character(day)) %&amp;gt;%
+  select(-(1:4))
+
+training_rows &amp;lt;- createDataPartition(empty_bicycle$empty, 1, p = 0.8)[[1]]
+
+training &amp;lt;- empty_bicycle[training_rows, ]
+test &amp;lt;- empty_bicycle[-training_rows, ]
+
+mod1 &amp;lt;- glm(empty ~ . + day:hour, data = training, family = &amp;quot;binomial&amp;quot;)
+
+pred1 &amp;lt;- predict(mod1, newdata = test, type = &amp;#39;response&amp;#39;)
+
+pred_empty &amp;lt;- rbinom(length(pred1), 1, prob = pred1)
+
+confusionMatrix(test$empty, pred_empty, positive = &amp;quot;1&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This model is terrible at predicting the emptyness of the stations.&lt;/p&gt;
+&lt;p&gt;A model is as good as the data that’s being fit.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Rewriting duplicated</title>
@@ -575,6 +769,188 @@ appended between the time the script should&amp;#39;ve started and should&amp;#3
 &lt;li&gt;&lt;p&gt;I use SQL Workbench to run queries from my local computer&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Forecasting independence: the catalan case</title>
+      <link>/blog/2017-12-31-forecasting-independence-the-catalan-case/forecasting-independence-the-catalan-case/</link>
+      <pubDate>Sun, 31 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2017-12-31-forecasting-independence-the-catalan-case/forecasting-independence-the-catalan-case/</guid>
+      <description>&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rvest)
+library(janitor)
+library(stringr)
+library(lubridate)
+library(tidyverse)
+
+read_web &amp;lt;- read_html(&amp;quot;https://en.wikipedia.org/wiki/Catalan_independence_movement&amp;quot;)
+
+indp_time &amp;lt;-
+  read_web %&amp;gt;%
+  html_nodes(xpath = &amp;#39;//table&amp;#39;) %&amp;gt;%
+  .[[3]] %&amp;gt;%
+  html_table() %&amp;gt;%
+  as_tibble() %&amp;gt;%
+  clean_names()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;example_path &amp;lt;-
+  read_web %&amp;gt;%
+  html_nodes(&amp;quot;.references-column-width&amp;quot;) %&amp;gt;% # go to the references
+  xml_children() %&amp;gt;% # dive into the referneces
+  xml_children() %&amp;gt;%
+  xml_path() %&amp;gt;% # get the xpath
+  .[[1]] %&amp;gt;% # and extract one sample
+  str_replace_all(&amp;quot;\\[[0-9]\\]$&amp;quot;, &amp;quot;&amp;quot;) # replace the last [1]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;code_dates &amp;lt;- str_extract_all(indp_time$date, &amp;quot;\\[[0-9]{3,3}\\]$&amp;quot;)
+end_paths &amp;lt;- unlist(code_dates)
+complete_paths &amp;lt;- paste0(example_path, end_paths)
+all_nodes &amp;lt;- map(complete_paths, ~ html_node(read_web, xpath =  .x)) %&amp;gt;% setNames(end_paths)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;extract_gencat &amp;lt;- function(node) {
+  int_node &amp;lt;-
+    node %&amp;gt;%
+    xml_children() %&amp;gt;%
+    xml_children() %&amp;gt;%
+    xml_children()
+  
+  node_href &amp;lt;- int_node[xml_has_attr(int_node, &amp;quot;rel&amp;quot;)]
+  
+  xml_attr(node_href, &amp;quot;href&amp;quot;)
+}
+
+all_links &amp;lt;-
+  map(all_nodes, extract_gencat) %&amp;gt;%
+  discard(~ any(grepl(&amp;quot;.pdf$&amp;quot;, .x)) || length(.x) &amp;gt; 1)
+# remove links where it ends with a pdf or where there&amp;#39;s 2 links
+# 2 links means that the page is not there anymore and they
+# have an archived link that downloads a file, so no webpage!
+
+grab_date &amp;lt;- function(link) {
+  link %&amp;gt;%
+    read_html() %&amp;gt;%
+    html_node(xpath = &amp;quot;//*[@id=&amp;#39;contingutPrincipal&amp;#39;]/div[1]/div[3]/p[3]&amp;quot;) %&amp;gt;%
+    xml_text() %&amp;gt;%
+    str_extract(&amp;quot;[0-9]{2,}-[0-9]{2,}-[0-9]{4,}&amp;quot;) # grabe the date in dd-mm-yyyy format
+}
+
+all_dates &amp;lt;- map_chr(all_links, grab_date)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lookup &amp;lt;- as.character(code_dates)
+col_date &amp;lt;- ifelse(lookup == &amp;quot;character(0)&amp;quot;, NA, lookup)
+
+# this is slow, but this is very short
+rem_dates &amp;lt;- as.character(dmy(all_dates[col_date]))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning in as.POSIXlt.POSIXct(x, tz): unknown timezone &amp;#39;zone/tz/2017c.1.0/
+## zoneinfo/Europe/Madrid&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;int_date &amp;lt;- indp_time$date
+normal_d &amp;lt;- grepl(&amp;quot;[0-9]{4,}$&amp;quot;, int_date)
+
+int_date[normal_d] &amp;lt;- as.character(dmy(paste0(&amp;quot;1 &amp;quot;, int_date[normal_d])))
+
+other_dates &amp;lt;- int_date[is.na(rem_dates) &amp;amp; grepl(&amp;quot;series&amp;quot;, int_date)]
+
+int_date[is.na(rem_dates) &amp;amp; grepl(&amp;quot;series&amp;quot;, int_date)] &amp;lt;- 
+  str_replace(other_dates, &amp;quot;\\sseries(.*)$&amp;quot;, &amp;quot;&amp;quot;) %&amp;gt;%
+  gsub(&amp;quot;1st&amp;quot;, &amp;quot;January&amp;quot;, .) %&amp;gt;%
+  gsub(&amp;quot;2nd&amp;quot;, &amp;quot;April&amp;quot;, .) %&amp;gt;%
+  gsub(&amp;quot;3rd&amp;quot;, &amp;quot;August&amp;quot;, .) %&amp;gt;%
+  gsub(&amp;quot;4th&amp;quot;, &amp;quot;November&amp;quot;, .) %&amp;gt;%
+  paste0(&amp;quot; 1&amp;quot;) %&amp;gt;%
+  ymd() %&amp;gt;%
+  as.character()
+
+final_date &amp;lt;- unname(ifelse(!is.na(rem_dates), rem_dates, int_date))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rdy_data &amp;lt;-
+  indp_time %&amp;gt;%
+  transmute(date,
+            new_date = ymd(final_date),
+            independent = independent_state_percent,
+            aut_c = autonomous_community_percent) %&amp;gt;%
+  gather(cat, val, -(1:2))
+
+rdy_data %&amp;gt;%
+  ggplot(aes(new_date, val, colour = cat)) +
+  geom_point(alpha = 0.4, size = 1) +
+  geom_line() +
+  theme_minimal() +
+  ylim(c(0, 100))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(prophet)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Loading required package: Rcpp&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: package &amp;#39;Rcpp&amp;#39; was built under R version 3.4.3&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df &amp;lt;-
+  rdy_data %&amp;gt;%
+  spread(cat, val) %&amp;gt;%
+  select(new_date, independent) %&amp;gt;%
+  rename(ds = new_date,
+         y = independent)
+
+ph_df &amp;lt;-
+  df %&amp;gt;%
+  filter(ds &amp;lt;= &amp;quot;2008-01-01&amp;quot;) %&amp;gt;%
+  prophet()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Disabling weekly seasonality. Run prophet with weekly.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## n.changepoints greater than number of observations. Using 7&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Initial log joint probability = -2.04896
+## Optimization terminated normally: 
+##   Convergence detected: absolute parameter change was below tolerance&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ph_df %&amp;gt;%
+  make_future_dataframe(periods = 40, freq = &amp;quot;month&amp;quot;, include_history = TRUE) %&amp;gt;%
+  predict(ph_df, .) %&amp;gt;%
+  plot(ph_df, .)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_roll &amp;lt;-
+  list(zoo::rollmean, zoo::rollmedian) %&amp;gt;%
+  setNames(c(&amp;quot;rollmean&amp;quot;, &amp;quot;rollmedian&amp;quot;)) %&amp;gt;%
+  map_dfc(~ .x(df$y, 3, fill = NA)) %&amp;gt;%
+  bind_cols(df, .)
+
+df_gather &amp;lt;-
+  df_roll %&amp;gt;%
+  gather(roll, values, -(1:2))
+
+df_roll %&amp;gt;%
+  ggplot(aes(ds, y)) +
+  geom_point() +
+  geom_line(data = df_gather, aes(x = ds, y = values, colour = roll))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_roll %&amp;gt;%
+  ggplot(aes(ds, y)) +
+  geom_point() +
+  geom_smooth(span = 2)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## `geom_smooth()` using method = &amp;#39;loess&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;roll_ph &amp;lt;-
+  df_roll %&amp;gt;%
+  select(ds, rollmedian) %&amp;gt;%
+  rename(y = rollmedian) %&amp;gt;%
+  filter(ds &amp;lt;= &amp;quot;2009-01-01&amp;quot;) %&amp;gt;% # change this to 2009 and the relationship dissapears
+  prophet()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Disabling weekly seasonality. Run prophet with weekly.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## n.changepoints greater than number of observations. Using 9&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Initial log joint probability = -2.0766
+## Optimization terminated normally: 
+##   Convergence detected: absolute parameter change was below tolerance&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;roll_ph %&amp;gt;%
+  make_future_dataframe(periods = 40, freq = &amp;quot;month&amp;quot;, include_history = TRUE) %&amp;gt;%
+  predict(roll_ph, .) %&amp;gt;%
+  plot(roll_ph, .)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This forecast would always predict that the independence vote would increase&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ph_df &amp;lt;-
+  df %&amp;gt;%
+  # filter(ds &amp;lt;= &amp;quot;2008-01-01&amp;quot;) %&amp;gt;%
+  prophet()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Disabling weekly seasonality. Run prophet with weekly.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Initial log joint probability = -2.36096
+## Optimization terminated normally: 
+##   Convergence detected: absolute parameter change was below tolerance&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ph_df %&amp;gt;%
+  make_future_dataframe(periods = 40, freq = &amp;quot;month&amp;quot;, include_history = TRUE) %&amp;gt;%
+  predict(ph_df, .) %&amp;gt;%
+  plot(ph_df, .)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 </description>
     </item>
     
