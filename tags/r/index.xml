@@ -99,6 +99,113 @@ all_countries&lt;/code&gt;&lt;/pre&gt;
     </item>
     
     <item>
+      <title>What time should I ride my bike?</title>
+      <link>/blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/</link>
+      <pubDate>Mon, 12 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/</guid>
+      <description>&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(DBI)
+library(RMySQL)
+library(caret)
+library(tidyverse)
+
+con &amp;lt;- dbConnect(MySQL(),
+                 dbname = &amp;quot;bicing&amp;quot;, # in &amp;quot;&amp;quot; quotes
+                 host = &amp;quot;82.196.1.229&amp;quot;,
+                 user = &amp;quot;cimentadaj&amp;quot;, # in &amp;quot;&amp;quot; quotes
+                 password = rstudioapi::askForPassword())
+
+
+query &amp;lt;- glue::glue(
+&amp;quot;SELECT slots, bikes, status, time
+ FROM bicing_station
+ WHERE hour(time) IN (&amp;#39;7&amp;#39;, &amp;#39;8&amp;#39;, &amp;#39;9&amp;#39;, &amp;#39;10&amp;#39;, &amp;#39;18&amp;#39;, &amp;#39;19&amp;#39;, &amp;#39;20&amp;#39;)
+ AND error_msg IS NULL;&amp;quot;)
+
+bicing &amp;lt;-
+  as_tibble(dbGetQuery(con, query)) %&amp;gt;%
+  mutate(time = lubridate::ymd_hms(time),
+         slots = as.numeric(slots),
+         bikes = as.numeric(slots))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The station was always open.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bicing %&amp;gt;%
+  filter(status != &amp;quot;OPN&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In the morning there seem’s to be more bikes than in the evening&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bicing %&amp;gt;%
+  mutate(hour = as.factor(lubridate::hour(time))) %&amp;gt;%
+  ggplot(aes(hour, bikes)) +
+  geom_boxplot()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Does this differ by day?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bicing %&amp;gt;%
+  mutate(hour = lubridate::hour(time),
+         day = lubridate::wday(time, label = TRUE),
+         morning_evening = ifelse(hour &amp;lt;= 10, &amp;quot;Morning&amp;quot;, &amp;quot;Evening&amp;quot;)) %&amp;gt;%
+  ggplot(aes(day, bikes, fill = morning_evening)) +
+  geom_col(position = &amp;quot;fill&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There we can see the Friday effect&lt;/p&gt;
+&lt;p&gt;What’s the rate at which bicycles are being taken out by hour? At which time is the station emptying out quicker?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;intm_df &amp;lt;-
+  bicing %&amp;gt;%
+  mutate(hour = lubridate::hour(time)) %&amp;gt;%
+  group_by(hour) %&amp;gt;%
+  mutate(future_bike = lag(bikes)) %&amp;gt;%
+  summarize(avg_movement = mean(bikes != future_bike, na.rm = TRUE)) %&amp;gt;%
+  ungroup()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Even though there are more bikes in the morning, bike activity is the same in th evening as in the early morning.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;intm_df &amp;lt;-
+  bicing %&amp;gt;%
+  mutate(hour = lubridate::hour(time),
+         day = lubridate::wday(time, label = TRUE)) %&amp;gt;%
+  group_by(hour, day) %&amp;gt;%
+  mutate(future_bike = lag(bikes)) %&amp;gt;%
+  summarize(avg_movement = mean(bikes != future_bike, na.rm = TRUE)) %&amp;gt;%
+  ungroup()
+
+intm_df %&amp;gt;%
+  top_n(10, avg_movement) %&amp;gt;%
+  unite(hour_day, hour, day, sep = &amp;quot; - &amp;quot;) %&amp;gt;%
+  ggplot(aes(hour_day, avg_movement)) +
+  geom_col() +
+  ylim(c(0, 1))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Wednesdays at 9 AM seems to be the worst moment to pick/drop off a bike given that in 40% of the hour there’s movement. An interesting pattern is that most of the activity is concentrate on Wednesdays and Tuesdays and not only in the mornings.&lt;/p&gt;
+&lt;p&gt;When are the moments when the station is empty? When should I look for it?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bicing %&amp;gt;%
+  filter(bikes == 0) %&amp;gt;%
+  count(hour = lubridate::hour(time), day = lubridate::wday(time, label = TRUE)) %&amp;gt;%
+  arrange(day, hour) %&amp;gt;%
+  ggplot(aes(hour, n)) +
+  geom_col() +
+  facet_wrap(~ day, ncol = 3)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Bicing people probably prepare very well because it’s mostly empty in the evenings&lt;/p&gt;
+&lt;p&gt;Can I predict whether the station will be empty?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;empty_bicycle &amp;lt;-
+  mutate(bicing,
+         empty = ifelse(bikes == 0, 1, 0),
+         hour = as.character(lubridate::hour(time)),
+         # morning = ifelse(time &amp;lt;= 10, 1, 0),
+         day = lubridate::wday(time),
+         # weekend = ifelse(between(day, 6, 7), 1, 0),
+         day = as.character(day)) %&amp;gt;%
+  select(-(1:4))
+
+training_rows &amp;lt;- createDataPartition(empty_bicycle$empty, 1, p = 0.8)[[1]]
+
+training &amp;lt;- empty_bicycle[training_rows, ]
+test &amp;lt;- empty_bicycle[-training_rows, ]
+
+mod1 &amp;lt;- glm(empty ~ . + day:hour, data = training, family = &amp;quot;binomial&amp;quot;)
+
+pred1 &amp;lt;- predict(mod1, newdata = test, type = &amp;#39;response&amp;#39;)
+
+pred_empty &amp;lt;- rbinom(length(pred1), 1, prob = pred1)
+
+confusionMatrix(test$empty, pred_empty, positive = &amp;quot;1&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This model is terrible at predicting the emptyness of the stations.&lt;/p&gt;
+&lt;p&gt;A model is as good as the data that’s being fit.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Rewriting duplicated</title>
       <link>/blog/2018-02-06-rewriting-duplicated/rewriting-duplicated/</link>
       <pubDate>Tue, 06 Feb 2018 00:00:00 +0000</pubDate>
@@ -2586,10 +2693,10 @@ cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Obtaining robust standard errors and odds ratios for logistic regression in R</title>
-      <link>/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</link>
+      <link>/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</link>
       <pubDate>Mon, 19 Sep 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</guid>
+      <guid>/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</guid>
       <description>&lt;p&gt;I’ve always found it frustrating how it’s so easy to produce robust standard errors in Stata and in R it’s so complicated. First, we have to estimate the standard errors separately and then replace the previous standard errors with the new ones. Second, if you want to estimate odds ratios instead of logit coefficients, then the robust standard errors need to be scaled. All of that is as simple as adding robust or in the Stata logit command.&lt;/p&gt;
 &lt;p&gt;I decided to make it as simple in R.&lt;/p&gt;
 &lt;p&gt;First, I have to give credit to &lt;a href=&#34;http://stackoverflow.com/users/4233642/achim-zeileis&#34;&gt;Achim Zeileis&lt;/a&gt; in this &lt;a href=&#34;http://stackoverflow.com/questions/27367974/different-robust-standard-errors-of-logit-regression-in-stata-and-r&#34;&gt;question&lt;/a&gt; because he provided part of code to generate the robust standard errors.&lt;/p&gt;

@@ -6,10 +6,99 @@
     <description>Recent content on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 04 Mar 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 22 Mar 2018 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>RSelenium and scraping Catalan educational data</title>
+      <link>/blog/2018-03-22-rselenium-and-scraping-catalan-educational-data/rselenium-and-scraping-catalan-educational-data/</link>
+      <pubDate>Thu, 22 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018-03-22-rselenium-and-scraping-catalan-educational-data/rselenium-and-scraping-catalan-educational-data/</guid>
+      <description>&lt;p&gt;Yesterday I found this public dataset on schools from Barcelona and their performance on tests on 6th grade. I wanted to scrape them to investigate the relationship between performance and schools that receive special government funds for social integration. I found this dataset &lt;a href=&#34;https://view-awesome-table.com/-L4lo3r-JA2iaWk1puUT/view&#34;&gt;here&lt;/a&gt; but it was different from the types of websites I usually scape (&lt;code&gt;html&lt;/code&gt; or &lt;code&gt;xml&lt;/code&gt;). Although the website has some &lt;code&gt;html&lt;/code&gt; the engine swiping the schools is actually based on &lt;code&gt;Javascript&lt;/code&gt;. Well, that’s a job for &lt;code&gt;RSelenium&lt;/code&gt;, an R package that allows you to browse a website with R.&lt;/p&gt;
+&lt;p&gt;The process was actually much easier than I thought using Docker. I follow the answer of setting docker from &lt;a href=&#34;https://stackoverflow.com/questions/45395849/cant-execute-rsdriver-connection-refused&#34;&gt;this&lt;/a&gt; post. Note that this is for Windows 10.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://download.docker.com/win/stable/DockerToolbox.exe&#34;&gt;install docker&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;run it, restart computer as requested&lt;/li&gt;
+&lt;li&gt;pull image by running in command line: &lt;code&gt;docker pull selenium/standalone-firefox&lt;/code&gt; (or chrome instead of firefox) or in R &lt;code&gt;shell(&#39;docker pull selenium/standalone-firefox&#39;)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;start server by running in command line: &lt;code&gt;docker run -d -p 4445:4444 selenium/standalone-firefox&lt;/code&gt; or in R &lt;code&gt;shell(&#39;docker run -d -p 4445:4444 selenium/standalone-firefox&#39;)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Then run &lt;code&gt;remDr &amp;lt;- remoteDriver(remoteServerAddr = &amp;quot;localhost&amp;quot;, port = 4445L, browserName = &amp;quot;firefox&#39;&amp;quot;)&lt;/code&gt;. The doc suggests something different with a virtual machine but i couldn’t get it to work. Replacing &lt;code&gt;&amp;quot;localhost&amp;quot;&lt;/code&gt; with the &lt;code&gt;ip&lt;/code&gt; the your docker server provides.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I used &lt;code&gt;chrome&lt;/code&gt; for all of the above and got this working just fine in no time!&lt;/p&gt;
+&lt;p&gt;Now that we got that down, I scraped the data with not much hassle.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Load packages and create empty data frame to fill out (I looked at the website to get the columns)&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(RSelenium)
+library(xml2)
+library(tidyverse)
+
+the_df &amp;lt;-
+  as_tibble(set_names(rerun(4, character()),
+                      c(&amp;quot;school_name&amp;quot;, &amp;quot;complexity&amp;quot;, &amp;quot;social_fund&amp;quot;, &amp;quot;score_6th&amp;quot;)))&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Open the website with &lt;code&gt;RSelenium&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;remDr &amp;lt;- remoteDriver(remoteServerAddr = &amp;quot;192.168.99.100&amp;quot;,
+                      port = 4445L,
+                      browserName = &amp;quot;chrome&amp;quot;)
+
+remDr$open()
+remDr$navigate(&amp;quot;https://view-awesome-table.com/-L4lo3r-JA2iaWk1puUT/view&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;At this point you can use &lt;code&gt;remDr$screenshot(display = TRUE)&lt;/code&gt; to print a screenshot of the website that you’re at.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Define a function that clicks one time on the swiping key on the right, scrapes the table and turns it into a &lt;code&gt;tibble&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;navigate_click &amp;lt;- function() {
+  webElem &amp;lt;- remDr$findElement(using = &amp;quot;class name&amp;quot;,
+                               &amp;quot;google-visualization-table-div-page&amp;quot;)
+  
+  Sys.sleep(0.5)
+  webElem$clickElement()
+  
+  remDr$getPageSource()[[1]] %&amp;gt;% 
+    read_xml() %&amp;gt;%
+    xml_ns_strip() %&amp;gt;%
+    xml_find_all(xpath = &amp;#39;//td&amp;#39;) %&amp;gt;%
+    xml_text() %&amp;gt;%
+    set_names(c(&amp;quot;school_name&amp;quot;, &amp;quot;complexity&amp;quot;, &amp;quot;social_fund&amp;quot;, &amp;quot;score_6th&amp;quot;)) %&amp;gt;%
+    as.list() %&amp;gt;% as_tibble()
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Run that function &lt;code&gt;160&lt;/code&gt; times (# of schools in that data) and bind all of these datasets together&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;complete_df &amp;lt;-
+  map(1:160, ~ navigate_click()) %&amp;gt;%
+  bind_rows()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Aaaaandddd, we got our nicely formatted dataset ready for some analysis.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;complete_df&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 160 x 4
+##    school_name                   complexity   social_fund score_6th   
+##    &amp;lt;chr&amp;gt;                         &amp;lt;chr&amp;gt;        &amp;lt;chr&amp;gt;       &amp;lt;chr&amp;gt;       
+##  1 Escuela Collaso i Gil         Muy alta     52%         Bajo        
+##  2 Escuela Ruben Darío           Muy alta     66%         Bajo        
+##  3 Escuela Castella              Muy alta     25%         Mediano-bajo
+##  4 Escuela Drassanes             Muy alta     41%         Bajo        
+##  5 Escuela Milà i Fontanals      Muy alta     49%         Bajo        
+##  6 Escuela Baixeras              Mediana-alta 24%         Bajo        
+##  7 Escuela Cervantes             Mediana-alta 38%         Mediano-alto
+##  8 Escuela Parc de la Ciutadella Mediana-baja 15%         Mediano-bajo
+##  9 Escuela Pere Vila             Alta         30%         Mediano-alto
+## 10 Escuela Alexandre Galí        Alta         27%         Bajo        
+## # ... with 150 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;PS: If they ever remove that dataset from the website this post might not work in the future, but at least there’s a traceback on how to user docker with &lt;code&gt;RSelenium&lt;/code&gt;.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>ess 0.1.1 is out!</title>
@@ -95,6 +184,113 @@ all_countries&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;…will return a list with each tibble in a slot.&lt;/p&gt;
 &lt;p&gt;For more concrete examples check out the new website of the ess &lt;a href=&#34;https://cimentadaj.github.io/ess/&#34;&gt;here&lt;/a&gt;. If you have any ideas for features or find a bug, please report &lt;a href=&#34;https://github.com/cimentadaj/ess/issues&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>What time should I ride my bike?</title>
+      <link>/blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/</link>
+      <pubDate>Mon, 12 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/</guid>
+      <description>&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(DBI)
+library(RMySQL)
+library(caret)
+library(tidyverse)
+
+con &amp;lt;- dbConnect(MySQL(),
+                 dbname = &amp;quot;bicing&amp;quot;, # in &amp;quot;&amp;quot; quotes
+                 host = &amp;quot;82.196.1.229&amp;quot;,
+                 user = &amp;quot;cimentadaj&amp;quot;, # in &amp;quot;&amp;quot; quotes
+                 password = rstudioapi::askForPassword())
+
+
+query &amp;lt;- glue::glue(
+&amp;quot;SELECT slots, bikes, status, time
+ FROM bicing_station
+ WHERE hour(time) IN (&amp;#39;7&amp;#39;, &amp;#39;8&amp;#39;, &amp;#39;9&amp;#39;, &amp;#39;10&amp;#39;, &amp;#39;18&amp;#39;, &amp;#39;19&amp;#39;, &amp;#39;20&amp;#39;)
+ AND error_msg IS NULL;&amp;quot;)
+
+bicing &amp;lt;-
+  as_tibble(dbGetQuery(con, query)) %&amp;gt;%
+  mutate(time = lubridate::ymd_hms(time),
+         slots = as.numeric(slots),
+         bikes = as.numeric(slots))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The station was always open.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bicing %&amp;gt;%
+  filter(status != &amp;quot;OPN&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In the morning there seem’s to be more bikes than in the evening&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bicing %&amp;gt;%
+  mutate(hour = as.factor(lubridate::hour(time))) %&amp;gt;%
+  ggplot(aes(hour, bikes)) +
+  geom_boxplot()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Does this differ by day?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bicing %&amp;gt;%
+  mutate(hour = lubridate::hour(time),
+         day = lubridate::wday(time, label = TRUE),
+         morning_evening = ifelse(hour &amp;lt;= 10, &amp;quot;Morning&amp;quot;, &amp;quot;Evening&amp;quot;)) %&amp;gt;%
+  ggplot(aes(day, bikes, fill = morning_evening)) +
+  geom_col(position = &amp;quot;fill&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There we can see the Friday effect&lt;/p&gt;
+&lt;p&gt;What’s the rate at which bicycles are being taken out by hour? At which time is the station emptying out quicker?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;intm_df &amp;lt;-
+  bicing %&amp;gt;%
+  mutate(hour = lubridate::hour(time)) %&amp;gt;%
+  group_by(hour) %&amp;gt;%
+  mutate(future_bike = lag(bikes)) %&amp;gt;%
+  summarize(avg_movement = mean(bikes != future_bike, na.rm = TRUE)) %&amp;gt;%
+  ungroup()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Even though there are more bikes in the morning, bike activity is the same in th evening as in the early morning.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;intm_df &amp;lt;-
+  bicing %&amp;gt;%
+  mutate(hour = lubridate::hour(time),
+         day = lubridate::wday(time, label = TRUE)) %&amp;gt;%
+  group_by(hour, day) %&amp;gt;%
+  mutate(future_bike = lag(bikes)) %&amp;gt;%
+  summarize(avg_movement = mean(bikes != future_bike, na.rm = TRUE)) %&amp;gt;%
+  ungroup()
+
+intm_df %&amp;gt;%
+  top_n(10, avg_movement) %&amp;gt;%
+  unite(hour_day, hour, day, sep = &amp;quot; - &amp;quot;) %&amp;gt;%
+  ggplot(aes(hour_day, avg_movement)) +
+  geom_col() +
+  ylim(c(0, 1))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Wednesdays at 9 AM seems to be the worst moment to pick/drop off a bike given that in 40% of the hour there’s movement. An interesting pattern is that most of the activity is concentrate on Wednesdays and Tuesdays and not only in the mornings.&lt;/p&gt;
+&lt;p&gt;When are the moments when the station is empty? When should I look for it?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bicing %&amp;gt;%
+  filter(bikes == 0) %&amp;gt;%
+  count(hour = lubridate::hour(time), day = lubridate::wday(time, label = TRUE)) %&amp;gt;%
+  arrange(day, hour) %&amp;gt;%
+  ggplot(aes(hour, n)) +
+  geom_col() +
+  facet_wrap(~ day, ncol = 3)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Bicing people probably prepare very well because it’s mostly empty in the evenings&lt;/p&gt;
+&lt;p&gt;Can I predict whether the station will be empty?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;empty_bicycle &amp;lt;-
+  mutate(bicing,
+         empty = ifelse(bikes == 0, 1, 0),
+         hour = as.character(lubridate::hour(time)),
+         # morning = ifelse(time &amp;lt;= 10, 1, 0),
+         day = lubridate::wday(time),
+         # weekend = ifelse(between(day, 6, 7), 1, 0),
+         day = as.character(day)) %&amp;gt;%
+  select(-(1:4))
+
+training_rows &amp;lt;- createDataPartition(empty_bicycle$empty, 1, p = 0.8)[[1]]
+
+training &amp;lt;- empty_bicycle[training_rows, ]
+test &amp;lt;- empty_bicycle[-training_rows, ]
+
+mod1 &amp;lt;- glm(empty ~ . + day:hour, data = training, family = &amp;quot;binomial&amp;quot;)
+
+pred1 &amp;lt;- predict(mod1, newdata = test, type = &amp;#39;response&amp;#39;)
+
+pred_empty &amp;lt;- rbinom(length(pred1), 1, prob = pred1)
+
+confusionMatrix(test$empty, pred_empty, positive = &amp;quot;1&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This model is terrible at predicting the emptyness of the stations.&lt;/p&gt;
+&lt;p&gt;A model is as good as the data that’s being fit.&lt;/p&gt;
 </description>
     </item>
     
@@ -662,6 +858,188 @@ appended between the time the script should&amp;#39;ve started and should&amp;#3
 &lt;li&gt;&lt;p&gt;I use SQL Workbench to run queries from my local computer&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Forecasting independence: the catalan case</title>
+      <link>/blog/2017-12-31-forecasting-independence-the-catalan-case/forecasting-independence-the-catalan-case/</link>
+      <pubDate>Sun, 31 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2017-12-31-forecasting-independence-the-catalan-case/forecasting-independence-the-catalan-case/</guid>
+      <description>&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rvest)
+library(janitor)
+library(stringr)
+library(lubridate)
+library(tidyverse)
+
+read_web &amp;lt;- read_html(&amp;quot;https://en.wikipedia.org/wiki/Catalan_independence_movement&amp;quot;)
+
+indp_time &amp;lt;-
+  read_web %&amp;gt;%
+  html_nodes(xpath = &amp;#39;//table&amp;#39;) %&amp;gt;%
+  .[[3]] %&amp;gt;%
+  html_table() %&amp;gt;%
+  as_tibble() %&amp;gt;%
+  clean_names()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;example_path &amp;lt;-
+  read_web %&amp;gt;%
+  html_nodes(&amp;quot;.references-column-width&amp;quot;) %&amp;gt;% # go to the references
+  xml_children() %&amp;gt;% # dive into the referneces
+  xml_children() %&amp;gt;%
+  xml_path() %&amp;gt;% # get the xpath
+  .[[1]] %&amp;gt;% # and extract one sample
+  str_replace_all(&amp;quot;\\[[0-9]\\]$&amp;quot;, &amp;quot;&amp;quot;) # replace the last [1]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;code_dates &amp;lt;- str_extract_all(indp_time$date, &amp;quot;\\[[0-9]{3,3}\\]$&amp;quot;)
+end_paths &amp;lt;- unlist(code_dates)
+complete_paths &amp;lt;- paste0(example_path, end_paths)
+all_nodes &amp;lt;- map(complete_paths, ~ html_node(read_web, xpath =  .x)) %&amp;gt;% setNames(end_paths)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;extract_gencat &amp;lt;- function(node) {
+  int_node &amp;lt;-
+    node %&amp;gt;%
+    xml_children() %&amp;gt;%
+    xml_children() %&amp;gt;%
+    xml_children()
+  
+  node_href &amp;lt;- int_node[xml_has_attr(int_node, &amp;quot;rel&amp;quot;)]
+  
+  xml_attr(node_href, &amp;quot;href&amp;quot;)
+}
+
+all_links &amp;lt;-
+  map(all_nodes, extract_gencat) %&amp;gt;%
+  discard(~ any(grepl(&amp;quot;.pdf$&amp;quot;, .x)) || length(.x) &amp;gt; 1)
+# remove links where it ends with a pdf or where there&amp;#39;s 2 links
+# 2 links means that the page is not there anymore and they
+# have an archived link that downloads a file, so no webpage!
+
+grab_date &amp;lt;- function(link) {
+  link %&amp;gt;%
+    read_html() %&amp;gt;%
+    html_node(xpath = &amp;quot;//*[@id=&amp;#39;contingutPrincipal&amp;#39;]/div[1]/div[3]/p[3]&amp;quot;) %&amp;gt;%
+    xml_text() %&amp;gt;%
+    str_extract(&amp;quot;[0-9]{2,}-[0-9]{2,}-[0-9]{4,}&amp;quot;) # grabe the date in dd-mm-yyyy format
+}
+
+all_dates &amp;lt;- map_chr(all_links, grab_date)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lookup &amp;lt;- as.character(code_dates)
+col_date &amp;lt;- ifelse(lookup == &amp;quot;character(0)&amp;quot;, NA, lookup)
+
+# this is slow, but this is very short
+rem_dates &amp;lt;- as.character(dmy(all_dates[col_date]))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning in as.POSIXlt.POSIXct(x, tz): unknown timezone &amp;#39;zone/tz/2017c.1.0/
+## zoneinfo/Europe/Madrid&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;int_date &amp;lt;- indp_time$date
+normal_d &amp;lt;- grepl(&amp;quot;[0-9]{4,}$&amp;quot;, int_date)
+
+int_date[normal_d] &amp;lt;- as.character(dmy(paste0(&amp;quot;1 &amp;quot;, int_date[normal_d])))
+
+other_dates &amp;lt;- int_date[is.na(rem_dates) &amp;amp; grepl(&amp;quot;series&amp;quot;, int_date)]
+
+int_date[is.na(rem_dates) &amp;amp; grepl(&amp;quot;series&amp;quot;, int_date)] &amp;lt;- 
+  str_replace(other_dates, &amp;quot;\\sseries(.*)$&amp;quot;, &amp;quot;&amp;quot;) %&amp;gt;%
+  gsub(&amp;quot;1st&amp;quot;, &amp;quot;January&amp;quot;, .) %&amp;gt;%
+  gsub(&amp;quot;2nd&amp;quot;, &amp;quot;April&amp;quot;, .) %&amp;gt;%
+  gsub(&amp;quot;3rd&amp;quot;, &amp;quot;August&amp;quot;, .) %&amp;gt;%
+  gsub(&amp;quot;4th&amp;quot;, &amp;quot;November&amp;quot;, .) %&amp;gt;%
+  paste0(&amp;quot; 1&amp;quot;) %&amp;gt;%
+  ymd() %&amp;gt;%
+  as.character()
+
+final_date &amp;lt;- unname(ifelse(!is.na(rem_dates), rem_dates, int_date))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rdy_data &amp;lt;-
+  indp_time %&amp;gt;%
+  transmute(date,
+            new_date = ymd(final_date),
+            independent = independent_state_percent,
+            aut_c = autonomous_community_percent) %&amp;gt;%
+  gather(cat, val, -(1:2))
+
+rdy_data %&amp;gt;%
+  ggplot(aes(new_date, val, colour = cat)) +
+  geom_point(alpha = 0.4, size = 1) +
+  geom_line() +
+  theme_minimal() +
+  ylim(c(0, 100))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(prophet)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Loading required package: Rcpp&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: package &amp;#39;Rcpp&amp;#39; was built under R version 3.4.3&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df &amp;lt;-
+  rdy_data %&amp;gt;%
+  spread(cat, val) %&amp;gt;%
+  select(new_date, independent) %&amp;gt;%
+  rename(ds = new_date,
+         y = independent)
+
+ph_df &amp;lt;-
+  df %&amp;gt;%
+  filter(ds &amp;lt;= &amp;quot;2008-01-01&amp;quot;) %&amp;gt;%
+  prophet()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Disabling weekly seasonality. Run prophet with weekly.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## n.changepoints greater than number of observations. Using 7&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Initial log joint probability = -2.04896
+## Optimization terminated normally: 
+##   Convergence detected: absolute parameter change was below tolerance&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ph_df %&amp;gt;%
+  make_future_dataframe(periods = 40, freq = &amp;quot;month&amp;quot;, include_history = TRUE) %&amp;gt;%
+  predict(ph_df, .) %&amp;gt;%
+  plot(ph_df, .)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_roll &amp;lt;-
+  list(zoo::rollmean, zoo::rollmedian) %&amp;gt;%
+  setNames(c(&amp;quot;rollmean&amp;quot;, &amp;quot;rollmedian&amp;quot;)) %&amp;gt;%
+  map_dfc(~ .x(df$y, 3, fill = NA)) %&amp;gt;%
+  bind_cols(df, .)
+
+df_gather &amp;lt;-
+  df_roll %&amp;gt;%
+  gather(roll, values, -(1:2))
+
+df_roll %&amp;gt;%
+  ggplot(aes(ds, y)) +
+  geom_point() +
+  geom_line(data = df_gather, aes(x = ds, y = values, colour = roll))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df_roll %&amp;gt;%
+  ggplot(aes(ds, y)) +
+  geom_point() +
+  geom_smooth(span = 2)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## `geom_smooth()` using method = &amp;#39;loess&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;roll_ph &amp;lt;-
+  df_roll %&amp;gt;%
+  select(ds, rollmedian) %&amp;gt;%
+  rename(y = rollmedian) %&amp;gt;%
+  filter(ds &amp;lt;= &amp;quot;2009-01-01&amp;quot;) %&amp;gt;% # change this to 2009 and the relationship dissapears
+  prophet()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Disabling weekly seasonality. Run prophet with weekly.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## n.changepoints greater than number of observations. Using 9&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Initial log joint probability = -2.0766
+## Optimization terminated normally: 
+##   Convergence detected: absolute parameter change was below tolerance&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;roll_ph %&amp;gt;%
+  make_future_dataframe(periods = 40, freq = &amp;quot;month&amp;quot;, include_history = TRUE) %&amp;gt;%
+  predict(roll_ph, .) %&amp;gt;%
+  plot(roll_ph, .)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This forecast would always predict that the independence vote would increase&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ph_df &amp;lt;-
+  df %&amp;gt;%
+  # filter(ds &amp;lt;= &amp;quot;2008-01-01&amp;quot;) %&amp;gt;%
+  prophet()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Disabling weekly seasonality. Run prophet with weekly.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Initial log joint probability = -2.36096
+## Optimization terminated normally: 
+##   Convergence detected: absolute parameter change was below tolerance&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ph_df %&amp;gt;%
+  make_future_dataframe(periods = 40, freq = &amp;quot;month&amp;quot;, include_history = TRUE) %&amp;gt;%
+  predict(ph_df, .) %&amp;gt;%
+  plot(ph_df, .)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 </description>
     </item>
     
@@ -2670,10 +3048,10 @@ cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Los pobres no son los peores pero los ricos sí son los mejores: desigualdad educativa</title>
-      <link>/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</link>
+      <link>/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</link>
       <pubDate>Sat, 24 Sep 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</guid>
+      <guid>/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</guid>
       <description>&lt;p&gt;Hace poco escribí un artículo sobre la desigualdad educativa en países Latinoamericanos y describí como la República Dominicana no parece estar tan mal como creemos. Ofrecí dos posibles explicaciones de porque esto pudiera ser bueno o malo, dependiendo del enfoque con que se ve (missing link after the ‘,’ with this: &lt;a href=&#34;http://www.jorgecimentada.com/?p=137&#34; class=&#34;uri&#34;&gt;http://www.jorgecimentada.com/?p=137&lt;/a&gt;). Luego de escribirlo me quedé pensando en algo que di por sentado: ¿realmente los ‘peores’ estudiantes son los estudiantes pobres? ¿son los estudiantes pobres los ‘peores’ en las escuelas públicas y privadas? Y a raíz del artículo de &lt;a href=&#34;http://acento.com.do/2016/opinion/8377420-desigualdad-educativa-interpela-desafia/&#34;&gt;Dinorah Garcia&lt;/a&gt;, ¿existe desigualdad entre las zonas rurales y urbanas?&lt;/p&gt;
 &lt;p&gt;Estas preguntas no solo ayudan a diagnosticar el estado actual de la desigualdad, más que eso, permiten inferir de donde pudieran provenir las fuentes de desigualdad. Si encontramos una diferencia bastante amplia entre los ‘mejores’ y ‘peores’ estudiantes, pero la diferencia es menor entre escuelas públicas y privada, pues la causa no es necesariamente las diferencias en calidad entre las tipos de escuelas. Sin embargo, si existen diferencias similares entre los estudiantes de escuelas rurales y urbanas, pues la razón puede ser precisamente en temas como la calidad educativa entre sectores pobres y ricos. Lo interesante de estas preguntas es que son todas preguntas empíricas, y se pueden responder con bases de datos como las de TERCE.&lt;/p&gt;
 &lt;div id=&#34;realmente-los-peores-estudiantes-son-los-estudiantes-pobres&#34; class=&#34;section level2&#34;&gt;
@@ -2715,10 +3093,10 @@ cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Obtaining robust standard errors and odds ratios for logistic regression in R</title>
-      <link>/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</link>
+      <link>/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</link>
       <pubDate>Mon, 19 Sep 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</guid>
+      <guid>/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</guid>
       <description>&lt;p&gt;I’ve always found it frustrating how it’s so easy to produce robust standard errors in Stata and in R it’s so complicated. First, we have to estimate the standard errors separately and then replace the previous standard errors with the new ones. Second, if you want to estimate odds ratios instead of logit coefficients, then the robust standard errors need to be scaled. All of that is as simple as adding robust or in the Stata logit command.&lt;/p&gt;
 &lt;p&gt;I decided to make it as simple in R.&lt;/p&gt;
 &lt;p&gt;First, I have to give credit to &lt;a href=&#34;http://stackoverflow.com/users/4233642/achim-zeileis&#34;&gt;Achim Zeileis&lt;/a&gt; in this &lt;a href=&#34;http://stackoverflow.com/questions/27367974/different-robust-standard-errors-of-logit-regression-in-stata-and-r&#34;&gt;question&lt;/a&gt; because he provided part of code to generate the robust standard errors.&lt;/p&gt;
