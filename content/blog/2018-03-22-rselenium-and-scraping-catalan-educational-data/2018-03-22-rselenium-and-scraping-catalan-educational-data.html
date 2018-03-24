@@ -1,0 +1,94 @@
+---
+title: "RSelenium and scraping Catalan educational data"
+author: "Jorge Cimentada"
+date: '2018-03-22'
+slug: rselenium-and-scraping-catalan-educational-data
+categories: []
+tags: []
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+
+
+<p>Yesterday I found this public dataset on schools from Barcelona and their performance on tests on 6th grade. I wanted to scrape them to investigate the relationship between performance and schools that receive special government funds for social integration. I found this dataset <a href="https://view-awesome-table.com/-L4lo3r-JA2iaWk1puUT/view">here</a> but it was different from the types of websites I usually scape (<code>html</code> or <code>xml</code>). Although the website has some <code>html</code> the engine swiping the schools is actually based on <code>Javascript</code>. Well, that’s a job for <code>RSelenium</code>, an R package that allows you to browse a website with R.</p>
+<p>The process was actually much easier than I thought using Docker. I follow the answer of setting docker from <a href="https://stackoverflow.com/questions/45395849/cant-execute-rsdriver-connection-refused">this</a> post. Note that this is for Windows 10.</p>
+<ul>
+<li><a href="https://download.docker.com/win/stable/DockerToolbox.exe">install docker</a></li>
+<li>run it, restart computer as requested</li>
+<li>pull image by running in command line: <code>docker pull selenium/standalone-firefox</code> (or chrome instead of firefox) or in R <code>shell('docker pull selenium/standalone-firefox')</code></li>
+<li>start server by running in command line: <code>docker run -d -p 4445:4444 selenium/standalone-firefox</code> or in R <code>shell('docker run -d -p 4445:4444 selenium/standalone-firefox')</code></li>
+<li>Then run <code>remDr &lt;- remoteDriver(remoteServerAddr = &quot;localhost&quot;, port = 4445L, browserName = &quot;firefox'&quot;)</code>. The doc suggests something different with a virtual machine but i couldn’t get it to work. Replacing <code>&quot;localhost&quot;</code> with the <code>ip</code> the your docker server provides.</li>
+</ul>
+<p>I used <code>chrome</code> for all of the above and got this working just fine in no time!</p>
+<p>Now that we got that down, I scraped the data with not much hassle.</p>
+<ul>
+<li><ol style="list-style-type: decimal">
+<li>Load packages and create empty data frame to fill out (I looked at the website to get the columns)</li>
+</ol></li>
+</ul>
+<pre class="r"><code>library(RSelenium)
+library(xml2)
+library(tidyverse)
+
+the_df &lt;-
+  as_tibble(set_names(rerun(4, character()),
+                      c(&quot;school_name&quot;, &quot;complexity&quot;, &quot;social_fund&quot;, &quot;score_6th&quot;)))</code></pre>
+<ul>
+<li><ol start="2" style="list-style-type: decimal">
+<li>Open the website with <code>RSelenium</code></li>
+</ol></li>
+</ul>
+<pre class="r"><code>remDr &lt;- remoteDriver(remoteServerAddr = &quot;192.168.99.100&quot;,
+                      port = 4445L,
+                      browserName = &quot;chrome&quot;)
+
+remDr$open()
+remDr$navigate(&quot;https://view-awesome-table.com/-L4lo3r-JA2iaWk1puUT/view&quot;)</code></pre>
+<p>At this point you can use <code>remDr$screenshot(display = TRUE)</code> to print a screenshot of the website that you’re at.</p>
+<ul>
+<li><ol start="3" style="list-style-type: decimal">
+<li>Define a function that clicks one time on the swiping key on the right, scrapes the table and turns it into a <code>tibble</code></li>
+</ol></li>
+</ul>
+<pre class="r"><code>navigate_click &lt;- function() {
+  webElem &lt;- remDr$findElement(using = &quot;class name&quot;,
+                               &quot;google-visualization-table-div-page&quot;)
+  
+  Sys.sleep(0.5)
+  webElem$clickElement()
+  
+  remDr$getPageSource()[[1]] %&gt;% 
+    read_xml() %&gt;%
+    xml_ns_strip() %&gt;%
+    xml_find_all(xpath = &#39;//td&#39;) %&gt;%
+    xml_text() %&gt;%
+    set_names(c(&quot;school_name&quot;, &quot;complexity&quot;, &quot;social_fund&quot;, &quot;score_6th&quot;)) %&gt;%
+    as.list() %&gt;% as_tibble()
+}</code></pre>
+<ul>
+<li><ol start="4" style="list-style-type: decimal">
+<li>Run that function <code>160</code> times (# of schools in that data) and bind all of these datasets together</li>
+</ol></li>
+</ul>
+<pre class="r"><code>complete_df &lt;-
+  map(1:160, ~ navigate_click()) %&gt;%
+  bind_rows()</code></pre>
+<p>Aaaaandddd, we got our nicely formatted dataset ready for some analysis.</p>
+<pre class="r"><code>complete_df</code></pre>
+<pre><code>## # A tibble: 160 x 4
+##    school_name                   complexity   social_fund score_6th   
+##    &lt;chr&gt;                         &lt;chr&gt;        &lt;chr&gt;       &lt;chr&gt;       
+##  1 Escuela Collaso i Gil         Muy alta     52%         Bajo        
+##  2 Escuela Ruben Darío           Muy alta     66%         Bajo        
+##  3 Escuela Castella              Muy alta     25%         Mediano-bajo
+##  4 Escuela Drassanes             Muy alta     41%         Bajo        
+##  5 Escuela Milà i Fontanals      Muy alta     49%         Bajo        
+##  6 Escuela Baixeras              Mediana-alta 24%         Bajo        
+##  7 Escuela Cervantes             Mediana-alta 38%         Mediano-alto
+##  8 Escuela Parc de la Ciutadella Mediana-baja 15%         Mediano-bajo
+##  9 Escuela Pere Vila             Alta         30%         Mediano-alto
+## 10 Escuela Alexandre Galí        Alta         27%         Bajo        
+## # ... with 150 more rows</code></pre>
+<p>PS: If they ever remove that dataset from the website this post might not work in the future, but at least there’s a traceback on how to user docker with <code>RSelenium</code>.</p>

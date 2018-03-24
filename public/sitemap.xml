@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/blog/2018-03-22-rselenium-and-scraping-catalan-educational-data/rselenium-and-scraping-catalan-educational-data/</loc>
+    <lastmod>2018-03-22T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/</loc>
     <lastmod>2018-03-04T00:00:00+00:00</lastmod>
   </url>
@@ -143,7 +148,7 @@
   
   <url>
     <loc>/blog/</loc>
-    <lastmod>2018-03-04T00:00:00+00:00</lastmod>
+    <lastmod>2018-03-22T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -182,7 +187,7 @@
   
   <url>
     <loc>/</loc>
-    <lastmod>2018-03-04T00:00:00+00:00</lastmod>
+    <lastmod>2018-03-22T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

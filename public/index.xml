@@ -6,10 +6,99 @@
     <description>Recent content on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 04 Mar 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 22 Mar 2018 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>RSelenium and scraping Catalan educational data</title>
+      <link>/blog/2018-03-22-rselenium-and-scraping-catalan-educational-data/rselenium-and-scraping-catalan-educational-data/</link>
+      <pubDate>Thu, 22 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018-03-22-rselenium-and-scraping-catalan-educational-data/rselenium-and-scraping-catalan-educational-data/</guid>
+      <description>&lt;p&gt;Yesterday I found this public dataset on schools from Barcelona and their performance on tests on 6th grade. I wanted to scrape them to investigate the relationship between performance and schools that receive special government funds for social integration. I found this dataset &lt;a href=&#34;https://view-awesome-table.com/-L4lo3r-JA2iaWk1puUT/view&#34;&gt;here&lt;/a&gt; but it was different from the types of websites I usually scape (&lt;code&gt;html&lt;/code&gt; or &lt;code&gt;xml&lt;/code&gt;). Although the website has some &lt;code&gt;html&lt;/code&gt; the engine swiping the schools is actually based on &lt;code&gt;Javascript&lt;/code&gt;. Well, that’s a job for &lt;code&gt;RSelenium&lt;/code&gt;, an R package that allows you to browse a website with R.&lt;/p&gt;
+&lt;p&gt;The process was actually much easier than I thought using Docker. I follow the answer of setting docker from &lt;a href=&#34;https://stackoverflow.com/questions/45395849/cant-execute-rsdriver-connection-refused&#34;&gt;this&lt;/a&gt; post. Note that this is for Windows 10.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://download.docker.com/win/stable/DockerToolbox.exe&#34;&gt;install docker&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;run it, restart computer as requested&lt;/li&gt;
+&lt;li&gt;pull image by running in command line: &lt;code&gt;docker pull selenium/standalone-firefox&lt;/code&gt; (or chrome instead of firefox) or in R &lt;code&gt;shell(&#39;docker pull selenium/standalone-firefox&#39;)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;start server by running in command line: &lt;code&gt;docker run -d -p 4445:4444 selenium/standalone-firefox&lt;/code&gt; or in R &lt;code&gt;shell(&#39;docker run -d -p 4445:4444 selenium/standalone-firefox&#39;)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Then run &lt;code&gt;remDr &amp;lt;- remoteDriver(remoteServerAddr = &amp;quot;localhost&amp;quot;, port = 4445L, browserName = &amp;quot;firefox&#39;&amp;quot;)&lt;/code&gt;. The doc suggests something different with a virtual machine but i couldn’t get it to work. Replacing &lt;code&gt;&amp;quot;localhost&amp;quot;&lt;/code&gt; with the &lt;code&gt;ip&lt;/code&gt; the your docker server provides.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I used &lt;code&gt;chrome&lt;/code&gt; for all of the above and got this working just fine in no time!&lt;/p&gt;
+&lt;p&gt;Now that we got that down, I scraped the data with not much hassle.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Load packages and create empty data frame to fill out (I looked at the website to get the columns)&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(RSelenium)
+library(xml2)
+library(tidyverse)
+
+the_df &amp;lt;-
+  as_tibble(set_names(rerun(4, character()),
+                      c(&amp;quot;school_name&amp;quot;, &amp;quot;complexity&amp;quot;, &amp;quot;social_fund&amp;quot;, &amp;quot;score_6th&amp;quot;)))&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Open the website with &lt;code&gt;RSelenium&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;remDr &amp;lt;- remoteDriver(remoteServerAddr = &amp;quot;192.168.99.100&amp;quot;,
+                      port = 4445L,
+                      browserName = &amp;quot;chrome&amp;quot;)
+
+remDr$open()
+remDr$navigate(&amp;quot;https://view-awesome-table.com/-L4lo3r-JA2iaWk1puUT/view&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;At this point you can use &lt;code&gt;remDr$screenshot(display = TRUE)&lt;/code&gt; to print a screenshot of the website that you’re at.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Define a function that clicks one time on the swiping key on the right, scrapes the table and turns it into a &lt;code&gt;tibble&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;navigate_click &amp;lt;- function() {
+  webElem &amp;lt;- remDr$findElement(using = &amp;quot;class name&amp;quot;,
+                               &amp;quot;google-visualization-table-div-page&amp;quot;)
+  
+  Sys.sleep(0.5)
+  webElem$clickElement()
+  
+  remDr$getPageSource()[[1]] %&amp;gt;% 
+    read_xml() %&amp;gt;%
+    xml_ns_strip() %&amp;gt;%
+    xml_find_all(xpath = &amp;#39;//td&amp;#39;) %&amp;gt;%
+    xml_text() %&amp;gt;%
+    set_names(c(&amp;quot;school_name&amp;quot;, &amp;quot;complexity&amp;quot;, &amp;quot;social_fund&amp;quot;, &amp;quot;score_6th&amp;quot;)) %&amp;gt;%
+    as.list() %&amp;gt;% as_tibble()
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Run that function &lt;code&gt;160&lt;/code&gt; times (# of schools in that data) and bind all of these datasets together&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;complete_df &amp;lt;-
+  map(1:160, ~ navigate_click()) %&amp;gt;%
+  bind_rows()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Aaaaandddd, we got our nicely formatted dataset ready for some analysis.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;complete_df&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 160 x 4
+##    school_name                   complexity   social_fund score_6th   
+##    &amp;lt;chr&amp;gt;                         &amp;lt;chr&amp;gt;        &amp;lt;chr&amp;gt;       &amp;lt;chr&amp;gt;       
+##  1 Escuela Collaso i Gil         Muy alta     52%         Bajo        
+##  2 Escuela Ruben Darío           Muy alta     66%         Bajo        
+##  3 Escuela Castella              Muy alta     25%         Mediano-bajo
+##  4 Escuela Drassanes             Muy alta     41%         Bajo        
+##  5 Escuela Milà i Fontanals      Muy alta     49%         Bajo        
+##  6 Escuela Baixeras              Mediana-alta 24%         Bajo        
+##  7 Escuela Cervantes             Mediana-alta 38%         Mediano-alto
+##  8 Escuela Parc de la Ciutadella Mediana-baja 15%         Mediano-bajo
+##  9 Escuela Pere Vila             Alta         30%         Mediano-alto
+## 10 Escuela Alexandre Galí        Alta         27%         Bajo        
+## # ... with 150 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;PS: If they ever remove that dataset from the website this post might not work in the future, but at least there’s a traceback on how to user docker with &lt;code&gt;RSelenium&lt;/code&gt;.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>ess 0.1.1 is out!</title>
