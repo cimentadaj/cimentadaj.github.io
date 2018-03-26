@@ -23,7 +23,9 @@ slug: projects
 
 perccalc ([CRAN](https://cran.r-project.org/web/packages/perccalc/index.html), [Github](https://github.com/cimentadaj/perccalc)): An implementation of two functions that estimate values for percentiles from an ordered categorical variable as described by Reardon (2011, isbn:978-0-87154-372-1).
 
-ess ([CRAN](https://cran.r-project.org/web/packages/ess/index.html), [Github](https://github.com/cimentadaj/ess)): Download data from the European Social Survey directly into R from their website http://www.europeansocialsurvey.org/.
+essurvey ([CRAN](https://cran.r-project.org/web/packages/essurvey/index.html), [Github](https://github.com/ropensci/essurvey)): Download data from the European Social Survey directly into R from their website http://www.europeansocialsurvey.org/.
+
+Package website: https://ropensci.github.io/essurvey/
 
 cimentadaj ([Github](https://github.com/cimentadaj/cimentadaj)): My personal package
 
