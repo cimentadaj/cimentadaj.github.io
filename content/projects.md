@@ -23,17 +23,17 @@ slug: projects
 
 perccalc ([CRAN](https://cran.r-project.org/web/packages/perccalc/index.html), [Github](https://github.com/cimentadaj/perccalc)): An implementation of two functions that estimate values for percentiles from an ordered categorical variable as described by Reardon (2011, isbn:978-0-87154-372-1).
 
-essurvey ([CRAN](https://cran.r-project.org/web/packages/essurvey/index.html), [Github](https://github.com/ropensci/essurvey)): Download data from the European Social Survey directly into R from their website http://www.europeansocialsurvey.org/.
-
-Package website: https://ropensci.github.io/essurvey/
+essurvey ([CRAN](https://cran.r-project.org/web/packages/essurvey/index.html), [Github](https://github.com/ropensci/essurvey), [Pkg website](https://ropensci.github.io/essurvey/)): Download data from the European Social Survey directly into R from their website http://www.europeansocialsurvey.org/.
 
 cimentadaj ([Github](https://github.com/cimentadaj/cimentadaj)): My personal package
 
 <b> Miscellaneous </b>
 
-[My PISA twitter bot](blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/index.html): I programmed a Twitter bot that tweets graphs from the [PISA](http://www.oecd.org/pisa/) database. Follow [@DailyPISA_Facts](https://twitter.com/DailyPISA_Facts)
+[My PISA twitter bot](blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/index.html): I programmed a Twitter bot that tweets graphs from the [PISA](http://www.oecd.org/pisa/) database. How did I do it? See [here](blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/index.html) and follow [@DailyPISA_Facts](https://twitter.com/DailyPISA_Facts)
 
 [Educational Inequality around the world](https://cimentadaj.shinyapps.io/shiny/): Visualize educational inequality for over 70 countries from 2000 to 2015 using this Shinyapp.
+
+I completed all solutions to the [R for Data Science book](http://r4ds.had.co.nz/). Solutions can be found [here](https://github.com/cimentadaj/R4DS-Solutions)
 
 I translated some Stata code to R for the <a href = "https://www.povertyactionlab.org/" target = "_blank"> The Abdul Latif Jameel Poverty Action Lab (J-PAL) </a> and was featured on their <a href = "https://www.povertyactionlab.org/research-resources/software-and-tools" target = "_blank"> website</a>.
 
