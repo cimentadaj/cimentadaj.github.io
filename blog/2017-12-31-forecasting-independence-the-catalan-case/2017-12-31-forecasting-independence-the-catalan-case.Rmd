@@ -3,7 +3,7 @@ title: 'Forecasting independence: the catalan case'
 author: Jorge Cimentada
 date: '2017-12-31'
 slug: forecasting-independence-the-catalan-case
-categories: []
+categories: ['R', 'scraping']
 tags: []
 ---
 
@@ -45,7 +45,6 @@ all_nodes <- map(complete_paths, ~ html_node(read_web, xpath =  .x)) %>% setName
 ```
 
 ```{r}
-
 extract_gencat <- function(node) {
   int_node <-
     node %>%
@@ -73,7 +72,7 @@ grab_date <- function(link) {
     str_extract("[0-9]{2,}-[0-9]{2,}-[0-9]{4,}") # grabe the date in dd-mm-yyyy format
 }
 
-all_dates <- map_chr(all_links, grab_date)
+all_dates <- map(all_links, safe_grab)
 ```
 
 ```{r}
@@ -107,13 +106,12 @@ final_date <- unname(ifelse(!is.na(rem_dates), rem_dates, int_date))
 rdy_data <-
   indp_time %>%
   transmute(date,
-            new_date = ymd(final_date),
             independent = independent_state_percent,
             aut_c = autonomous_community_percent) %>%
   gather(cat, val, -(1:2))
 
 rdy_data %>%
-  ggplot(aes(new_date, val, colour = cat)) +
+  ggplot(aes(date, val, colour = cat)) +
   geom_point(alpha = 0.4, size = 1) +
   geom_line() +
   theme_minimal() +
