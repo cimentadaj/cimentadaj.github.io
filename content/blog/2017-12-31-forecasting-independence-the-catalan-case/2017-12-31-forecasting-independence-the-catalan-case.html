@@ -1,0 +1,184 @@
+---
+title: 'Forecasting independence: the catalan case'
+author: Jorge Cimentada
+date: '2017-12-31'
+slug: forecasting-independence-the-catalan-case
+categories: []
+tags: []
+---
+
+
+
+<pre class="r"><code>library(rvest)
+library(janitor)
+library(stringr)
+library(lubridate)
+library(tidyverse)
+
+read_web &lt;- read_html(&quot;https://en.wikipedia.org/wiki/Catalan_independence_movement&quot;)
+
+indp_time &lt;-
+  read_web %&gt;%
+  html_nodes(xpath = &#39;//table&#39;) %&gt;%
+  .[[3]] %&gt;%
+  html_table() %&gt;%
+  as_tibble() %&gt;%
+  clean_names()</code></pre>
+<pre class="r"><code>example_path &lt;-
+  read_web %&gt;%
+  html_nodes(&quot;.references-column-width&quot;) %&gt;% # go to the references
+  xml_children() %&gt;% # dive into the referneces
+  xml_children() %&gt;%
+  xml_path() %&gt;% # get the xpath
+  .[[1]] %&gt;% # and extract one sample
+  str_replace_all(&quot;\\[[0-9]\\]$&quot;, &quot;&quot;) # replace the last [1]</code></pre>
+<pre class="r"><code>code_dates &lt;- str_extract_all(indp_time$date, &quot;\\[[0-9]{3,3}\\]$&quot;)
+end_paths &lt;- unlist(code_dates)
+complete_paths &lt;- paste0(example_path, end_paths)
+all_nodes &lt;- map(complete_paths, ~ html_node(read_web, xpath =  .x)) %&gt;% setNames(end_paths)</code></pre>
+<pre class="r"><code>extract_gencat &lt;- function(node) {
+  int_node &lt;-
+    node %&gt;%
+    xml_children() %&gt;%
+    xml_children() %&gt;%
+    xml_children()
+  
+  node_href &lt;- int_node[xml_has_attr(int_node, &quot;rel&quot;)]
+  
+  xml_attr(node_href, &quot;href&quot;)
+}
+
+all_links &lt;-
+  map(all_nodes, extract_gencat) %&gt;%
+  discard(~ any(grepl(&quot;.pdf$&quot;, .x)) || length(.x) &gt; 1)
+# remove links where it ends with a pdf or where there&#39;s 2 links
+# 2 links means that the page is not there anymore and they
+# have an archived link that downloads a file, so no webpage!
+
+grab_date &lt;- function(link) {
+  link %&gt;%
+    read_html() %&gt;%
+    html_node(xpath = &quot;//*[@id=&#39;contingutPrincipal&#39;]/div[1]/div[3]/p[3]&quot;) %&gt;%
+    xml_text() %&gt;%
+    str_extract(&quot;[0-9]{2,}-[0-9]{2,}-[0-9]{4,}&quot;) # grabe the date in dd-mm-yyyy format
+}
+
+all_dates &lt;- map_chr(all_links, grab_date)</code></pre>
+<pre class="r"><code>lookup &lt;- as.character(code_dates)
+col_date &lt;- ifelse(lookup == &quot;character(0)&quot;, NA, lookup)
+
+# this is slow, but this is very short
+rem_dates &lt;- as.character(dmy(all_dates[col_date]))</code></pre>
+<pre><code>## Warning in as.POSIXlt.POSIXct(x, tz): unknown timezone &#39;zone/tz/2017c.1.0/
+## zoneinfo/Europe/Madrid&#39;</code></pre>
+<pre class="r"><code>int_date &lt;- indp_time$date
+normal_d &lt;- grepl(&quot;[0-9]{4,}$&quot;, int_date)
+
+int_date[normal_d] &lt;- as.character(dmy(paste0(&quot;1 &quot;, int_date[normal_d])))
+
+other_dates &lt;- int_date[is.na(rem_dates) &amp; grepl(&quot;series&quot;, int_date)]
+
+int_date[is.na(rem_dates) &amp; grepl(&quot;series&quot;, int_date)] &lt;- 
+  str_replace(other_dates, &quot;\\sseries(.*)$&quot;, &quot;&quot;) %&gt;%
+  gsub(&quot;1st&quot;, &quot;January&quot;, .) %&gt;%
+  gsub(&quot;2nd&quot;, &quot;April&quot;, .) %&gt;%
+  gsub(&quot;3rd&quot;, &quot;August&quot;, .) %&gt;%
+  gsub(&quot;4th&quot;, &quot;November&quot;, .) %&gt;%
+  paste0(&quot; 1&quot;) %&gt;%
+  ymd() %&gt;%
+  as.character()
+
+final_date &lt;- unname(ifelse(!is.na(rem_dates), rem_dates, int_date))</code></pre>
+<pre class="r"><code>rdy_data &lt;-
+  indp_time %&gt;%
+  transmute(date,
+            new_date = ymd(final_date),
+            independent = independent_state_percent,
+            aut_c = autonomous_community_percent) %&gt;%
+  gather(cat, val, -(1:2))
+
+rdy_data %&gt;%
+  ggplot(aes(new_date, val, colour = cat)) +
+  geom_point(alpha = 0.4, size = 1) +
+  geom_line() +
+  theme_minimal() +
+  ylim(c(0, 100))</code></pre>
+<p><img src="/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>library(prophet)</code></pre>
+<pre><code>## Loading required package: Rcpp</code></pre>
+<pre><code>## Warning: package &#39;Rcpp&#39; was built under R version 3.4.3</code></pre>
+<pre class="r"><code>df &lt;-
+  rdy_data %&gt;%
+  spread(cat, val) %&gt;%
+  select(new_date, independent) %&gt;%
+  rename(ds = new_date,
+         y = independent)
+
+ph_df &lt;-
+  df %&gt;%
+  filter(ds &lt;= &quot;2008-01-01&quot;) %&gt;%
+  prophet()</code></pre>
+<pre><code>## Disabling weekly seasonality. Run prophet with weekly.seasonality=TRUE to override this.</code></pre>
+<pre><code>## Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.</code></pre>
+<pre><code>## n.changepoints greater than number of observations. Using 7</code></pre>
+<pre><code>## Initial log joint probability = -2.04896
+## Optimization terminated normally: 
+##   Convergence detected: absolute parameter change was below tolerance</code></pre>
+<pre class="r"><code>ph_df %&gt;%
+  make_future_dataframe(periods = 40, freq = &quot;month&quot;, include_history = TRUE) %&gt;%
+  predict(ph_df, .) %&gt;%
+  plot(ph_df, .)</code></pre>
+<p><img src="/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>df_roll &lt;-
+  list(zoo::rollmean, zoo::rollmedian) %&gt;%
+  setNames(c(&quot;rollmean&quot;, &quot;rollmedian&quot;)) %&gt;%
+  map_dfc(~ .x(df$y, 3, fill = NA)) %&gt;%
+  bind_cols(df, .)
+
+df_gather &lt;-
+  df_roll %&gt;%
+  gather(roll, values, -(1:2))
+
+df_roll %&gt;%
+  ggplot(aes(ds, y)) +
+  geom_point() +
+  geom_line(data = df_gather, aes(x = ds, y = values, colour = roll))</code></pre>
+<p><img src="/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code>df_roll %&gt;%
+  ggplot(aes(ds, y)) +
+  geom_point() +
+  geom_smooth(span = 2)</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39;</code></pre>
+<p><img src="/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre class="r"><code>roll_ph &lt;-
+  df_roll %&gt;%
+  select(ds, rollmedian) %&gt;%
+  rename(y = rollmedian) %&gt;%
+  filter(ds &lt;= &quot;2009-01-01&quot;) %&gt;% # change this to 2009 and the relationship dissapears
+  prophet()</code></pre>
+<pre><code>## Disabling weekly seasonality. Run prophet with weekly.seasonality=TRUE to override this.</code></pre>
+<pre><code>## Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.</code></pre>
+<pre><code>## n.changepoints greater than number of observations. Using 9</code></pre>
+<pre><code>## Initial log joint probability = -2.0766
+## Optimization terminated normally: 
+##   Convergence detected: absolute parameter change was below tolerance</code></pre>
+<pre class="r"><code>roll_ph %&gt;%
+  make_future_dataframe(periods = 40, freq = &quot;month&quot;, include_history = TRUE) %&gt;%
+  predict(roll_ph, .) %&gt;%
+  plot(roll_ph, .)</code></pre>
+<p><img src="/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>This forecast would always predict that the independence vote would increase</p>
+<pre class="r"><code>ph_df &lt;-
+  df %&gt;%
+  # filter(ds &lt;= &quot;2008-01-01&quot;) %&gt;%
+  prophet()</code></pre>
+<pre><code>## Disabling weekly seasonality. Run prophet with weekly.seasonality=TRUE to override this.</code></pre>
+<pre><code>## Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.</code></pre>
+<pre><code>## Initial log joint probability = -2.36096
+## Optimization terminated normally: 
+##   Convergence detected: absolute parameter change was below tolerance</code></pre>
+<pre class="r"><code>ph_df %&gt;%
+  make_future_dataframe(periods = 40, freq = &quot;month&quot;, include_history = TRUE) %&gt;%
+  predict(ph_df, .) %&gt;%
+  plot(ph_df, .)</code></pre>
+<p><img src="/blog/2017-12-31-forecasting-independence-the-catalan-case/2017-12-31-forecasting-independence-the-catalan-case_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
