@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Simple minimalist theme">
+<meta name="keywords" content="blog,goa,hugo,r,statistics,education">
+
+<base href="/">
+
+<title>Jorge Cimentada</title>
+
+<meta name="generator" content="Hugo 0.37.1" />
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
+<script src="/js/highlight.pack.js"></script>
+<script>
+hljs.configure({langauges: ['R']});
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="row text-left title">
+  <h1 class="title">What time should I ride my bike?</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON FEB 12, 2018 
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    <pre class="r"><code>library(DBI)
+library(RMySQL)
+library(caret)
+library(tidyverse)
+
+con &lt;- dbConnect(MySQL(),
+                 dbname = &quot;bicing&quot;, # in &quot;&quot; quotes
+                 host = &quot;82.196.1.229&quot;,
+                 user = &quot;cimentadaj&quot;, # in &quot;&quot; quotes
+                 password = rstudioapi::askForPassword())
+
+
+query &lt;- glue::glue(
+&quot;SELECT slots, bikes, status, time
+ FROM bicing_station
+ WHERE hour(time) IN (&#39;7&#39;, &#39;8&#39;, &#39;9&#39;, &#39;10&#39;, &#39;18&#39;, &#39;19&#39;, &#39;20&#39;)
+ AND error_msg IS NULL;&quot;)
+
+bicing &lt;-
+  as_tibble(dbGetQuery(con, query)) %&gt;%
+  mutate(time = lubridate::ymd_hms(time),
+         slots = as.numeric(slots),
+         bikes = as.numeric(slots))</code></pre>
+<p>The station was always open.</p>
+<pre class="r"><code>bicing %&gt;%
+  filter(status != &quot;OPN&quot;)</code></pre>
+<p>In the morning there seem’s to be more bikes than in the evening</p>
+<pre class="r"><code>bicing %&gt;%
+  mutate(hour = as.factor(lubridate::hour(time))) %&gt;%
+  ggplot(aes(hour, bikes)) +
+  geom_boxplot()</code></pre>
+<p>Does this differ by day?</p>
+<pre class="r"><code>bicing %&gt;%
+  mutate(hour = lubridate::hour(time),
+         day = lubridate::wday(time, label = TRUE),
+         morning_evening = ifelse(hour &lt;= 10, &quot;Morning&quot;, &quot;Evening&quot;)) %&gt;%
+  ggplot(aes(day, bikes, fill = morning_evening)) +
+  geom_col(position = &quot;fill&quot;)</code></pre>
+<p>There we can see the Friday effect</p>
+<p>What’s the rate at which bicycles are being taken out by hour? At which time is the station emptying out quicker?</p>
+<pre class="r"><code>intm_df &lt;-
+  bicing %&gt;%
+  mutate(hour = lubridate::hour(time)) %&gt;%
+  group_by(hour) %&gt;%
+  mutate(future_bike = lag(bikes)) %&gt;%
+  summarize(avg_movement = mean(bikes != future_bike, na.rm = TRUE)) %&gt;%
+  ungroup()</code></pre>
+<p>Even though there are more bikes in the morning, bike activity is the same in th evening as in the early morning.</p>
+<pre class="r"><code>intm_df &lt;-
+  bicing %&gt;%
+  mutate(hour = lubridate::hour(time),
+         day = lubridate::wday(time, label = TRUE)) %&gt;%
+  group_by(hour, day) %&gt;%
+  mutate(future_bike = lag(bikes)) %&gt;%
+  summarize(avg_movement = mean(bikes != future_bike, na.rm = TRUE)) %&gt;%
+  ungroup()
+
+intm_df %&gt;%
+  top_n(10, avg_movement) %&gt;%
+  unite(hour_day, hour, day, sep = &quot; - &quot;) %&gt;%
+  ggplot(aes(hour_day, avg_movement)) +
+  geom_col() +
+  ylim(c(0, 1))</code></pre>
+<p>Wednesdays at 9 AM seems to be the worst moment to pick/drop off a bike given that in 40% of the hour there’s movement. An interesting pattern is that most of the activity is concentrate on Wednesdays and Tuesdays and not only in the mornings.</p>
+<p>When are the moments when the station is empty? When should I look for it?</p>
+<pre class="r"><code>bicing %&gt;%
+  filter(bikes == 0) %&gt;%
+  count(hour = lubridate::hour(time), day = lubridate::wday(time, label = TRUE)) %&gt;%
+  arrange(day, hour) %&gt;%
+  ggplot(aes(hour, n)) +
+  geom_col() +
+  facet_wrap(~ day, ncol = 3)</code></pre>
+<p>Bicing people probably prepare very well because it’s mostly empty in the evenings</p>
+<p>Can I predict whether the station will be empty?</p>
+<pre class="r"><code>empty_bicycle &lt;-
+  mutate(bicing,
+         empty = ifelse(bikes == 0, 1, 0),
+         hour = as.character(lubridate::hour(time)),
+         # morning = ifelse(time &lt;= 10, 1, 0),
+         day = lubridate::wday(time),
+         # weekend = ifelse(between(day, 6, 7), 1, 0),
+         day = as.character(day)) %&gt;%
+  select(-(1:4))
+
+training_rows &lt;- createDataPartition(empty_bicycle$empty, 1, p = 0.8)[[1]]
+
+training &lt;- empty_bicycle[training_rows, ]
+test &lt;- empty_bicycle[-training_rows, ]
+
+mod1 &lt;- glm(empty ~ . + day:hour, data = training, family = &quot;binomial&quot;)
+
+pred1 &lt;- predict(mod1, newdata = test, type = &#39;response&#39;)
+
+pred_empty &lt;- rbinom(length(pred1), 1, prob = pred1)
+
+confusionMatrix(test$empty, pred_empty, positive = &quot;1&quot;)</code></pre>
+<p>This model is terrible at predicting the emptyness of the stations.</p>
+<p>A model is as good as the data that’s being fit.</p>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+      
+      
+      TAGS:
+      
+      
+      <a class="meta" href="/tags/r">R</a>, 
+      
+      <a class="meta" href="/tags/project">PROJECT</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+<div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "cimentadaj-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  <span><a class="menu-item" href="/blog/2018-02-06-rewriting-duplicated/rewriting-duplicated/">&lt; prev | </a></span>
+  
+  
+  <span><a class="menu-item" href="/blog">blog</a></span>
+  
+  
+  <span><a class="menu-item" href="/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/"> | next &gt;</a></span>
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="/">home</a></h4>
+</section>
+
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2017. Jorge Cimentada. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'XYZ', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+
