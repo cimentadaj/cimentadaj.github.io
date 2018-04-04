@@ -10,6 +10,8 @@ git push
 
 git checkout master
 
+git pull
+
 cd ..
 
 git clone -b root https://github.com/cimentadaj/cimentadaj.github.io.git tempfolder
