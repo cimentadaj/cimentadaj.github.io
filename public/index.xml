@@ -22,8 +22,9 @@
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;We identify the POST method and the URL&lt;/li&gt;
 &lt;/ol&gt;
+&lt;!-- &lt;img src=&#34;/img/post_method.png&#34; alt=&#34;Drawing&#34; style=&#34;width: 600px;&#34;/&gt; --&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;post_method.png&#34; /&gt;
+&lt;img src=&#34;/img/post_method.png&#34; /&gt;
 
 &lt;/div&gt;
 &lt;p&gt;It’s the branch with &lt;code&gt;form&lt;/code&gt; that has &lt;code&gt;method=&#39;post&#39;&lt;/code&gt;.&lt;/p&gt;
@@ -31,7 +32,7 @@
 &lt;li&gt;Open the &lt;code&gt;POST&lt;/code&gt; branch and find all fields. First are the two ‘hidden’ fields.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;hidden_fields.png&#34; /&gt;
+&lt;img src=&#34;/img/hidden_fields.png&#34; /&gt;
 
 &lt;/div&gt;
 &lt;p&gt;Below the &lt;code&gt;form&lt;/code&gt; tag, we see two &lt;code&gt;input&lt;/code&gt; tags set to hidden, there they are! Even though we want to login, we also have to provide the two hidden fields. Take not of both their &lt;code&gt;name&lt;/code&gt; and &lt;code&gt;value&lt;/code&gt; tags.&lt;/p&gt;
@@ -40,12 +41,12 @@
 &lt;/ol&gt;
 &lt;p&gt;For username:&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;username.png&#34; /&gt;
+&lt;img src=&#34;/img/username.png&#34; /&gt;
 
 &lt;/div&gt;
 &lt;p&gt;For password:&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;password.png&#34; /&gt;
+&lt;img src=&#34;/img/password.png&#34; /&gt;
 
 &lt;/div&gt;
 &lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
