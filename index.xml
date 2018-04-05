@@ -6,10 +6,93 @@
     <description>Recent content on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Thu, 22 Mar 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 05 Apr 2018 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Login in, scraping and hidden fields</title>
+      <link>/blog/2018-04-05-login-in-scraping-and-hidden-fields/login-in-scraping-and-hidden-fields/</link>
+      <pubDate>Thu, 05 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018-04-05-login-in-scraping-and-hidden-fields/login-in-scraping-and-hidden-fields/</guid>
+      <description>&lt;p&gt;Lightning post. Earlier today I was trying to scrape the emails from all the PhD candidates in my program and I had to log in to out ‘Aula Global’. I did so using &lt;code&gt;httr&lt;/code&gt; but something was off: I introduced both my username and password but the website did not log in. Apparently, when loging in through &lt;code&gt;POST&lt;/code&gt;, there’s sometimes hidden fields that you need to fill out! I would’ve never though about this. Below is my case study, excluding my credentials&lt;/p&gt;
+&lt;p&gt;First thing we have to do is identify the &lt;code&gt;POST&lt;/code&gt; method and the inputs to the request. Using Google Chrome, go to the website &lt;a href=&#34;https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php&#34;&gt;https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php&lt;/a&gt; -&amp;gt; Settings -&amp;gt; More tools -&amp;gt; Developer tools. Here we have the complete html of the website.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;We identify the POST method and the URL&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;post_method.png&#34; /&gt;
+
+&lt;/div&gt;
+&lt;p&gt;It’s the branch with &lt;code&gt;form&lt;/code&gt; that has &lt;code&gt;method=&#39;post&#39;&lt;/code&gt;.&lt;/p&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Open the &lt;code&gt;POST&lt;/code&gt; branch and find all fields. First are the two ‘hidden’ fields.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;hidden_fields.png&#34; /&gt;
+
+&lt;/div&gt;
+&lt;p&gt;Below the &lt;code&gt;form&lt;/code&gt; tag, we see two &lt;code&gt;input&lt;/code&gt; tags set to hidden, there they are! Even though we want to login, we also have to provide the two hidden fields. Take not of both their &lt;code&gt;name&lt;/code&gt; and &lt;code&gt;value&lt;/code&gt; tags.&lt;/p&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Dive deeper down the branch and find other fields. In our case, username and password.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;For username:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;username.png&#34; /&gt;
+
+&lt;/div&gt;
+&lt;p&gt;For password:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;password.png&#34; /&gt;
+
+&lt;/div&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Writen down the field names with the correspoding values.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_fields &amp;lt;-
+  list(
+    adAS_username = &amp;quot;private&amp;quot;,
+    adAS_password = &amp;quot;private&amp;quot;,
+    adAS_i18n_theme = &amp;#39;en&amp;#39;,
+    adAS_mode = &amp;#39;authn&amp;#39;
+  )&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Load our packages and our URL’s&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+library(httr)
+library(xml2)
+
+login &amp;lt;- &amp;quot;https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php&amp;quot;
+website &amp;lt;- &amp;quot;https://aulaglobal.upf.edu/user/index.php?page=0&amp;amp;perpage=5000&amp;amp;mode=1&amp;amp;accesssince=0&amp;amp;search&amp;amp;roleid=5&amp;amp;contextid=185837&amp;amp;id=9829&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Login using all of our fields.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;upf &amp;lt;- handle(&amp;quot;https://aulaglobal.upf.edu&amp;quot;)
+
+access &amp;lt;- POST(login,
+               body = all_fields,
+               handle = upf)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note how I set the &lt;code&gt;handle&lt;/code&gt;. If the website you want to visit and the website that hosts the login information have the same root of the URL (&lt;code&gt;aulaglobal.upf.edu&lt;/code&gt; for example), then you can avoid using &lt;code&gt;handle&lt;/code&gt; (it’s done behind the scenes). In my case, I set the &lt;code&gt;handle&lt;/code&gt; to the same root URL of the website I WANT to visit after I log in (because they have different root URL’s). This way the cookies and login information from the login are preserved through out the session.&lt;/p&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Request the information from the website you’re interested&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;emails &amp;lt;- GET(website, handle = upf)&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Scrape away!&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_emails &amp;lt;-
+  read_html(emails) %&amp;gt;% 
+  xml_ns_strip() %&amp;gt;% 
+  xml_find_all(&amp;quot;//table//a&amp;quot;) %&amp;gt;% 
+  as_list() %&amp;gt;% 
+  unlist() %&amp;gt;% 
+  str_subset(&amp;quot;.+@upf.edu$&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Unfortunately you won’t be able to reproduce this script because you don’t have a log information unless you belong to the same PhD program as I do. However, I hope you find the hidden fields explanation useful, I’m sure I will come back to this in the near future for reference!&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>RSelenium and scraping Catalan educational data</title>
