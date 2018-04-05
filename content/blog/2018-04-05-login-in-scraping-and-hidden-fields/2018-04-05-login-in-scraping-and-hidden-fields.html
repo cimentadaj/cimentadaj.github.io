@@ -1,0 +1,88 @@
+---
+title: Login in, scraping and hidden fields
+author: Jorge Cimentada
+date: '2018-04-05'
+slug: login-in-scraping-and-hidden-fields
+categories: []
+tags: ['R', 'scraping']
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+
+
+<p>Lightning post. Earlier today I was trying to scrape the emails from all the PhD candidates in my program and I had to log in to out ‘Aula Global’. I did so using <code>httr</code> but something was off: I introduced both my username and password but the website did not log in. Apparently, when loging in through <code>POST</code>, there’s sometimes hidden fields that you need to fill out! I would’ve never though about this. Below is my case study, excluding my credentials</p>
+<p>First thing we have to do is identify the <code>POST</code> method and the inputs to the request. Using Google Chrome, go to the website <a href="https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php">https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php</a> -&gt; Settings -&gt; More tools -&gt; Developer tools. Here we have the complete html of the website.</p>
+<ol style="list-style-type: decimal">
+<li>We identify the POST method and the URL</li>
+</ol>
+<div class="figure">
+<img src="post_method.png" />
+
+</div>
+<p>It’s the branch with <code>form</code> that has <code>method='post'</code>.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Open the <code>POST</code> branch and find all fields. First are the two ‘hidden’ fields.</li>
+</ol>
+<div class="figure">
+<img src="hidden_fields.png" />
+
+</div>
+<p>Below the <code>form</code> tag, we see two <code>input</code> tags set to hidden, there they are! Even though we want to login, we also have to provide the two hidden fields. Take not of both their <code>name</code> and <code>value</code> tags.</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Dive deeper down the branch and find other fields. In our case, username and password.</li>
+</ol>
+<p>For username:</p>
+<div class="figure">
+<img src="username.png" />
+
+</div>
+<p>For password:</p>
+<div class="figure">
+<img src="password.png" />
+
+</div>
+<ol start="4" style="list-style-type: decimal">
+<li>Writen down the field names with the correspoding values.</li>
+</ol>
+<pre class="r"><code>all_fields &lt;-
+  list(
+    adAS_username = &quot;private&quot;,
+    adAS_password = &quot;private&quot;,
+    adAS_i18n_theme = &#39;en&#39;,
+    adAS_mode = &#39;authn&#39;
+  )</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>Load our packages and our URL’s</li>
+</ol>
+<pre class="r"><code>library(tidyverse)
+library(httr)
+library(xml2)
+
+login &lt;- &quot;https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php&quot;
+website &lt;- &quot;https://aulaglobal.upf.edu/user/index.php?page=0&amp;perpage=5000&amp;mode=1&amp;accesssince=0&amp;search&amp;roleid=5&amp;contextid=185837&amp;id=9829&quot;</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Login using all of our fields.</li>
+</ol>
+<pre class="r"><code>upf &lt;- handle(&quot;https://aulaglobal.upf.edu&quot;)
+
+access &lt;- POST(login,
+               body = all_fields,
+               handle = upf)</code></pre>
+<p>Note how I set the <code>handle</code>. If the website you want to visit and the website that hosts the login information have the same root of the URL (<code>aulaglobal.upf.edu</code> for example), then you can avoid using <code>handle</code> (it’s done behind the scenes). In my case, I set the <code>handle</code> to the same root URL of the website I WANT to visit after I log in (because they have different root URL’s). This way the cookies and login information from the login are preserved through out the session.</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Request the information from the website you’re interested</li>
+</ol>
+<pre class="r"><code>emails &lt;- GET(website, handle = upf)</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>Scrape away!</li>
+</ol>
+<pre class="r"><code>all_emails &lt;-
+  read_html(emails) %&gt;% 
+  xml_ns_strip() %&gt;% 
+  xml_find_all(&quot;//table//a&quot;) %&gt;% 
+  as_list() %&gt;% 
+  unlist() %&gt;% 
+  str_subset(&quot;.+@upf.edu$&quot;)</code></pre>
+<p>Unfortunately you won’t be able to reproduce this script because you don’t have a log information unless you belong to the same PhD program as I do. However, I hope you find the hidden fields explanation useful, I’m sure I will come back to this in the near future for reference!</p>
