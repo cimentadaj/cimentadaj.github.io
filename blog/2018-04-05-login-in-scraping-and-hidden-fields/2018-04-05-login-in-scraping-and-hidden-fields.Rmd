@@ -21,13 +21,15 @@ First thing we have to do is identify the `POST` method and the inputs to the re
 
 1. We identify the POST method and the URL
 
-![](post_method.png)
+<!-- <img src="/img/post_method.png" alt="Drawing" style="width: 600px;"/> -->
+
+![](/img/post_method.png)
 
 It's the branch with `form` that has `method='post'`.
 
 2. Open the `POST` branch and find all fields. First are the two 'hidden' fields.
 
-![](hidden_fields.png)
+![](/img/hidden_fields.png)
 
 Below the `form` tag, we see two `input` tags set to hidden, there they are! Even though we want to login, we also have to provide the two hidden fields. Take not of both their `name` and `value` tags.
 
@@ -35,12 +37,12 @@ Below the `form` tag, we see two `input` tags set to hidden, there they are! Eve
 
 For username:
 
-![](username.png)
+![](/img/username.png)
 
 For password:
 
 
-![](password.png)
+![](/img/password.png)
 
 4. Writen down the field names with the correspoding values.
 
