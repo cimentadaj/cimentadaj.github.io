@@ -80,18 +80,18 @@ hljs.initHighlightingOnLoad();
 <pre class="r"><code>library(ggridges)
 Catalan_elections</code></pre>
 <pre><code>## # A tibble: 20,764 x 4
-##          Municipality  Year Option Percent
-##                 &lt;chr&gt; &lt;int&gt;  &lt;chr&gt;   &lt;dbl&gt;
-##  1 Abella de la Conca  1980   Indy   68.42
-##  2 Abella de la Conca  1984   Indy   95.71
-##  3 Abella de la Conca  1988   Indy   89.36
-##  4 Abella de la Conca  1992   Indy   81.67
-##  5 Abella de la Conca  1995   Indy   80.00
-##  6 Abella de la Conca  1999   Indy   74.70
-##  7 Abella de la Conca  2003   Indy   84.42
-##  8 Abella de la Conca  2006   Indy   73.24
-##  9 Abella de la Conca  2010   Indy   75.90
-## 10 Abella de la Conca  2012   Indy   83.95
+##    Municipality        Year Option Percent
+##    &lt;chr&gt;              &lt;int&gt; &lt;chr&gt;    &lt;dbl&gt;
+##  1 Abella de la Conca  1980 Indy      68.4
+##  2 Abella de la Conca  1984 Indy      95.7
+##  3 Abella de la Conca  1988 Indy      89.4
+##  4 Abella de la Conca  1992 Indy      81.7
+##  5 Abella de la Conca  1995 Indy      80.0
+##  6 Abella de la Conca  1999 Indy      74.7
+##  7 Abella de la Conca  2003 Indy      84.4
+##  8 Abella de la Conca  2006 Indy      73.2
+##  9 Abella de la Conca  2010 Indy      75.9
+## 10 Abella de la Conca  2012 Indy      84.0
 ## # ... with 20,754 more rows</code></pre>
 <p>Very straight forward. It’s the ‘Indy’ or Independent vote and the ‘Unionist’ vote from 1980 until 2015. The data is complete for nearly all Municipalities, meaning that the data is available for all years. Only a handful (~ 40) do not have data starting from 1980.</p>
 <p>Basically, I wanted to answer one question: has the indepence vote grown over time? This question is of general interest considering that the topic is being hotly debated in the media and next week new Catalan elections will be held in a scenario never seen before; after independent parties proclaimed unilateral independece and the government seized control of Catalunya. The elections are predicted to be very contested with Independent parties losing some votes.</p>
