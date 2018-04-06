@@ -19,7 +19,7 @@ knitr::opts_chunk$set(message = FALSE,
                       collapse = TRUE,
                       comment = "#",
                       fig.align = 'center',
-                      cache = TRUE)
+                      cache = FALSE)
 ```
 
 ```{r}
@@ -104,7 +104,7 @@ For example, check any episode from season [8](http://transcripts.foreverdreamin
 all_episodes$count <- map_dbl(all_episodes$text, nrow)
 ```
 
-We can extend the previous `tibble` to be a big more organized by separating the episode-season column into separate season and episo numbers.
+We can extend the previous `tibble` to be a bit more organized by separating the episode-season column into separate season and episo numbers.
 
 ```{r}
 all_episodes <-

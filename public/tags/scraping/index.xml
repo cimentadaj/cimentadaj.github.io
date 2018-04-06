@@ -473,19 +473,19 @@ all_episodes$id &amp;lt;- 1:nrow(all_episodes)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;There we go! Now we have a very organized &lt;code&gt;tibble&lt;/code&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_episodes
 # # A tibble: 208 x 3
-#                      episode_name
-#                             &amp;lt;chr&amp;gt;
-#  1                  01x01 - Pilot
-#  2         01x02 - Purple Giraffe
-#  3 01x03 - Sweet Taste of Liberty
-#  4    01x04 - Return of the Shirt
-#  5           01x05 - Okay Awesome
-#  6         01x06 - Slutty Pumpkin
-#  7             01x07 - Matchmaker
-#  8               01x08 - The Duel
-#  9   01x09 - Belly Full of Turkey
-# 10 01x10 - The Pineapple Incident
-# # ... with 198 more rows, and 2 more variables: link &amp;lt;chr&amp;gt;, id &amp;lt;int&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+#    episode_name                   link                                  id
+#    &amp;lt;chr&amp;gt;                          &amp;lt;chr&amp;gt;                              &amp;lt;int&amp;gt;
+#  1 01x01 - Pilot                  http://transcripts.foreverdreamin~     1
+#  2 01x02 - Purple Giraffe         http://transcripts.foreverdreamin~     2
+#  3 01x03 - Sweet Taste of Liberty http://transcripts.foreverdreamin~     3
+#  4 01x04 - Return of the Shirt    http://transcripts.foreverdreamin~     4
+#  5 01x05 - Okay Awesome           http://transcripts.foreverdreamin~     5
+#  6 01x06 - Slutty Pumpkin         http://transcripts.foreverdreamin~     6
+#  7 01x07 - Matchmaker             http://transcripts.foreverdreamin~     7
+#  8 01x08 - The Duel               http://transcripts.foreverdreamin~     8
+#  9 01x09 - Belly Full of Turkey   http://transcripts.foreverdreamin~     9
+# 10 01x10 - The Pineapple Incident http://transcripts.foreverdreamin~    10
+# # ... with 198 more rows&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The remaining part is to actually scrape the text from each episode. We can work that out for a single episode and then turn that into a function and apply for all episodes.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;episode_fun &amp;lt;- function(file) {
   
@@ -506,25 +506,25 @@ all_episodes$id &amp;lt;- 1:nrow(all_episodes)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The above function reads each episode, turns the html text into a data frame and organizes it clearly for text analysis. For example:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;episode_fun(all_episodes$link[15])
 # # A tibble: 195 x 1
-#                                                                           text
-#                                                                          &amp;lt;chr&amp;gt;
-#  1 Ted from 2030: Kids, something you might not know about your Uncle Marshall
-#  2                  &amp;quot;Ted: You don&amp;#39;t have to shout out \&amp;quot;poker\&amp;quot; when you win.&amp;quot;
-#  3                                     Marshall: I know. It&amp;#39;s just fun to say.
-#  4 &amp;quot;Ted from 2030: We all finally agreed Marshall should be running our game n
-#  5 &amp;quot;Marshall: It&amp;#39;s called \&amp;quot;Marsh-gammon.\&amp;quot; It combines all the best features 
-#  6                                               Robin: Backgammon, obviously.
-#  7 &amp;quot;Marshall: No. Backgammon sucks. I took the only good part of backgammon, t
-#  8                                     Lily: I&amp;#39;m so excited Victoria&amp;#39;s coming.
-#  9                                   Robin: I&amp;#39;m going to go get another round.
-# 10 Ted: Okay, I want to lay down some ground rules for tonight. Barney, I actu
+#    text                                                                   
+#    &amp;lt;chr&amp;gt;                                                                  
+#  1 Ted from 2030: Kids, something you might not know about your Uncle Mar~
+#  2 &amp;quot;Ted: You don&amp;#39;t have to shout out \&amp;quot;poker\&amp;quot; when you win.&amp;quot;             
+#  3 Marshall: I know. It&amp;#39;s just fun to say.                                
+#  4 &amp;quot;Ted from 2030: We all finally agreed Marshall should be running our g~
+#  5 &amp;quot;Marshall: It&amp;#39;s called \&amp;quot;Marsh-gammon.\&amp;quot; It combines all the best feat~
+#  6 Robin: Backgammon, obviously.                                          
+#  7 &amp;quot;Marshall: No. Backgammon sucks. I took the only good part of backgamm~
+#  8 Lily: I&amp;#39;m so excited Victoria&amp;#39;s coming.                                
+#  9 Robin: I&amp;#39;m going to go get another round.                              
+# 10 Ted: Okay, I want to lay down some ground rules for tonight. Barney, I~
 # # ... with 185 more rows&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;We now have a data frame with only dialogue for each character. We need to apply that function to each episode and &lt;code&gt;bind&lt;/code&gt; everything together. We first apply the function to every episode.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_episodes$text &amp;lt;- map(all_episodes$link, episode_fun)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The &lt;code&gt;text&lt;/code&gt; list-column is an organized list with text for each episode. However, manual inspection of some episodes actually denotes a small error that limits our analysis greatly. Among the main interests of this document is to study relationships and presence between characters. For that, we need each line of text to be accompanied by the character who said it. Unfortunately, some of these scripts don’t have that.&lt;/p&gt;
 &lt;p&gt;For example, check any episode from season &lt;a href=&#34;http://transcripts.foreverdreaming.org/viewforum.php?f=177&amp;amp;start=175&#34;&gt;8&lt;/a&gt; and &lt;a href=&#34;http://transcripts.foreverdreaming.org/viewforum.php?f=177&amp;amp;start=200&#34;&gt;9&lt;/a&gt;. The writer didn’t write the dialogue and just rewrote the lines. There’s nothing we can do so far to improve that and we’ll be excluding these episodes. This pattern is also present in random episodes like in season 4 or season 6. We can exclude chapters based on the number of lines we parsed. On average, each of these episodes has about 200 lines of dialogue. Anything significantly lower, like 30 or 50 lines, is an episode which doesn’t have a lot of dialogue.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_episodes$count &amp;lt;- map_dbl(all_episodes$text, nrow)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We can extend the previous &lt;code&gt;tibble&lt;/code&gt; to be a big more organized by separating the episode-season column into separate season and episo numbers.&lt;/p&gt;
+&lt;p&gt;We can extend the previous &lt;code&gt;tibble&lt;/code&gt; to be a bit more organized by separating the episode-season column into separate season and episo numbers.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_episodes &amp;lt;-
   all_episodes %&amp;gt;%
   separate(episode_name, c(&amp;quot;season&amp;quot;, &amp;quot;episode&amp;quot;), &amp;quot;-&amp;quot;, extra = &amp;quot;merge&amp;quot;) %&amp;gt;%
@@ -562,18 +562,18 @@ all_episodes$id &amp;lt;- 1:nrow(all_episodes)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Just to make sure, let’s look at the &lt;code&gt;tibble&lt;/code&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;words_per_character
 # # A tibble: 88,174 x 7
-#      name season episode character episode_lines_id all_lines_id      word
-#     &amp;lt;ord&amp;gt;  &amp;lt;ord&amp;gt;   &amp;lt;ord&amp;gt;     &amp;lt;chr&amp;gt;            &amp;lt;int&amp;gt;        &amp;lt;int&amp;gt;     &amp;lt;chr&amp;gt;
-#  1 01x01      01     01   marshall                1            1      ring
-#  2 01x01      01     01   marshall                1            1     marry
-#  3 01x01      01     01        ted                2            2   perfect
-#  4 01x01      01     01        ted                2            2   engaged
-#  5 01x01      01     01        ted                2            2       pop
-#  6 01x01      01     01        ted                2            2 champagne
-#  7 01x01      01     01        ted                2            2     drink
-#  8 01x01      01     01        ted                2            2     toast
-#  9 01x01      01     01        ted                2            2   kitchen
-# 10 01x01      01     01        ted                2            2     floor
+#    name     season episode character episode_lines_id all_lines_id word   
+#    &amp;lt;ord&amp;gt;    &amp;lt;ord&amp;gt;  &amp;lt;ord&amp;gt;   &amp;lt;chr&amp;gt;                &amp;lt;int&amp;gt;        &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;  
+#  1 &amp;quot;01x01 &amp;quot; 01     &amp;quot;01 &amp;quot;   marshall                 1            1 ring   
+#  2 &amp;quot;01x01 &amp;quot; 01     &amp;quot;01 &amp;quot;   marshall                 1            1 marry  
+#  3 &amp;quot;01x01 &amp;quot; 01     &amp;quot;01 &amp;quot;   ted                      2            2 perfect
+#  4 &amp;quot;01x01 &amp;quot; 01     &amp;quot;01 &amp;quot;   ted                      2            2 engaged
+#  5 &amp;quot;01x01 &amp;quot; 01     &amp;quot;01 &amp;quot;   ted                      2            2 pop    
+#  6 &amp;quot;01x01 &amp;quot; 01     &amp;quot;01 &amp;quot;   ted                      2            2 champa~
+#  7 &amp;quot;01x01 &amp;quot; 01     &amp;quot;01 &amp;quot;   ted                      2            2 drink  
+#  8 &amp;quot;01x01 &amp;quot; 01     &amp;quot;01 &amp;quot;   ted                      2            2 toast  
+#  9 &amp;quot;01x01 &amp;quot; 01     &amp;quot;01 &amp;quot;   ted                      2            2 kitchen
+# 10 &amp;quot;01x01 &amp;quot; 01     &amp;quot;01 &amp;quot;   ted                      2            2 floor  
 # # ... with 88,164 more rows&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Perfect! One row per word, per character, per episode with the id of the line of the word.&lt;/p&gt;
 &lt;p&gt;Alright, let’s get our hands dirty. First, let visualize the presence of each character in terms of words over time.&lt;/p&gt;

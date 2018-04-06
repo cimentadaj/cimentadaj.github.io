@@ -42,19 +42,19 @@ all_episodes$id &lt;- 1:nrow(all_episodes)</code></pre>
 <p>There we go! Now we have a very organized <code>tibble</code>.</p>
 <pre class="r"><code>all_episodes
 # # A tibble: 208 x 3
-#                      episode_name
-#                             &lt;chr&gt;
-#  1                  01x01 - Pilot
-#  2         01x02 - Purple Giraffe
-#  3 01x03 - Sweet Taste of Liberty
-#  4    01x04 - Return of the Shirt
-#  5           01x05 - Okay Awesome
-#  6         01x06 - Slutty Pumpkin
-#  7             01x07 - Matchmaker
-#  8               01x08 - The Duel
-#  9   01x09 - Belly Full of Turkey
-# 10 01x10 - The Pineapple Incident
-# # ... with 198 more rows, and 2 more variables: link &lt;chr&gt;, id &lt;int&gt;</code></pre>
+#    episode_name                   link                                  id
+#    &lt;chr&gt;                          &lt;chr&gt;                              &lt;int&gt;
+#  1 01x01 - Pilot                  http://transcripts.foreverdreamin~     1
+#  2 01x02 - Purple Giraffe         http://transcripts.foreverdreamin~     2
+#  3 01x03 - Sweet Taste of Liberty http://transcripts.foreverdreamin~     3
+#  4 01x04 - Return of the Shirt    http://transcripts.foreverdreamin~     4
+#  5 01x05 - Okay Awesome           http://transcripts.foreverdreamin~     5
+#  6 01x06 - Slutty Pumpkin         http://transcripts.foreverdreamin~     6
+#  7 01x07 - Matchmaker             http://transcripts.foreverdreamin~     7
+#  8 01x08 - The Duel               http://transcripts.foreverdreamin~     8
+#  9 01x09 - Belly Full of Turkey   http://transcripts.foreverdreamin~     9
+# 10 01x10 - The Pineapple Incident http://transcripts.foreverdreamin~    10
+# # ... with 198 more rows</code></pre>
 <p>The remaining part is to actually scrape the text from each episode. We can work that out for a single episode and then turn that into a function and apply for all episodes.</p>
 <pre class="r"><code>episode_fun &lt;- function(file) {
   
@@ -75,25 +75,25 @@ all_episodes$id &lt;- 1:nrow(all_episodes)</code></pre>
 <p>The above function reads each episode, turns the html text into a data frame and organizes it clearly for text analysis. For example:</p>
 <pre class="r"><code>episode_fun(all_episodes$link[15])
 # # A tibble: 195 x 1
-#                                                                           text
-#                                                                          &lt;chr&gt;
-#  1 Ted from 2030: Kids, something you might not know about your Uncle Marshall
-#  2                  &quot;Ted: You don&#39;t have to shout out \&quot;poker\&quot; when you win.&quot;
-#  3                                     Marshall: I know. It&#39;s just fun to say.
-#  4 &quot;Ted from 2030: We all finally agreed Marshall should be running our game n
-#  5 &quot;Marshall: It&#39;s called \&quot;Marsh-gammon.\&quot; It combines all the best features 
-#  6                                               Robin: Backgammon, obviously.
-#  7 &quot;Marshall: No. Backgammon sucks. I took the only good part of backgammon, t
-#  8                                     Lily: I&#39;m so excited Victoria&#39;s coming.
-#  9                                   Robin: I&#39;m going to go get another round.
-# 10 Ted: Okay, I want to lay down some ground rules for tonight. Barney, I actu
+#    text                                                                   
+#    &lt;chr&gt;                                                                  
+#  1 Ted from 2030: Kids, something you might not know about your Uncle Mar~
+#  2 &quot;Ted: You don&#39;t have to shout out \&quot;poker\&quot; when you win.&quot;             
+#  3 Marshall: I know. It&#39;s just fun to say.                                
+#  4 &quot;Ted from 2030: We all finally agreed Marshall should be running our g~
+#  5 &quot;Marshall: It&#39;s called \&quot;Marsh-gammon.\&quot; It combines all the best feat~
+#  6 Robin: Backgammon, obviously.                                          
+#  7 &quot;Marshall: No. Backgammon sucks. I took the only good part of backgamm~
+#  8 Lily: I&#39;m so excited Victoria&#39;s coming.                                
+#  9 Robin: I&#39;m going to go get another round.                              
+# 10 Ted: Okay, I want to lay down some ground rules for tonight. Barney, I~
 # # ... with 185 more rows</code></pre>
 <p>We now have a data frame with only dialogue for each character. We need to apply that function to each episode and <code>bind</code> everything together. We first apply the function to every episode.</p>
 <pre class="r"><code>all_episodes$text &lt;- map(all_episodes$link, episode_fun)</code></pre>
 <p>The <code>text</code> list-column is an organized list with text for each episode. However, manual inspection of some episodes actually denotes a small error that limits our analysis greatly. Among the main interests of this document is to study relationships and presence between characters. For that, we need each line of text to be accompanied by the character who said it. Unfortunately, some of these scripts don’t have that.</p>
 <p>For example, check any episode from season <a href="http://transcripts.foreverdreaming.org/viewforum.php?f=177&amp;start=175">8</a> and <a href="http://transcripts.foreverdreaming.org/viewforum.php?f=177&amp;start=200">9</a>. The writer didn’t write the dialogue and just rewrote the lines. There’s nothing we can do so far to improve that and we’ll be excluding these episodes. This pattern is also present in random episodes like in season 4 or season 6. We can exclude chapters based on the number of lines we parsed. On average, each of these episodes has about 200 lines of dialogue. Anything significantly lower, like 30 or 50 lines, is an episode which doesn’t have a lot of dialogue.</p>
 <pre class="r"><code>all_episodes$count &lt;- map_dbl(all_episodes$text, nrow)</code></pre>
-<p>We can extend the previous <code>tibble</code> to be a big more organized by separating the episode-season column into separate season and episo numbers.</p>
+<p>We can extend the previous <code>tibble</code> to be a bit more organized by separating the episode-season column into separate season and episo numbers.</p>
 <pre class="r"><code>all_episodes &lt;-
   all_episodes %&gt;%
   separate(episode_name, c(&quot;season&quot;, &quot;episode&quot;), &quot;-&quot;, extra = &quot;merge&quot;) %&gt;%
@@ -131,18 +131,18 @@ all_episodes$id &lt;- 1:nrow(all_episodes)</code></pre>
 <p>Just to make sure, let’s look at the <code>tibble</code>.</p>
 <pre class="r"><code>words_per_character
 # # A tibble: 88,174 x 7
-#      name season episode character episode_lines_id all_lines_id      word
-#     &lt;ord&gt;  &lt;ord&gt;   &lt;ord&gt;     &lt;chr&gt;            &lt;int&gt;        &lt;int&gt;     &lt;chr&gt;
-#  1 01x01      01     01   marshall                1            1      ring
-#  2 01x01      01     01   marshall                1            1     marry
-#  3 01x01      01     01        ted                2            2   perfect
-#  4 01x01      01     01        ted                2            2   engaged
-#  5 01x01      01     01        ted                2            2       pop
-#  6 01x01      01     01        ted                2            2 champagne
-#  7 01x01      01     01        ted                2            2     drink
-#  8 01x01      01     01        ted                2            2     toast
-#  9 01x01      01     01        ted                2            2   kitchen
-# 10 01x01      01     01        ted                2            2     floor
+#    name     season episode character episode_lines_id all_lines_id word   
+#    &lt;ord&gt;    &lt;ord&gt;  &lt;ord&gt;   &lt;chr&gt;                &lt;int&gt;        &lt;int&gt; &lt;chr&gt;  
+#  1 &quot;01x01 &quot; 01     &quot;01 &quot;   marshall                 1            1 ring   
+#  2 &quot;01x01 &quot; 01     &quot;01 &quot;   marshall                 1            1 marry  
+#  3 &quot;01x01 &quot; 01     &quot;01 &quot;   ted                      2            2 perfect
+#  4 &quot;01x01 &quot; 01     &quot;01 &quot;   ted                      2            2 engaged
+#  5 &quot;01x01 &quot; 01     &quot;01 &quot;   ted                      2            2 pop    
+#  6 &quot;01x01 &quot; 01     &quot;01 &quot;   ted                      2            2 champa~
+#  7 &quot;01x01 &quot; 01     &quot;01 &quot;   ted                      2            2 drink  
+#  8 &quot;01x01 &quot; 01     &quot;01 &quot;   ted                      2            2 toast  
+#  9 &quot;01x01 &quot; 01     &quot;01 &quot;   ted                      2            2 kitchen
+# 10 &quot;01x01 &quot; 01     &quot;01 &quot;   ted                      2            2 floor  
 # # ... with 88,164 more rows</code></pre>
 <p>Perfect! One row per word, per character, per episode with the id of the line of the word.</p>
 <p>Alright, let’s get our hands dirty. First, let visualize the presence of each character in terms of words over time.</p>
