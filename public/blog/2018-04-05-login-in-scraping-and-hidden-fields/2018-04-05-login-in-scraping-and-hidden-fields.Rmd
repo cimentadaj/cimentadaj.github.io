@@ -15,9 +15,9 @@ knitr::opts_chunk$set(eval = FALSE)
 ```
 
 
-Lightning post. Earlier today I was trying to scrape the emails from all the PhD candidates in my program and I had to log in to out 'Aula Global'. I did so using `httr` but something was off: I introduced both my username and password but the website did not log in. Apparently, when loging in through `POST`, there's sometimes hidden fields that you need to fill out! I would've never though about this. Below is my case study, excluding my credentials
+Lightning post. Earlier today I was trying to scrape the emails from all the PhD candidates in my program and I had to log in from our 'Aula Global'. I did so using `httr` but something was off: I introduced both my username and password but the website did not log in. Apparently, when loging in through `POST`, sometimes there's a thing call hidden fields that you need to fill out! I would've never though about this. Below is a case study, that excludes my credentials.
 
-First thing we have to do is identify the `POST` method and the inputs to the request. Using Google Chrome, go to the website https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php -> Settings -> More tools -> Developer tools. Here we have the complete html of the website.
+The first thing we have to do is identify the `POST` method and the inputs to the request. Using Google Chrome, go to the website https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php  and then on the Google Chrome menu go to -> Settings -> More tools -> Developer tools. Here we have the complete html of the website.
 
 1. We identify the POST method and the URL
 
@@ -27,11 +27,11 @@ First thing we have to do is identify the `POST` method and the inputs to the re
 
 It's the branch with `form` that has `method='post'`.
 
-2. Open the `POST` branch and find all fields. First are the two 'hidden' fields.
+2. Open the `POST` branch and find all fields. We can see the two 'hidden' fields.
 
 ![](/img/hidden_fields.png)
 
-Below the `form` tag, we see two `input` tags set to hidden, there they are! Even though we want to login, we also have to provide the two hidden fields. Take not of both their `name` and `value` tags.
+Below the `form` tag, we see two `input` tags set to hidden, there they are! Even though we want to login, we also have to provide the two hidden fields. Take note of both their `name` and `value` tags.
 
 3. Dive deeper down the branch and find other fields. In our case, username and password.
 
@@ -44,7 +44,7 @@ For password:
 
 ![](/img/password.png)
 
-4. Writen down the field names with the correspoding values.
+4. Write down the field names with the correspoding values.
 
 ```{r}
 all_fields <-

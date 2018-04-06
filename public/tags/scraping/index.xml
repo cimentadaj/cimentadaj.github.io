@@ -17,8 +17,8 @@
       <pubDate>Thu, 05 Apr 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-04-05-login-in-scraping-and-hidden-fields/login-in-scraping-and-hidden-fields/</guid>
-      <description>&lt;p&gt;Lightning post. Earlier today I was trying to scrape the emails from all the PhD candidates in my program and I had to log in to out ‘Aula Global’. I did so using &lt;code&gt;httr&lt;/code&gt; but something was off: I introduced both my username and password but the website did not log in. Apparently, when loging in through &lt;code&gt;POST&lt;/code&gt;, there’s sometimes hidden fields that you need to fill out! I would’ve never though about this. Below is my case study, excluding my credentials&lt;/p&gt;
-&lt;p&gt;First thing we have to do is identify the &lt;code&gt;POST&lt;/code&gt; method and the inputs to the request. Using Google Chrome, go to the website &lt;a href=&#34;https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php&#34;&gt;https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php&lt;/a&gt; -&amp;gt; Settings -&amp;gt; More tools -&amp;gt; Developer tools. Here we have the complete html of the website.&lt;/p&gt;
+      <description>&lt;p&gt;Lightning post. Earlier today I was trying to scrape the emails from all the PhD candidates in my program and I had to log in from our ‘Aula Global’. I did so using &lt;code&gt;httr&lt;/code&gt; but something was off: I introduced both my username and password but the website did not log in. Apparently, when loging in through &lt;code&gt;POST&lt;/code&gt;, sometimes there’s a thing call hidden fields that you need to fill out! I would’ve never though about this. Below is a case study, that excludes my credentials.&lt;/p&gt;
+&lt;p&gt;The first thing we have to do is identify the &lt;code&gt;POST&lt;/code&gt; method and the inputs to the request. Using Google Chrome, go to the website &lt;a href=&#34;https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php&#34;&gt;https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php&lt;/a&gt; and then on the Google Chrome menu go to -&amp;gt; Settings -&amp;gt; More tools -&amp;gt; Developer tools. Here we have the complete html of the website.&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;We identify the POST method and the URL&lt;/li&gt;
 &lt;/ol&gt;
@@ -29,13 +29,13 @@
 &lt;/div&gt;
 &lt;p&gt;It’s the branch with &lt;code&gt;form&lt;/code&gt; that has &lt;code&gt;method=&#39;post&#39;&lt;/code&gt;.&lt;/p&gt;
 &lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;Open the &lt;code&gt;POST&lt;/code&gt; branch and find all fields. First are the two ‘hidden’ fields.&lt;/li&gt;
+&lt;li&gt;Open the &lt;code&gt;POST&lt;/code&gt; branch and find all fields. We can see the two ‘hidden’ fields.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div class=&#34;figure&#34;&gt;
 &lt;img src=&#34;/img/hidden_fields.png&#34; /&gt;
 
 &lt;/div&gt;
-&lt;p&gt;Below the &lt;code&gt;form&lt;/code&gt; tag, we see two &lt;code&gt;input&lt;/code&gt; tags set to hidden, there they are! Even though we want to login, we also have to provide the two hidden fields. Take not of both their &lt;code&gt;name&lt;/code&gt; and &lt;code&gt;value&lt;/code&gt; tags.&lt;/p&gt;
+&lt;p&gt;Below the &lt;code&gt;form&lt;/code&gt; tag, we see two &lt;code&gt;input&lt;/code&gt; tags set to hidden, there they are! Even though we want to login, we also have to provide the two hidden fields. Take note of both their &lt;code&gt;name&lt;/code&gt; and &lt;code&gt;value&lt;/code&gt; tags.&lt;/p&gt;
 &lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Dive deeper down the branch and find other fields. In our case, username and password.&lt;/li&gt;
 &lt;/ol&gt;
@@ -50,7 +50,7 @@
 
 &lt;/div&gt;
 &lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;Writen down the field names with the correspoding values.&lt;/li&gt;
+&lt;li&gt;Write down the field names with the correspoding values.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_fields &amp;lt;-
   list(

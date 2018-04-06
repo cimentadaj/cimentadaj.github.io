@@ -12,8 +12,8 @@ showpagemeta: yes
 
 
 
-<p>Lightning post. Earlier today I was trying to scrape the emails from all the PhD candidates in my program and I had to log in to out ‘Aula Global’. I did so using <code>httr</code> but something was off: I introduced both my username and password but the website did not log in. Apparently, when loging in through <code>POST</code>, there’s sometimes hidden fields that you need to fill out! I would’ve never though about this. Below is my case study, excluding my credentials</p>
-<p>First thing we have to do is identify the <code>POST</code> method and the inputs to the request. Using Google Chrome, go to the website <a href="https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php">https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php</a> -&gt; Settings -&gt; More tools -&gt; Developer tools. Here we have the complete html of the website.</p>
+<p>Lightning post. Earlier today I was trying to scrape the emails from all the PhD candidates in my program and I had to log in from our ‘Aula Global’. I did so using <code>httr</code> but something was off: I introduced both my username and password but the website did not log in. Apparently, when loging in through <code>POST</code>, sometimes there’s a thing call hidden fields that you need to fill out! I would’ve never though about this. Below is a case study, that excludes my credentials.</p>
+<p>The first thing we have to do is identify the <code>POST</code> method and the inputs to the request. Using Google Chrome, go to the website <a href="https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php">https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php</a> and then on the Google Chrome menu go to -&gt; Settings -&gt; More tools -&gt; Developer tools. Here we have the complete html of the website.</p>
 <ol style="list-style-type: decimal">
 <li>We identify the POST method and the URL</li>
 </ol>
@@ -24,13 +24,13 @@ showpagemeta: yes
 </div>
 <p>It’s the branch with <code>form</code> that has <code>method='post'</code>.</p>
 <ol start="2" style="list-style-type: decimal">
-<li>Open the <code>POST</code> branch and find all fields. First are the two ‘hidden’ fields.</li>
+<li>Open the <code>POST</code> branch and find all fields. We can see the two ‘hidden’ fields.</li>
 </ol>
 <div class="figure">
 <img src="/img/hidden_fields.png" />
 
 </div>
-<p>Below the <code>form</code> tag, we see two <code>input</code> tags set to hidden, there they are! Even though we want to login, we also have to provide the two hidden fields. Take not of both their <code>name</code> and <code>value</code> tags.</p>
+<p>Below the <code>form</code> tag, we see two <code>input</code> tags set to hidden, there they are! Even though we want to login, we also have to provide the two hidden fields. Take note of both their <code>name</code> and <code>value</code> tags.</p>
 <ol start="3" style="list-style-type: decimal">
 <li>Dive deeper down the branch and find other fields. In our case, username and password.</li>
 </ol>
@@ -45,7 +45,7 @@ showpagemeta: yes
 
 </div>
 <ol start="4" style="list-style-type: decimal">
-<li>Writen down the field names with the correspoding values.</li>
+<li>Write down the field names with the correspoding values.</li>
 </ol>
 <pre class="r"><code>all_fields &lt;-
   list(
