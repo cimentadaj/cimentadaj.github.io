@@ -6,10 +6,36 @@
     <description>Recent content in Packages on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 04 Mar 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 26 Mar 2018 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/tags/packages/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>ess is now essurvey</title>
+      <link>/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</link>
+      <pubDate>Mon, 26 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</guid>
+      <description>&lt;p&gt;My &lt;code&gt;ess&lt;/code&gt; package has be renamed to &lt;code&gt;essurvey&lt;/code&gt;. For quite some time I’ve been pondering whether I should change the name. All of this comes from a dicussion we had on the &lt;a href=&#34;http://r.789695.n4.nabble.com/R-pkgs-Release-of-ess-0-0-1-td4746540.html&#34;&gt;R-pkg mailing list&lt;/a&gt; where many R users suggested that the name was unfortunate given that Emacs Speaks Statistics (ESS) has a long precedence in the R community and the names are very similar. Later on, when submitting the package to &lt;a href=&#34;https://ropensci.org/&#34;&gt;rOpensci&lt;/a&gt;, Jim Hester &lt;a href=&#34;https://github.com/ropensci/onboarding/issues/201#issuecomment-372304003&#34;&gt;raised the fact once again&lt;/a&gt;, without being aware of the previous email thread.&lt;/p&gt;
+&lt;p&gt;Considering that I was already changing some of the functionalities of the package due to the &lt;a href=&#34;https://github.com/ropensci/onboarding/issues/201&#34;&gt;rOpensci review&lt;/a&gt;, I decided to change the package name and republish an improved version of &lt;code&gt;ess&lt;/code&gt; as &lt;code&gt;essurvey 1.0.0&lt;/code&gt;. &lt;code&gt;essurvey&lt;/code&gt; is now on CRAN and the repository has been moved to rOpensci’s &lt;a href=&#34;https://github.com/ropensci/essurvey&#34;&gt;github account&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The new package is mostly similar although there are now some deprecated functions and new features. Below are the main changes.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;You can login &lt;strong&gt;once&lt;/strong&gt; using &lt;code&gt;set_email(&amp;quot;your_email&amp;quot;)&lt;/code&gt; and avoid rewriting your email in every call to the &lt;code&gt;ess_*&lt;/code&gt; functions.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;All &lt;code&gt;ess_*&lt;/code&gt; functions have been deprecated in favour of similar &lt;code&gt;import_*&lt;/code&gt; functions. For example:&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ess_rounds(1:7)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;becomes..&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;import_rounds(1:7)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;But that’s the same you would say. The only difference is that with &lt;code&gt;ess_rounds&lt;/code&gt; you could download data in Stata, SPSS or SAS formats directly. For that, there’s now the &lt;code&gt;download_*&lt;/code&gt; functions.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;download_rounds(
+  1:5,
+  output_dir = getwd(),
+  format = &amp;quot;spss&amp;quot;
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;All of the above applies to &lt;code&gt;ess_country&lt;/code&gt; and the &lt;code&gt;ess_all_*&lt;/code&gt; functions. There’s also some other minor changes you can checkout in the &lt;a href=&#34;https://github.com/ropensci/essurvey/blob/master/NEWS.md&#34;&gt;NEWS&lt;/a&gt; file. If you haven’t tried &lt;code&gt;essurvey&lt;/code&gt;, you can visit the package website for more detailed examples at &lt;a href=&#34;https://ropensci.github.io/essurvey/&#34; class=&#34;uri&#34;&gt;https://ropensci.github.io/essurvey/&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>ess 0.1.1 is out!</title>
