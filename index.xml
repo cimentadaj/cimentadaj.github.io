@@ -3632,7 +3632,7 @@ lm(income ~ gender + kids)&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;&lt;b&gt; Data analysis &lt;/b&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&#34;blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike/index.html&#34;&gt;How long should I wait for my bike?&lt;/a&gt;: This is a series of posts (currently active) in which I set up a private server and interact with the Barcelona public bicycle system API. I&amp;rsquo;ve performed analysis of waiting times and I plan to add a live predictive model of waiting time for stations.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/index.html&#34;&gt;How long should I wait for my bike?&lt;/a&gt;: This is a series of posts (currently active) in which I set up a private server and interact with the Barcelona public bicycle system API. I&amp;rsquo;ve performed analysis of waiting times and I plan to add a live predictive model of waiting time for stations.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/index.html&#34;&gt;Analyzing &amp;ldquo;How I Met Your Mother&amp;rdquo;&lt;/a&gt;: In this blog post I scraped and analyzed the scripts of the American TV series &amp;ldquo;How I Met Your Mother&amp;rdquo;.&lt;/p&gt;
 
