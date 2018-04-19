@@ -15,7 +15,7 @@ slug: projects
 
 <br>
 
-<b> Data analysis </b>
+<b> Data science </b>
 
 [How long should I wait for my bike?](blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/index.html): This is a series of posts (currently active) in which I set up a private server and interact with the Barcelona public bicycle system API. I've performed analysis of waiting times and I plan to add a live predictive model of waiting time for stations.
 
