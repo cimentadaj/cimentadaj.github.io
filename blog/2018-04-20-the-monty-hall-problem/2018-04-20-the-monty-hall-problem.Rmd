@@ -1,0 +1,128 @@
+---
+title: 'The Monty Hall problem'
+author: 'Jorge Cimentada'
+date: '2018-04-20'
+slug: the-monty-hall-problem
+tags: ['python', 'simulation']
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+Just recently, I've been completing the online version of `CS109` from Harvard which is a class for understanding machine learning algorithms in Python. In the very first section the homework of the class asked us to develope a working simulation of the Monty Hall problem.
+
+The Monty Hall problem is very simple. In a gameshow, contestants try to guess which of 3 closed doors contain a cash prize (goats are behind the other two doors). Of course, the odds of choosing the correct door are 1 in 3. As a twist, the host of the show occasionally opens a door after a contestant makes his or her choice. This door is always one of the two the contestant did not pick, and is also always one of the goat doors (note that it is always possible to do this, since there are two goat doors). At this point, the contestant has the option of keeping his or her original choice, or swtiching to the other unopened door. The question is: is there any benefit to switching doors?
+
+I implemented this in Python below. Let's go step by step. Let's load the packages we'll use.
+
+1. Load packages
+
+```{python}
+import numpy as np
+```
+
+2. Define a function that simulates an array of prize doors. Optionally, supply any number of doors available.
+```{python}
+def simulate_prizedoor(nsim, doors = 3):
+    answer = np.array([np.random.randint(0, doors) for x in range(nsim)])
+    return answer
+    
+print(simulate_prizedoor(10, 3))
+```
+
+This array shows a random prize door from 10 hypothetical (independent) tries in which a persons will choose a guess.
+
+3. Define a function that simulates an array of guesses.
+```{python}
+def simulate_guess(nsim, doors = 3):
+    return(simulate_prizedoor(nsim, doors = doors))
+
+print(simulate_guess(10))
+```
+
+This array shows a random choosen door from 10 hypothetical (independent) tries in which a persons will choose a guess.
+
+3. Define a `goat_door` function that returns the first 'goat' door that the host of the show will open.
+
+```{python}
+# Find elements in `first_set` not present in `second_set`
+
+
+def diff(first_set, second_set):
+    res = [x for x in first_set if x not in second_set]
+    return res
+    
+
+# Choose the goat door
+def goat_door(prizedoors, guesses, doors = 3):
+    new_stack = np.column_stack((prizedoors, guesses))
+    full_ops = [x for x in range(doors)]
+    res = [diff(full_ops, new_stack[index, ])[0] for index in range(new_stack.shape[0])]
+    return np.array(res)
+    
+
+
+print(goat_door(simulate_prizedoor(10), simulate_guess(10)))
+```
+
+For example, if the prizedoor is 2 and the person guessed door 2, the `goat_door` function will return either `0` or `1` (in this case it will return always `0` because I was a bit lazy).
+
+4. Define a function that switches the guess of the respondent in case he/she wants to change doors after the first door has been opened.
+```{python}
+#your code here
+def switch_guess(guesses, goatdoors):
+    return goat_door(guesses, goatdoors)
+    
+print(switch_guess(np.array([0, 1, 2]), np.array([1, 2, 1])))
+```
+
+5. Finally, define a function that calculates the percentage of correct doors the person guessed.
+
+```{python}
+def win_percentage(guesses, prizedoors):
+    return (guesses == prizedoors).mean()
+```
+
+The exercise adds this:
+
+Simulate 10000 games where contestant keeps his original guess, and 10000 games where the contestant switches his door after a  goat door is revealed. Compute the percentage of time the contestant wins under either strategy. Is one strategy better than the other?
+
+I implement it below.
+
+```{python}
+# Number of simulations
+nsim = 10000
+# Numer of doors
+doors = 3
+
+# The user picks nsim random guesses
+first_guess = simulate_guess(nsim, doors = doors)
+
+# The equivalent 10000 random prize_doors
+prize_door = simulate_prizedoor(nsim, doors = doors)
+
+# The 10000 doors which the host opened
+chosen_goat = goat_door(first_guess, prize_door)
+
+## For the scenario where the users keeps the first guess,
+## how many wins does he/she has?
+first_perc = win_percentage(first_guess, prize_door)
+
+print(first_perc)
+```
+
+What happens if the user switches the door after the host has opened one door
+
+```{python}
+# After you had your first guess, switch to a door that is not the door opened by the
+# host
+second_guess = switch_guess(first_guess, chosen_goat)
+
+# Calculate the % win with this new guess
+second_perc = win_percentage(second_guess, prize_door)
+
+print(second_perc)
+```
+
+What? It's not 50/50? This is a bit counterintuitive as most of the internet suggests but I found this explanation very intuitive. With 3 doors, the odds of winning are as simple as `1/3` and the odds of losing is `2/3`. When Monty opens a second door, the odds don't go to `50/50` because you already knew from before that you had a `2/3` chance of losing that **just** became `1/3`. If the odds of losing were `2/3` and a new door was opened, then the odds of losing become `1/3`, which means that odds of winning became `2/3`! And that fraction becomes `66%`, the percentage we got above. The key thing to understanding the riddle is **not** reestimating your odds but merely **updating** your odds like a true bayesian :).
+
