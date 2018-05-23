@@ -6,10 +6,80 @@
     <description>Recent content in Blogs on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Fri, 20 Apr 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 23 May 2018 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>A list of must pre-project questions</title>
+      <link>/blog/2018-05-23-a-list-of-must-preproject-questions/a-list-of-must-pre-project-questions/</link>
+      <pubDate>Wed, 23 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018-05-23-a-list-of-must-preproject-questions/a-list-of-must-pre-project-questions/</guid>
+      <description>&lt;p&gt;Rumbling through Twitter I found a Jupyter Notebook of Paige Bailey written at the rOpensci unconf about Ethical Machine Learning which you can read &lt;a href=&#34;https://github.com/ropenscilabs/proxy-bias-vignette/blob/master/EthicalMachineLearning.ipynb&#34;&gt;here&lt;/a&gt;. It was very interesting to look at her workflow but even more interesting was the set of questions she asked herself before and during the analysis. I paste them here just to keep them as a reference.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;As you design the goal and the purpose of your machine learning product, you must first ask: Who is your audience?&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Is your product or analysis meant to include all people?&lt;/li&gt;
+&lt;li&gt;And, if not: is it targeted to an exclusive audience?&lt;/li&gt;
+&lt;li&gt;Is there a person on your team tasked specifically with identifying and resolving bias and discrimination issues?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Once the concept and scope have been defined, it is time to focus on the acquisition, evaluation, and cleaning of data. We have received a single .csv file filled with information on customers from the bank’s manager. Some questions to consider:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Did the data come from a system prone to human error?&lt;/li&gt;
+&lt;li&gt;Is the data current?&lt;/li&gt;
+&lt;li&gt;What technology facilitated the collection of the data?&lt;/li&gt;
+&lt;li&gt;Was participation of the data subjects voluntary?&lt;/li&gt;
+&lt;li&gt;Does the context of the collection match the context of your use?&lt;/li&gt;
+&lt;li&gt;Was your data collected by people or a system that was operating with quotas or a particular incentive structure?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Now that your data has been collected, it would be a great idea to evaluate and describe it:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Who is represented in the data?&lt;/li&gt;
+&lt;li&gt;Who is under-represented or absent from your data?&lt;/li&gt;
+&lt;li&gt;Can you find additional data, or use statistical methods, to make your data more inclusive?&lt;/li&gt;
+&lt;li&gt;Was the data collected in an environment where data subjects had meaningful choices?&lt;/li&gt;
+&lt;li&gt;How does the data reflect the perspective of the institution that collected it?&lt;/li&gt;
+&lt;li&gt;Were fields within the data inferred or appended beyond what was clear to the data subject?
+Would this use of the data surprise the data subjects?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;The next step would be cleaning the data.&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Are there any fields that should be eliminated from your data?&lt;/li&gt;
+&lt;li&gt;Can you use anonymization or pseudonymization techniques to avoid needless evaluation or processing of individual data?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Establishing logic for variables&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Can you describe the logic that connects the variables to the output of your equation?&lt;/li&gt;
+&lt;li&gt;Do your variables have a causal relationship to the results they predict?&lt;/li&gt;
+&lt;li&gt;How did you determine what weight to give each variable?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Identifying assumptions&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Will your variables apply equally across race, gender, age, disability, ethnicity, socioeconomic status, education, etc.?&lt;/li&gt;
+&lt;li&gt;What are you assuming about the kinds of people in your data set?&lt;/li&gt;
+&lt;li&gt;Would you be comfortable explaining your assumptions to the public?&lt;/li&gt;
+&lt;li&gt;What assumptions are you relying on to determine the relevant variables and their weights?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Defining success&lt;/strong&gt;
+- What amount and type of error do you expect?
+- How will you ensure your system is behaving the way you intend? How reliable is it?&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;How will you choose your analytical method? For example, predictive analytics, machine learning (supervised, unsupervised), neural networks or deep learning, etc.&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;How much transparency does this method allow your end users and yourself?&lt;/li&gt;
+&lt;li&gt;Are non-deterministic outcomes acceptable given your legal or ethical obligations around transparency and explainability?&lt;/li&gt;
+&lt;li&gt;Does your choice of analytical method allow you to sufficiently explain your results?&lt;/li&gt;
+&lt;li&gt;What particular tasks are associated with the type of analytical method you are using?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Tools&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;How could results that look successful still contain bias?&lt;/li&gt;
+&lt;li&gt;Is there a trustworthy or audited source for the tools you need?&lt;/li&gt;
+&lt;li&gt;Have the tools you are using been associated with biased products?&lt;/li&gt;
+&lt;li&gt;Or, if you build from scratch: can you or a third-party test your tools for any features that can result in biased or unfair outcomes?&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>The Monty Hall problem</title>
