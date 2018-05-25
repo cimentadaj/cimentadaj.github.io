@@ -27,7 +27,8 @@
 &lt;p&gt;The data set they’re referring is called ‘CD4’ and as they authors explain in the book it measures ‘… CD4 percentages for a set of young children with HIV who were measured several times over a period of two years. The dataset also includes the ages of the children at each measurement..’. I’m not sure what CD4 means, but that shouldn’t stop us from at least interpreting the results and answering the questions. Let’s start with the exercises:&lt;/p&gt;
 &lt;hr /&gt;
 &lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
-&lt;li&gt;Write a model predicting CD4 percentage as a function of time with varying intercepts across children. Fit using lmer() and interpret the coefficient for time. The data argument is excluding some NA’s because the next model is to be compared with this model and we need to have the same number of observations&lt;/li&gt;
+&lt;li&gt;Write a model predicting CD4 percentage as a function of time with
+varying intercepts across children. Fit using lmer() and interpret the coefficient for time. The data argument is excluding some NA’s because the next model is to be compared with this model and we need to have the same number of observations&lt;/li&gt;
 &lt;/ol&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;suppressWarnings(suppressMessages(library(arm)))
 cd4 &amp;lt;- read.csv(&amp;quot;http://www.stat.columbia.edu/~gelman/arm/examples/cd4/allvar.csv&amp;quot;)
@@ -41,10 +42,9 @@ head(cd4)&lt;/code&gt;&lt;/pre&gt;
 ## 5    13      1 11/30/1989      13   0 5.330833        1    626    3.91
 ## 6    16      1                 NA  NA       NA        1    220    3.91&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Let&amp;#39;s transform the VDATE variable into date format
-cd4$VDATE &amp;lt;- as.Date(cd4$VDATE, format = &amp;quot;%m/%d/%Y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in strptime(x, format, tz = &amp;quot;GMT&amp;quot;): unknown timezone &amp;#39;zone/tz/
-## 2017c.1.0/zoneinfo/Europe/Madrid&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mod1 &amp;lt;- lmer(CD4PCT ~
+cd4$VDATE &amp;lt;- as.Date(cd4$VDATE, format = &amp;quot;%m/%d/%Y&amp;quot;)
+
+mod1 &amp;lt;- lmer(CD4PCT ~
                VDATE +
                (1 | newpid),
              data = subset(cd4, !is.na(treatmnt) &amp;amp; !is.na(baseage)))
@@ -203,10 +203,8 @@ display(mod2)&lt;/code&gt;&lt;/pre&gt;
 cd4 &amp;lt;- read.csv(&amp;quot;http://www.stat.columbia.edu/~gelman/arm/examples/cd4/allvar.csv&amp;quot;)
 
 # Let&amp;#39;s recreate the model from 12.2 (b)
-cd4$VDATE &amp;lt;- as.Date(cd4$VDATE, format = &amp;quot;%m/%d/%Y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in strptime(x, format, tz = &amp;quot;GMT&amp;quot;): unknown timezone &amp;#39;zone/tz/
-## 2017c.1.0/zoneinfo/Europe/Madrid&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mod2 &amp;lt;- lmer(CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), data = cd4)&lt;/code&gt;&lt;/pre&gt;
+cd4$VDATE &amp;lt;- as.Date(cd4$VDATE, format = &amp;quot;%m/%d/%Y&amp;quot;)
+mod2 &amp;lt;- lmer(CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), data = cd4)&lt;/code&gt;&lt;/pre&gt;
 &lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
 &lt;li&gt;Use the model fit from Exercise 12.2 (b) to generate simulation of predicted CD4 percentages for each child in the dataset at a hypothetical next time point.&lt;/li&gt;
 &lt;/ol&gt;
@@ -242,7 +240,8 @@ hyp_child &amp;lt;- data.frame(newpid = 120,
                         treatmnt = 1)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The exercise doesn’t say anything about the treatment variable but I have to assign a value to it because it’s present in the previous model. I’ll assume this new child was in the treatment.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;year_pred &amp;lt;- predict(mod2, newdata = hyp_child)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;That’s it! Now we have the predicted CD4 percentage for different time points for a hypothetical child.&lt;/p&gt;
+&lt;p&gt;That’s it! Now we have the predicted CD4 percentage for different time points
+for a hypothetical child.&lt;/p&gt;
 &lt;p&gt;Finally, exercise 12.4 posits this question:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Posterior predictive checking: continuing the previous exercise, use the fitted model from Exercise 12.2 (b) to simulate a new dataset of CD4 percentages (with the same sample size and ages of the original dataset) for the final time point of the study, and record the average CD4 percentage in this sample. Repeat this process 1000 times and compare the simulated distribution to the observed CD4 percentage at the final time point for the actual data.&lt;/p&gt;
@@ -278,7 +277,8 @@ cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## [1] 30.1&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;So our predictions are extremely uncertain. Over half our simulations are underestimating the date and a handful are overestimating the results. It looks like our model is terrible at predicting that final time point.&lt;/p&gt;
 &lt;hr /&gt;
-&lt;p&gt;Well that’s it. Hope you enjoyed it. I’ll be completing more exercises in the future so remember to check back. ```&lt;/p&gt;
+&lt;p&gt;Well that’s it. Hope you enjoyed it. I’ll be completing more exercises in the future so remember to check back.
+```&lt;/p&gt;
 </description>
     </item>
     

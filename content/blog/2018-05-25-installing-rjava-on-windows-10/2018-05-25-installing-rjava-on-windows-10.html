@@ -1,0 +1,25 @@
+---
+title: Installing rJava on Windows 10
+author: Jorge Cimentada
+date: '2018-05-25'
+slug: installing-rjava-on-windows-10
+categories: []
+tags: ['R']
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+
+
+<p>Struggled for about two hours to install <code>rJava</code> on my Windows 10 machine. Post here the steps that made it work in case anyone is interested (that is, future me).</p>
+<ul>
+<li><p>Check whether R is 32/64 bit with <code>sessionInfo()</code>. Check Platform.</p></li>
+<li><p>Download the specific 32/64 bit of Java. This is <strong>really</strong> important. R and Java must have the same memory signature, either 32 or 64 bit. I had 64 bit so I downloaded the Offline 64-bit version from <a href="https://www.java.com/en/download/manual.jsp">here</a>.</p></li>
+<li><p>Download Java JDK for 32/64 bit. For 64-bit I had to download the Windows version from <a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk10-downloads-4416644.html">here</a>.</p></li>
+<li><p>If you installed 32-bit Java then everything should be saved in <code>C:/Program Files (x86)/Java/</code>. Conversely, if you installed 64-bit then everything should be installed in <code>C:/Program Files/Java/</code>.</p></li>
+<li><p>Install <code>rJava</code> with <code>install.packages(&quot;rJava&quot;)</code>.</p></li>
+<li><p>Set your <code>JAVA_HOME</code> environment with <code>Sys.setenv(JAVA_HOME=&quot;C:/Program Files/Java/jdk-10.0.1/&quot;)</code> so that it points to your specific (64-bit in my case) folder that contains the <code>jdk</code>. Don’t worry about <code>jdk-10.0.1</code> as this might change for future releases.</p></li>
+<li><p><code>library(rJava)</code> throws no errors to me!</p></li>
+</ul>
+<p>Good luck!</p>

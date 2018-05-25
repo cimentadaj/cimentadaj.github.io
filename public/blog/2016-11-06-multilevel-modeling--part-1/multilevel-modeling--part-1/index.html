@@ -80,7 +80,8 @@ hljs.initHighlightingOnLoad();
 <p>The data set they’re referring is called ‘CD4’ and as they authors explain in the book it measures ‘… CD4 percentages for a set of young children with HIV who were measured several times over a period of two years. The dataset also includes the ages of the children at each measurement..’. I’m not sure what CD4 means, but that shouldn’t stop us from at least interpreting the results and answering the questions. Let’s start with the exercises:</p>
 <hr />
 <ol style="list-style-type: lower-alpha">
-<li>Write a model predicting CD4 percentage as a function of time with varying intercepts across children. Fit using lmer() and interpret the coefficient for time. The data argument is excluding some NA’s because the next model is to be compared with this model and we need to have the same number of observations</li>
+<li>Write a model predicting CD4 percentage as a function of time with
+varying intercepts across children. Fit using lmer() and interpret the coefficient for time. The data argument is excluding some NA’s because the next model is to be compared with this model and we need to have the same number of observations</li>
 </ol>
 <pre class="r"><code>suppressWarnings(suppressMessages(library(arm)))
 cd4 &lt;- read.csv(&quot;http://www.stat.columbia.edu/~gelman/arm/examples/cd4/allvar.csv&quot;)
@@ -94,10 +95,9 @@ head(cd4)</code></pre>
 ## 5    13      1 11/30/1989      13   0 5.330833        1    626    3.91
 ## 6    16      1                 NA  NA       NA        1    220    3.91</code></pre>
 <pre class="r"><code># Let&#39;s transform the VDATE variable into date format
-cd4$VDATE &lt;- as.Date(cd4$VDATE, format = &quot;%m/%d/%Y&quot;)</code></pre>
-<pre><code>## Warning in strptime(x, format, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/
-## 2017c.1.0/zoneinfo/Europe/Madrid&#39;</code></pre>
-<pre class="r"><code>mod1 &lt;- lmer(CD4PCT ~
+cd4$VDATE &lt;- as.Date(cd4$VDATE, format = &quot;%m/%d/%Y&quot;)
+
+mod1 &lt;- lmer(CD4PCT ~
                VDATE +
                (1 | newpid),
              data = subset(cd4, !is.na(treatmnt) &amp; !is.na(baseage)))

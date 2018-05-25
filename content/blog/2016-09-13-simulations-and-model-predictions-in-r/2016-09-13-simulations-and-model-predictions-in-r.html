@@ -37,16 +37,16 @@ return(vec)
 # shots in a row.</code></pre>
 <pre class="r"><code># test
 thrower(0.6)</code></pre>
-<pre><code>## [1] 1 0 1 0 0</code></pre>
+<pre><code>##  [1] 0 1 0 1 0 1 1 1 0 0</code></pre>
 <pre class="r"><code># 0 1 0 1 0 0
 # Last two elements are always zero</code></pre>
 <pre class="r"><code># b)
 attempts &lt;- replicate(1000, thrower(0.60))
 mean(sapply(attempts, length)) </code></pre>
-<pre><code>## [1] 8.977</code></pre>
+<pre><code>## [1] 8.584</code></pre>
 <pre class="r"><code># mean number of shots until two shots are missed in a row</code></pre>
 <pre class="r"><code>sd(sapply(attempts, length)) </code></pre>
-<pre><code>## [1] 7.613569</code></pre>
+<pre><code>## [1] 7.044613</code></pre>
 <pre class="r"><code># standard deviation of shots made
 # until two shots are missed in a row</code></pre>
 <pre class="r"><code>hist(sapply(attempts, length)) # distribution of shots made</code></pre>

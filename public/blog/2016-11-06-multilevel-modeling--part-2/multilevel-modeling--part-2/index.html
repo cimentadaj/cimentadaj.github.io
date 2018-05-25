@@ -85,10 +85,8 @@ hljs.initHighlightingOnLoad();
 cd4 &lt;- read.csv(&quot;http://www.stat.columbia.edu/~gelman/arm/examples/cd4/allvar.csv&quot;)
 
 # Let&#39;s recreate the model from 12.2 (b)
-cd4$VDATE &lt;- as.Date(cd4$VDATE, format = &quot;%m/%d/%Y&quot;)</code></pre>
-<pre><code>## Warning in strptime(x, format, tz = &quot;GMT&quot;): unknown timezone &#39;zone/tz/
-## 2017c.1.0/zoneinfo/Europe/Madrid&#39;</code></pre>
-<pre class="r"><code>mod2 &lt;- lmer(CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), data = cd4)</code></pre>
+cd4$VDATE &lt;- as.Date(cd4$VDATE, format = &quot;%m/%d/%Y&quot;)
+mod2 &lt;- lmer(CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), data = cd4)</code></pre>
 <ol style="list-style-type: lower-alpha">
 <li>Use the model fit from Exercise 12.2 (b) to generate simulation of predicted CD4 percentages for each child in the dataset at a hypothetical next time point.</li>
 </ol>
@@ -124,7 +122,8 @@ hyp_child &lt;- data.frame(newpid = 120,
                         treatmnt = 1)</code></pre>
 <p>The exercise doesn’t say anything about the treatment variable but I have to assign a value to it because it’s present in the previous model. I’ll assume this new child was in the treatment.</p>
 <pre class="r"><code>year_pred &lt;- predict(mod2, newdata = hyp_child)</code></pre>
-<p>That’s it! Now we have the predicted CD4 percentage for different time points for a hypothetical child.</p>
+<p>That’s it! Now we have the predicted CD4 percentage for different time points
+for a hypothetical child.</p>
 <p>Finally, exercise 12.4 posits this question:</p>
 <blockquote>
 <p>Posterior predictive checking: continuing the previous exercise, use the fitted model from Exercise 12.2 (b) to simulate a new dataset of CD4 percentages (with the same sample size and ages of the original dataset) for the final time point of the study, and record the average CD4 percentage in this sample. Repeat this process 1000 times and compare the simulated distribution to the observed CD4 percentage at the final time point for the actual data.</p>
@@ -160,7 +159,8 @@ cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]</code></pre>
 <pre><code>## [1] 30.1</code></pre>
 <p>So our predictions are extremely uncertain. Over half our simulations are underestimating the date and a handful are overestimating the results. It looks like our model is terrible at predicting that final time point.</p>
 <hr />
-<p>Well that’s it. Hope you enjoyed it. I’ll be completing more exercises in the future so remember to check back. ```</p>
+<p>Well that’s it. Hope you enjoyed it. I’ll be completing more exercises in the future so remember to check back.
+```</p>
 
   </div>
 </section>

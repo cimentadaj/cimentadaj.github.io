@@ -6,10 +6,30 @@
     <description>Recent content in R on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Thu, 05 Apr 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 25 May 2018 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/tags/r/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Installing rJava on Windows 10</title>
+      <link>/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/</link>
+      <pubDate>Fri, 25 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/</guid>
+      <description>&lt;p&gt;Struggled for about two hours to install &lt;code&gt;rJava&lt;/code&gt; on my Windows 10 machine. Post here the steps that made it work in case anyone is interested (that is, future me).&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Check whether R is 32/64 bit with &lt;code&gt;sessionInfo()&lt;/code&gt;. Check Platform.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Download the specific 32/64 bit of Java. This is &lt;strong&gt;really&lt;/strong&gt; important. R and Java must have the same memory signature, either 32 or 64 bit. I had 64 bit so I downloaded the Offline 64-bit version from &lt;a href=&#34;https://www.java.com/en/download/manual.jsp&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Download Java JDK for 32/64 bit. For 64-bit I had to download the Windows version from &lt;a href=&#34;http://www.oracle.com/technetwork/java/javase/downloads/jdk10-downloads-4416644.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If you installed 32-bit Java then everything should be saved in &lt;code&gt;C:/Program Files (x86)/Java/&lt;/code&gt;. Conversely, if you installed 64-bit then everything should be installed in &lt;code&gt;C:/Program Files/Java/&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Install &lt;code&gt;rJava&lt;/code&gt; with &lt;code&gt;install.packages(&amp;quot;rJava&amp;quot;)&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Set your &lt;code&gt;JAVA_HOME&lt;/code&gt; environment with &lt;code&gt;Sys.setenv(JAVA_HOME=&amp;quot;C:/Program Files/Java/jdk-10.0.1/&amp;quot;)&lt;/code&gt; so that it points to your specific (64-bit in my case) folder that contains the &lt;code&gt;jdk&lt;/code&gt;. Don’t worry about &lt;code&gt;jdk-10.0.1&lt;/code&gt; as this might change for future releases.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;library(rJava)&lt;/code&gt; throws no errors to me!&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Good luck!&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Login in, scraping and hidden fields</title>
@@ -2687,7 +2707,8 @@ cbind(repl_coef + (-1 * repl_se), repl_coef + (1 * repl_se))&lt;/code&gt;&lt;/pr
 &lt;p&gt;The data set they’re referring is called ‘CD4’ and as they authors explain in the book it measures ‘… CD4 percentages for a set of young children with HIV who were measured several times over a period of two years. The dataset also includes the ages of the children at each measurement..’. I’m not sure what CD4 means, but that shouldn’t stop us from at least interpreting the results and answering the questions. Let’s start with the exercises:&lt;/p&gt;
 &lt;hr /&gt;
 &lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
-&lt;li&gt;Write a model predicting CD4 percentage as a function of time with varying intercepts across children. Fit using lmer() and interpret the coefficient for time. The data argument is excluding some NA’s because the next model is to be compared with this model and we need to have the same number of observations&lt;/li&gt;
+&lt;li&gt;Write a model predicting CD4 percentage as a function of time with
+varying intercepts across children. Fit using lmer() and interpret the coefficient for time. The data argument is excluding some NA’s because the next model is to be compared with this model and we need to have the same number of observations&lt;/li&gt;
 &lt;/ol&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;suppressWarnings(suppressMessages(library(arm)))
 cd4 &amp;lt;- read.csv(&amp;quot;http://www.stat.columbia.edu/~gelman/arm/examples/cd4/allvar.csv&amp;quot;)
@@ -2701,10 +2722,9 @@ head(cd4)&lt;/code&gt;&lt;/pre&gt;
 ## 5    13      1 11/30/1989      13   0 5.330833        1    626    3.91
 ## 6    16      1                 NA  NA       NA        1    220    3.91&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Let&amp;#39;s transform the VDATE variable into date format
-cd4$VDATE &amp;lt;- as.Date(cd4$VDATE, format = &amp;quot;%m/%d/%Y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in strptime(x, format, tz = &amp;quot;GMT&amp;quot;): unknown timezone &amp;#39;zone/tz/
-## 2017c.1.0/zoneinfo/Europe/Madrid&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mod1 &amp;lt;- lmer(CD4PCT ~
+cd4$VDATE &amp;lt;- as.Date(cd4$VDATE, format = &amp;quot;%m/%d/%Y&amp;quot;)
+
+mod1 &amp;lt;- lmer(CD4PCT ~
                VDATE +
                (1 | newpid),
              data = subset(cd4, !is.na(treatmnt) &amp;amp; !is.na(baseage)))
@@ -2863,10 +2883,8 @@ display(mod2)&lt;/code&gt;&lt;/pre&gt;
 cd4 &amp;lt;- read.csv(&amp;quot;http://www.stat.columbia.edu/~gelman/arm/examples/cd4/allvar.csv&amp;quot;)
 
 # Let&amp;#39;s recreate the model from 12.2 (b)
-cd4$VDATE &amp;lt;- as.Date(cd4$VDATE, format = &amp;quot;%m/%d/%Y&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in strptime(x, format, tz = &amp;quot;GMT&amp;quot;): unknown timezone &amp;#39;zone/tz/
-## 2017c.1.0/zoneinfo/Europe/Madrid&amp;#39;&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mod2 &amp;lt;- lmer(CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), data = cd4)&lt;/code&gt;&lt;/pre&gt;
+cd4$VDATE &amp;lt;- as.Date(cd4$VDATE, format = &amp;quot;%m/%d/%Y&amp;quot;)
+mod2 &amp;lt;- lmer(CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), data = cd4)&lt;/code&gt;&lt;/pre&gt;
 &lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
 &lt;li&gt;Use the model fit from Exercise 12.2 (b) to generate simulation of predicted CD4 percentages for each child in the dataset at a hypothetical next time point.&lt;/li&gt;
 &lt;/ol&gt;
@@ -2902,7 +2920,8 @@ hyp_child &amp;lt;- data.frame(newpid = 120,
                         treatmnt = 1)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The exercise doesn’t say anything about the treatment variable but I have to assign a value to it because it’s present in the previous model. I’ll assume this new child was in the treatment.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;year_pred &amp;lt;- predict(mod2, newdata = hyp_child)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;That’s it! Now we have the predicted CD4 percentage for different time points for a hypothetical child.&lt;/p&gt;
+&lt;p&gt;That’s it! Now we have the predicted CD4 percentage for different time points
+for a hypothetical child.&lt;/p&gt;
 &lt;p&gt;Finally, exercise 12.4 posits this question:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Posterior predictive checking: continuing the previous exercise, use the fitted model from Exercise 12.2 (b) to simulate a new dataset of CD4 percentages (with the same sample size and ages of the original dataset) for the final time point of the study, and record the average CD4 percentage in this sample. Repeat this process 1000 times and compare the simulated distribution to the observed CD4 percentage at the final time point for the actual data.&lt;/p&gt;
@@ -2938,7 +2957,8 @@ cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## [1] 30.1&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;So our predictions are extremely uncertain. Over half our simulations are underestimating the date and a handful are overestimating the results. It looks like our model is terrible at predicting that final time point.&lt;/p&gt;
 &lt;hr /&gt;
-&lt;p&gt;Well that’s it. Hope you enjoyed it. I’ll be completing more exercises in the future so remember to check back. ```&lt;/p&gt;
+&lt;p&gt;Well that’s it. Hope you enjoyed it. I’ll be completing more exercises in the future so remember to check back.
+```&lt;/p&gt;
 </description>
     </item>
     
@@ -3081,16 +3101,16 @@ return(vec)
 # shots in a row.&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# test
 thrower(0.6)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 1 0 1 0 0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] 0 1 0 1 0 1 1 1 0 0&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# 0 1 0 1 0 0
 # Last two elements are always zero&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# b)
 attempts &amp;lt;- replicate(1000, thrower(0.60))
 mean(sapply(attempts, length)) &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 8.977&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 8.584&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# mean number of shots until two shots are missed in a row&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sd(sapply(attempts, length)) &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 7.613569&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 7.044613&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# standard deviation of shots made
 # until two shots are missed in a row&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;hist(sapply(attempts, length)) # distribution of shots made&lt;/code&gt;&lt;/pre&gt;
