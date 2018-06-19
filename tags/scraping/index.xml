@@ -42,21 +42,10 @@ network&lt;/code&gt;&lt;/pre&gt;
 ## 10 Karl Ulrich Mayer    /citations?use~ Paul B. Bal~ /citations?user=vcOZ~
 ## # ... with 11 more rows&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The main author here is Hans-Peter Blossfeld, a well known Sociologist. We also see that Melinda Mills is one of his coauthors, so we also have the coauthors of Melinda Mills right after him. &lt;code&gt;grab_networks&lt;/code&gt; also has the &lt;code&gt;n_coauthors&lt;/code&gt; argument to control how many coauthors you can extract (limited to 20 by Google Scholar). You’ll notice that once you go over 10 coauthors things start to get very messy when we visualize this.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot_coauthors(network, size_labels = 3)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Cool eh? We can play around with more coauthors as well.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot_coauthors(grab_network(&amp;quot;citations?user=F0kCgy8AAAAJ&amp;amp;hl=en&amp;quot;, n_coauthors = 7), size_labels = 3)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Hope you enjoy it!&lt;/p&gt;
 &lt;!-- To make it more accesible to non-R users, I [created a Shiny app](https://cimentadaj.shinyapps.io/gs_coauthorsip/) where everyone can explore their own coauthors. Enjoy! --&gt;
 </description>
