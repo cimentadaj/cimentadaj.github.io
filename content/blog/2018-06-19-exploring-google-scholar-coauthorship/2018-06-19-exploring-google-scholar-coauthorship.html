@@ -1,0 +1,56 @@
+---
+title: Exploring Google Scholar coauthorship
+author: Jorge Cimentada
+date: '2018-06-19'
+slug: exploring-google-scholar-coauthorship
+categories: []
+tags: ['R', 'shiny', 'scraping', 'packages']
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+
+
+<p>I woke up today to read Maëlle Salmon’s latest blog entry in which she scraped her own <a href="https://masalmon.eu/2018/06/18/mathtree/">mathematical tree</a>. Running through the code I had an idea about scraping the coauthorship list that a Google Scholar profile has. With this, I could visualize the network of coauthorship of important scientists and explore whether they have closed or open collaborations.</p>
+<p>I sat down this morning and created the <code>coauthornetwork</code> package that allows you to do just that! It’s actually very simple. First, install it with the usual:</p>
+<pre class="r"><code>devtools::install_github(&quot;cimentadaj/coauthornetwork&quot;)</code></pre>
+<p>There’s two functions: <code>grab_network</code> and <code>plot_coauthors</code>. The first scrapes and returns a data frame of a Google Scholar profile, their coauthors and the coauthors of their coauthors (what?). More simply, by default, the data frame returns this:</p>
+<p>Google Scholar Profile –&gt; Coauthors –&gt; Coauthors</p>
+<p>It’s not that hard after all. The only thing you need to provide is the end of the URL of a Google Scholar profile. For example, a typical URL looks like this: <code>https://scholar.google.com/citations?user=F0kCgy8AAAAJ&amp;hl=en</code>. <code>grab_network</code> will accept the latter part of the URL, namely: <code>citations?user=F0kCgy8AAAAJ&amp;hl=en</code>. Let’s test it:</p>
+<pre class="r"><code>library(coauthornetwork)
+
+network &lt;- grab_network(&quot;citations?user=F0kCgy8AAAAJ&amp;hl=en&quot;)
+network</code></pre>
+<pre><code>## # A tibble: 21 x 4
+##    author               href            coauthors    coauthors_href       
+##    &lt;chr&gt;                &lt;chr&gt;           &lt;chr&gt;        &lt;chr&gt;                
+##  1 Hans-Peter Blossfeld citations?user~ Melinda Mil~ /citations?user=HX9K~
+##  2 Hans-Peter Blossfeld citations?user~ Karl Ulrich~ /citations?user=iuzu~
+##  3 Hans-Peter Blossfeld citations?user~ Yossi Shavit /citations?user=brfW~
+##  4 Hans-Peter Blossfeld citations?user~ Jan Skopek   /citations?user=Mmo1~
+##  5 Hans-Peter Blossfeld citations?user~ Andreas Timm /citations?user=NnRu~
+##  6 Melinda Mills        /citations?use~ Hans-Peter ~ /citations?user=F0kC~
+##  7 Melinda Mills        /citations?use~ Tanturri Ma~ /citations?user=xN3X~
+##  8 Melinda Mills        /citations?use~ René Veenst~ /citations?user=_9OV~
+##  9 Melinda Mills        /citations?use~ Francesco C~ /citations?user=-JR6~
+## 10 Karl Ulrich Mayer    /citations?use~ Paul B. Bal~ /citations?user=vcOZ~
+## # ... with 11 more rows</code></pre>
+<p>The main author here is Hans-Peter Blossfeld, a well known Sociologist. We also see that Melinda Mills is one of his coauthors, so we also have the coauthors of Melinda Mills right after him. <code>grab_networks</code> also has the <code>n_coauthors</code> argument to control how many coauthors you can extract (limited to 20 by Google Scholar). You’ll notice that once you go over 10 coauthors things start to get very messy when we visualize this.</p>
+<pre class="r"><code>plot_coauthors(network, size_labels = 3)</code></pre>
+<pre><code>## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
+## font family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
+## font family not found in Windows font database</code></pre>
+<p><img src="/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Cool eh? We can play around with more coauthors as well.</p>
+<pre class="r"><code>plot_coauthors(grab_network(&quot;citations?user=F0kCgy8AAAAJ&amp;hl=en&quot;, n_coauthors = 7), size_labels = 3)</code></pre>
+<pre><code>## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
+## font family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
+## font family not found in Windows font database</code></pre>
+<p><img src="/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Hope you enjoy it!</p>
+<!-- To make it more accesible to non-R users, I [created a Shiny app](https://cimentadaj.shinyapps.io/gs_coauthorsip/) where everyone can explore their own coauthors. Enjoy! -->

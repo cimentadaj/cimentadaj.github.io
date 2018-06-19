@@ -1,0 +1,54 @@
+---
+title: Exploring Google Scholar coauthorship
+author: Jorge Cimentada
+date: '2018-06-19'
+slug: exploring-google-scholar-coauthorship
+categories: []
+tags: ['R', 'shiny', 'scraping', 'packages']
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+I woke up today to read Maëlle Salmon's latest blog entry in which she scraped her own [mathematical tree](https://masalmon.eu/2018/06/18/mathtree/). Running through the code I had an idea about scraping the coauthorship list that a Google Scholar profile has. With this, I could visualize the network of coauthorship of important scientists and explore whether they have closed or open collaborations.
+
+I sat down this morning and created the `coauthornetwork` package that allows you to do just that! It's actually very simple. First, install it with the usual:
+
+```{r, eval = FALSE}
+devtools::install_github("cimentadaj/coauthornetwork")
+```
+
+There's two functions: `grab_network` and `plot_coauthors`. The first scrapes and returns a data frame of a Google Scholar profile, their coauthors and the coauthors of their coauthors (what?). More simply, by default, the data frame returns this:
+
+Google Scholar Profile --> Coauthors --> Coauthors
+
+It's not that hard after all. The only thing you need to provide is the end of the URL of a Google Scholar profile. For example, a typical URL looks like this: `https://scholar.google.com/citations?user=F0kCgy8AAAAJ&hl=en`. `grab_network` will accept the latter part of the URL, namely: `citations?user=F0kCgy8AAAAJ&hl=en`. Let's test it:
+
+
+```{r}
+library(coauthornetwork)
+
+network <- grab_network("citations?user=F0kCgy8AAAAJ&hl=en")
+network
+```
+
+The main author here is Hans-Peter Blossfeld, a well known Sociologist. We also see that Melinda Mills is one of his coauthors, so we also have the coauthors of Melinda Mills right after him. `grab_networks` also has the `n_coauthors` argument to control how many coauthors you can extract (limited to 20 by Google Scholar). You'll notice that once you go over 10 coauthors things start to get very messy when we visualize this.
+
+```{r, eval = FALSE}
+plot_coauthors(network, size_labels = 3)
+```
+
+```{r, echo = FALSE}
+suppressWarnings(plot_coauthors(network, size_labels = 3))
+```
+
+Cool eh? We can play around with more coauthors as well.
+
+```{r}
+plot_coauthors(grab_network("citations?user=F0kCgy8AAAAJ&hl=en", n_coauthors = 7), size_labels = 3)
+```
+
+Hope you enjoy it!
+
+<!-- To make it more accesible to non-R users, I [created a Shiny app](https://cimentadaj.shinyapps.io/gs_coauthorsip/) where everyone can explore their own coauthors. Enjoy! -->
+
