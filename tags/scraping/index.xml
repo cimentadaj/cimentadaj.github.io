@@ -6,10 +6,61 @@
     <description>Recent content in Scraping on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Thu, 05 Apr 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 19 Jun 2018 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/tags/scraping/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Exploring Google Scholar coauthorship</title>
+      <link>/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</link>
+      <pubDate>Tue, 19 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</guid>
+      <description>&lt;p&gt;I woke up today to read Maëlle Salmon’s latest blog entry in which she scraped her own &lt;a href=&#34;https://masalmon.eu/2018/06/18/mathtree/&#34;&gt;mathematical tree&lt;/a&gt;. Running through the code I had an idea about scraping the coauthorship list that a Google Scholar profile has. With this, I could visualize the network of coauthorship of important scientists and explore whether they have closed or open collaborations.&lt;/p&gt;
+&lt;p&gt;I sat down this morning and created the &lt;code&gt;coauthornetwork&lt;/code&gt; package that allows you to do just that! It’s actually very simple. First, install it with the usual:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;devtools::install_github(&amp;quot;cimentadaj/coauthornetwork&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There’s two functions: &lt;code&gt;grab_network&lt;/code&gt; and &lt;code&gt;plot_coauthors&lt;/code&gt;. The first scrapes and returns a data frame of a Google Scholar profile, their coauthors and the coauthors of their coauthors (what?). More simply, by default, the data frame returns this:&lt;/p&gt;
+&lt;p&gt;Google Scholar Profile –&amp;gt; Coauthors –&amp;gt; Coauthors&lt;/p&gt;
+&lt;p&gt;It’s not that hard after all. The only thing you need to provide is the end of the URL of a Google Scholar profile. For example, a typical URL looks like this: &lt;code&gt;https://scholar.google.com/citations?user=F0kCgy8AAAAJ&amp;amp;hl=en&lt;/code&gt;. &lt;code&gt;grab_network&lt;/code&gt; will accept the latter part of the URL, namely: &lt;code&gt;citations?user=F0kCgy8AAAAJ&amp;amp;hl=en&lt;/code&gt;. Let’s test it:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(coauthornetwork)
+
+network &amp;lt;- grab_network(&amp;quot;citations?user=F0kCgy8AAAAJ&amp;amp;hl=en&amp;quot;)
+network&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 21 x 4
+##    author               href            coauthors    coauthors_href       
+##    &amp;lt;chr&amp;gt;                &amp;lt;chr&amp;gt;           &amp;lt;chr&amp;gt;        &amp;lt;chr&amp;gt;                
+##  1 Hans-Peter Blossfeld citations?user~ Melinda Mil~ /citations?user=HX9K~
+##  2 Hans-Peter Blossfeld citations?user~ Karl Ulrich~ /citations?user=iuzu~
+##  3 Hans-Peter Blossfeld citations?user~ Yossi Shavit /citations?user=brfW~
+##  4 Hans-Peter Blossfeld citations?user~ Jan Skopek   /citations?user=Mmo1~
+##  5 Hans-Peter Blossfeld citations?user~ Andreas Timm /citations?user=NnRu~
+##  6 Melinda Mills        /citations?use~ Hans-Peter ~ /citations?user=F0kC~
+##  7 Melinda Mills        /citations?use~ Tanturri Ma~ /citations?user=xN3X~
+##  8 Melinda Mills        /citations?use~ René Veenst~ /citations?user=_9OV~
+##  9 Melinda Mills        /citations?use~ Francesco C~ /citations?user=-JR6~
+## 10 Karl Ulrich Mayer    /citations?use~ Paul B. Bal~ /citations?user=vcOZ~
+## # ... with 11 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The main author here is Hans-Peter Blossfeld, a well known Sociologist. We also see that Melinda Mills is one of his coauthors, so we also have the coauthors of Melinda Mills right after him. &lt;code&gt;grab_networks&lt;/code&gt; also has the &lt;code&gt;n_coauthors&lt;/code&gt; argument to control how many coauthors you can extract (limited to 20 by Google Scholar). You’ll notice that once you go over 10 coauthors things start to get very messy when we visualize this.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot_coauthors(network, size_labels = 3)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
+## font family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
+## font family not found in Windows font database&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Cool eh? We can play around with more coauthors as well.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot_coauthors(grab_network(&amp;quot;citations?user=F0kCgy8AAAAJ&amp;amp;hl=en&amp;quot;, n_coauthors = 7), size_labels = 3)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
+## font family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
+## font family not found in Windows font database&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Hope you enjoy it!&lt;/p&gt;
+&lt;!-- To make it more accesible to non-R users, I [created a Shiny app](https://cimentadaj.shinyapps.io/gs_coauthorsip/) where everyone can explore their own coauthors. Enjoy! --&gt;
+</description>
+    </item>
     
     <item>
       <title>Login in, scraping and hidden fields</title>
