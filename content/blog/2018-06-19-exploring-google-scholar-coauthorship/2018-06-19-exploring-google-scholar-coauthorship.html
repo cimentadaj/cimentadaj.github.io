@@ -37,20 +37,9 @@ network</code></pre>
 ## 10 Karl Ulrich Mayer    /citations?use~ Paul B. Bal~ /citations?user=vcOZ~
 ## # ... with 11 more rows</code></pre>
 <p>The main author here is Hans-Peter Blossfeld, a well known Sociologist. We also see that Melinda Mills is one of his coauthors, so we also have the coauthors of Melinda Mills right after him. <code>grab_networks</code> also has the <code>n_coauthors</code> argument to control how many coauthors you can extract (limited to 20 by Google Scholar). You’ll notice that once you go over 10 coauthors things start to get very messy when we visualize this.</p>
-<pre class="r"><code>plot_coauthors(network, size_labels = 3)</code></pre>
-<pre><code>## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database</code></pre>
-<p><img src="/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>Cool eh? We can play around with more coauthors as well.</p>
 <pre class="r"><code>plot_coauthors(grab_network(&quot;citations?user=F0kCgy8AAAAJ&amp;hl=en&quot;, n_coauthors = 7), size_labels = 3)</code></pre>
-<pre><code>## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database
-
-## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, :
-## font family not found in Windows font database</code></pre>
-<p><img src="/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>Hope you enjoy it!</p>
 <!-- To make it more accesible to non-R users, I [created a Shiny app](https://cimentadaj.shinyapps.io/gs_coauthorsip/) where everyone can explore their own coauthors. Enjoy! -->
