@@ -8,7 +8,7 @@ tags: ['PISA', 'R', 'projects']
 
 
 
-<p>I’ve long wanted to prepare a project with R related to education. I knew I’d found the idea when I read Thomas Lumley’s <a href="http://notstatschat.tumblr.com/post/156007757906/a-bus-watching-bot">attempt to create a Twitter bot in which he tweeted bus arrivals in New Zealand</a>. Quoting him, “Is it really hard to write a bot? No. Even I can do it. And I’m old.”</p>
+<p>I’ve long wanted to prepare a project with R related to education. I knew I’d found the idea when I read Thomas Lumley’s <a href="http://notstatschat.tumblr.com/post/156007757906/a-bus-watching-bot">attempt to create a Twitter bot in which he tweeted bus arrivals in New Zealand</a>. Quoting him, “Is it really hard to write a bot? No. Even I can do it. And I’m old.”</p>
 <p>So I said to myself, alright, you have to create a Twitter bot but it has to be related to education. It’s an easy project which shouldn’t take a lot of your time. I then came up with this idea: what if you could randomly sample questions from the <a href="http://www.oecd.org/pisa/aboutpisa/">PISA databases</a> and create a sort of random facts generator. The result would be one graph a day, showing a question for some random sample of countries. I figured, why not prepare a post (both for me to remember how I did it but also so others can contribute to the project) where I explained step-by-step how I did it?</p>
 <p>The repository for the project is <a href="https://github.com/cimentadaj/PISAfacts_twitterBot">here</a>, so feel free to drop any comments or improvements. The idea is to load the <a href="http://vs-web-fs-1.oecd.org/pisa/PUF_SPSS_COMBINED_CMB_STU_QQQ.zip">PISA 2015 data</a>, randomly pick a question that doesn’t have a lot of labels (because then it’s very difficult to plot it nicely), and based on the type of question create an appropriate graph. Of course, all of this needs to be done on the fly, without human assistance. You can follow this twitter account at <span class="citation">@DailyPISA_Facts</span>. Let’s start!</p>
 <div id="data-wrangling" class="section level2">
@@ -116,17 +116,17 @@ write_lines(new_var, path = &quot;./all_variables.txt&quot;, append = T)
   pisa.table(var_name, data = ., by = &quot;cnt&quot;) %&gt;%
   filter(complete.cases(.))</code></pre>
 <p>Let’s check out the contents of <code>try_df</code>:</p>
-<pre><code>##          cnt ec020q11na Freq Percentage Std.err.
-## 1  Australia          1 1180      29.91        0
-## 2  Australia          2 2336      59.21        0
-## 3  Australia          3  429      10.87        0
-## 4    Belgium          1  207      25.03        0
-## 5    Belgium          2  487      58.89        0
-## 6    Belgium          3  133      16.08        0
-## 7   Bulgaria          1  826      30.11        0
-## 8   Bulgaria          2 1402      51.11        0
-## 9   Bulgaria          3  515      18.78        0
-## 10   Croatia          1  593      26.05        0</code></pre>
+<pre><code>##                   cnt pa039q01ta Freq Percentage Std.err.
+## 1             Belgium          1 3972      85.16        0
+## 2             Belgium          2  692      14.84        0
+## 3               Chile          1 6062      96.88        0
+## 4               Chile          2  195       3.12        0
+## 5             Croatia          1 4353      81.17        0
+## 6             Croatia          2 1010      18.83        0
+## 7  Dominican Republic          1 4335      98.37        0
+## 8  Dominican Republic          2   72       1.63        0
+## 9              France          1 4463      84.46        0
+## 10             France          2  821      15.54        0</code></pre>
 <p>Great! To finish with the data, we simply need one more thing: to recode the value labels with the <code>labels</code> vector.</p>
 <pre class="r"><code>try_df[var_name] &lt;- labels[try_df[, var_name]]</code></pre>
 <p>Awesome. We have the data ready, more or less. Let’s produce a dirty plot to check how long the title is.</p>
@@ -352,7 +352,8 @@ unlink(file)</code></pre>
 <p>The whole sequence would be like this:</p>
 <pre class="bash"><code>env EDITOR=nano crontab -e
 30 9 * * 1-5 /usr/local/bin/RScript path_to_your/script.R</code></pre>
-<p>To save the file, press Control + O (to write out the file), then enter to accept the file name, then press Control + X (to exit nano). If all went well, then you should see “crontab: installing new crontab” without anything after that.</p>
+<p>To save the file, press Control + O (to write out the file), then enter to accept the file name, then
+press Control + X (to exit nano). If all went well, then you should see “crontab: installing new crontab” without anything after that.</p>
 <p>Aaaaaand that’s it! You now have a working script that will be run from Monday to Friday at 9:30 am. This script will read the PISA data, pick a random variable, make a graph and tweet it. You can follow this twitter account at <span class="citation">[@DailyPISA_Facts]</span>(<a href="https://twitter.com/DailyPISA_Facts" class="uri">https://twitter.com/DailyPISA_Facts</a>).</p>
 <p>Hope this was useful!</p>
 </div>

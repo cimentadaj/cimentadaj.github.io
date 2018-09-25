@@ -118,8 +118,8 @@ display(lm(y ~ x1 + x2))</code></pre>
 <li>Put the above step in a loop and repeat 1000 times. Calculate the confidence coverage for the 68% intervals for each of the three coefficients in the model.</li>
 </ol>
 </blockquote>
-<pre class="r"><code>coefs &lt;- array(NA, c(3, 1000))
-se &lt;- array(NA, c(3, 1000))
+<pre class="r"><code>coefs &lt;- matrix(NA, nrow = 3, ncol = 1000)
+se &lt;- matrix(NA, nrow = 3, ncol = 1000)
 
 # Naturally, these estimates will be different for anyone who runs this code
 # even if specifying set seed because the loop will loop new numbers each time.
@@ -132,13 +132,13 @@ for (i in 1:ncol(coefs)) {
   y = 3 + 0.1*x1 + 0.5*x2 + error1
   
   mod1 &lt;- summary(lm(y ~ x1 + x2))
-  coefs[1,i] &lt;- tidy(mod1)[1,2]
-  coefs[2,i] &lt;- tidy(mod1)[2,2]
-  coefs[3,i] &lt;- tidy(mod1)[3,2]
+  coefs[1,i] &lt;- tidy(mod1)[1,2, drop = TRUE]
+  coefs[2,i] &lt;- tidy(mod1)[2,2, drop = TRUE]
+  coefs[3,i] &lt;- tidy(mod1)[3,2, drop = TRUE]
   
-  se[1,i] &lt;- tidy(mod1)[1,3]
-  se[2,i] &lt;- tidy(mod1)[2,3]
-  se[3,i] &lt;- tidy(mod1)[3,3]
+  se[1,i] &lt;- tidy(mod1)[1,3, drop = TRUE]
+  se[2,i] &lt;- tidy(mod1)[2,3, drop = TRUE]
+  se[3,i] &lt;- tidy(mod1)[3,3, drop = TRUE]
 }
 
 repl_coef &lt;- rowMeans(coefs)
@@ -156,8 +156,8 @@ cbind(repl_coef + (-1 * repl_se), repl_coef + (1 * repl_se))</code></pre>
 <li>Repeat this simulation, but instead fit the model using t errors (see Exercise 6.6). The only change here is defining error1 as a t distribution instead of normally distributed</li>
 </ol>
 </blockquote>
-<pre class="r"><code>coefs &lt;- array(NA, c(3, 1000))
-se &lt;- array(NA, c(3, 1000))
+<pre class="r"><code>coefs &lt;- matrix(NA, nrow = 3, ncol = 1000)
+se &lt;- matrix(NA, nrow = 3, ncol = 1000)
 
 for (i in 1:ncol(coefs)) {
   x1 &lt;- 1:100

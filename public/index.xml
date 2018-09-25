@@ -1663,11 +1663,11 @@ three_rounds[[1]]&lt;/code&gt;&lt;/pre&gt;
       <guid>/blog/2017-11-18-123check/1-2-3-check/</guid>
       <description>&lt;p&gt;1..2..3..check! This is my first post using &lt;a href=&#34;https://cran.r-project.org/web/packages/blogdown/index.html&#34;&gt;blogdown&lt;/a&gt;. I migrated my website from &lt;code&gt;Jekyll&lt;/code&gt; to &lt;code&gt;Hugo&lt;/code&gt; and although it took me around 2 days to tweak everything to where I wanted it, the process wasn’t so bad after all. As a celebration, I though of doing a quick analysis!&lt;/p&gt;
 &lt;p&gt;I live in Barcelona, a city known for sunny weather, great football and for wanting to become an independent state. In fact, just recently there was an unsuccessful attempt to break parts with the Spanish nation. Without delving too much into it, I searched for any question related to nationalism into the European Social Survey and downloaded the last available wave using the &lt;a href=&#34;https://cran.r-project.org/web/packages/ess/index.html&#34;&gt;ess&lt;/a&gt; package.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ess)
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(essurvey)
 library(cimentadaj)
 library(tidyverse)
 
-spain_df &amp;lt;- ess_country(&amp;quot;Spain&amp;quot;, 7, &amp;quot;your_email@gmail.com&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+spain_df &amp;lt;- import_country(&amp;quot;Spain&amp;quot;, 7, &amp;quot;your_email@gmail.com&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;code&gt;spain_df&lt;/code&gt; is now a data frame containing the 7th ESS round. Next we have to recode the autonomous communities which are in a ESS format. We’re interested in two variables, &lt;code&gt;region&lt;/code&gt; and &lt;code&gt;fclcntr&lt;/code&gt;, the second one asking whether the person feels closer to Spain.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Note: did you notice the comunidades &lt;code&gt;tibble&lt;/code&gt; there? I pasted that with no effort with &lt;a href=&#34;https://cran.r-project.org/web/packages/datapasta/index.html&#34;&gt;datapasta&lt;/a&gt;! If you’re using Rstudio, just copy the table from your source and use Shift + CMD + T (on a mac) to paste it as a very nice tibble.&lt;/strong&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;comunidades &amp;lt;- tibble::tribble(
@@ -2137,7 +2137,7 @@ summary(bootstrap)
 &lt;h2&gt;Conclusion&lt;/h2&gt;
 &lt;p&gt;Again, this is a very crude approach, and the whole idea is to understand the inner workings of these algorithms in practice. For more thorough approaches I suggest using the &lt;code&gt;cv&lt;/code&gt; functions from the &lt;code&gt;boot&lt;/code&gt; package or &lt;code&gt;caret&lt;/code&gt; or &lt;code&gt;modelr&lt;/code&gt;. I hope this was useful. I will try to keep doing these things as they help me understand these techniques better.&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Kohavi, Ron. “A study of cross-validation and bootstrap for accuracy estimation and model selection.” Ijcai. Vol. 14. No. 2. 1995.&lt;/li&gt;
+&lt;li&gt;Kohavi, Ron. “A study of cross-validation and bootstrap for accuracy estimation and model selection.” Ijcai. Vol. 14. No. 2. 1995.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 </description>
@@ -2260,7 +2260,7 @@ k_fold_cv %&amp;gt;%
 &lt;h2&gt;Conclusion&lt;/h2&gt;
 &lt;p&gt;This was my first attempt at manually implementing the Holdout method and the K-Fold CV. These examples are certainly flawed, like rounding the decimal number of rows correct for the unique number of rows in each K-Fold slice. If anyone is interested in correcting thes, please do send a pull request. For those interested in using more reliable approaches, take a look at the &lt;code&gt;caret&lt;/code&gt; and the &lt;code&gt;modelr&lt;/code&gt; package. In the next entry I will implement the LOO method and the bootstrap (and maybe the stratified K-Fold CV)&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Kohavi, Ron. “A study of cross-validation and bootstrap for accuracy estimation and model selection.” Ijcai. Vol. 14. No. 2. 1995.&lt;/li&gt;
+&lt;li&gt;Kohavi, Ron. “A study of cross-validation and bootstrap for accuracy estimation and model selection.” Ijcai. Vol. 14. No. 2. 1995.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 </description>
@@ -2311,20 +2311,21 @@ dataset_ready &amp;lt;-
   select(-CNT, -STIDSTD)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The final results is this dataset:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;## # A tibble: 10 x 3
-##      score         income       wt
-##      &amp;lt;dbl&amp;gt;         &amp;lt;fctr&amp;gt;    &amp;lt;dbl&amp;gt;
-## 1 439.5622 Less than &amp;lt;$A&amp;gt; 137.3068
-## 2 523.1422 Less than &amp;lt;$A&amp;gt; 170.0566
-## 3 291.4083 Less than &amp;lt;$A&amp;gt; 162.3794
-## 4 436.6023 Less than &amp;lt;$A&amp;gt; 162.3794
-## 5 367.4326 Less than &amp;lt;$A&amp;gt; 114.6644
+##   score income            wt
+##   &amp;lt;dbl&amp;gt; &amp;lt;fct&amp;gt;          &amp;lt;dbl&amp;gt;
+## 1  440. Less than &amp;lt;$A&amp;gt;  137.
+## 2  523. Less than &amp;lt;$A&amp;gt;  170.
+## 3  291. Less than &amp;lt;$A&amp;gt;  162.
+## 4  437. Less than &amp;lt;$A&amp;gt;  162.
+## 5  367. Less than &amp;lt;$A&amp;gt;  115.
 ## # ... with 5 more rows&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;This is the minimum dataset that the function will accept. This means that it needs to have at least a categorical variable and a continuous variable (the vector of weights is optional).&lt;/p&gt;
 &lt;p&gt;The package is called &lt;code&gt;perccalc&lt;/code&gt;, short for percentile calculator and we can install and load it with this code:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;quot;perccalc&amp;quot;, repo = &amp;quot;https://cran.rediris.es/&amp;quot;)
+## package &amp;#39;perccalc&amp;#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  /var/folders/w0/pscnb7zx5y9g_qf13cxhl0_r0000gn/T//Rtmphlh1k0/downloaded_packages
+##  C:\Users\cimentadaj\AppData\Local\Temp\RtmpYFnDzN\downloaded_packages
 library(perccalc)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The package has two functions, which I’ll show some examples. The first one is called &lt;code&gt;perc_diff&lt;/code&gt; and it’s very easy to use, we just specify the data, the name of the categorical and continuous variable and the percentile difference we want.&lt;/p&gt;
 &lt;p&gt;Let’s put it to use!&lt;/p&gt;
@@ -2435,107 +2436,15 @@ postclose `memhold&amp;#39;
 ##  95.228517   8.454902&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The second function of the package is called &lt;code&gt;perc_dist&lt;/code&gt; and instead of calculating the difference of two percentiles, it returns the score and standard error of every percentile. The arguments of the function are exactly the same but without the &lt;code&gt;percentiles&lt;/code&gt; argument, because this will return the whole set of percentiles.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_dist(dataset_ready, income, score)
-##     percentile   estimate std.error
-## 1            1   3.693889  1.327722
-## 2            2   7.280584  2.591314
-## 3            3  10.762009  3.792189
-## 4            4  14.140090  4.931759
-## 5            5  17.416754  6.011441
-## 6            6  20.593925  7.032650
-## 7            7  23.673529  7.996804
-## 8            8  26.657492  8.905323
-## 9            9  29.547739  9.759628
-## 10          10  32.346196 10.561142
-## 11          11  35.054789 11.311287
-## 12          12  37.675443 12.011489
-## 13          13  40.210083 12.663175
-## 14          14  42.660636 13.267774
-## 15          15  45.029026 13.826714
-## 16          16  47.317180 14.341427
-## 17          17  49.527023 14.813345
-## 18          18  51.660481 15.243900
-## 19          19  53.719479 15.634527
-## 20          20  55.705943 15.986660
-## 21          21  57.621798 16.301735
-## 22          22  59.468970 16.581186
-## 23          23  61.249385 16.826450
-## 24          24  62.964968 17.038960
-## 25          25  64.617644 17.220150
-## 26          26  66.209340 17.371453
-## 27          27  67.741982 17.494296
-## 28          28  69.217493 17.590108
-## 29          29  70.637801 17.660310
-## 30          30  72.004830 17.706321
-## 31          31  73.320507 17.729551
-## 32          32  74.586757 17.731404
-## 33          33  75.805505 17.713275
-## 34          34  76.978678 17.676548
-## 35          35  78.108200 17.622596
-## 36          36  79.195997 17.552774
-## 37          37  80.243995 17.468422
-## 38          38  81.254120 17.370860
-## 39          39  82.228297 17.261387
-## 40          40  83.168451 17.141273
-## 41          41  84.076509 17.011761
-## 42          42  84.954395 16.874063
-## 43          43  85.804036 16.729352
-## 44          44  86.627357 16.578762
-## 45          45  87.426284 16.423385
-## 46          46  88.202741 16.264261
-## 47          47  88.958656 16.102380
-## 48          48  89.695953 15.938677
-## 49          49  90.416558 15.774024
-## 50          50  91.122396 15.609233
-## 51          51  91.815394 15.445050
-## 52          52  92.497476 15.282149
-## 53          53  93.170569 15.121139
-## 54          54  93.836598 14.962558
-## 55          55  94.497488 14.806873
-## 56          56  95.155165 14.654486
-## 57          57  95.811555 14.505735
-## 58          58  96.468584 14.360901
-## 59          59  97.128176 14.220213
-## 60          60  97.792258 14.083859
-## 61          61  98.462754 13.951996
-## 62          62  99.141592 13.824764
-## 63          63  99.830695 13.702302
-## 64          64 100.531991 13.584764
-## 65          65 101.247404 13.472342
-## 66          66 101.978860 13.365285
-## 67          67 102.728285 13.263927
-## 68          68 103.497604 13.168712
-## 69          69 104.288742 13.080222
-## 70          70 105.103627 12.999208
-## 71          71 105.944182 12.926622
-## 72          72 106.812333 12.863647
-## 73          73 107.710007 12.811728
-## 74          74 108.639129 12.772604
-## 75          75 109.601624 12.748328
-## 76          76 110.599418 12.741293
-## 77          77 111.634436 12.754239
-## 78          78 112.708605 12.790256
-## 79          79 113.823849 12.852771
-## 80          80 114.982095 12.945522
-## 81          81 116.185267 13.072509
-## 82          82 117.435292 13.237935
-## 83          83 118.734096 13.446126
-## 84          84 120.083602 13.701443
-## 85          85 121.485739 14.008184
-## 86          86 122.942430 14.370488
-## 87          87 124.455601 14.792251
-## 88          88 126.027178 15.277052
-## 89          89 127.659088 15.828107
-## 90          90 129.353254 16.448235
-## 91          91 131.111603 17.139861
-## 92          92 132.936061 17.905030
-## 93          93 134.828552 18.745443
-## 94          94 136.791004 19.662499
-## 95          95 138.825340 20.657348
-## 96          96 140.933487 21.730939
-## 97          97 143.117371 22.884074
-## 98          98 145.378916 24.117446
-## 99          99 147.720049 25.431683
-## 100        100 150.142695 26.827377&lt;/code&gt;&lt;/pre&gt;
+## # A tibble: 100 x 3
+##   percentile estimate std.error
+##        &amp;lt;int&amp;gt;    &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;
+## 1          1     3.69      1.33
+## 2          2     7.28      2.59
+## 3          3    10.8       3.79
+## 4          4    14.1       4.93
+## 5          5    17.4       6.01
+## # ... with 95 more rows&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;We can also add the optional set of weights and graph it:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_dist(dataset_ready, income, score, wt) %&amp;gt;%
   mutate(ci_low = estimate - 1.96 * std.error,
@@ -2550,8 +2459,10 @@ postclose `memhold&amp;#39;
   filter(percentile %in% c(90, 10)) %&amp;gt;%
   summarize(diff = diff(estimate),
             se_diff = diff(std.error))
-##       diff  se_diff
-## 1 95.22852 5.679855&lt;/code&gt;&lt;/pre&gt;
+## # A tibble: 1 x 2
+##    diff se_diff
+##   &amp;lt;dbl&amp;gt;   &amp;lt;dbl&amp;gt;
+## 1  95.2    5.68&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;compared to&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_diff(dataset_ready, income, score, weights = wt, percentiles = c(90, 10))
 ## difference         se 
@@ -2582,7 +2493,7 @@ postclose `memhold&amp;#39;
       <pubDate>Wed, 08 Mar 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</guid>
-      <description>&lt;p&gt;I’ve long wanted to prepare a project with R related to education. I knew I’d found the idea when I read Thomas Lumley’s &lt;a href=&#34;http://notstatschat.tumblr.com/post/156007757906/a-bus-watching-bot&#34;&gt;attempt to create a Twitter bot in which he tweeted bus arrivals in New Zealand&lt;/a&gt;. Quoting him, “Is it really hard to write a bot? No. Even I can do it. And I’m old.”&lt;/p&gt;
+      <description>&lt;p&gt;I’ve long wanted to prepare a project with R related to education. I knew I’d found the idea when I read Thomas Lumley’s &lt;a href=&#34;http://notstatschat.tumblr.com/post/156007757906/a-bus-watching-bot&#34;&gt;attempt to create a Twitter bot in which he tweeted bus arrivals in New Zealand&lt;/a&gt;. Quoting him, “Is it really hard to write a bot? No. Even I can do it. And I’m old.”&lt;/p&gt;
 &lt;p&gt;So I said to myself, alright, you have to create a Twitter bot but it has to be related to education. It’s an easy project which shouldn’t take a lot of your time. I then came up with this idea: what if you could randomly sample questions from the &lt;a href=&#34;http://www.oecd.org/pisa/aboutpisa/&#34;&gt;PISA databases&lt;/a&gt; and create a sort of random facts generator. The result would be one graph a day, showing a question for some random sample of countries. I figured, why not prepare a post (both for me to remember how I did it but also so others can contribute to the project) where I explained step-by-step how I did it?&lt;/p&gt;
 &lt;p&gt;The repository for the project is &lt;a href=&#34;https://github.com/cimentadaj/PISAfacts_twitterBot&#34;&gt;here&lt;/a&gt;, so feel free to drop any comments or improvements. The idea is to load the &lt;a href=&#34;http://vs-web-fs-1.oecd.org/pisa/PUF_SPSS_COMBINED_CMB_STU_QQQ.zip&#34;&gt;PISA 2015 data&lt;/a&gt;, randomly pick a question that doesn’t have a lot of labels (because then it’s very difficult to plot it nicely), and based on the type of question create an appropriate graph. Of course, all of this needs to be done on the fly, without human assistance. You can follow this twitter account at &lt;span class=&#34;citation&#34;&gt;@DailyPISA_Facts&lt;/span&gt;. Let’s start!&lt;/p&gt;
 &lt;div id=&#34;data-wrangling&#34; class=&#34;section level2&#34;&gt;
@@ -2690,17 +2601,17 @@ write_lines(new_var, path = &amp;quot;./all_variables.txt&amp;quot;, append = T)
   pisa.table(var_name, data = ., by = &amp;quot;cnt&amp;quot;) %&amp;gt;%
   filter(complete.cases(.))&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Let’s check out the contents of &lt;code&gt;try_df&lt;/code&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;##          cnt ec020q11na Freq Percentage Std.err.
-## 1  Australia          1 1180      29.91        0
-## 2  Australia          2 2336      59.21        0
-## 3  Australia          3  429      10.87        0
-## 4    Belgium          1  207      25.03        0
-## 5    Belgium          2  487      58.89        0
-## 6    Belgium          3  133      16.08        0
-## 7   Bulgaria          1  826      30.11        0
-## 8   Bulgaria          2 1402      51.11        0
-## 9   Bulgaria          3  515      18.78        0
-## 10   Croatia          1  593      26.05        0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##                   cnt pa039q01ta Freq Percentage Std.err.
+## 1             Belgium          1 3972      85.16        0
+## 2             Belgium          2  692      14.84        0
+## 3               Chile          1 6062      96.88        0
+## 4               Chile          2  195       3.12        0
+## 5             Croatia          1 4353      81.17        0
+## 6             Croatia          2 1010      18.83        0
+## 7  Dominican Republic          1 4335      98.37        0
+## 8  Dominican Republic          2   72       1.63        0
+## 9              France          1 4463      84.46        0
+## 10             France          2  821      15.54        0&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Great! To finish with the data, we simply need one more thing: to recode the value labels with the &lt;code&gt;labels&lt;/code&gt; vector.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;try_df[var_name] &amp;lt;- labels[try_df[, var_name]]&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Awesome. We have the data ready, more or less. Let’s produce a dirty plot to check how long the title is.&lt;/p&gt;
@@ -2926,7 +2837,8 @@ unlink(file)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The whole sequence would be like this:&lt;/p&gt;
 &lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;env EDITOR=nano crontab -e
 30 9 * * 1-5 /usr/local/bin/RScript path_to_your/script.R&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;To save the file, press Control + O (to write out the file), then enter to accept the file name, then press Control + X (to exit nano). If all went well, then you should see “crontab: installing new crontab” without anything after that.&lt;/p&gt;
+&lt;p&gt;To save the file, press Control + O (to write out the file), then enter to accept the file name, then
+press Control + X (to exit nano). If all went well, then you should see “crontab: installing new crontab” without anything after that.&lt;/p&gt;
 &lt;p&gt;Aaaaaand that’s it! You now have a working script that will be run from Monday to Friday at 9:30 am. This script will read the PISA data, pick a random variable, make a graph and tweet it. You can follow this twitter account at &lt;span class=&#34;citation&#34;&gt;[@DailyPISA_Facts]&lt;/span&gt;(&lt;a href=&#34;https://twitter.com/DailyPISA_Facts&#34; class=&#34;uri&#34;&gt;https://twitter.com/DailyPISA_Facts&lt;/a&gt;).&lt;/p&gt;
 &lt;p&gt;Hope this was useful!&lt;/p&gt;
 &lt;/div&gt;
@@ -2998,8 +2910,8 @@ display(lm(y ~ x1 + x2))&lt;/code&gt;&lt;/pre&gt;
 &lt;li&gt;Put the above step in a loop and repeat 1000 times. Calculate the confidence coverage for the 68% intervals for each of the three coefficients in the model.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/blockquote&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;coefs &amp;lt;- array(NA, c(3, 1000))
-se &amp;lt;- array(NA, c(3, 1000))
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;coefs &amp;lt;- matrix(NA, nrow = 3, ncol = 1000)
+se &amp;lt;- matrix(NA, nrow = 3, ncol = 1000)
 
 # Naturally, these estimates will be different for anyone who runs this code
 # even if specifying set seed because the loop will loop new numbers each time.
@@ -3012,13 +2924,13 @@ for (i in 1:ncol(coefs)) {
   y = 3 + 0.1*x1 + 0.5*x2 + error1
   
   mod1 &amp;lt;- summary(lm(y ~ x1 + x2))
-  coefs[1,i] &amp;lt;- tidy(mod1)[1,2]
-  coefs[2,i] &amp;lt;- tidy(mod1)[2,2]
-  coefs[3,i] &amp;lt;- tidy(mod1)[3,2]
+  coefs[1,i] &amp;lt;- tidy(mod1)[1,2, drop = TRUE]
+  coefs[2,i] &amp;lt;- tidy(mod1)[2,2, drop = TRUE]
+  coefs[3,i] &amp;lt;- tidy(mod1)[3,2, drop = TRUE]
   
-  se[1,i] &amp;lt;- tidy(mod1)[1,3]
-  se[2,i] &amp;lt;- tidy(mod1)[2,3]
-  se[3,i] &amp;lt;- tidy(mod1)[3,3]
+  se[1,i] &amp;lt;- tidy(mod1)[1,3, drop = TRUE]
+  se[2,i] &amp;lt;- tidy(mod1)[2,3, drop = TRUE]
+  se[3,i] &amp;lt;- tidy(mod1)[3,3, drop = TRUE]
 }
 
 repl_coef &amp;lt;- rowMeans(coefs)
@@ -3036,8 +2948,8 @@ cbind(repl_coef + (-1 * repl_se), repl_coef + (1 * repl_se))&lt;/code&gt;&lt;/pr
 &lt;li&gt;Repeat this simulation, but instead fit the model using t errors (see Exercise 6.6). The only change here is defining error1 as a t distribution instead of normally distributed&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/blockquote&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;coefs &amp;lt;- array(NA, c(3, 1000))
-se &amp;lt;- array(NA, c(3, 1000))
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;coefs &amp;lt;- matrix(NA, nrow = 3, ncol = 1000)
+se &amp;lt;- matrix(NA, nrow = 3, ncol = 1000)
 
 for (i in 1:ncol(coefs)) {
   x1 &amp;lt;- 1:100
@@ -3522,16 +3434,16 @@ return(vec)
 # shots in a row.&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# test
 thrower(0.6)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  [1] 0 1 0 1 0 1 1 1 0 0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 0 1 1 1 1 0 0&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# 0 1 0 1 0 0
 # Last two elements are always zero&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# b)
 attempts &amp;lt;- replicate(1000, thrower(0.60))
 mean(sapply(attempts, length)) &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 8.584&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 8.905&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# mean number of shots until two shots are missed in a row&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sd(sapply(attempts, length)) &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 7.044613&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 7.248898&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# standard deviation of shots made
 # until two shots are missed in a row&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;hist(sapply(attempts, length)) # distribution of shots made&lt;/code&gt;&lt;/pre&gt;
@@ -3817,9 +3729,9 @@ lm(income ~ gender + kids)&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;&lt;br&gt;&lt;/p&gt;
 
-&lt;p&gt;Hi, I’m Jorge Cimentada and I’m a PhD candidate in Sociology at Pompeu Fabra University in Barcelona, Spain. I belong to the &lt;a href=&#34;https://www.upf.edu/web/survey&#34;&gt;Research and Expertise Centre for Survey Methodology (RECSM)&lt;/a&gt; and my main research interests are the study of achievement inequality, the role of schools in reproducing these inequalities and early education as a remedy to achievement inequalities. I’m currently working at the &lt;a href=&#34;https://www.upf.edu/web/survey&#34;&gt;Research and Expertise Centre for Survey Methodology (RECSM)&lt;/a&gt; as an R developer and Data Scientists. Previously I worked on a project related to class mobility and how it has changed over time in industrialized countries in the &lt;a href=&#34;https://www.upf.edu/web/demosoc&#34;&gt;DEMOSOC&lt;/a&gt; research group.&lt;/p&gt;
+&lt;p&gt;Hi, I’m Jorge Cimentada and I’m a Data Scientist at &lt;a href=&#34;https://kernel-analytics.com/en/analytics/&#34;&gt;Kernel Analytics&lt;/a&gt;. I&amp;rsquo;m finishing my PhD candidacy in Quantitative Sociology at Pompeu Fabra University and belong to the &lt;a href=&#34;https://www.upf.edu/web/survey&#34;&gt;Research and Expertise Centre for Survey Methodology (RECSM)&lt;/a&gt;. My main research interests are the study of achievement inequality, the role of schools in reproducing these inequalities and early education as a remedy to achievement inequalities. I enjoy programming with R, scraping educational data and applying machine learning and data science to help people. If this matches your profile, let&amp;rsquo;s work on something together!&lt;/p&gt;
 
-&lt;p&gt;I am very passionate about statistical programming with R , data visualization, statistics and drums.&lt;/p&gt;
+&lt;p&gt;I am very passionate about statistical programming with R, machine learning, data visualization, statistics and drums.&lt;/p&gt;
 
 &lt;p&gt;If you wish to contact me send me an email to &lt;code&gt;cimentadaj (at) gmail (dot) com&lt;/code&gt;. I’m also on &lt;a href=&#34;https://github.com/cimentadaj&#34;&gt;Github&lt;/a&gt; and &lt;a href=&#34;https://www.linkedin.com/in/jorge-cimentada-1740877a/&#34;&gt;Linkedin&lt;/a&gt;.&lt;/p&gt;
 </description>

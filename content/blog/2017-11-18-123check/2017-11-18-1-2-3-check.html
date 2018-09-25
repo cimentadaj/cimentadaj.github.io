@@ -11,11 +11,11 @@ tags: ['R', 'EDA']
 
 <p>1..2..3..check! This is my first post using <a href="https://cran.r-project.org/web/packages/blogdown/index.html">blogdown</a>. I migrated my website from <code>Jekyll</code> to <code>Hugo</code> and although it took me around 2 days to tweak everything to where I wanted it, the process wasn’t so bad after all. As a celebration, I though of doing a quick analysis!</p>
 <p>I live in Barcelona, a city known for sunny weather, great football and for wanting to become an independent state. In fact, just recently there was an unsuccessful attempt to break parts with the Spanish nation. Without delving too much into it, I searched for any question related to nationalism into the European Social Survey and downloaded the last available wave using the <a href="https://cran.r-project.org/web/packages/ess/index.html">ess</a> package.</p>
-<pre class="r"><code>library(ess)
+<pre class="r"><code>library(essurvey)
 library(cimentadaj)
 library(tidyverse)
 
-spain_df &lt;- ess_country(&quot;Spain&quot;, 7, &quot;your_email@gmail.com&quot;)</code></pre>
+spain_df &lt;- import_country(&quot;Spain&quot;, 7, &quot;your_email@gmail.com&quot;)</code></pre>
 <p><code>spain_df</code> is now a data frame containing the 7th ESS round. Next we have to recode the autonomous communities which are in a ESS format. We’re interested in two variables, <code>region</code> and <code>fclcntr</code>, the second one asking whether the person feels closer to Spain.</p>
 <p><strong>Note: did you notice the comunidades <code>tibble</code> there? I pasted that with no effort with <a href="https://cran.r-project.org/web/packages/datapasta/index.html">datapasta</a>! If you’re using Rstudio, just copy the table from your source and use Shift + CMD + T (on a mac) to paste it as a very nice tibble.</strong></p>
 <pre class="r"><code>comunidades &lt;- tibble::tribble(

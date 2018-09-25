@@ -47,20 +47,21 @@ dataset_ready &lt;-
   select(-CNT, -STIDSTD)</code></pre>
 <p>The final results is this dataset:</p>
 <pre><code>## # A tibble: 10 x 3
-##      score         income       wt
-##      &lt;dbl&gt;         &lt;fctr&gt;    &lt;dbl&gt;
-## 1 439.5622 Less than &lt;$A&gt; 137.3068
-## 2 523.1422 Less than &lt;$A&gt; 170.0566
-## 3 291.4083 Less than &lt;$A&gt; 162.3794
-## 4 436.6023 Less than &lt;$A&gt; 162.3794
-## 5 367.4326 Less than &lt;$A&gt; 114.6644
+##   score income            wt
+##   &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;
+## 1  440. Less than &lt;$A&gt;  137.
+## 2  523. Less than &lt;$A&gt;  170.
+## 3  291. Less than &lt;$A&gt;  162.
+## 4  437. Less than &lt;$A&gt;  162.
+## 5  367. Less than &lt;$A&gt;  115.
 ## # ... with 5 more rows</code></pre>
 <p>This is the minimum dataset that the function will accept. This means that it needs to have at least a categorical variable and a continuous variable (the vector of weights is optional).</p>
 <p>The package is called <code>perccalc</code>, short for percentile calculator and we can install and load it with this code:</p>
 <pre class="r"><code>install.packages(&quot;perccalc&quot;, repo = &quot;https://cran.rediris.es/&quot;)
+## package &#39;perccalc&#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  /var/folders/w0/pscnb7zx5y9g_qf13cxhl0_r0000gn/T//Rtmphlh1k0/downloaded_packages
+##  C:\Users\cimentadaj\AppData\Local\Temp\RtmpYFnDzN\downloaded_packages
 library(perccalc)</code></pre>
 <p>The package has two functions, which I’ll show some examples. The first one is called <code>perc_diff</code> and it’s very easy to use, we just specify the data, the name of the categorical and continuous variable and the percentile difference we want.</p>
 <p>Let’s put it to use!</p>
@@ -171,107 +172,15 @@ postclose `memhold&#39;
 ##  95.228517   8.454902</code></pre>
 <p>The second function of the package is called <code>perc_dist</code> and instead of calculating the difference of two percentiles, it returns the score and standard error of every percentile. The arguments of the function are exactly the same but without the <code>percentiles</code> argument, because this will return the whole set of percentiles.</p>
 <pre class="r"><code>perc_dist(dataset_ready, income, score)
-##     percentile   estimate std.error
-## 1            1   3.693889  1.327722
-## 2            2   7.280584  2.591314
-## 3            3  10.762009  3.792189
-## 4            4  14.140090  4.931759
-## 5            5  17.416754  6.011441
-## 6            6  20.593925  7.032650
-## 7            7  23.673529  7.996804
-## 8            8  26.657492  8.905323
-## 9            9  29.547739  9.759628
-## 10          10  32.346196 10.561142
-## 11          11  35.054789 11.311287
-## 12          12  37.675443 12.011489
-## 13          13  40.210083 12.663175
-## 14          14  42.660636 13.267774
-## 15          15  45.029026 13.826714
-## 16          16  47.317180 14.341427
-## 17          17  49.527023 14.813345
-## 18          18  51.660481 15.243900
-## 19          19  53.719479 15.634527
-## 20          20  55.705943 15.986660
-## 21          21  57.621798 16.301735
-## 22          22  59.468970 16.581186
-## 23          23  61.249385 16.826450
-## 24          24  62.964968 17.038960
-## 25          25  64.617644 17.220150
-## 26          26  66.209340 17.371453
-## 27          27  67.741982 17.494296
-## 28          28  69.217493 17.590108
-## 29          29  70.637801 17.660310
-## 30          30  72.004830 17.706321
-## 31          31  73.320507 17.729551
-## 32          32  74.586757 17.731404
-## 33          33  75.805505 17.713275
-## 34          34  76.978678 17.676548
-## 35          35  78.108200 17.622596
-## 36          36  79.195997 17.552774
-## 37          37  80.243995 17.468422
-## 38          38  81.254120 17.370860
-## 39          39  82.228297 17.261387
-## 40          40  83.168451 17.141273
-## 41          41  84.076509 17.011761
-## 42          42  84.954395 16.874063
-## 43          43  85.804036 16.729352
-## 44          44  86.627357 16.578762
-## 45          45  87.426284 16.423385
-## 46          46  88.202741 16.264261
-## 47          47  88.958656 16.102380
-## 48          48  89.695953 15.938677
-## 49          49  90.416558 15.774024
-## 50          50  91.122396 15.609233
-## 51          51  91.815394 15.445050
-## 52          52  92.497476 15.282149
-## 53          53  93.170569 15.121139
-## 54          54  93.836598 14.962558
-## 55          55  94.497488 14.806873
-## 56          56  95.155165 14.654486
-## 57          57  95.811555 14.505735
-## 58          58  96.468584 14.360901
-## 59          59  97.128176 14.220213
-## 60          60  97.792258 14.083859
-## 61          61  98.462754 13.951996
-## 62          62  99.141592 13.824764
-## 63          63  99.830695 13.702302
-## 64          64 100.531991 13.584764
-## 65          65 101.247404 13.472342
-## 66          66 101.978860 13.365285
-## 67          67 102.728285 13.263927
-## 68          68 103.497604 13.168712
-## 69          69 104.288742 13.080222
-## 70          70 105.103627 12.999208
-## 71          71 105.944182 12.926622
-## 72          72 106.812333 12.863647
-## 73          73 107.710007 12.811728
-## 74          74 108.639129 12.772604
-## 75          75 109.601624 12.748328
-## 76          76 110.599418 12.741293
-## 77          77 111.634436 12.754239
-## 78          78 112.708605 12.790256
-## 79          79 113.823849 12.852771
-## 80          80 114.982095 12.945522
-## 81          81 116.185267 13.072509
-## 82          82 117.435292 13.237935
-## 83          83 118.734096 13.446126
-## 84          84 120.083602 13.701443
-## 85          85 121.485739 14.008184
-## 86          86 122.942430 14.370488
-## 87          87 124.455601 14.792251
-## 88          88 126.027178 15.277052
-## 89          89 127.659088 15.828107
-## 90          90 129.353254 16.448235
-## 91          91 131.111603 17.139861
-## 92          92 132.936061 17.905030
-## 93          93 134.828552 18.745443
-## 94          94 136.791004 19.662499
-## 95          95 138.825340 20.657348
-## 96          96 140.933487 21.730939
-## 97          97 143.117371 22.884074
-## 98          98 145.378916 24.117446
-## 99          99 147.720049 25.431683
-## 100        100 150.142695 26.827377</code></pre>
+## # A tibble: 100 x 3
+##   percentile estimate std.error
+##        &lt;int&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1          1     3.69      1.33
+## 2          2     7.28      2.59
+## 3          3    10.8       3.79
+## 4          4    14.1       4.93
+## 5          5    17.4       6.01
+## # ... with 95 more rows</code></pre>
 <p>We can also add the optional set of weights and graph it:</p>
 <pre class="r"><code>perc_dist(dataset_ready, income, score, wt) %&gt;%
   mutate(ci_low = estimate - 1.96 * std.error,
@@ -286,8 +195,10 @@ postclose `memhold&#39;
   filter(percentile %in% c(90, 10)) %&gt;%
   summarize(diff = diff(estimate),
             se_diff = diff(std.error))
-##       diff  se_diff
-## 1 95.22852 5.679855</code></pre>
+## # A tibble: 1 x 2
+##    diff se_diff
+##   &lt;dbl&gt;   &lt;dbl&gt;
+## 1  95.2    5.68</code></pre>
 <p>compared to</p>
 <pre class="r"><code>perc_diff(dataset_ready, income, score, weights = wt, percentiles = c(90, 10))
 ## difference         se 
