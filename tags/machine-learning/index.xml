@@ -174,7 +174,7 @@ summary(bootstrap)
 &lt;h2&gt;Conclusion&lt;/h2&gt;
 &lt;p&gt;Again, this is a very crude approach, and the whole idea is to understand the inner workings of these algorithms in practice. For more thorough approaches I suggest using the &lt;code&gt;cv&lt;/code&gt; functions from the &lt;code&gt;boot&lt;/code&gt; package or &lt;code&gt;caret&lt;/code&gt; or &lt;code&gt;modelr&lt;/code&gt;. I hope this was useful. I will try to keep doing these things as they help me understand these techniques better.&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Kohavi, Ron. “A study of cross-validation and bootstrap for accuracy estimation and model selection.” Ijcai. Vol. 14. No. 2. 1995.&lt;/li&gt;
+&lt;li&gt;Kohavi, Ron. “A study of cross-validation and bootstrap for accuracy estimation and model selection.” Ijcai. Vol. 14. No. 2. 1995.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 </description>
@@ -297,7 +297,7 @@ k_fold_cv %&amp;gt;%
 &lt;h2&gt;Conclusion&lt;/h2&gt;
 &lt;p&gt;This was my first attempt at manually implementing the Holdout method and the K-Fold CV. These examples are certainly flawed, like rounding the decimal number of rows correct for the unique number of rows in each K-Fold slice. If anyone is interested in correcting thes, please do send a pull request. For those interested in using more reliable approaches, take a look at the &lt;code&gt;caret&lt;/code&gt; and the &lt;code&gt;modelr&lt;/code&gt; package. In the next entry I will implement the LOO method and the bootstrap (and maybe the stratified K-Fold CV)&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Kohavi, Ron. “A study of cross-validation and bootstrap for accuracy estimation and model selection.” Ijcai. Vol. 14. No. 2. 1995.&lt;/li&gt;
+&lt;li&gt;Kohavi, Ron. “A study of cross-validation and bootstrap for accuracy estimation and model selection.” Ijcai. Vol. 14. No. 2. 1995.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 </description>

@@ -17,7 +17,7 @@
       <pubDate>Wed, 08 Mar 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</guid>
-      <description>&lt;p&gt;I’ve long wanted to prepare a project with R related to education. I knew I’d found the idea when I read Thomas Lumley’s &lt;a href=&#34;http://notstatschat.tumblr.com/post/156007757906/a-bus-watching-bot&#34;&gt;attempt to create a Twitter bot in which he tweeted bus arrivals in New Zealand&lt;/a&gt;. Quoting him, “Is it really hard to write a bot? No. Even I can do it. And I’m old.”&lt;/p&gt;
+      <description>&lt;p&gt;I’ve long wanted to prepare a project with R related to education. I knew I’d found the idea when I read Thomas Lumley’s &lt;a href=&#34;http://notstatschat.tumblr.com/post/156007757906/a-bus-watching-bot&#34;&gt;attempt to create a Twitter bot in which he tweeted bus arrivals in New Zealand&lt;/a&gt;. Quoting him, “Is it really hard to write a bot? No. Even I can do it. And I’m old.”&lt;/p&gt;
 &lt;p&gt;So I said to myself, alright, you have to create a Twitter bot but it has to be related to education. It’s an easy project which shouldn’t take a lot of your time. I then came up with this idea: what if you could randomly sample questions from the &lt;a href=&#34;http://www.oecd.org/pisa/aboutpisa/&#34;&gt;PISA databases&lt;/a&gt; and create a sort of random facts generator. The result would be one graph a day, showing a question for some random sample of countries. I figured, why not prepare a post (both for me to remember how I did it but also so others can contribute to the project) where I explained step-by-step how I did it?&lt;/p&gt;
 &lt;p&gt;The repository for the project is &lt;a href=&#34;https://github.com/cimentadaj/PISAfacts_twitterBot&#34;&gt;here&lt;/a&gt;, so feel free to drop any comments or improvements. The idea is to load the &lt;a href=&#34;http://vs-web-fs-1.oecd.org/pisa/PUF_SPSS_COMBINED_CMB_STU_QQQ.zip&#34;&gt;PISA 2015 data&lt;/a&gt;, randomly pick a question that doesn’t have a lot of labels (because then it’s very difficult to plot it nicely), and based on the type of question create an appropriate graph. Of course, all of this needs to be done on the fly, without human assistance. You can follow this twitter account at &lt;span class=&#34;citation&#34;&gt;@DailyPISA_Facts&lt;/span&gt;. Let’s start!&lt;/p&gt;
 &lt;div id=&#34;data-wrangling&#34; class=&#34;section level2&#34;&gt;
@@ -125,17 +125,17 @@ write_lines(new_var, path = &amp;quot;./all_variables.txt&amp;quot;, append = T)
   pisa.table(var_name, data = ., by = &amp;quot;cnt&amp;quot;) %&amp;gt;%
   filter(complete.cases(.))&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Let’s check out the contents of &lt;code&gt;try_df&lt;/code&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;##          cnt ec020q11na Freq Percentage Std.err.
-## 1  Australia          1 1180      29.91        0
-## 2  Australia          2 2336      59.21        0
-## 3  Australia          3  429      10.87        0
-## 4    Belgium          1  207      25.03        0
-## 5    Belgium          2  487      58.89        0
-## 6    Belgium          3  133      16.08        0
-## 7   Bulgaria          1  826      30.11        0
-## 8   Bulgaria          2 1402      51.11        0
-## 9   Bulgaria          3  515      18.78        0
-## 10   Croatia          1  593      26.05        0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##                   cnt pa039q01ta Freq Percentage Std.err.
+## 1             Belgium          1 3972      85.16        0
+## 2             Belgium          2  692      14.84        0
+## 3               Chile          1 6062      96.88        0
+## 4               Chile          2  195       3.12        0
+## 5             Croatia          1 4353      81.17        0
+## 6             Croatia          2 1010      18.83        0
+## 7  Dominican Republic          1 4335      98.37        0
+## 8  Dominican Republic          2   72       1.63        0
+## 9              France          1 4463      84.46        0
+## 10             France          2  821      15.54        0&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Great! To finish with the data, we simply need one more thing: to recode the value labels with the &lt;code&gt;labels&lt;/code&gt; vector.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;try_df[var_name] &amp;lt;- labels[try_df[, var_name]]&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Awesome. We have the data ready, more or less. Let’s produce a dirty plot to check how long the title is.&lt;/p&gt;
@@ -361,7 +361,8 @@ unlink(file)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The whole sequence would be like this:&lt;/p&gt;
 &lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;env EDITOR=nano crontab -e
 30 9 * * 1-5 /usr/local/bin/RScript path_to_your/script.R&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;To save the file, press Control + O (to write out the file), then enter to accept the file name, then press Control + X (to exit nano). If all went well, then you should see “crontab: installing new crontab” without anything after that.&lt;/p&gt;
+&lt;p&gt;To save the file, press Control + O (to write out the file), then enter to accept the file name, then
+press Control + X (to exit nano). If all went well, then you should see “crontab: installing new crontab” without anything after that.&lt;/p&gt;
 &lt;p&gt;Aaaaaand that’s it! You now have a working script that will be run from Monday to Friday at 9:30 am. This script will read the PISA data, pick a random variable, make a graph and tweet it. You can follow this twitter account at &lt;span class=&#34;citation&#34;&gt;[@DailyPISA_Facts]&lt;/span&gt;(&lt;a href=&#34;https://twitter.com/DailyPISA_Facts&#34; class=&#34;uri&#34;&gt;https://twitter.com/DailyPISA_Facts&lt;/a&gt;).&lt;/p&gt;
 &lt;p&gt;Hope this was useful!&lt;/p&gt;
 &lt;/div&gt;

@@ -21,19 +21,19 @@ knitr::opts_chunk$set(
 I live in Barcelona, a city known for sunny weather, great football and for wanting to become an independent state. In fact, just recently there was an unsuccessful attempt to break parts with the Spanish nation. Without delving too much into it, I searched for any question related to nationalism into the European Social Survey and downloaded the last available wave using the [ess](https://cran.r-project.org/web/packages/ess/index.html) package.
 
 ```{r, eval = FALSE}
-library(ess)
+library(essurvey)
 library(cimentadaj)
 library(tidyverse)
 
-spain_df <- ess_country("Spain", 7, "your_email@gmail.com")
+spain_df <- import_country("Spain", 7, "your_email@gmail.com")
 ```
 
 ```{r, results = 'hide', echo = FALSE}
-library(ess)
+library(essurvey)
 library(cimentadaj)
 library(tidyverse)
 
-spain_df <- ess_country("Spain", 7, "cimentadaj@gmail.com")
+spain_df <- import_country("Spain", 7, "cimentadaj@gmail.com")
 ```
 
 `spain_df` is now a data frame containing the 7th ESS round. Next we have to recode the autonomous communities which are in a ESS format. We're interested in two variables, `region` and `fclcntr`, the second one asking whether the person feels closer to Spain.

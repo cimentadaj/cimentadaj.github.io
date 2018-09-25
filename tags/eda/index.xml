@@ -185,11 +185,11 @@ Catalan_elections %&amp;gt;%
       <guid>/blog/2017-11-18-123check/1-2-3-check/</guid>
       <description>&lt;p&gt;1..2..3..check! This is my first post using &lt;a href=&#34;https://cran.r-project.org/web/packages/blogdown/index.html&#34;&gt;blogdown&lt;/a&gt;. I migrated my website from &lt;code&gt;Jekyll&lt;/code&gt; to &lt;code&gt;Hugo&lt;/code&gt; and although it took me around 2 days to tweak everything to where I wanted it, the process wasn’t so bad after all. As a celebration, I though of doing a quick analysis!&lt;/p&gt;
 &lt;p&gt;I live in Barcelona, a city known for sunny weather, great football and for wanting to become an independent state. In fact, just recently there was an unsuccessful attempt to break parts with the Spanish nation. Without delving too much into it, I searched for any question related to nationalism into the European Social Survey and downloaded the last available wave using the &lt;a href=&#34;https://cran.r-project.org/web/packages/ess/index.html&#34;&gt;ess&lt;/a&gt; package.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ess)
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(essurvey)
 library(cimentadaj)
 library(tidyverse)
 
-spain_df &amp;lt;- ess_country(&amp;quot;Spain&amp;quot;, 7, &amp;quot;your_email@gmail.com&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+spain_df &amp;lt;- import_country(&amp;quot;Spain&amp;quot;, 7, &amp;quot;your_email@gmail.com&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;code&gt;spain_df&lt;/code&gt; is now a data frame containing the 7th ESS round. Next we have to recode the autonomous communities which are in a ESS format. We’re interested in two variables, &lt;code&gt;region&lt;/code&gt; and &lt;code&gt;fclcntr&lt;/code&gt;, the second one asking whether the person feels closer to Spain.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Note: did you notice the comunidades &lt;code&gt;tibble&lt;/code&gt; there? I pasted that with no effort with &lt;a href=&#34;https://cran.r-project.org/web/packages/datapasta/index.html&#34;&gt;datapasta&lt;/a&gt;! If you’re using Rstudio, just copy the table from your source and use Shift + CMD + T (on a mac) to paste it as a very nice tibble.&lt;/strong&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;comunidades &amp;lt;- tibble::tribble(
