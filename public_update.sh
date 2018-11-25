@@ -1,5 +1,9 @@
-cd /mnt/c/Users/cimentadaj/Desktop/Documents/all_repos/cimentadaj.github.io
+# cd /mnt/c/Users/cimentadaj/Desktop/Documents/all_repos/cimentadaj.github.io
 # cd /Users/cimentadaj/Downloads/gitrepo/cimentadaj.github.io
+
+echo $PWD
+cd $PWD
+
 git pull
 
 git add .
