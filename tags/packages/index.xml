@@ -17,7 +17,10 @@
       <pubDate>Tue, 19 Jun 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</guid>
-      <description>&lt;p&gt;I woke up today to read Maëlle Salmon’s latest blog entry in which she scraped her own &lt;a href=&#34;https://masalmon.eu/2018/06/18/mathtree/&#34;&gt;mathematical tree&lt;/a&gt;. Running through the code I had an idea about scraping the coauthorship list that a Google Scholar profile has. With this, I could visualize the network of coauthorship of important scientists and explore whether they have closed or open collaborations.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I woke up today to read Maëlle Salmon’s latest blog entry in which she scraped her own &lt;a href=&#34;https://masalmon.eu/2018/06/18/mathtree/&#34;&gt;mathematical tree&lt;/a&gt;. Running through the code I had an idea about scraping the coauthorship list that a Google Scholar profile has. With this, I could visualize the network of coauthorship of important scientists and explore whether they have closed or open collaborations.&lt;/p&gt;
 &lt;p&gt;I sat down this morning and created the &lt;code&gt;coauthornetwork&lt;/code&gt; package that allows you to do just that! It’s actually very simple. First, install it with the usual:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;devtools::install_github(&amp;quot;cimentadaj/coauthornetwork&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;There’s two functions: &lt;code&gt;grab_network&lt;/code&gt; and &lt;code&gt;plot_coauthors&lt;/code&gt;. The first scrapes and returns a data frame of a Google Scholar profile, their coauthors and the coauthors of their coauthors (what?). More simply, by default, the data frame returns this:&lt;/p&gt;
@@ -57,7 +60,10 @@ network&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Mon, 26 Mar 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</guid>
-      <description>&lt;p&gt;My &lt;code&gt;ess&lt;/code&gt; package has be renamed to &lt;code&gt;essurvey&lt;/code&gt;. For quite some time I’ve been pondering whether I should change the name. All of this comes from a dicussion we had on the &lt;a href=&#34;http://r.789695.n4.nabble.com/R-pkgs-Release-of-ess-0-0-1-td4746540.html&#34;&gt;R-pkg mailing list&lt;/a&gt; where many R users suggested that the name was unfortunate given that Emacs Speaks Statistics (ESS) has a long precedence in the R community and the names are very similar. Later on, when submitting the package to &lt;a href=&#34;https://ropensci.org/&#34;&gt;rOpensci&lt;/a&gt;, Jim Hester &lt;a href=&#34;https://github.com/ropensci/onboarding/issues/201#issuecomment-372304003&#34;&gt;raised the fact once again&lt;/a&gt;, without being aware of the previous email thread.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;My &lt;code&gt;ess&lt;/code&gt; package has be renamed to &lt;code&gt;essurvey&lt;/code&gt;. For quite some time I’ve been pondering whether I should change the name. All of this comes from a dicussion we had on the &lt;a href=&#34;http://r.789695.n4.nabble.com/R-pkgs-Release-of-ess-0-0-1-td4746540.html&#34;&gt;R-pkg mailing list&lt;/a&gt; where many R users suggested that the name was unfortunate given that Emacs Speaks Statistics (ESS) has a long precedence in the R community and the names are very similar. Later on, when submitting the package to &lt;a href=&#34;https://ropensci.org/&#34;&gt;rOpensci&lt;/a&gt;, Jim Hester &lt;a href=&#34;https://github.com/ropensci/onboarding/issues/201#issuecomment-372304003&#34;&gt;raised the fact once again&lt;/a&gt;, without being aware of the previous email thread.&lt;/p&gt;
 &lt;p&gt;Considering that I was already changing some of the functionalities of the package due to the &lt;a href=&#34;https://github.com/ropensci/onboarding/issues/201&#34;&gt;rOpensci review&lt;/a&gt;, I decided to change the package name and republish an improved version of &lt;code&gt;ess&lt;/code&gt; as &lt;code&gt;essurvey 1.0.0&lt;/code&gt;. &lt;code&gt;essurvey&lt;/code&gt; is now on CRAN and the repository has been moved to rOpensci’s &lt;a href=&#34;https://github.com/ropensci/essurvey&#34;&gt;github account&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;The new package is mostly similar although there are now some deprecated functions and new features. Below are the main changes.&lt;/p&gt;
 &lt;ul&gt;
@@ -83,7 +89,10 @@ network&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Sun, 04 Mar 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/</guid>
-      <description>&lt;p&gt;The new version of the ess package is out! &lt;code&gt;ess 0.1.1&lt;/code&gt; fixes some bugs and inconsistencies across the package and has one important new feature and a change that breaks backward compatibility. You can see all changes &lt;a href=&#34;https://cimentadaj.github.io/ess/news/index.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;The new version of the ess package is out! &lt;code&gt;ess 0.1.1&lt;/code&gt; fixes some bugs and inconsistencies across the package and has one important new feature and a change that breaks backward compatibility. You can see all changes &lt;a href=&#34;https://cimentadaj.github.io/ess/news/index.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Install the latest version &lt;code&gt;0.1.1&lt;/code&gt; from CRAN with &lt;code&gt;install.packages(&amp;quot;ess&amp;quot;)&lt;/code&gt;.&lt;/p&gt;
 &lt;div id=&#34;new-features&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;New features&lt;/h2&gt;
@@ -170,7 +179,10 @@ all_countries&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Thu, 23 Nov 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-11-23-an-introduction-to-the-ess-package/an-introduction-to-the-ess-package/</guid>
-      <description>&lt;p&gt;The &lt;code&gt;ess&lt;/code&gt; package is designed to download the ESS data as easily as possible. It has a few helper functions to download rounds, rounds for a selected country and to show which rounds/countries are available. In this tutorial I will walk you through how these functions work.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;The &lt;code&gt;ess&lt;/code&gt; package is designed to download the ESS data as easily as possible. It has a few helper functions to download rounds, rounds for a selected country and to show which rounds/countries are available. In this tutorial I will walk you through how these functions work.&lt;/p&gt;
 &lt;p&gt;Before using the package it is necessary for you to sign up at &lt;a href=&#34;http://www.europeansocialsurvey.org/&#34; class=&#34;uri&#34;&gt;http://www.europeansocialsurvey.org/&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Let’s do it together.&lt;/p&gt;
 &lt;p&gt;When you enter the website go the to topmost left corner and click on &lt;code&gt;Sign in/Register&lt;/code&gt;. Under the email box, click on &lt;code&gt;New user?&lt;/code&gt; and fill out your personal information. Click on &lt;code&gt;Register&lt;/code&gt; and check your email inbox. You should’ve received an email from the ESS with an activation link. Click on that link and voila! We’re ready to go.&lt;/p&gt;
@@ -251,7 +263,10 @@ three_rounds[[1]]&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Tue, 01 Aug 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-08-01-perccalc-package/perccalc-package/</guid>
-      <description>&lt;p&gt;Reardon (2011) introduced a very interesting concept in which he calculates percentile differences from ordered categorical variables. He explains his procedure very much in detail in the appendix of the book chapter but no formal implementation has been yet available on the web. With this package I introduce a function that applies the procedure, following a step-by-step Stata script that Sean Reardon kindly sent me.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;Reardon (2011) introduced a very interesting concept in which he calculates percentile differences from ordered categorical variables. He explains his procedure very much in detail in the appendix of the book chapter but no formal implementation has been yet available on the web. With this package I introduce a function that applies the procedure, following a step-by-step Stata script that Sean Reardon kindly sent me.&lt;/p&gt;
 &lt;p&gt;In this vignette I show you how to use the function and match the results to the Stata code provided by Reardon himself.&lt;/p&gt;
 &lt;p&gt;For this example, we’ll use a real world data set, one I’m very much familiar with: PISA. We’ll use the PISA 2012 wave for Germany because it asked parents about their income category. For this example we’ll need the packages below.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# install.packages(c(&amp;quot;devtools&amp;quot;, &amp;quot;matrixStats&amp;quot;, &amp;quot;tidyverse&amp;quot;))
@@ -461,7 +476,10 @@ postclose `memhold&amp;#39;
       <pubDate>Mon, 22 Aug 2016 00:00:00 +0000</pubDate>
       
       <guid>/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</guid>
-      <description>&lt;p&gt;Whoa, what a day. I’ve been using the stargazer package for producing my (beautiful) regression tables in R for a while now. Among all the arguments of its main function (&lt;code&gt;stargazer()&lt;/code&gt; ) are &lt;code&gt;apply.coef&lt;/code&gt;, &lt;code&gt;apply.se&lt;/code&gt;, &lt;code&gt;apply.ci&lt;/code&gt;, … and so on for all the other statistics of a regression output. Each of these arguments, if specified, applies a function over the specified statistic. So, for calculating the odds ratios I would simply apply the &lt;code&gt;exp()&lt;/code&gt; function over the set of log odds. It turns out that if you apply any function over the coefficients (or any other statistic), stargazer automatically recalculates t values with the new coefficients! This means that the significance of my model will depend on the new values and we surely wouldn’t want that.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;Whoa, what a day. I’ve been using the stargazer package for producing my (beautiful) regression tables in R for a while now. Among all the arguments of its main function (&lt;code&gt;stargazer()&lt;/code&gt; ) are &lt;code&gt;apply.coef&lt;/code&gt;, &lt;code&gt;apply.se&lt;/code&gt;, &lt;code&gt;apply.ci&lt;/code&gt;, … and so on for all the other statistics of a regression output. Each of these arguments, if specified, applies a function over the specified statistic. So, for calculating the odds ratios I would simply apply the &lt;code&gt;exp()&lt;/code&gt; function over the set of log odds. It turns out that if you apply any function over the coefficients (or any other statistic), stargazer automatically recalculates t values with the new coefficients! This means that the significance of my model will depend on the new values and we surely wouldn’t want that.&lt;/p&gt;
 &lt;p&gt;Let’s show a reproducible example:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# install.packages(&amp;quot;stargazer&amp;quot;) # in case you don&amp;#39;t have this package
 suppressMessages(library(stargazer))

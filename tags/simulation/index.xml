@@ -17,7 +17,10 @@
       <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-04-20-the-monty-hall-problem/the-monty-hall-problem/</guid>
-      <description>&lt;p&gt;Just recently, I’ve been completing the online version of &lt;code&gt;CS109&lt;/code&gt; from Harvard which is a class for understanding machine learning algorithms in Python. In the very first section the homework of the class asked us to develope a working simulation of the Monty Hall problem.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;Just recently, I’ve been completing the online version of &lt;code&gt;CS109&lt;/code&gt; from Harvard which is a class for understanding machine learning algorithms in Python. In the very first section the homework of the class asked us to develope a working simulation of the Monty Hall problem.&lt;/p&gt;
 &lt;p&gt;The Monty Hall problem is very simple. In a gameshow, contestants try to guess which of 3 closed doors contain a cash prize (goats are behind the other two doors). Of course, the odds of choosing the correct door are 1 in 3. As a twist, the host of the show occasionally opens a door after a contestant makes his or her choice. This door is always one of the two the contestant did not pick, and is also always one of the goat doors (note that it is always possible to do this, since there are two goat doors). At this point, the contestant has the option of keeping his or her original choice, or swtiching to the other unopened door. The question is: is there any benefit to switching doors?&lt;/p&gt;
 &lt;p&gt;I implemented this in Python below. Let’s go step by step. Let’s load the packages we’ll use.&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
@@ -110,7 +113,10 @@ print(second_perc)&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Thu, 07 Sep 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</guid>
-      <description>&lt;p&gt;This is the second entry, and probably the last, on model validation methods. These posts are inspired by the work of Kohavi (1995), which I totally recommend reading. This post will talk talk about the Leave-One-Out Cross Validation (LOOCV), which is the extreme version of the K-Fold Cross Validation and the Bootstrap for model assessment.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;This is the second entry, and probably the last, on model validation methods. These posts are inspired by the work of Kohavi (1995), which I totally recommend reading. This post will talk talk about the Leave-One-Out Cross Validation (LOOCV), which is the extreme version of the K-Fold Cross Validation and the Bootstrap for model assessment.&lt;/p&gt;
 &lt;p&gt;Let’s dive in!&lt;/p&gt;
 &lt;div id=&#34;the-leave-one-out-cv-method&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;The Leave-One-Out CV method&lt;/h2&gt;
@@ -209,7 +215,10 @@ summary(bootstrap)
       <pubDate>Wed, 06 Sep 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</guid>
-      <description>&lt;p&gt;In a recent attempt to bring a bit of discipline into my life, I’ve been forcing myself to read papers after lunch, specifically concentrated on data science topics. The whole idea is to educated myself every day, but if I find something cool that I can implement in R, I’ll do it right away.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;In a recent attempt to bring a bit of discipline into my life, I’ve been forcing myself to read papers after lunch, specifically concentrated on data science topics. The whole idea is to educated myself every day, but if I find something cool that I can implement in R, I’ll do it right away.&lt;/p&gt;
 &lt;p&gt;This blogpost is the first of a series of entries I plan to post explaining the main concepts of Kohavi (1995), which compares cross-validation methods and bootstrap methods for model selection. This first post will implement a K-Fold cross validation from scratch in order to understand more deeply what’s going on behind the scenes.&lt;/p&gt;
 &lt;p&gt;Before we explain the concept of K-Fold cross validation, we need to define what the ‘Holdout’ method is.&lt;/p&gt;
 &lt;div id=&#34;holdout-method&#34; class=&#34;section level2&#34;&gt;
@@ -332,7 +341,10 @@ k_fold_cv %&amp;gt;%
       <pubDate>Tue, 13 Sep 2016 00:00:00 +0000</pubDate>
       
       <guid>/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</guid>
-      <description>&lt;p&gt;I was on a flight from Asturias to Barcelona yesterday and I finally had some free time to open Gelman and Hill’s book and submerge in some studying. After finishing the chapter on simulations, I tried doing the first exercise and enjoyed it very much.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I was on a flight from Asturias to Barcelona yesterday and I finally had some free time to open Gelman and Hill’s book and submerge in some studying. After finishing the chapter on simulations, I tried doing the first exercise and enjoyed it very much.&lt;/p&gt;
 &lt;p&gt;The exercise goes as follows:&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Discrete probability simulation: suppose that a basketball player has a 60% chance of making a shot, and he keeps taking shots until he misses two in a row. Also assume his shots are independent (so that each shot has 60% probability of success, no matter what happened before).&lt;/em&gt;&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;

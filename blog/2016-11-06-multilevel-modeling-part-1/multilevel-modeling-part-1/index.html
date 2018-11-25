@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Simple minimalist theme">
+<meta name="keywords" content="blog,goa,hugo,r,statistics,education">
+
+<base href="/">
+
+<title>Jorge Cimentada</title>
+
+<meta name="generator" content="Hugo 0.51" />
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
+<script src="/js/highlight.pack.js"></script>
+<script>
+hljs.configure({langauges: ['R']});
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="row text-left title">
+  <h1 class="title">Multilevel modeling – Part 1</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON NOV 6, 2016 
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    
+
+
+<p>I’ve been reading Andrew Gelman’s and Jennifer Hill’s book again but this time concentrating on the multilevel section of the book. I finished the first chapter (chapter 12) and got fixed on the exercises 12.2, 12.3 and 12.4. I finally completed them and I thought I’d share the three exercises in two posts, mostly for me to come back to these in the future. The first exercise goes as follows:</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Write a model predicting CD4 percentage as a function of time with varying intercepts across children. Fit using lmer() and interpret the coefficient for time.</p></li>
+<li><p>Extend the model in (a) to include child-level predictors (that is, group-level predictors) for treatment and age at baseline. Fit using lmer() and interpret the coefficients on time, treatment, and age at baseline.</p></li>
+<li><p>Investigate the change in partial pooling from (a) to (b) both graphically and numerically.</p></li>
+<li><p>Compare results in (b) to those obtained in part (c).</p></li>
+</ol>
+<p>The data set they’re referring is called ‘CD4’ and as they authors explain in the book it measures ‘… CD4 percentages for a set of young children with HIV who were measured several times over a period of two years. The dataset also includes the ages of the children at each measurement..’. I’m not sure what CD4 means, but that shouldn’t stop us from at least interpreting the results and answering the questions. Let’s start with the exercises:</p>
+<hr />
+<ol style="list-style-type: lower-alpha">
+<li>Write a model predicting CD4 percentage as a function of time with
+varying intercepts across children. Fit using lmer() and interpret the coefficient for time. The data argument is excluding some NA’s because the next model is to be compared with this model and we need to have the same number of observations</li>
+</ol>
+<pre class="r"><code>suppressWarnings(suppressMessages(library(arm)))
+cd4 &lt;- read.csv(&quot;http://www.stat.columbia.edu/~gelman/arm/examples/cd4/allvar.csv&quot;)
+
+head(cd4)</code></pre>
+<pre><code>##   VISIT newpid       VDATE CD4PCT arv   visage treatmnt CD4CNT baseage
+## 1     1      1  6/29/1988      18   0 3.910000        1    323    3.91
+## 2     4      1  1/19/1989      37   0 4.468333        1    610    3.91
+## 3     7      1  4/13/1989      13   0 4.698333        1    324    3.91
+## 4    10      1                 NA   0 5.005000        1     NA    3.91
+## 5    13      1 11/30/1989      13   0 5.330833        1    626    3.91
+## 6    16      1                 NA  NA       NA        1    220    3.91</code></pre>
+<pre class="r"><code># Let&#39;s transform the VDATE variable into date format
+cd4$VDATE &lt;- as.Date(cd4$VDATE, format = &quot;%m/%d/%Y&quot;)
+
+mod1 &lt;- lmer(CD4PCT ~
+               VDATE +
+               (1 | newpid),
+             data = subset(cd4, !is.na(treatmnt) &amp; !is.na(baseage)))
+
+display(mod1)</code></pre>
+<pre><code>## lmer(formula = CD4PCT ~ VDATE + (1 | newpid), data = subset(cd4, 
+##     !is.na(treatmnt) &amp; !is.na(baseage)))
+##             coef.est coef.se
+## (Intercept) 66.04     9.48  
+## VDATE       -0.01     0.00  
+## 
+## Error terms:
+##  Groups   Name        Std.Dev.
+##  newpid   (Intercept) 11.65   
+##  Residual              7.31   
+## ---
+## number of obs: 1072, groups: newpid, 250
+## AIC = 7914, DIC = 7885.8
+## deviance = 7895.9</code></pre>
+<p>The time coefficient simply means that as time increases the percentage of CD4 decreases by 0.01 percent for each child. The effect size is really small, although significant. We can also see that most of the variation in CD4 is between children rather than within children (that is between time because that’s the variation within each child)</p>
+<hr />
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Extend the model in (a) to include child-level predictors (that is, group-level predictors) for treatment and age at baseline. Fit using lmer() and interpret the coefficients on time, treatment, and age at baseline.</li>
+</ol>
+<pre class="r"><code>mod2 &lt;- lmer(CD4PCT ~
+               VDATE +
+               treatmnt +
+               baseage +
+               (1 | newpid),
+             data = cd4)
+
+display(mod2)</code></pre>
+<pre><code>## lmer(formula = CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), 
+##     data = cd4)
+##             coef.est coef.se
+## (Intercept) 67.28     9.82  
+## VDATE       -0.01     0.00  
+## treatmnt     1.26     1.54  
+## baseage     -1.00     0.34  
+## 
+## Error terms:
+##  Groups   Name        Std.Dev.
+##  newpid   (Intercept) 11.45   
+##  Residual              7.32   
+## ---
+## number of obs: 1072, groups: newpid, 250
+## AIC = 7906.3, DIC = 7878.8
+## deviance = 7886.5</code></pre>
+<p>The time coefficients is exactly the same so neither the treatment or the base age is correlated with the date in which the students were measured. Those who were treated have on average about 1.26% more CD4 than the non-treated. And finally, children which were older at the base measure have about 1% less CD4 than younger children at base. The between-child variance went down from 11.65 to 11.45, so either treatment, baseage or both explained some of the differences between children. The within child variation is practically the same.</p>
+<p>The next exercises uses a term called ‘partial pooling’. This term took me some time to understand but it basically means that we’re neither running a regression ignoring any multilevel structure (complete pooling of the groups) or running a regression for each group separately (complete no-pooling). Running a partially pooled model means being able to have single parameters (like in a completely-pooled model), but estimated from separate regression models for each group(like in a complete-no-pooled model).</p>
+<p>How we can investigate the changes in partial pooling? A completely pooled model runs perfectly when you have little to no variation between groups. Whenever a set of predictors shrinks the between group variation, we’re getting closer to a model with less and less between group variation ( so completely pooled). How can we measure this? In our case, because we’re modeling a varying intercept, we can compare the confidence intervals of the intercept of each group intercept and see if the estimation has become more certain. Numerically, we can check whether the between group variation has decreased, becoming closer to a completely-pooled model.</p>
+<hr />
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Investigate the change in partial pooling from (a) to (b) both graphically and numerically.</li>
+</ol>
+<pre class="r"><code>suppressMessages(suppressWarnings(library(ggplot2)))
+# Change in standard errors
+
+# First and second model intercepts
+df1 &lt;- coef(mod1)$newpid[,1 , drop = F]
+df2 &lt;- coef(mod2)$newpid[,1 , drop = F]
+names(df1) &lt;- c(&quot;int&quot;)
+names(df2) &lt;- c(&quot;int&quot;)
+
+# Confidence intervals for each intercept for both moels
+df1$ci_bottom &lt;- df1$int + (-2 * se.ranef(mod1)$newpid[,1])
+df1$ci_upper &lt;- df1$int + (2 * se.ranef(mod1)$newpid[,1])
+
+df2$ci_bottom &lt;- df2$int + (-2 * se.ranef(mod2)$newpid[,1])
+df2$ci_upper &lt;- df2$int + (2 * se.ranef(mod2)$newpid[,1])
+
+# Now we need to compare whether the CI&#39;s shrunk from
+# the first to the second model
+
+# Calculate difference
+df1$diff &lt;- df1$ci_upper - df1$ci_bottom
+df2$dff &lt;- df2$ci_upper - df2$ci_bottom
+
+# Create a df with both differences
+df3 &lt;- data.frame(cbind(df1$diff, df2$dff))
+
+# Create a difference out of that
+df3$diff &lt;- df3$X1 - df3$X2
+
+# Graph it
+ggplot(df3, aes(diff)) + geom_histogram(bins = 100) +
+  xlim(0, 0.2)</code></pre>
+<p><img src="/blog/2016-11-06-multilevel-modeling--part-1/2016-11-06-multilevel-modeling--part-1_files/figure-html/fig.-1.png" width="672" /></p>
+<p>It looks like the difference is always higher than zero which means that in the second model the difference between the upper and lower CI is smaller than in the first model. This suggests we have greater certainty of our estimation by including the two predictors in the model.</p>
+<pre class="r"><code># Numerically, the between-child variance in the first
+# model was:
+display(mod1)</code></pre>
+<pre><code>## lmer(formula = CD4PCT ~ VDATE + (1 | newpid), data = subset(cd4, 
+##     !is.na(treatmnt) &amp; !is.na(baseage)))
+##             coef.est coef.se
+## (Intercept) 66.04     9.48  
+## VDATE       -0.01     0.00  
+## 
+## Error terms:
+##  Groups   Name        Std.Dev.
+##  newpid   (Intercept) 11.65   
+##  Residual              7.31   
+## ---
+## number of obs: 1072, groups: newpid, 250
+## AIC = 7914, DIC = 7885.8
+## deviance = 7895.9</code></pre>
+<pre class="r"><code>11.65 / (11.65 + 7.31)</code></pre>
+<pre><code>## [1] 0.6144515</code></pre>
+<pre class="r"><code># For the second model
+display(mod2)</code></pre>
+<pre><code>## lmer(formula = CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), 
+##     data = cd4)
+##             coef.est coef.se
+## (Intercept) 67.28     9.82  
+## VDATE       -0.01     0.00  
+## treatmnt     1.26     1.54  
+## baseage     -1.00     0.34  
+## 
+## Error terms:
+##  Groups   Name        Std.Dev.
+##  newpid   (Intercept) 11.45   
+##  Residual              7.32   
+## ---
+## number of obs: 1072, groups: newpid, 250
+## AIC = 7906.3, DIC = 7878.8
+## deviance = 7886.5</code></pre>
+<pre class="r"><code>11.45 / (11.45 + 7.32)</code></pre>
+<pre><code>## [1] 0.610016</code></pre>
+<p>The between variance went down JUST a little, in line with the tiny reduction in the standard errors of the intercept.</p>
+<hr />
+<p>The last question asks:</p>
+<p>Compare results in (b) to those obtained in part (c).</p>
+<p>It looks like from the results in (c) the second model a bit more certain in making estimations because it shrinks the partial pooling closer to complete-pooling. As Gelman and Hill explain in page 270, multilevel modeling is most effective when closest to complete-pooling because the estimation of individual group parameters can be done much more precisely, specially for groups with a small amount of observations.</p>
+<p>In the next post we’ll cover exercises 12.3 and 12.4 which build on the models outlined here.</p>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+      
+      
+      TAGS:
+      
+      
+      <a class="meta" href="/tags/r">R</a>, 
+      
+      <a class="meta" href="/tags/gelman">GELMAN</a>, 
+      
+      <a class="meta" href="/tags/multilevel">MULTILEVEL</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "cimentadaj-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  <span><a class="menu-item" href="/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/">&lt; prev | </a></span>
+  
+  
+  <span><a class="menu-item" href="/blog">blog</a></span>
+  
+  
+  <span><a class="menu-item" href="/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/"> | next &gt;</a></span>
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="/">home</a></h4>
+</section>
+
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2017. Jorge Cimentada. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+

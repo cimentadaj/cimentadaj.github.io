@@ -14,7 +14,7 @@
 
 <title>Jorge Cimentada</title>
 
-<meta name="generator" content="Hugo 0.37.1" />
+<meta name="generator" content="Hugo 0.51" />
 
 
 
@@ -70,7 +70,10 @@ hljs.initHighlightingOnLoad();
 </section>
 <section id="content-pane" class="row">
   <div class="col-md-12 text-justify content">
-    <p>In a recent attempt to bring a bit of discipline into my life, I’ve been forcing myself to read papers after lunch, specifically concentrated on data science topics. The whole idea is to educated myself every day, but if I find something cool that I can implement in R, I’ll do it right away.</p>
+    
+
+
+<p>In a recent attempt to bring a bit of discipline into my life, I’ve been forcing myself to read papers after lunch, specifically concentrated on data science topics. The whole idea is to educated myself every day, but if I find something cool that I can implement in R, I’ll do it right away.</p>
 <p>This blogpost is the first of a series of entries I plan to post explaining the main concepts of Kohavi (1995), which compares cross-validation methods and bootstrap methods for model selection. This first post will implement a K-Fold cross validation from scratch in order to understand more deeply what’s going on behind the scenes.</p>
 <p>Before we explain the concept of K-Fold cross validation, we need to define what the ‘Holdout’ method is.</p>
 <div id="holdout-method" class="section level2">
@@ -214,7 +217,7 @@ k_fold_cv %&gt;%
 
 
 <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -266,12 +269,16 @@ k_fold_cv %&gt;%
 </div>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'XYZ', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

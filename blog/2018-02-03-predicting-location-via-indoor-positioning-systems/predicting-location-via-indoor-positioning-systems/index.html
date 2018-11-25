@@ -14,7 +14,7 @@
 
 <title>Jorge Cimentada</title>
 
-<meta name="generator" content="Hugo 0.37.1" />
+<meta name="generator" content="Hugo 0.51" />
 
 
 
@@ -70,7 +70,10 @@ hljs.initHighlightingOnLoad();
 </section>
 <section id="content-pane" class="row">
   <div class="col-md-12 text-justify content">
-    <p>I’ve just started reading the wonderful book <a href="http://rdatasciencecases.org/">Data Science in R: A Case Studies Approach to Computational Reasoning and Problem Solving</a>. I’ve just begun the first chapter and I wanted to document some of the things I found interesting. In this post I’ll walkthrough the example on how to transform a text file with GPS locations into a well formatted rectangular dataset. For a detailed explanation see their book, which I highly recommend buying.</p>
+    
+
+
+<p>I’ve just started reading the wonderful book <a href="http://rdatasciencecases.org/">Data Science in R: A Case Studies Approach to Computational Reasoning and Problem Solving</a>. I’ve just begun the first chapter and I wanted to document some of the things I found interesting. In this post I’ll walkthrough the example on how to transform a text file with GPS locations into a well formatted rectangular dataset. For a detailed explanation see their book, which I highly recommend buying.</p>
 <p>Note: When it makes senses/it’s possible, I always try to find an equivalent tidyverse solution to everything they do in the book.</p>
 <p>This is the data.</p>
 <pre class="r"><code>library(tidyverse)
@@ -352,7 +355,7 @@ final_data</code></pre>
 
 
 <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -404,12 +407,16 @@ final_data</code></pre>
 </div>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'XYZ', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

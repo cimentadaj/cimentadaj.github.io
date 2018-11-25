@@ -14,7 +14,7 @@
 
 <title>Jorge Cimentada</title>
 
-<meta name="generator" content="Hugo 0.37.1" />
+<meta name="generator" content="Hugo 0.51" />
 
 
 
@@ -70,7 +70,10 @@ hljs.initHighlightingOnLoad();
 </section>
 <section id="content-pane" class="row">
   <div class="col-md-12 text-justify content">
-    <p>I’ve been working on a personal project to gather daily data from public bicycles in Barcelona to create a historical timeline of a few stations. Since the data is only available live, I had to scrape the data and store in a database daily. This is a short tutorial showing the steps I had to take to setup a database on my remote server and connect both from my local computer as well as from my server. I also show the R script that scrapes data, connects to the server and appends the information every day for a certain amouint of time.</p>
+    
+
+
+<p>I’ve been working on a personal project to gather daily data from public bicycles in Barcelona to create a historical timeline of a few stations. Since the data is only available live, I had to scrape the data and store in a database daily. This is a short tutorial showing the steps I had to take to setup a database on my remote server and connect both from my local computer as well as from my server. I also show the R script that scrapes data, connects to the server and appends the information every day for a certain amouint of time.</p>
 <p><em>Note: This worked for my Digital Ocean droplet 512 MB and 20 GB disk with Ubuntu 16.04.3 x64.</em></p>
 <p>Let’s get to it. It’s better to do <em>ALL</em> of this as a user in your server but remember to append <code>sudo</code> to everything. Nonetheless, beware of problems like the ones I encountered. For example, when installing R packages that where ran by <code>cron</code> in a script, if installed through a non-root user the packages were said to be <code>'not installed'</code> (when I fact running the script separately was fine). However, when I installed the packages logged in as root the packages were installed successfully.</p>
 <div id="setting-up-the-data-base" class="section level2">
@@ -356,7 +359,7 @@ appended between the time the script should&#39;ve started and should&#39;ve end
 
 
 <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -408,12 +411,16 @@ appended between the time the script should&#39;ve started and should&#39;ve end
 </div>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'XYZ', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

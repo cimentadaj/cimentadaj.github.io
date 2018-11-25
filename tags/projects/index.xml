@@ -17,7 +17,10 @@
       <pubDate>Wed, 23 May 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-05-23-a-list-of-must-preproject-questions/a-list-of-must-pre-project-questions/</guid>
-      <description>&lt;p&gt;Rumbling through Twitter I found a Jupyter Notebook of Paige Bailey written at the rOpensci unconf about Ethical Machine Learning which you can read &lt;a href=&#34;https://github.com/ropenscilabs/proxy-bias-vignette/blob/master/EthicalMachineLearning.ipynb&#34;&gt;here&lt;/a&gt;. It was very interesting to look at her workflow but even more interesting was the set of questions she asked herself before and during the analysis. I paste them here just to keep them as a reference.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;Rumbling through Twitter I found a Jupyter Notebook of Paige Bailey written at the rOpensci unconf about Ethical Machine Learning which you can read &lt;a href=&#34;https://github.com/ropenscilabs/proxy-bias-vignette/blob/master/EthicalMachineLearning.ipynb&#34;&gt;here&lt;/a&gt;. It was very interesting to look at her workflow but even more interesting was the set of questions she asked herself before and during the analysis. I paste them here just to keep them as a reference.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;As you design the goal and the purpose of your machine learning product, you must first ask: Who is your audience?&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Is your product or analysis meant to include all people?&lt;/li&gt;
@@ -87,7 +90,10 @@ Would this use of the data surprise the data subjects?&lt;/li&gt;
       <pubDate>Sat, 03 Feb 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-02-03-predicting-location-via-indoor-positioning-systems/predicting-location-via-indoor-positioning-systems/</guid>
-      <description>&lt;p&gt;I’ve just started reading the wonderful book &lt;a href=&#34;http://rdatasciencecases.org/&#34;&gt;Data Science in R: A Case Studies Approach to Computational Reasoning and Problem Solving&lt;/a&gt;. I’ve just begun the first chapter and I wanted to document some of the things I found interesting. In this post I’ll walkthrough the example on how to transform a text file with GPS locations into a well formatted rectangular dataset. For a detailed explanation see their book, which I highly recommend buying.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I’ve just started reading the wonderful book &lt;a href=&#34;http://rdatasciencecases.org/&#34;&gt;Data Science in R: A Case Studies Approach to Computational Reasoning and Problem Solving&lt;/a&gt;. I’ve just begun the first chapter and I wanted to document some of the things I found interesting. In this post I’ll walkthrough the example on how to transform a text file with GPS locations into a well formatted rectangular dataset. For a detailed explanation see their book, which I highly recommend buying.&lt;/p&gt;
 &lt;p&gt;Note: When it makes senses/it’s possible, I always try to find an equivalent tidyverse solution to everything they do in the book.&lt;/p&gt;
 &lt;p&gt;This is the data.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
@@ -350,7 +356,10 @@ final_data&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Fri, 01 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/</guid>
-      <description>&lt;p&gt;I’ve just started a project which I’m very excited about. Everyday I take my bike to work and most days I have one of two problems. First, whenever I get to my station there are no bikes available; no problem, there’s an app that shows the closest stations with bikes available. The problem is that these stations might be far and sometimes I’m relucant to walk that much. I’d love for bicing to give me some time estimation until a new bike arrives.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I’ve just started a project which I’m very excited about. Everyday I take my bike to work and most days I have one of two problems. First, whenever I get to my station there are no bikes available; no problem, there’s an app that shows the closest stations with bikes available. The problem is that these stations might be far and sometimes I’m relucant to walk that much. I’d love for bicing to give me some time estimation until a new bike arrives.&lt;/p&gt;
 &lt;p&gt;Second, whenever you’re trying to return a bike the station might not have any parking spaces available. Similarly, it would be very cool if bicing (the public bicycle company) gave me an estimate of how much time I should wait until a new bike will be taken. I started thinking on how I could implement this and started looking for bicing data online. To my surprise, bicing actually releases their &lt;strong&gt;live&lt;/strong&gt; data as a json! But for this type of estimation I need historical data. I want to know the pattern usage of the station and use that information for the prediction.&lt;/p&gt;
 &lt;p&gt;With that idea in mind, I got to work. I needed to set up my Virtual Private Server (VPS) to pull the data from the bicing API everyday. Because this is still a work in progress, I will only describe here how I set my VPS to scrape the bicing API everyday and how I set &lt;code&gt;cron&lt;/code&gt; to send me an email after every scrape.&lt;/p&gt;
 &lt;p&gt;I have a VPS from &lt;a href=&#34;https://www.digitalocean.com/&#34;&gt;Digital Ocean&lt;/a&gt; with an Ubuntu OS and 512 mb of RAM and 2 GB of hard disk. That’s enough for this task because the data should not be very big, even in the long run. In any case you can adjust for your VPS to have more memory/ram without losing information. Assuming you have &lt;a href=&#34;https://www.digitalocean.com/community/tutorials/how-to-install-r-on-ubuntu-16-04-2&#34;&gt;R installed in your Ubuntu VPS&lt;/a&gt; with your favorite packages, then make sure your script works by running &lt;code&gt;Rscript path/to/your/script.R&lt;/code&gt;. It might be better to type &lt;code&gt;which Rscript&lt;/code&gt; in the terminal and paste the path to the executable, similar to &lt;code&gt;/usr/bin/Rscript path/to/your/script.R&lt;/code&gt;&lt;/p&gt;
@@ -423,7 +432,10 @@ hostname=your_host_name
       <pubDate>Mon, 16 Oct 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</guid>
-      <description>&lt;p&gt;How I Met Your Mother (HIMYM from here after) is a television series very similar to the classical ‘Friends’ series from the 90’s. Following the release of the &lt;a href=&#34;http://tidytextmining.com/&#34;&gt;tidy text&lt;/a&gt; book I was looking for a project in which I could apply these skills. I decided I would scrape all the transcripts from HIMYM and analyze patterns between characters. This post really took me to the limit in terms of web scraping and pattern matching, which was specifically what I wanted to improve in the first place. Let’s begin!&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;How I Met Your Mother (HIMYM from here after) is a television series very similar to the classical ‘Friends’ series from the 90’s. Following the release of the &lt;a href=&#34;http://tidytextmining.com/&#34;&gt;tidy text&lt;/a&gt; book I was looking for a project in which I could apply these skills. I decided I would scrape all the transcripts from HIMYM and analyze patterns between characters. This post really took me to the limit in terms of web scraping and pattern matching, which was specifically what I wanted to improve in the first place. Let’s begin!&lt;/p&gt;
 &lt;p&gt;My first task was whether there was any consistency in the URL’s that stored the transcripts. If you ever watched HIMYM, we know there’s around nine seasons, each one with about 22 episodes. This makes about 200 episodes give or take. It would be a big pain to manually write down 200 complicated URL’s. Luckily, there is a way of finding the 200 links without writing them down manually.&lt;/p&gt;
 &lt;p&gt;First, we create the links for the 9 websites that contain all episodes (1 through season 9)&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rvest)
@@ -715,7 +727,10 @@ cowplot::plot_grid(plotlist = all_season_plots, labels = seasons)&lt;/code&gt;&l
       <pubDate>Tue, 01 Aug 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-08-01-perccalc-package/perccalc-package/</guid>
-      <description>&lt;p&gt;Reardon (2011) introduced a very interesting concept in which he calculates percentile differences from ordered categorical variables. He explains his procedure very much in detail in the appendix of the book chapter but no formal implementation has been yet available on the web. With this package I introduce a function that applies the procedure, following a step-by-step Stata script that Sean Reardon kindly sent me.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;Reardon (2011) introduced a very interesting concept in which he calculates percentile differences from ordered categorical variables. He explains his procedure very much in detail in the appendix of the book chapter but no formal implementation has been yet available on the web. With this package I introduce a function that applies the procedure, following a step-by-step Stata script that Sean Reardon kindly sent me.&lt;/p&gt;
 &lt;p&gt;In this vignette I show you how to use the function and match the results to the Stata code provided by Reardon himself.&lt;/p&gt;
 &lt;p&gt;For this example, we’ll use a real world data set, one I’m very much familiar with: PISA. We’ll use the PISA 2012 wave for Germany because it asked parents about their income category. For this example we’ll need the packages below.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# install.packages(c(&amp;quot;devtools&amp;quot;, &amp;quot;matrixStats&amp;quot;, &amp;quot;tidyverse&amp;quot;))
@@ -925,7 +940,10 @@ postclose `memhold&amp;#39;
       <pubDate>Wed, 08 Mar 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</guid>
-      <description>&lt;p&gt;I’ve long wanted to prepare a project with R related to education. I knew I’d found the idea when I read Thomas Lumley’s &lt;a href=&#34;http://notstatschat.tumblr.com/post/156007757906/a-bus-watching-bot&#34;&gt;attempt to create a Twitter bot in which he tweeted bus arrivals in New Zealand&lt;/a&gt;. Quoting him, “Is it really hard to write a bot? No. Even I can do it. And I’m old.”&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I’ve long wanted to prepare a project with R related to education. I knew I’d found the idea when I read Thomas Lumley’s &lt;a href=&#34;http://notstatschat.tumblr.com/post/156007757906/a-bus-watching-bot&#34;&gt;attempt to create a Twitter bot in which he tweeted bus arrivals in New Zealand&lt;/a&gt;. Quoting him, “Is it really hard to write a bot? No. Even I can do it. And I’m old.”&lt;/p&gt;
 &lt;p&gt;So I said to myself, alright, you have to create a Twitter bot but it has to be related to education. It’s an easy project which shouldn’t take a lot of your time. I then came up with this idea: what if you could randomly sample questions from the &lt;a href=&#34;http://www.oecd.org/pisa/aboutpisa/&#34;&gt;PISA databases&lt;/a&gt; and create a sort of random facts generator. The result would be one graph a day, showing a question for some random sample of countries. I figured, why not prepare a post (both for me to remember how I did it but also so others can contribute to the project) where I explained step-by-step how I did it?&lt;/p&gt;
 &lt;p&gt;The repository for the project is &lt;a href=&#34;https://github.com/cimentadaj/PISAfacts_twitterBot&#34;&gt;here&lt;/a&gt;, so feel free to drop any comments or improvements. The idea is to load the &lt;a href=&#34;http://vs-web-fs-1.oecd.org/pisa/PUF_SPSS_COMBINED_CMB_STU_QQQ.zip&#34;&gt;PISA 2015 data&lt;/a&gt;, randomly pick a question that doesn’t have a lot of labels (because then it’s very difficult to plot it nicely), and based on the type of question create an appropriate graph. Of course, all of this needs to be done on the fly, without human assistance. You can follow this twitter account at &lt;span class=&#34;citation&#34;&gt;@DailyPISA_Facts&lt;/span&gt;. Let’s start!&lt;/p&gt;
 &lt;div id=&#34;data-wrangling&#34; class=&#34;section level2&#34;&gt;
@@ -1279,11 +1297,14 @@ press Control + X (to exit nano). If all went well, then you should see “cront
     
     <item>
       <title>Cognitive inequality around the world – Shiny app</title>
-      <link>/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</link>
+      <link>/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</link>
       <pubDate>Mon, 12 Dec 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</guid>
-      <description>&lt;p&gt;For the last month I’ve been working on this massive dataset that combines all PISA, TIMSS and PIRLS surveys into one major database. It has over 3 million students and over 2,000 variables, including student background and school and teacher information. I started playing around with it and ending up doing this: &lt;a href=&#34;https://cimentadaj.shinyapps.io/shiny/&#34; class=&#34;uri&#34;&gt;https://cimentadaj.shinyapps.io/shiny/&lt;/a&gt;. Feel free to check it out and drop any comments below.&lt;/p&gt;
+      <guid>/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</guid>
+      <description>
+
+
+&lt;p&gt;For the last month I’ve been working on this massive dataset that combines all PISA, TIMSS and PIRLS surveys into one major database. It has over 3 million students and over 2,000 variables, including student background and school and teacher information. I started playing around with it and ending up doing this: &lt;a href=&#34;https://cimentadaj.shinyapps.io/shiny/&#34; class=&#34;uri&#34;&gt;https://cimentadaj.shinyapps.io/shiny/&lt;/a&gt;. Feel free to check it out and drop any comments below.&lt;/p&gt;
 &lt;p&gt;If you want to contribute, &lt;a href=&#34;https://github.com/cimentadaj/Inequality_Shinyapp&#34;&gt;this&lt;/a&gt; is the Github repository. I plan to keep adding some stuff to the app, including new surveys and automatic plot downloading, so don’t forget to check it out.&lt;/p&gt;
 </description>
     </item>

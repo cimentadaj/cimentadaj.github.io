@@ -14,7 +14,7 @@
 
 <title>Jorge Cimentada</title>
 
-<meta name="generator" content="Hugo 0.37.1" />
+<meta name="generator" content="Hugo 0.51" />
 
 
 
@@ -70,7 +70,10 @@ hljs.initHighlightingOnLoad();
 </section>
 <section id="content-pane" class="row">
   <div class="col-md-12 text-justify content">
-    <p>Lightning post. I got very confused earlier today on how to use <code>duplicated</code>. Basically, I didn’t know if it was picking only one duplicate or many of the duplicates at the same time. I figure it out but I still was a bit confused so I decided to rewrite the function from scratch. Below you can see it. Please post any other solutions or feedback.</p>
+    
+
+
+<p>Lightning post. I got very confused earlier today on how to use <code>duplicated</code>. Basically, I didn’t know if it was picking only one duplicate or many of the duplicates at the same time. I figure it out but I still was a bit confused so I decided to rewrite the function from scratch. Below you can see it. Please post any other solutions or feedback.</p>
 <pre class="r"><code>dupl_identifier &lt;- function(vec, where) {
   intm &lt;- x %in% vec
   pos &lt;- which(intm)
@@ -126,7 +129,7 @@ identical(my_duplicated(x),
 
 
 <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -178,12 +181,16 @@ identical(my_duplicated(x),
 </div>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'XYZ', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
