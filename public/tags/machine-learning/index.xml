@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Machine Learning on Jorge Cimentada</title>
+    <link>/tags/machine-learning/</link>
+    <description>Recent content in Machine Learning on Jorge Cimentada</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Wed, 23 May 2018 00:00:00 +0000</lastBuildDate>
+    
+        <atom:link href="/tags/machine-learning/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>A list of must pre-project questions</title>
+      <link>/blog/2018-05-23-a-list-of-must-preproject-questions/a-list-of-must-pre-project-questions/</link>
+      <pubDate>Wed, 23 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018-05-23-a-list-of-must-preproject-questions/a-list-of-must-pre-project-questions/</guid>
+      <description>
+
+
+&lt;p&gt;Rumbling through Twitter I found a Jupyter Notebook of Paige Bailey written at the rOpensci unconf about Ethical Machine Learning which you can read &lt;a href=&#34;https://github.com/ropenscilabs/proxy-bias-vignette/blob/master/EthicalMachineLearning.ipynb&#34;&gt;here&lt;/a&gt;. It was very interesting to look at her workflow but even more interesting was the set of questions she asked herself before and during the analysis. I paste them here just to keep them as a reference.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;As you design the goal and the purpose of your machine learning product, you must first ask: Who is your audience?&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Is your product or analysis meant to include all people?&lt;/li&gt;
+&lt;li&gt;And, if not: is it targeted to an exclusive audience?&lt;/li&gt;
+&lt;li&gt;Is there a person on your team tasked specifically with identifying and resolving bias and discrimination issues?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Once the concept and scope have been defined, it is time to focus on the acquisition, evaluation, and cleaning of data. We have received a single .csv file filled with information on customers from the bank’s manager. Some questions to consider:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Did the data come from a system prone to human error?&lt;/li&gt;
+&lt;li&gt;Is the data current?&lt;/li&gt;
+&lt;li&gt;What technology facilitated the collection of the data?&lt;/li&gt;
+&lt;li&gt;Was participation of the data subjects voluntary?&lt;/li&gt;
+&lt;li&gt;Does the context of the collection match the context of your use?&lt;/li&gt;
+&lt;li&gt;Was your data collected by people or a system that was operating with quotas or a particular incentive structure?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Now that your data has been collected, it would be a great idea to evaluate and describe it:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Who is represented in the data?&lt;/li&gt;
+&lt;li&gt;Who is under-represented or absent from your data?&lt;/li&gt;
+&lt;li&gt;Can you find additional data, or use statistical methods, to make your data more inclusive?&lt;/li&gt;
+&lt;li&gt;Was the data collected in an environment where data subjects had meaningful choices?&lt;/li&gt;
+&lt;li&gt;How does the data reflect the perspective of the institution that collected it?&lt;/li&gt;
+&lt;li&gt;Were fields within the data inferred or appended beyond what was clear to the data subject?
+Would this use of the data surprise the data subjects?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;The next step would be cleaning the data.&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Are there any fields that should be eliminated from your data?&lt;/li&gt;
+&lt;li&gt;Can you use anonymization or pseudonymization techniques to avoid needless evaluation or processing of individual data?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Establishing logic for variables&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Can you describe the logic that connects the variables to the output of your equation?&lt;/li&gt;
+&lt;li&gt;Do your variables have a causal relationship to the results they predict?&lt;/li&gt;
+&lt;li&gt;How did you determine what weight to give each variable?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Identifying assumptions&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Will your variables apply equally across race, gender, age, disability, ethnicity, socioeconomic status, education, etc.?&lt;/li&gt;
+&lt;li&gt;What are you assuming about the kinds of people in your data set?&lt;/li&gt;
+&lt;li&gt;Would you be comfortable explaining your assumptions to the public?&lt;/li&gt;
+&lt;li&gt;What assumptions are you relying on to determine the relevant variables and their weights?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Defining success&lt;/strong&gt;
+- What amount and type of error do you expect?
+- How will you ensure your system is behaving the way you intend? How reliable is it?&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;How will you choose your analytical method? For example, predictive analytics, machine learning (supervised, unsupervised), neural networks or deep learning, etc.&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;How much transparency does this method allow your end users and yourself?&lt;/li&gt;
+&lt;li&gt;Are non-deterministic outcomes acceptable given your legal or ethical obligations around transparency and explainability?&lt;/li&gt;
+&lt;li&gt;Does your choice of analytical method allow you to sufficiently explain your results?&lt;/li&gt;
+&lt;li&gt;What particular tasks are associated with the type of analytical method you are using?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Tools&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;How could results that look successful still contain bias?&lt;/li&gt;
+&lt;li&gt;Is there a trustworthy or audited source for the tools you need?&lt;/li&gt;
+&lt;li&gt;Have the tools you are using been associated with biased products?&lt;/li&gt;
+&lt;li&gt;Or, if you build from scratch: can you or a third-party test your tools for any features that can result in biased or unfair outcomes?&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>The LOO and the Bootstrap</title>
+      <link>/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</link>
+      <pubDate>Thu, 07 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</guid>
+      <description>
+
+
+&lt;p&gt;This is the second entry, and probably the last, on model validation methods. These posts are inspired by the work of Kohavi (1995), which I totally recommend reading. This post will talk talk about the Leave-One-Out Cross Validation (LOOCV), which is the extreme version of the K-Fold Cross Validation and the Bootstrap for model assessment.&lt;/p&gt;
+&lt;p&gt;Let’s dive in!&lt;/p&gt;
+&lt;div id=&#34;the-leave-one-out-cv-method&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The Leave-One-Out CV method&lt;/h2&gt;
+&lt;p&gt;The LOOCV is actually a very intuitive idea if you know how the K-Fold CV works.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;LOOCV: Let’s imagine a data set with 30 rows. We separate the 1st row to be the test data and the remaining 29 rows to be the training data. We fit the model on the training data and then predict the one observation we left out. We record the model accuracy and then repeat but predicting the 2nd row from training the model on row 1 and 3:30. We repeat until every row has been predicted.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This is surprisingly easy to implement in R.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+
+set.seed(21341)
+loo_result &amp;lt;-
+  map_lgl(1:nrow(mtcars), ~ {
+  test &amp;lt;- mtcars[.x, ] # Pick the .x row of the iteration to be the test
+  train &amp;lt;- mtcars[-.x, ] # Let the training be all the data EXCEPT that row
+  
+  train_model &amp;lt;- glm(am ~ mpg + cyl + disp, family = binomial(), data = train) # Fit any model
+  
+  # Since the prediction is in probabilities, pass the probability
+  # to generate either a 1 or 0 based on the probability
+  prediction &amp;lt;- predict(train_model, newdata = test, type = &amp;quot;response&amp;quot;) %&amp;gt;% rbinom(1, 1, .)
+  
+  test$am == prediction # compare whether the prediction matches the actual value
+})
+
+summary(loo_result %&amp;gt;% as.numeric) # percentage of accurate results
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#  0.0000  0.0000  1.0000  0.5938  1.0000  1.0000&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It looks like our model had nearly 60% accuracy, not very good. But not entirely bad given our very low sample size.&lt;/p&gt;
+&lt;p&gt;Advantages:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Just as with the K-Fold CV, this approach is useful because it uses all the data. At some point, every rows gets to be the test set and training set, maximizing information.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In fact, it uses almost ALL the data as the original data set as the training set is just N - 1 (this method uses even more than the K-Fold CV).&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Disadvantage:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;This approach is very heavy on your computer. We need to refit de model N times (although there is a shortcut for linear regreesion, see &lt;a href=&#34;https://gerardnico.com/wiki/lang/r/cross_validation&#34;&gt;here&lt;/a&gt;).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Given that the test set is of only 1 observation, there might be a lot of variance in the prediction, making the accuracy test more unreliable (that is, relative to K-Fold CV)&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-bootstrap-method&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The Bootstrap method&lt;/h2&gt;
+&lt;p&gt;The bootstrap method is a bit different. Maybe you’ve heard about the bootstrap for estimating standard errors, and in fact for model assessment it’s very similar.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Boostrap method: Take the data from before with 30 rows. Suppose we resample this dataset with replacement. That is, the dataset will have the same 30 rows, but row 1 might be repeated 3 times, row 2 might be repeated 4 times, row 3 might not be in the dataset anymore, and so on. Now, take this resampled data and use it to train the model. Now test your predictions on the actual data (the one with 30 unique rows) and calculate the model accuracy. Repeat N times.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Again, the R implementation is very straightforward.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+set.seed(21314)
+bootstrap &amp;lt;-
+  map_dbl(1:500, ~ {
+  train &amp;lt;- mtcars[sample(nrow(mtcars), replace = T), ] # randomly sample rows with replacement
+  test &amp;lt;- mtcars
+  
+  train_model &amp;lt;- glm(am ~ mpg + cyl + disp, family = binomial(), data = train) # fit any model
+  
+  # Get predicted probabilities and assign a 1 or 0 based on the probability
+  prediction &amp;lt;- predict(train_model, newdata = test, type = &amp;quot;response&amp;quot;) %&amp;gt;% rbinom(nrow(mtcars), 1, .)
+  accuracy &amp;lt;- test$am == prediction # compare whether the prediction matches the actual value
+  
+  mean(accuracy) # get the proportion of correct predictions
+})
+
+summary(bootstrap)
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#  0.4375  0.6875  0.7500  0.7468  0.8125  0.9375&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We got a better accuracy with the bootstrap (probably biased, see below) and a range of possible values going from 0.43 to 0.93. Note that if you run these models you’ll get a bunch of warnings like &lt;code&gt;glm.fit: fitted probabilities numerically 0 or 1 occurred&lt;/code&gt; because we just have too few observations to be including covariates, resulting in a lot of overfitting.&lt;/p&gt;
+&lt;p&gt;Advantages:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Variance is small considering both train and test have the same number of rows.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Disadvantages&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;It gives more biased results than the CV methods because it repeats data, rather than keep unique observations for training and testing.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In the end, it’s a trade-off against what you’re looking for. In some instances, it’s alright to have a slightly biased estimate (either pessimistic or optimistic) as long as its reliable (bootstrap). On other instances, it’s better to have a very exact prediction but that is less unreliable (CV methods).&lt;/p&gt;
+&lt;p&gt;Some rule of thumbs:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;For large sample sizes, the variance issues become less important and the computational part is more of an issues. I still would stick by repeated CV for small and large sample sizes. See &lt;a href=&#34;https://stats.stackexchange.com/questions/18348/differences-between-cross-validation-and-bootstrapping-to-estimate-the-predictio&#34;&gt;here&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Cross validation is a good tool when deciding on the model – it helps you avoid fooling yourself into thinking that you have a good model when in fact you are overfitting. When your model is fixed, then using the bootstrap makes more sense to assess accuracy (to me at least). See again &lt;a href=&#34;https://stats.stackexchange.com/questions/18348/differences-between-cross-validation-and-bootstrapping-to-estimate-the-predictio&#34;&gt;here&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Again, this is a very crude approach, and the whole idea is to understand the inner workings of these algorithms in practice. For more thorough approaches I suggest using the &lt;code&gt;cv&lt;/code&gt; functions from the &lt;code&gt;boot&lt;/code&gt; package or &lt;code&gt;caret&lt;/code&gt; or &lt;code&gt;modelr&lt;/code&gt;. I hope this was useful. I will try to keep doing these things as they help me understand these techniques better.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Kohavi, Ron. “A study of cross-validation and bootstrap for accuracy estimation and model selection.” Ijcai. Vol. 14. No. 2. 1995.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Holdout and cross-validation</title>
+      <link>/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</link>
+      <pubDate>Wed, 06 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</guid>
+      <description>
+
+
+&lt;p&gt;In a recent attempt to bring a bit of discipline into my life, I’ve been forcing myself to read papers after lunch, specifically concentrated on data science topics. The whole idea is to educated myself every day, but if I find something cool that I can implement in R, I’ll do it right away.&lt;/p&gt;
+&lt;p&gt;This blogpost is the first of a series of entries I plan to post explaining the main concepts of Kohavi (1995), which compares cross-validation methods and bootstrap methods for model selection. This first post will implement a K-Fold cross validation from scratch in order to understand more deeply what’s going on behind the scenes.&lt;/p&gt;
+&lt;p&gt;Before we explain the concept of K-Fold cross validation, we need to define what the ‘Holdout’ method is.&lt;/p&gt;
+&lt;div id=&#34;holdout-method&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Holdout method&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Holdout method: Imagine we have a dataset with house prices as the dependent variable and two independent variables showing the square footage of the house and the number of rooms. Now, imagine this dataset has &lt;code&gt;30&lt;/code&gt; rows. The whole idea is that you build a model that can predict house prices accurately. To ‘train’ your model, or see how well it performs, we randomly subset 20 of those rows and fit the model. The second step is to predict the values of those 10 rows that we excluded and measure how well our predictions were. As a rule of thumb, experts suggest to randomly sample 80% of the data into the training set and 20% into the test set.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;A very quick example:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+library(modelr)
+
+holdout &amp;lt;- function(repeat_times) { # empty argument for later
+  n &amp;lt;- nrow(mtcars)
+  eighty_percent &amp;lt;- (n * 0.8) %&amp;gt;% floor
+  train_sample &amp;lt;- sample(1:n, eighty_percent) # randomly pick 80% of the rows
+  test_sample &amp;lt;- setdiff(1:n, train_sample) # get the remaining 20% of the rows
+  
+  train &amp;lt;- mtcars[train_sample, ] # subset the 80% of the rows
+  test &amp;lt;- mtcars[test_sample, ] # subset 20% of the rows
+  
+  train_model &amp;lt;- lm(mpg ~ ., data = train)
+  
+  test %&amp;gt;%
+    add_predictions(train_model) %&amp;gt;% # add the predicted mpg values to the test data
+    summarize(average_error = (pred - mpg) %&amp;gt;% mean %&amp;gt;% round(2)) %&amp;gt;%
+    pull(average_error)
+  # calculate the average difference of the predicition from the actual value
+}
+
+set.seed(2131)
+holdout()
+# [1] 3.59&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can see that on average the training set over predicts the actual values by about 3.6 points. An even more complex approach is what Kohavi (1995) calls “random subsampling”.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;random-subsampling&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Random subsampling&lt;/h2&gt;
+&lt;p&gt;In a nutshell, repeat the previous &lt;code&gt;N&lt;/code&gt; times and calculate the average and standard deviation of your metric of interest.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(2134)
+
+random_subsampling &amp;lt;- map_dbl(1:500, holdout)
+summary(random_subsampling)
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# -7.3100 -0.7525  0.4000  0.4255  1.5550  9.1500&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We get a mean error of 0.42, a maximum of 9.15 and a minimum of -7.31. Quite some variation, eh? It is precisely for this reason that Kohavi (1995) highlights that random subsampling has an important problem.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Each time we resample, some observations might’ve been in the previous resample, leading to non-independence and making the training dataset unrepresentative of the original dataset.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What happens when you try to predict Y from an unrepresented X, 500 times? What we just saw before.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;k-fold-cross-validation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;K-Fold cross validation&lt;/h2&gt;
+&lt;p&gt;Let’s move on to cross validation. K-Fold cross validation is a bit trickier, but here is a simple explanation.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;K-Fold cross validation: Take the house prices dataset from the previous example, divide the dataset into 10 parts of equal size, so if the data is 30 rows long, you’ll have 10 datasets of 3 rows each. Each split contains unique rows not present in other splits. In the first iteration, take the first dataset as the test dataset and merge the remaining 9 datasets as the train dataset. Fit the model on the training data, predict on the test data and record model accuracy. Repeat a new iteration where dataset 2 is the test set and data set 1 and 3:10 merged is the training set. Repeat for all K slices.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can implement this in R.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;k_slicer &amp;lt;- function(data, slices) {
+  stopifnot(nrow(data) &amp;gt; slices) # the number of rows must be bigger than the K slices
+  slice_size &amp;lt;- (nrow(data) / slices) %&amp;gt;% floor
+  
+  rows &amp;lt;- 1:nrow(data)
+  data_list &amp;lt;- rep(list(list()), slices) # create empty list of N slices
+
+  # Randomly sample slice_size from the rows available, but exclude these rows
+  # from the next sample of rows. This makes sure each slice has unique rows.
+  for (k in 1:slices) {
+    specific_rows &amp;lt;- sample(rows, slice_size) # sample unique rows for K slice
+    rows &amp;lt;- setdiff(rows, specific_rows) # exclue those rows
+    data_list[[k]] &amp;lt;- data[specific_rows, ] # sample the K slice and save in empty list
+  }
+  
+  data_list
+}
+
+mtcars_sliced &amp;lt;- k_slicer(mtcars, slices = 5) # data sliced in K slices&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;All good so far? We took a dataset and split it into K mutually exclusive datasets. The next step is to run the modeling on &lt;code&gt;K = 2:10&lt;/code&gt; and test on &lt;code&gt;K = 1&lt;/code&gt;, and then repeat on &lt;code&gt;K = c(1, 3:10)&lt;/code&gt; as training and test on &lt;code&gt;K = 2&lt;/code&gt;, and repeat for al &lt;code&gt;K’s&lt;/code&gt;. Below we implement it in R.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+k_fold_cv &amp;lt;-
+  map_dbl(seq_along(mtcars_sliced), ~ {
+  test &amp;lt;- mtcars_sliced[[.x]] # Take the K fold
+  
+  # Note the -.x, for excluding that K
+  train &amp;lt;- mtcars_sliced[-.x] %&amp;gt;% reduce(bind_rows) # bind row all remaining K&amp;#39;s
+  
+  lm(mpg ~ ., data = train) %&amp;gt;%
+    rmse(test) # calculate the root mean square error of predicting the test set
+})
+
+k_fold_cv %&amp;gt;%
+  summary
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#   3.192   3.746   3.993   3.957   4.279   4.574&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And we get a summary of the root mean square error, a metric we decided to use now, instead of predictions. We can asses how accurate our model is this way and compare several specification of models and choose the one which better fits the data.&lt;/p&gt;
+&lt;p&gt;The main advantage of this approach:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;We maximize the use of data because all data is used, at some point, as test and training.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This is very interesting in contrast to the holdout method in which we can’t maximize our data! Take data out of the test set and the predictions will have wider uncertainty intervals, take data out of the train set and get biased predictions.&lt;/p&gt;
+&lt;p&gt;This approach, as any other, has disadvantages.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;It is computationally intensive, given that we have to run the model K-1 times. In this setting it’s trivial, but in more complex modeling this can be quite costly.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If in any of the K iterations the predictions are bad, the overall accuracy will be bad, considering that other K iterations will also likely be bad. In other words, predictions need to be stable across all K iterations.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Building on the previous point, once the model is stable, increasing the number of folds (5, 10, 20, 25…) generates little change considering that the accuracy will be similar (and the variance of different K-folds will be similar as well).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Finally, if Y consists of categories, and one of these categories is very minimal, the best K-Fold CV can do is predict the class with more observations. If an observation of this minimal class gets to be in the test set in one of the iterations, then the training model will have very little accuracy for that category. See Kohavi (1995) page 3, example 1 for a detailed example.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;This was my first attempt at manually implementing the Holdout method and the K-Fold CV. These examples are certainly flawed, like rounding the decimal number of rows correct for the unique number of rows in each K-Fold slice. If anyone is interested in correcting thes, please do send a pull request. For those interested in using more reliable approaches, take a look at the &lt;code&gt;caret&lt;/code&gt; and the &lt;code&gt;modelr&lt;/code&gt; package. In the next entry I will implement the LOO method and the bootstrap (and maybe the stratified K-Fold CV)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Kohavi, Ron. “A study of cross-validation and bootstrap for accuracy estimation and model selection.” Ijcai. Vol. 14. No. 2. 1995.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Python on Jorge Cimentada</title>
+    <link>/tags/python/</link>
+    <description>Recent content in Python on Jorge Cimentada</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Fri, 20 Apr 2018 00:00:00 +0000</lastBuildDate>
+    
+        <atom:link href="/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>The Monty Hall problem</title>
+      <link>/blog/2018-04-20-the-monty-hall-problem/the-monty-hall-problem/</link>
+      <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018-04-20-the-monty-hall-problem/the-monty-hall-problem/</guid>
+      <description>
+
+
+&lt;p&gt;Just recently, I’ve been completing the online version of &lt;code&gt;CS109&lt;/code&gt; from Harvard which is a class for understanding machine learning algorithms in Python. In the very first section the homework of the class asked us to develope a working simulation of the Monty Hall problem.&lt;/p&gt;
+&lt;p&gt;The Monty Hall problem is very simple. In a gameshow, contestants try to guess which of 3 closed doors contain a cash prize (goats are behind the other two doors). Of course, the odds of choosing the correct door are 1 in 3. As a twist, the host of the show occasionally opens a door after a contestant makes his or her choice. This door is always one of the two the contestant did not pick, and is also always one of the goat doors (note that it is always possible to do this, since there are two goat doors). At this point, the contestant has the option of keeping his or her original choice, or swtiching to the other unopened door. The question is: is there any benefit to switching doors?&lt;/p&gt;
+&lt;p&gt;I implemented this in Python below. Let’s go step by step. Let’s load the packages we’ll use.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Load packages&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;import numpy as np&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Define a function that simulates an array of prize doors. Optionally, supply any number of doors available.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def simulate_prizedoor(nsim, doors = 3):
+    answer = np.array([np.random.randint(0, doors) for x in range(nsim)])
+    return answer
+    
+print(simulate_prizedoor(10, 3))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [2 1 2 0 2 1 0 2 2 1]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This array shows a random prize door from 10 hypothetical (independent) tries in which a persons will choose a guess.&lt;/p&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Define a function that simulates an array of guesses.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def simulate_guess(nsim, doors = 3):
+    return(simulate_prizedoor(nsim, doors = doors))
+print(simulate_guess(10))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1 0 0 1 0 1 0 1 1 1]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This array shows a random choosen door from 10 hypothetical (independent) tries in which a persons will choose a guess.&lt;/p&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Define a &lt;code&gt;goat_door&lt;/code&gt; function that returns the first ‘goat’ door that the host of the show will open.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;# Find elements in `first_set` not present in `second_set`
+def diff(first_set, second_set):
+    res = [x for x in first_set if x not in second_set]
+    return res
+    
+# Choose the goat door
+def goat_door(prizedoors, guesses, doors = 3):
+    new_stack = np.column_stack((prizedoors, guesses))
+    full_ops = [x for x in range(doors)]
+    res = [diff(full_ops, new_stack[index, ])[0] for index in range(new_stack.shape[0])]
+    return np.array(res)
+    
+print(goat_door(simulate_prizedoor(10), simulate_guess(10)))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [2 1 1 0 1 2 0 0 2 1]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;For example, if the prizedoor is 2 and the person guessed door 2, the &lt;code&gt;goat_door&lt;/code&gt; function will return either &lt;code&gt;0&lt;/code&gt; or &lt;code&gt;1&lt;/code&gt; (in this case it will return always &lt;code&gt;0&lt;/code&gt; because I was a bit lazy).&lt;/p&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Define a function that switches the guess of the respondent in case he/she wants to change doors after the first door has been opened.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;#your code here
+def switch_guess(guesses, goatdoors):
+    return goat_door(guesses, goatdoors)
+    
+print(switch_guess(np.array([0, 1, 2]), np.array([1, 2, 1])))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [2 0 0]&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Finally, define a function that calculates the percentage of correct doors the person guessed.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def win_percentage(guesses, prizedoors):
+    return (guesses == prizedoors).mean()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The exercise adds this:&lt;/p&gt;
+&lt;p&gt;Simulate 10000 games where contestant keeps his original guess, and 10000 games where the contestant switches his door after a goat door is revealed. Compute the percentage of time the contestant wins under either strategy. Is one strategy better than the other?&lt;/p&gt;
+&lt;p&gt;I implement it below.&lt;/p&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;# Number of simulations
+nsim = 10000
+# Numer of doors
+doors = 3
+# The user picks nsim random guesses
+first_guess = simulate_guess(nsim, doors = doors)
+# The equivalent 10000 random prize_doors
+prize_door = simulate_prizedoor(nsim, doors = doors)
+# The 10000 doors which the host opened
+chosen_goat = goat_door(first_guess, prize_door)
+## For the scenario where the users keeps the first guess,
+## how many wins does he/she has?
+first_perc = win_percentage(first_guess, prize_door)
+print(first_perc)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 0.3405&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;What happens if the user switches the door after the host has opened one door&lt;/p&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;# After you had your first guess, switch to a door that is not the door opened by the
+# host
+second_guess = switch_guess(first_guess, chosen_goat)
+# Calculate the % win with this new guess
+second_perc = win_percentage(second_guess, prize_door)
+print(second_perc)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 0.6595&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;What? It’s not 50/50? This is a bit counterintuitive as most of the internet suggests but I found this explanation very intuitive. With 3 doors, the odds of winning are as simple as &lt;code&gt;1/3&lt;/code&gt; and the odds of losing is &lt;code&gt;2/3&lt;/code&gt;. When Monty opens a second door, the odds don’t go to &lt;code&gt;50/50&lt;/code&gt; because you already knew from before that you had a &lt;code&gt;2/3&lt;/code&gt; chance of losing that &lt;strong&gt;just&lt;/strong&gt; became &lt;code&gt;1/3&lt;/code&gt;. If the odds of losing were &lt;code&gt;2/3&lt;/code&gt; and a new door was opened, then the odds of losing become &lt;code&gt;1/3&lt;/code&gt;, which means that odds of winning became &lt;code&gt;2/3&lt;/code&gt;! And that fraction becomes &lt;code&gt;66%&lt;/code&gt;, the percentage we got above. The key thing to understanding the riddle is &lt;strong&gt;not&lt;/strong&gt; reestimating your odds but merely &lt;strong&gt;updating&lt;/strong&gt; your odds like a true bayesian :).&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

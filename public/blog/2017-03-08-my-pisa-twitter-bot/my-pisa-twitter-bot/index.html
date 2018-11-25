@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Simple minimalist theme">
+<meta name="keywords" content="blog,goa,hugo,r,statistics,education">
+
+<base href="/">
+
+<title>Jorge Cimentada</title>
+
+<meta name="generator" content="Hugo 0.51" />
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
+<script src="/js/highlight.pack.js"></script>
+<script>
+hljs.configure({langauges: ['R']});
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="row text-left title">
+  <h1 class="title">My PISA twitter bot</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON MAR 8, 2017 
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    
+
+
+<p>I’ve long wanted to prepare a project with R related to education. I knew I’d found the idea when I read Thomas Lumley’s <a href="http://notstatschat.tumblr.com/post/156007757906/a-bus-watching-bot">attempt to create a Twitter bot in which he tweeted bus arrivals in New Zealand</a>. Quoting him, “Is it really hard to write a bot? No. Even I can do it. And I’m old.”</p>
+<p>So I said to myself, alright, you have to create a Twitter bot but it has to be related to education. It’s an easy project which shouldn’t take a lot of your time. I then came up with this idea: what if you could randomly sample questions from the <a href="http://www.oecd.org/pisa/aboutpisa/">PISA databases</a> and create a sort of random facts generator. The result would be one graph a day, showing a question for some random sample of countries. I figured, why not prepare a post (both for me to remember how I did it but also so others can contribute to the project) where I explained step-by-step how I did it?</p>
+<p>The repository for the project is <a href="https://github.com/cimentadaj/PISAfacts_twitterBot">here</a>, so feel free to drop any comments or improvements. The idea is to load the <a href="http://vs-web-fs-1.oecd.org/pisa/PUF_SPSS_COMBINED_CMB_STU_QQQ.zip">PISA 2015 data</a>, randomly pick a question that doesn’t have a lot of labels (because then it’s very difficult to plot it nicely), and based on the type of question create an appropriate graph. Of course, all of this needs to be done on the fly, without human assistance. You can follow this twitter account at <span class="citation">@DailyPISA_Facts</span>. Let’s start!</p>
+<div id="data-wrangling" class="section level2">
+<h2>Data wrangling</h2>
+<p>First we load some of the packages we’ll use and read the PISA 2015 student data.</p>
+<pre class="r"><code>library(tidyverse)
+library(forcats)
+library(haven)
+library(intsvy) # For correct estimation of PISA estimates
+library(countrycode) # For countrycodes
+library(cimentadaj) # devtools::install_github(&quot;cimentadaj/cimentadaj&quot;)
+library(lazyeval)
+library(ggthemes) # devtools::install_github(&quot;jrnold/ggthemes&quot;)</code></pre>
+<pre class="r"><code>file_name &lt;- file.path(tempdir(), &quot;pisa.zip&quot;)
+
+download.file(
+  &quot;http://vs-web-fs-1.oecd.org/pisa/PUF_SPSS_COMBINED_CMB_STU_QQQ.zip&quot;,
+  destfile = file_name
+)
+
+unzip(file_name, exdir = tempdir())
+
+pisa_2015 &lt;- read_spss(file.path(tempdir(), &quot;CY6_MS_CMB_STU_QQQ.sav&quot;))</code></pre>
+<p>Downloading the data takes a bit but make sure to download the zip file and unzip it as I’ve just outlined.</p>
+<p>The idea is to generate a script that can be used with all PISA datasets, so at some point we should be able not only to randomly pick question but also randomly pick PISA surveys (PISA has been implemented since the year 2000 in three year intervals). We create some places holders for the variable country name, the format of the country names and the missing labels we want to ignore for each question (I think these labels should be the same across all surveys).</p>
+<pre class="r"><code>country_var &lt;- &quot;cnt&quot;
+country_types &lt;- &quot;iso3c&quot;
+
+missing_labels &lt;- c(&quot;Valid Skip&quot;,
+                    &quot;Not Reached&quot;,
+                    &quot;Not Applicable&quot;,
+                    &quot;Invalid&quot;,
+                    &quot;No Response&quot;)
+
+int_data &lt;- pisa_2015 # Create a safe copy of the data, since it takes about 2 mins to read.</code></pre>
+<p>After this, I started doing some basic data manipulation. Each line is followed by a comment on why I did it.</p>
+<pre class="r"><code>names(int_data) &lt;- tolower(names(int_data)) # It&#39;s easier to write variable names as lower case
+int_data$region &lt;- countrycode(int_data[[country_var]], country_types, &quot;continent&quot;)
+# Create a region variable to add regional colours to plots at some point.</code></pre>
+<p>Most PISA datasets are in SPSS format, where the variable’s question has been written as a label. If you’ve used SPSS or SAS you know that labels are very common; they basically outline the question of that variable. In R, this didn’t properly exists until the <code>foreign</code> and <code>haven</code> package. With <code>read_spss()</code>, each variable has now two important attributes called <code>label</code> and <code>labels</code>. Respectively, the first one contains the question, while the second contains the value labels (assuming the file to be read has these labels). This information will be vital to our PISA bot. In fact, this script works only if the data has these two attributes. If you’re feeling particularly adventurous, you can fork this repository and make the script work also with metadata!</p>
+<p>Have a look at the country names in <code>int_data[[country_var]][1:10]</code>. They’re all written as 3-letter country codes. But to our luck, the <code>labels</code> attribute has the correct names with the 3-letter equivalent. We can save these attributes and recode the 3-letter country name to long names.</p>
+<pre class="r"><code># Saving country names to change 3 letter country name to long country names
+country_labels &lt;- attr(int_data[[country_var]], &quot;labels&quot;)
+
+# Reversing the 3-letter code to names so I can search for countries
+# in a lookup table
+country_names &lt;- reverse_name(country_labels)
+
+# Lookup 3-letter code and change them for long country names
+int_data[, country_var] &lt;- country_names[int_data[[country_var]]]
+attr(int_data[[country_var]], &quot;labels&quot;) &lt;- country_labels</code></pre>
+<p>Next thing I’d like to do is check which variables will be valid, i.e. those which have a <code>labels</code> attribute, have 2 or more <code>labels</code> aside from the <code>missing</code> category of labels and are not either characters or factors (remember that all variables should be numeric with an attribute that contains the labels; character columns are actually invalid here). This will give me the list of variables that I’ll be able to use.</p>
+<pre class="r"><code>subset_vars &lt;- 
+  int_data %&gt;%
+  map_lgl(function(x)
+    !is.null(attr(x, &quot;labels&quot;)) &amp;&amp;
+    length(setdiff(names(attr(x, &quot;labels&quot;)), missing_labels)) &gt;= 2 &amp;&amp;
+    !typeof(x) %in% c(&quot;character&quot;, &quot;factor&quot;)) %&gt;%
+  which()</code></pre>
+<p>Great, we have our vector of valid columns.</p>
+<p>The next steps are fairly straight forward. I randomply sample one of those indexes (which have the variale name as a <code>names</code> attribute, check <code>subset_vars</code>), together with the <code>cnt</code> and <code>region</code> variables.</p>
+<pre class="r"><code>valid_df_fun &lt;- function(data, vars_select) {
+  data %&gt;%
+  select_(&quot;cnt&quot;, &quot;region&quot;, sample(names(vars_select), 1)) %&gt;%
+  as.data.frame()
+}
+
+valid_df &lt;- valid_df_fun(int_data, subset_vars)
+random_countries &lt;- unique(valid_df$cnt) # To sample unique countries later on</code></pre>
+<p>We also need to check how many labels we have, aside from the <code>missing</code> labels. In any case, if those unique labels have more than 5, we need to resample a new variable. It’s difficult to understand a plot with that many labels. We need to make our plots as simple and straightforward as possible.</p>
+<pre class="r"><code>var_labels &lt;- attr(valid_df[[names(valid_df)[3]]], &#39;labels&#39;) # Get labels
+
+# Get unique labels
+valid_labels &lt;- function(variable_label, miss) {
+  variable_label %&gt;%
+    names() %&gt;%
+    setdiff(miss)
+}
+
+len_labels &lt;- length(valid_labels(var_labels, missing_labels)) # length of unique labels
+
+# While the length of the of the labels is &gt; 4, sample a new variable.
+while (len_labels &gt; 4) {
+  valid_df &lt;- valid_df_fun(int_data, subset_vars)
+  var_labels &lt;- attr(valid_df[[names(valid_df)[3]]], &#39;labels&#39;) # Get labels
+  len_labels &lt;- length(valid_labels(var_labels, missing_labels))
+}
+
+# Make 100% sure we get the results:
+stopifnot(len_labels &lt;= 4)
+
+(labels &lt;- reverse_name(var_labels)) 
+# Reverse vector names to objects and viceversa for 
+# later recoding.
+
+var_name &lt;- names(valid_df)[3]</code></pre>
+<p>Before estimating the <code>PISA</code> proportions, I want to create a record of all variables that have been used. Whenever a graph has something wrong we wanna know which variable it was, so we can reproduce the problem and fix it later in the future.</p>
+<pre class="r"><code>new_var &lt;- paste(var_name, Sys.Date(), sep = &quot; - &quot;)
+write_lines(new_var, path = &quot;./all_variables.txt&quot;, append = T) 
+# I create an empty .txt file to write the vars</code></pre>
+<p>Now comes the estimation section. Using the <code>pisa.table</code> function from the package <code>intsvy</code> we can correctly estimate the population proportions of any variable for any valid country. This table will be the core data behind our plot.</p>
+<pre class="r"><code>try_df &lt;-
+  valid_df %&gt;%
+  filter(!is.na(region)) %&gt;%
+  pisa.table(var_name, data = ., by = &quot;cnt&quot;) %&gt;%
+  filter(complete.cases(.))</code></pre>
+<p>Let’s check out the contents of <code>try_df</code>:</p>
+<pre><code>##                   cnt pa039q01ta Freq Percentage Std.err.
+## 1             Belgium          1 3972      85.16        0
+## 2             Belgium          2  692      14.84        0
+## 3               Chile          1 6062      96.88        0
+## 4               Chile          2  195       3.12        0
+## 5             Croatia          1 4353      81.17        0
+## 6             Croatia          2 1010      18.83        0
+## 7  Dominican Republic          1 4335      98.37        0
+## 8  Dominican Republic          2   72       1.63        0
+## 9              France          1 4463      84.46        0
+## 10             France          2  821      15.54        0</code></pre>
+<p>Great! To finish with the data, we simply need one more thing: to recode the value labels with the <code>labels</code> vector.</p>
+<pre class="r"><code>try_df[var_name] &lt;- labels[try_df[, var_name]]</code></pre>
+<p>Awesome. We have the data ready, more or less. Let’s produce a dirty plot to check how long the title is.</p>
+<pre class="r"><code>title_question &lt;- attr(valid_df[, var_name], &#39;label&#39;)
+
+ggplot(try_df, aes_string(names(try_df)[2], &quot;Percentage&quot;)) +
+  geom_col() +
+  xlab(title_question)</code></pre>
+<p><img src="/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><em>Note: Because the question is randomly sampled, you might be getting a short title. Rerun the script and eventually you’ll get a long one.</em></p>
+<p>So, the question <em>might</em> have two problems. The wording is a bit confusing (something we can’t really do anything about because that’s how it’s written in the questionnaire) and it’s too long. For the second problem I created a function that cuts the title in an arbitrary cutoff point (based on experimental tests on how many letters fit into a ggplot coordinate plane) but it makes sure that the cutoff is not in the middle of a word, i.e. it searches for the closest end of a word.</p>
+<pre class="r"><code>## Section: Get the title
+cut &lt;- 60 # Arbitrary cutoff
+
+# This function accepts a sentence (or better, a title) and cuts it between
+# the start and cutoff arguments (just as substr).
+# But if the cutoff is not an empty space it will search +-1 index by
+# index from the cutoff point until it reaches
+# the closest empty space. It will return from start to the new cutoff
+sentence_cut &lt;- function(sentence, start, cutoff) {
+  
+  if (nchar(sentence) &lt;= cutoff) return(substr(sentence, start, cutoff))
+  
+  excerpt &lt;- substr(sentence, start, cutoff)
+  actual_val &lt;- cutoff
+  neg_val &lt;- pos_val &lt;- actual_val
+  
+  if (!substr(excerpt, actual_val, actual_val) == &quot; &quot;) {
+    
+    expr &lt;- c(substr(sentence, neg_val, neg_val) == &quot; &quot;, substr(sentence, pos_val, pos_val) == &quot; &quot;)
+    
+    while (!any(expr)) {
+      neg_val &lt;- neg_val - 1
+      pos_val &lt;- pos_val + 1
+      
+      expr &lt;- c(substr(sentence, neg_val, neg_val) == &quot; &quot;, substr(sentence, pos_val, pos_val) == &quot; &quot;)
+    }
+    
+    cutoff &lt;- ifelse(which(expr) == 1, neg_val, pos_val)
+    excerpt &lt;- substr(sentence, start, cutoff)
+    return(excerpt)
+    
+  } else {
+    
+    return(excerpt)
+    
+  }
+}
+
+# How many lines in ggplot2 should this new title have? Based on the cut off
+sentence_vecs &lt;- ceiling(nchar(title_question) / cut)
+
+# Create an empty list with the length of `lines` of the title.
+# In this list I&#39;ll paste the divided question and later paste them together
+list_excerpts &lt;- replicate(sentence_vecs, vector(&quot;character&quot;, 0))</code></pre>
+<p>Just to make sure our function works, let’s do some quick tests. Let’s create the sentence <code>This is my new sentence</code> and subset from index <code>1</code> to index <code>17</code>. Index <code>17</code> is the letter <code>e</code> from the word <code>sentence</code>, so we should cut the sentence to the closest space, in our case, <code>This is my new</code>.</p>
+<pre class="r"><code>sentence_cut(&quot;This is my new sentence&quot;, 1, 17)</code></pre>
+<pre><code>## [1] &quot;This is my new &quot;</code></pre>
+<p>A more complicated test using <code>I want my sentence to be cut where no word is still running</code>. Let’s pick from index <code>19</code>, which is the space between <code>sentence</code> and <code>to</code>, the index <code>27</code>, which is the <code>u</code> of <code>cut</code>. Because the length to a space <code>-1 and +1</code> is the same both ways, the function always picks the shortest length as a defensive mechanism to long titles.</p>
+<pre class="r"><code>sentence_cut(&quot;I want my sentence to be cut where no word is still running&quot;, 19, 27)</code></pre>
+<pre><code>## [1] &quot; to be &quot;</code></pre>
+<p>Now that we have the function ready, we have to automate the process so that the first line is cut, then the second line should start where the first line left off and so on.</p>
+<pre class="r"><code>for (list_index in seq_along(list_excerpts)) {
+  
+  non_empty_list &lt;- Filter(f = function(x) !(is_empty(x)), list_excerpts)
+  
+  # If this is the first line, the start should 1, otherwise the sum of all characters
+  # of previous lines
+  start &lt;- ifelse(list_index == 1, 1, sum(map_dbl(non_empty_list, nchar)))
+  
+  # Because start gets updated every iteration, simply cut from start to start + cut
+  # The appropriate exceptions are added when its the first line of the plot.
+  list_excerpts[[list_index]] &lt;-
+    sentence_cut(title_question, start, ifelse(list_index == 1, cut, start + cut))
+}
+
+final_title &lt;- paste(list_excerpts, collapse = &quot;\n&quot;)</code></pre>
+<p>The above loop gives you a list with the title separate into N lines based on the cutoff point. For the ggplot title, we finish by collapsing the separate titles with the <code>\n</code> as the separator.</p>
+<p>So, I wrapped all of this into this function:</p>
+<pre class="r"><code>label_cutter &lt;- function(variable_labels, cut) {
+  
+  variable_label &lt;- unname(variable_labels)
+  
+  # This function accepts a sentence (or better, a title) and cuts it between
+  # the start and cutoff arguments ( just as substr). But if the cutoff is not an empty space
+  # it will search +-1 index by index from the cutoff point until it reaches
+  # the closest empty space. It will return from start to the new cutoff
+  sentence_cut &lt;- function(sentence, start, cutoff) {
+    
+    if (nchar(sentence) &lt;= cutoff) return(substr(sentence, start, cutoff))
+    
+    excerpt &lt;- substr(sentence, start, cutoff)
+    actual_val &lt;- cutoff
+    neg_val &lt;- pos_val &lt;- actual_val
+    
+    if (!substr(excerpt, actual_val, actual_val) == &quot; &quot;) {
+      
+      expr &lt;- c(substr(sentence, neg_val, neg_val) == &quot; &quot;, substr(sentence, pos_val, pos_val) == &quot; &quot;)
+      
+      while (!any(expr)) {
+        neg_val &lt;- neg_val - 1
+        pos_val &lt;- pos_val + 1
+        
+        expr &lt;- c(substr(sentence, neg_val, neg_val) == &quot; &quot;, substr(sentence, pos_val, pos_val) == &quot; &quot;)
+      }
+      
+      cutoff &lt;- ifelse(which(expr) == 1, neg_val, pos_val)
+      excerpt &lt;- substr(sentence, start, cutoff)
+      return(excerpt)
+      
+    } else {
+      
+      return(excerpt)
+      
+    }
+  }
+  
+  # How many lines should this new title have? Based on the cut off
+  sentence_vecs &lt;- ceiling(nchar(variable_label) / cut)
+  
+  # Create an empty list with the amount of lines for the excerpts
+  # to be stored.
+  list_excerpts &lt;- replicate(sentence_vecs, vector(&quot;character&quot;, 0))
+  
+  for (list_index in seq_along(list_excerpts)) {
+    
+    non_empty_list &lt;- Filter(f = function(x) !(is_empty(x)), list_excerpts)
+    
+    # If this is the first line, the start should 1, otherwise the sum of all characters
+    # of previous lines
+    start &lt;- ifelse(list_index == 1, 1, sum(map_dbl(non_empty_list, nchar)))
+    
+    # Because start gets updated every iteration, simply cut from start to start + cut
+    # The appropriate exceptions are added when its the first line of the plot.
+    list_excerpts[[list_index]] &lt;-
+      sentence_cut(variable_label, start, ifelse(list_index == 1, cut, start + cut))
+  }
+  
+  final_title &lt;- paste(list_excerpts, collapse = &quot;\n&quot;)
+  final_title
+}</code></pre>
+<p>The function accepts a string and a cut off point. It will automatically create new lines if needed and return the separated title based on the cutoff point. We apply this function over the title and the labels, to make sure everything is clean.</p>
+<pre class="r"><code>final_title &lt;- label_cutter(title_question, 60)
+labels &lt;- map_chr(labels, label_cutter, 35)</code></pre>
+<p>Finally, as I’ve outlined above, each question should have less then four labels. I though that it might be a good idea if I created different graphs for different number of labels. For example, for the two label questions, I thought a simple dot plot might be a good idea —— the space between the dots will sum up to one making it quite intuitive. However, for three and four labels, I though of a cutomized dotplot.</p>
+<p>At the time I was writing this bot I was learning object oriented programming, so I said to myself, why not create a generic function that generates different plots for different labels? First, I need to assign the data frame the appropriate class.</p>
+<pre class="r"><code>label_class &lt;-
+  c(&quot;2&quot; = &quot;labeltwo&quot;, &#39;3&#39; = &quot;labelthree&quot;, &#39;4&#39; = &quot;labelfour&quot;)[as.character(len_labels)]
+
+class(try_df) &lt;- c(class(try_df), label_class)</code></pre>
+<p>The generic function, together with its cousin functions, are located in the <code>ggplot_funs.R</code> script in the PISA bot repository linked in the beginning.</p>
+<p>The idea is simple. Create a generic function that dispatches based on the class of the object.</p>
+<pre class="r"><code>pisa_graph &lt;- function(data, y_title, fill_var) UseMethod(&quot;pisa_graph&quot;)</code></pre>
+<pre class="r"><code>pisa_graph.labeltwo &lt;- function(data, y_title, fill_var) {
+  
+  dots &lt;- setNames(list(interp(~ fct_reorder2(x, y, z),
+                               x = quote(cnt),
+                               y = as.name(fill_var),
+                               z = quote(Percentage))), &quot;cnt&quot;)
+  # To make sure we can randomly sample a number lower than the length
+  unique_cnt &lt;- length(unique(data$cnt))
+  
+  data %&gt;%
+    filter(cnt %in% sample(unique(cnt), ifelse(unique_cnt &gt;= 15, 15, 10))) %&gt;%
+    mutate_(.dots = dots) %&gt;%
+    ggplot(aes(cnt, Percentage)) +
+    geom_point(aes_string(colour = fill_var)) +
+    labs(y = y_title, x = NULL) +
+    scale_colour_discrete(name = NULL) +
+    guides(colour = guide_legend(nrow = 1)) +
+    scale_y_continuous(limits = c(0, 100),
+                       breaks = seq(0, 100, 20),
+                       labels = paste0(seq(0, 100, 20), &quot;%&quot;)) +
+    coord_flip() +
+    theme_minimal() +
+    theme(legend.position = &quot;top&quot;)
+}</code></pre>
+<p>This is the graph for the <code>labeltwo</code> class. Using a work around for non-standard evaluation, I reorder the <code>x</code> axis. This took me some time to understand but it’s very easy once you’ve written two or three expressions. Create a list with the formula (this might be for <code>mutate</code>, <code>filter</code> or whatever <code>tidyverse</code> function) and <strong>rename</strong> the placeholders in the formula with the appropriate names. Make sure to name that list object with the new variable name you want for this variable. So, for my example, we’re creating a new variable called <code>cnt</code> that will be the same variable reordered by the <code>fill_var</code> and the <code>Percentage</code> variable.</p>
+<p>After this, I just built a usual <code>ggplot2</code> object (although notice that I used <code>mutate_</code> instead of <code>mutate</code> for the non-standard evaluation).</p>
+<p>If you’re interested in learning more about standard and non-standard evaluation, I found these resources very useful (<a href="http://www.carlboettiger.info/2015/02/06/fun-standardizing-non-standard-evaluation.html">here</a>, <a href="http://adv-r.had.co.nz/Computing-on-the-language.html">here</a> and <a href="https://cran.r-project.org/web/packages/lazyeval/vignettes/lazyeval.html">here</a>)</p>
+<p>The generic for <code>labelthree</code> and <code>labelfour</code> are pretty much the same as the previous plot but using a slightly different <code>geom</code>. Have a look at the original file <a href="https://raw.githubusercontent.com/cimentadaj/PISAfacts_twitterBot/master/ggplot_funs.R">here</a></p>
+<p>We’ll, we’re almost there. After this, we simply, <code>source</code> the <code>ggplot_funs.R</code> script and produce the plot.</p>
+<pre class="r"><code>source(&quot;https://raw.githubusercontent.com/cimentadaj/PISAfacts_twitterBot/master/ggplot_funs.R&quot;)
+pisa_graph(data = try_df,
+             y_title = final_title,
+             fill_var = var_name)</code></pre>
+<p><img src="/blog/2017-03-08-my-pisa-twitter-bot/2017-03-08-my-pisa-twitter-bot_files/figure-html/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>file &lt;- tempfile()
+ggsave(file, device = &quot;png&quot;)</code></pre>
+</div>
+<div id="setting-the-twitter-bot" class="section level2">
+<h2>Setting the twitter bot</h2>
+<p>The final part is automating the twitter bot. I followed <a href="https://www.r-bloggers.com/programming-a-twitter-bot-and-the-rescue-from-procrastination/">this</a> and <a href="http://www.r-datacollection.com/blog/How-to-conduct-a-tombola-with-R/">this</a>. I won’t go into the specifics because I probably wouldn’t do justice to the the second post, but you have to create your account on Twitter, this will give you some keys that make sure you’re the right person. <em>You need to write these key-value pairs as environment variables</em> (follow the second post) and then delete them from your R script (they’re secret! You shouldn’t keep them on your script but on some folder on your computer). Finally, make sure you identify your twitter account and make your first tweet!</p>
+<pre class="r"><code>library(twitteR) # devtools::install_github(&quot;geoffjentry/twitteR&quot;)
+setwd(&quot;./folder_with_my_credentials/&quot;)
+
+api_key             &lt;- Sys.getenv(&quot;twitter_api_key&quot;)
+api_secret          &lt;- Sys.getenv(&quot;twitter_api_secret&quot;)
+access_token        &lt;- Sys.getenv(&quot;twitter_access_token&quot;)
+access_token_secret &lt;- Sys.getenv(&quot;twitter_access_token_secret&quot;)
+setup_twitter_oauth(api_key, api_secret, access_token, access_token_secret)
+
+tweet(&quot;&quot;, mediaPath = file)
+unlink(file)</code></pre>
+<p>That’s it! The last line should create the<code>tweet</code>.</p>
+</div>
+<div id="automating-the-bot" class="section level2">
+<h2>Automating the bot</h2>
+<p>The only thing left to do is automate this to run every day. I’ll explain how I did it for OSx by following <a href="http://www.techradar.com/how-to/computing/apple/terminal-101-creating-cron-jobs-1305651">this</a> tutorial. You can find a Windows explanation in step 3 <a href="https://www.r-bloggers.com/programming-a-twitter-bot-and-the-rescue-from-procrastination/">here</a>.</p>
+<p>First, we need to figure out the specific time we want to schedule the script. We define the time by filling out five stars:</p>
+<p><code>*****</code></p>
+<ul>
+<li>The first asterisk is for specifying the minute of the run (0-59)</li>
+<li>The second asterisk is for specifying the hour of the run (0-23)</li>
+<li>The third asterisk is for specifying the day of the month for the run (1-31)</li>
+<li>The fourth asterisk is for specifying the month of the run (1-12)</li>
+<li>The fifth asterisk is for specifying the day of the week (where Sunday is equal to 0, up to Saturday is equal to 6)</li>
+</ul>
+<p>Taken from <a href="http://www.techradar.com/how-to/computing/apple/terminal-101-creating-cron-jobs-1305651">here</a></p>
+<p>For example, let’s say we wanted to schedule the script for <code>3:00 pm</code> every day, then the combination would be <code>0 15 * * *</code>. If we wanted something every <code>15</code> minutes, then <code>15 * * * *</code> would do it. If we wanted to schedule the script for Mondays and Wednesdays at <code>15:00</code> and <code>17:00</code> respectively, then we would write <code>0 15,17 * * 1,3</code>. In this last example the <code>* *</code> are the placeholders for day of the month and month.</p>
+<p>In my example, I want the script to run every weekday at <code>9:30</code> am, so my equivalent would be <code>30 9 * * 1-5</code>.</p>
+<p>To begin, we type <code>env EDITOR=nano crontab -e</code> in the <code>terminal</code> to initiate the <code>cron</code> file that will run the script. Next, type our time schedule followed by the command that will run the script in R. The command is <code>RScript</code>. However, because your terminal might not know where <code>RScript</code> is we need to type the directory to where RScript is. Type <code>which RScript</code> in the terminal and you shall get something like <code>/usr/local/bin/RScript</code>. Then the expression would be something like <code>30 9 * * 1-5 /usr/local/bin/RScript path_to_your/script.R</code>. See <a href="https://support.rstudio.com/hc/en-us/articles/218012917-How-to-run-R-scripts-from-the-command-line">here</a> for the <code>RScript</code> explanation.</p>
+<p>The whole sequence would be like this:</p>
+<pre class="bash"><code>env EDITOR=nano crontab -e
+30 9 * * 1-5 /usr/local/bin/RScript path_to_your/script.R</code></pre>
+<p>To save the file, press Control + O (to write out the file), then enter to accept the file name, then
+press Control + X (to exit nano). If all went well, then you should see “crontab: installing new crontab” without anything after that.</p>
+<p>Aaaaaand that’s it! You now have a working script that will be run from Monday to Friday at 9:30 am. This script will read the PISA data, pick a random variable, make a graph and tweet it. You can follow this twitter account at <span class="citation">[@DailyPISA_Facts]</span>(<a href="https://twitter.com/DailyPISA_Facts" class="uri">https://twitter.com/DailyPISA_Facts</a>).</p>
+<p>Hope this was useful!</p>
+</div>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+      
+      
+      TAGS:
+      
+      
+      <a class="meta" href="/tags/pisa">PISA</a>, 
+      
+      <a class="meta" href="/tags/r">R</a>, 
+      
+      <a class="meta" href="/tags/projects">PROJECTS</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "cimentadaj-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  <span><a class="menu-item" href="/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/">&lt; prev | </a></span>
+  
+  
+  <span><a class="menu-item" href="/blog">blog</a></span>
+  
+  
+  <span><a class="menu-item" href="/blog/2017-04-13-replicating-dupriez-and-dumay-2006/replicating-dupriez-and-dumay-2006/"> | next &gt;</a></span>
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="/">home</a></h4>
+</section>
+
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2017. Jorge Cimentada. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Project on Jorge Cimentada</title>
+    <link>/tags/project/</link>
+    <description>Recent content in Project on Jorge Cimentada</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Mon, 26 Mar 2018 00:00:00 +0000</lastBuildDate>
+    
+        <atom:link href="/tags/project/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>ess is now essurvey</title>
+      <link>/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</link>
+      <pubDate>Mon, 26 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</guid>
+      <description>
+
+
+&lt;p&gt;My &lt;code&gt;ess&lt;/code&gt; package has be renamed to &lt;code&gt;essurvey&lt;/code&gt;. For quite some time I’ve been pondering whether I should change the name. All of this comes from a dicussion we had on the &lt;a href=&#34;http://r.789695.n4.nabble.com/R-pkgs-Release-of-ess-0-0-1-td4746540.html&#34;&gt;R-pkg mailing list&lt;/a&gt; where many R users suggested that the name was unfortunate given that Emacs Speaks Statistics (ESS) has a long precedence in the R community and the names are very similar. Later on, when submitting the package to &lt;a href=&#34;https://ropensci.org/&#34;&gt;rOpensci&lt;/a&gt;, Jim Hester &lt;a href=&#34;https://github.com/ropensci/onboarding/issues/201#issuecomment-372304003&#34;&gt;raised the fact once again&lt;/a&gt;, without being aware of the previous email thread.&lt;/p&gt;
+&lt;p&gt;Considering that I was already changing some of the functionalities of the package due to the &lt;a href=&#34;https://github.com/ropensci/onboarding/issues/201&#34;&gt;rOpensci review&lt;/a&gt;, I decided to change the package name and republish an improved version of &lt;code&gt;ess&lt;/code&gt; as &lt;code&gt;essurvey 1.0.0&lt;/code&gt;. &lt;code&gt;essurvey&lt;/code&gt; is now on CRAN and the repository has been moved to rOpensci’s &lt;a href=&#34;https://github.com/ropensci/essurvey&#34;&gt;github account&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The new package is mostly similar although there are now some deprecated functions and new features. Below are the main changes.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;You can login &lt;strong&gt;once&lt;/strong&gt; using &lt;code&gt;set_email(&amp;quot;your_email&amp;quot;)&lt;/code&gt; and avoid rewriting your email in every call to the &lt;code&gt;ess_*&lt;/code&gt; functions.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;All &lt;code&gt;ess_*&lt;/code&gt; functions have been deprecated in favour of similar &lt;code&gt;import_*&lt;/code&gt; functions. For example:&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ess_rounds(1:7)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;becomes..&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;import_rounds(1:7)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;But that’s the same you would say. The only difference is that with &lt;code&gt;ess_rounds&lt;/code&gt; you could download data in Stata, SPSS or SAS formats directly. For that, there’s now the &lt;code&gt;download_*&lt;/code&gt; functions.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;download_rounds(
+  1:5,
+  output_dir = getwd(),
+  format = &amp;quot;spss&amp;quot;
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;All of the above applies to &lt;code&gt;ess_country&lt;/code&gt; and the &lt;code&gt;ess_all_*&lt;/code&gt; functions. There’s also some other minor changes you can checkout in the &lt;a href=&#34;https://github.com/ropensci/essurvey/blob/master/NEWS.md&#34;&gt;NEWS&lt;/a&gt; file. If you haven’t tried &lt;code&gt;essurvey&lt;/code&gt;, you can visit the package website for more detailed examples at &lt;a href=&#34;https://ropensci.github.io/essurvey/&#34; class=&#34;uri&#34;&gt;https://ropensci.github.io/essurvey/&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>What time should I ride my bike?</title>
+      <link>/blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/</link>
+      <pubDate>Mon, 12 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/</guid>
+      <description>
+
+
+&lt;p&gt;For a few months now I’ve started developing a project on which I download live bicycle usage from the API of Bicing, the public bicycle service from the city of Barcelona. Before I started analyzing the data I wanted to harvest a reasonable amount of data to be able to get a representative sample of bicycle usage.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;The first thing I did was to set up my Virtual Private Server (VPS) and set a &lt;code&gt;cron&lt;/code&gt; job to email me every day after the scraping of the data is done. Check out a detailed tutorial on how to this &lt;a href=&#34;blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/index.html&#34;&gt;here&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The second thing I did was to set up a MySQL database in my VPS and develop a program that interacts with the Barcelona Public Bicycle System API and feeds the database on a daily basis. Check out a detailed tutorial on how I did it &lt;a href=&#34;blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/index.html&#34;&gt;here&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I left this program grabing biclycle data of a station close to my house only in the mornings and evenings (moments I used the bicycle) for the last 3 months. This is my first attempt to analyze this data. Please take this as a work in progress as I develop more fine-grained understanding of the data.&lt;/p&gt;
+&lt;p&gt;Here I load the libraries and connect to the database in my VPS. Note how I hide the IP of the server and the password by grabbing it as environment variables.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(DBI)
+library(RMySQL)
+library(caret)
+library(viridis)
+library(tidyverse)
+
+
+password &amp;lt;- Sys.getenv(&amp;quot;password&amp;quot;)
+host &amp;lt;- Sys.getenv(&amp;quot;host&amp;quot;)
+
+con &amp;lt;- dbConnect(MySQL(),
+                 dbname = &amp;quot;bicing&amp;quot;, # in &amp;quot;&amp;quot; quotes
+                 user = &amp;quot;cimentadaj&amp;quot;, # in &amp;quot;&amp;quot; quotes
+                 password = password,
+                 host = host) # ip of my server&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Next, let’s grab the data with a simple query. Let’s get some columns:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;code&gt;slots&lt;/code&gt; is the number of available slots in the station&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;bikes&lt;/code&gt; is the number of available bikes in the station&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;These two columns are exact opposites. If the station can hold 20 bicycles and there are 8 slots available, then there’s 12 bicycles availables.&lt;/p&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;code&gt;status&lt;/code&gt; is the status of the station. Whether &lt;code&gt;OPN&lt;/code&gt; or &lt;code&gt;CLOSED&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;time&lt;/code&gt; is the specific date/time at which that row was returned from the API.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;There’s an additional column named &lt;code&gt;error_msg&lt;/code&gt; that has the error message if the API couldn’t retrieve the data. Let’s use only those which were scraped correctly. Let’s write that query and grab the data.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;query &amp;lt;- 
+&amp;quot;SELECT slots, bikes, status, time
+ FROM bicing_station
+ WHERE hour(time) IN (&amp;#39;7&amp;#39;, &amp;#39;8&amp;#39;, &amp;#39;9&amp;#39;, &amp;#39;10&amp;#39;, &amp;#39;18&amp;#39;, &amp;#39;19&amp;#39;, &amp;#39;20&amp;#39;)
+ AND error_msg IS NULL;&amp;quot;
+
+bicing &amp;lt;-
+  dbGetQuery(con, query) %&amp;gt;%
+  as_tibble() %&amp;gt;% 
+  mutate(time = lubridate::ymd_hms(time),
+         slots = as.numeric(slots),
+         bikes = as.numeric(slots))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Awesome. Now we have our data set.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bicing&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 46,399 x 4
+##    slots bikes status time               
+##    &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;  &amp;lt;dttm&amp;gt;             
+##  1   10.   10. OPN    2017-12-11 08:01:16
+##  2   10.   10. OPN    2017-12-11 08:02:12
+##  3   10.   10. OPN    2017-12-11 08:03:04
+##  4   10.   10. OPN    2017-12-11 08:04:04
+##  5   10.   10. OPN    2017-12-11 08:05:04
+##  6    9.    9. OPN    2017-12-11 08:06:04
+##  7    8.    8. OPN    2017-12-11 08:07:04
+##  8    8.    8. OPN    2017-12-11 08:08:05
+##  9    7.    7. OPN    2017-12-11 08:09:04
+## 10    8.    8. OPN    2017-12-11 08:10:04
+## # ... with 46,389 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Let’s check if there’s any cases in which the station was not open.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bicing %&amp;gt;%
+  filter(status != &amp;quot;OPN&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 0 x 4
+## # ... with 4 variables: slots &amp;lt;dbl&amp;gt;, bikes &amp;lt;dbl&amp;gt;, status &amp;lt;chr&amp;gt;,
+## #   time &amp;lt;dttm&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Empty rows, alright, station has worked fine.&lt;/p&gt;
+&lt;p&gt;Let’s explore the number of bikes comparing between mornings/evenings&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;summary_time &amp;lt;-
+  bicing %&amp;gt;% 
+  group_by(hour = as.factor(lubridate::hour(time))) %&amp;gt;% 
+  summarize(Average = mean(bikes, na.rm = TRUE),
+            Median = median(bikes, na.rm = TRUE)) %&amp;gt;% 
+  gather(type, value, -hour)
+
+bicing %&amp;gt;%
+  mutate(hour = as.factor(lubridate::hour(time))) %&amp;gt;%
+  ggplot(aes(hour, bikes)) +
+  geom_jitter(alpha = 1/8) +
+  geom_point(data = summary_time,
+             aes(y = value, colour = type), size = 3) +
+  theme_bw() +
+  labs(x = &amp;quot;Hour of the day (24H)&amp;quot;,
+       y = &amp;quot;# of available bikes&amp;quot;,
+       title = &amp;quot;Mornings have greater bicycle usage than evenings&amp;quot;,
+       subtitle = &amp;quot;But number of bikes can vary betwen 0 and 20 in the morning&amp;quot;) +
+  scale_colour_manual(name = &amp;quot;Types&amp;quot;, values = c(&amp;#39;Average&amp;#39; = &amp;#39;red&amp;#39;, &amp;#39;Median&amp;#39; = &amp;#39;blue&amp;#39;))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This is a bit revealing. Some take aways:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Mornings have greater number of bikes but they also have high variability. For example, look at the 8 AM category. Even though the average is at around 7 bikes, it’s also very likely that there’s 0 bikes as well as 20 bikes.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;As time passes, more outliers appear in the distribution. We can infer this both from the overall distribution and the average and the mean are farther away from each other.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This is probably related to how Bicing fills out the stations (a few times a days a truck with bicycles passes by the station and fills them out). I think this is beginning to tell a story although perhaps it’s too early: usage in the mornings is heavy and very dynamic but as the day passes by more a more bikes are taken (either by the Bicing team or by citizens).&lt;/p&gt;
+&lt;p&gt;This gives no clear clue to the layman citizen: if it’s 8 AM, how likely am I find bikes? Let’s inspect further.&lt;/p&gt;
+&lt;p&gt;Logically, the next question is: does this differ by day of the week? Bloew I plot the average number of bikes per day/hour combination. In addition we’d also want to plot some sort of uncertainty indicator like the standard deviation. However, because it’s very common for bikes to be close to 7-10 bikes as average and below, I plot the uncertainty as the percentage of times that the station has over 10 bikes.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;summary_time &amp;lt;-
+  bicing %&amp;gt;% 
+  group_by(hour = as.factor(lubridate::hour(time)),
+           day = as.factor(lubridate::wday(time, label = TRUE, week_start = TRUE))) %&amp;gt;% 
+  summarize(Average = mean(bikes, na.rm = TRUE),
+            Variation = mean(bikes &amp;gt; 10, na.rm = TRUE)) %&amp;gt;% 
+  gather(type, value, -hour, -day)
+
+p1 &amp;lt;- 
+  summary_time %&amp;gt;% 
+  filter(type == &amp;quot;Average&amp;quot;) %&amp;gt;% 
+  ggplot(aes(hour, day, fill = value)) + 
+  geom_tile() +
+  scale_fill_viridis(name = &amp;quot;Avg # of bikes&amp;quot;) +
+  labs(x = &amp;#39;Hour of the day (24H)&amp;#39;,
+       y = &amp;#39;Day of the week&amp;#39;,
+       title = &amp;#39;Average number of bikes has a workin week/end of week divide&amp;#39;,
+       subtitle = &amp;#39;Thu and Wed seem to have high peaks at 8, Sun and Sat have peaks at 10&amp;#39;)
+
+p2 &amp;lt;-
+  summary_time %&amp;gt;% 
+  filter(type == &amp;quot;Variation&amp;quot;) %&amp;gt;% 
+  ggplot(aes(hour, day, fill = value)) + 
+  geom_tile() +
+  scale_fill_viridis(name = &amp;#39;% of times \n station has &amp;gt; 10 bikes&amp;#39;) +
+  labs(x = &amp;#39;Hour of the day (24H)&amp;#39;,
+       y = &amp;#39;Day of the week&amp;#39;,
+       title = &amp;#39;Variability reflects same pattern as average # of bikes&amp;#39;,
+       subtitle = &amp;#39;Thu and Wed seem to have &amp;gt; 10 bikes often at 8, Sun and Sat have peaks at 10&amp;#39;)
+
+p1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Similarly, we can see whether there’s a clear morning/evening divide by looking at the percentage of bikes for every day in the evening and the morning.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bicing %&amp;gt;%
+  mutate(hour = lubridate::hour(time),
+         day = lubridate::wday(time, label = TRUE, week_start = TRUE),
+         morning_evening = ifelse(hour &amp;lt;= 10, &amp;quot;Morning&amp;quot;, &amp;quot;Evening&amp;quot;)) %&amp;gt;%
+  ggplot(aes(day, bikes, fill = morning_evening)) +
+  geom_col(position = &amp;quot;fill&amp;quot;) +
+  labs(x = &amp;quot;Day of the week&amp;quot;,
+       y = &amp;quot;% of bikes&amp;quot;,
+       title = &amp;#39;# of bikes increases linearly through out the week&amp;#39;,
+       fill = &amp;#39;Time of day&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Alright, so we got that down. So far:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;There’s more taking and droping happening in the first few days of the week than in the rest&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Weekdays and weekends have different patterns in bike usage; namely that bike usage is higher in earlier in the week than in the weekends.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;More bikes are taken in the early days of the weeks than in the latter parts.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Following the previous conclusion, I had the itching of figuring out the rate at which bicycles are taken out by hour. This we can depart from the total or average number of bikes, to actual rate of picking/droping bikes. This can help to pinpoint specific times at which we should avoid going or droping a bike.&lt;/p&gt;
+&lt;p&gt;What’s the rate at which bicycles are being taken out by hour? At which time is the station emptying out quicker?&lt;/p&gt;
+&lt;p&gt;I’ve computed a metric that calculates the percentage of minutes that there’s changes in the station.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;intm_df &amp;lt;-
+  bicing %&amp;gt;%
+  mutate(hour = as.factor(lubridate::hour(time)),
+         day = lubridate::wday(time, label = TRUE, week_start = TRUE)) %&amp;gt;%
+  group_by(hour, day) %&amp;gt;%
+  mutate(future_bike = lag(bikes)) %&amp;gt;%
+  summarize(avg_movement = mean(bikes != future_bike, na.rm = TRUE) * 60) %&amp;gt;%
+  ungroup()
+
+intm_df %&amp;gt;% 
+  ggplot(aes(hour, avg_movement, colour = day, group = day)) +
+  geom_line(size = 1.2) +
+  facet_wrap(~ day, ncol = 4) +
+  theme_bw() +
+  labs(x = &amp;#39;Hour of the day (24H)&amp;#39;,
+       y = &amp;quot;Minutes per hour with a bicycle change&amp;quot;,
+       title = &amp;#39;Weekdays have much greater bicycle usage than weekends&amp;#39;,
+       subtitle = &amp;quot;Wed has the busiest hour of the week at 8AM; There&amp;#39;s activity 25 minutes out of the 60 minutes.&amp;quot;) +
+  theme(legend.position = &amp;#39;none&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This is very interesting! This plot reverses some of the findings from before. First off, we see that there’s high variability between hours: there’s no point in looking at averages within an hour because a lot happens between minutes. For example, at 7AM and 10 AM during working days there’s very little activity regardless of the day. On the contrary, 8AM and 9AM have high bycicle usage through the working days.&lt;/p&gt;
+&lt;p&gt;This makes sense, it’s the time that people usually go to work. Also as expected, bicycle usage is low on weekend mornings and increases linearly through out the day. All in all, 8/9 AM on working days seems to be the time to avoid bicycles if you can! Eventually, in another post, I plan to investigate whether there’s minute-to-minute patterns for 8/9 AM on working days. For example, is there more activity closer to certain minutes? Like half past the hour or at exactly the hour.&lt;/p&gt;
+&lt;p&gt;Also, it seems that evenings are busy even on working days, specially on Thursdays but have very little bicycle usage on Fridays! Perhaps Catalans are ready to party and travel on the metro. On my follow up post, I also plan to see whether these patterns hold by season. I would expect summer and winter to have strong seasonal patterns.&lt;/p&gt;
+&lt;p&gt;To begin the conclusion, when are the moments when the station is empty? This will trigger me to avoid picking bicycles on those specific times.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bicing %&amp;gt;%
+  filter(bikes == 0) %&amp;gt;%
+  mutate(time_day = as.numeric(lubridate::hm(str_extract(time, &amp;quot;[0-9]{2}:[0-9]{2}&amp;quot;)))) %&amp;gt;% 
+  ggplot(aes(x = time_day)) +
+  geom_histogram()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Bicing people probably prepare very well because it’s mostly empty in the evenings&lt;/p&gt;
+&lt;p&gt;The next step in the analysis is to start making predictions in waiting time. That will be the topic of my next post, in which I start to develop a modelling approach to predict the time you’ll have to have wait until a bicycle arrives or leaves. As a very simple exercise, I wanted to predict check whether I can predict when the station will be empty? I tried a simple logistic regression just to check.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;empty_bicycle &amp;lt;-
+  mutate(bicing,
+         empty = ifelse(bikes == 0, 1, 0),
+         hour = as.character(lubridate::hour(time)),
+         day = lubridate::wday(time),
+         day = as.character(day)) %&amp;gt;%
+  select(-(1:4))
+
+training_rows &amp;lt;- createDataPartition(empty_bicycle$empty, 1, p = 0.8)[[1]]
+
+training &amp;lt;- empty_bicycle[training_rows, ]
+test &amp;lt;- empty_bicycle[-training_rows, ]
+
+mod1 &amp;lt;- glm(empty ~ . + day:hour, data = training, family = &amp;quot;binomial&amp;quot;)
+
+pred1 &amp;lt;- predict(mod1, newdata = test, type = &amp;#39;response&amp;#39;)
+
+pred_empty &amp;lt;- rbinom(length(pred1), 1, prob = pred1)
+
+confusionMatrix(test$empty, pred_empty, positive = &amp;quot;1&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    0    1
+##          0 6693 1162
+##          1 1103  321
+##                                          
+##                Accuracy : 0.7559         
+##                  95% CI : (0.747, 0.7646)
+##     No Information Rate : 0.8402         
+##     P-Value [Acc &amp;gt; NIR] : 1.000          
+##                                          
+##                   Kappa : 0.0762         
+##  Mcnemar&amp;#39;s Test P-Value : 0.223          
+##                                          
+##             Sensitivity : 0.21645        
+##             Specificity : 0.85852        
+##          Pos Pred Value : 0.22542        
+##          Neg Pred Value : 0.85207        
+##              Prevalence : 0.15982        
+##          Detection Rate : 0.03459        
+##    Detection Prevalence : 0.15346        
+##       Balanced Accuracy : 0.53749        
+##                                          
+##        &amp;#39;Positive&amp;#39; Class : 1              
+## &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This model is terrible at predicting the emptyness of the stations as it can only predict 20% of the time. A few strategies I could check out to improve accuracy:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Feature engineer when the bicing team picks up bicycles (because they leave them empty)&lt;/li&gt;
+&lt;li&gt;Add more information on weather and public holidays from public API’s&lt;/li&gt;
+&lt;li&gt;Because the cell that contains empty stations has very few cases, it might be useful to resample that sample until it reaches a similar sample size as the other cells. This might give greater certainty and I assume that there’s not a lot of variability in the pattern of empty stations, so it should be representative.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Finally, other classification models are certainly warranted. One good alternative would be a random forest, as it takes into consideration specific thresholds in the time of day when prunning the trees.&lt;/p&gt;
+&lt;p&gt;However, we also need to be aware that a model is as good as the data that’s being fit. Perhaps, we just need better data!&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

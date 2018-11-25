@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Simple minimalist theme">
+<meta name="keywords" content="blog,goa,hugo,r,statistics,education">
+
+<base href="/">
+
+<title>Jorge Cimentada</title>
+
+<meta name="generator" content="Hugo 0.51" />
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
+<script src="/js/highlight.pack.js"></script>
+<script>
+hljs.configure({langauges: ['R']});
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="row text-left title">
+  <h1 class="title">A list of must pre-project questions</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON MAY 23, 2018 
+      
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    
+
+
+<p>Rumbling through Twitter I found a Jupyter Notebook of Paige Bailey written at the rOpensci unconf about Ethical Machine Learning which you can read <a href="https://github.com/ropenscilabs/proxy-bias-vignette/blob/master/EthicalMachineLearning.ipynb">here</a>. It was very interesting to look at her workflow but even more interesting was the set of questions she asked herself before and during the analysis. I paste them here just to keep them as a reference.</p>
+<p><strong>As you design the goal and the purpose of your machine learning product, you must first ask: Who is your audience?</strong></p>
+<ul>
+<li>Is your product or analysis meant to include all people?</li>
+<li>And, if not: is it targeted to an exclusive audience?</li>
+<li>Is there a person on your team tasked specifically with identifying and resolving bias and discrimination issues?</li>
+</ul>
+<p><strong>Once the concept and scope have been defined, it is time to focus on the acquisition, evaluation, and cleaning of data. We have received a single .csv file filled with information on customers from the bank’s manager. Some questions to consider:</strong></p>
+<ul>
+<li>Did the data come from a system prone to human error?</li>
+<li>Is the data current?</li>
+<li>What technology facilitated the collection of the data?</li>
+<li>Was participation of the data subjects voluntary?</li>
+<li>Does the context of the collection match the context of your use?</li>
+<li>Was your data collected by people or a system that was operating with quotas or a particular incentive structure?</li>
+</ul>
+<p><strong>Now that your data has been collected, it would be a great idea to evaluate and describe it:</strong></p>
+<ul>
+<li>Who is represented in the data?</li>
+<li>Who is under-represented or absent from your data?</li>
+<li>Can you find additional data, or use statistical methods, to make your data more inclusive?</li>
+<li>Was the data collected in an environment where data subjects had meaningful choices?</li>
+<li>How does the data reflect the perspective of the institution that collected it?</li>
+<li>Were fields within the data inferred or appended beyond what was clear to the data subject?
+Would this use of the data surprise the data subjects?</li>
+</ul>
+<p><strong>The next step would be cleaning the data.</strong></p>
+<ul>
+<li>Are there any fields that should be eliminated from your data?</li>
+<li>Can you use anonymization or pseudonymization techniques to avoid needless evaluation or processing of individual data?</li>
+</ul>
+<p><strong>Establishing logic for variables</strong></p>
+<ul>
+<li>Can you describe the logic that connects the variables to the output of your equation?</li>
+<li>Do your variables have a causal relationship to the results they predict?</li>
+<li>How did you determine what weight to give each variable?</li>
+</ul>
+<p><strong>Identifying assumptions</strong></p>
+<ul>
+<li>Will your variables apply equally across race, gender, age, disability, ethnicity, socioeconomic status, education, etc.?</li>
+<li>What are you assuming about the kinds of people in your data set?</li>
+<li>Would you be comfortable explaining your assumptions to the public?</li>
+<li>What assumptions are you relying on to determine the relevant variables and their weights?</li>
+</ul>
+<p><strong>Defining success</strong>
+- What amount and type of error do you expect?
+- How will you ensure your system is behaving the way you intend? How reliable is it?</p>
+<p><strong>How will you choose your analytical method? For example, predictive analytics, machine learning (supervised, unsupervised), neural networks or deep learning, etc.</strong></p>
+<ul>
+<li>How much transparency does this method allow your end users and yourself?</li>
+<li>Are non-deterministic outcomes acceptable given your legal or ethical obligations around transparency and explainability?</li>
+<li>Does your choice of analytical method allow you to sufficiently explain your results?</li>
+<li>What particular tasks are associated with the type of analytical method you are using?</li>
+</ul>
+<p><strong>Tools</strong></p>
+<ul>
+<li>How could results that look successful still contain bias?</li>
+<li>Is there a trustworthy or audited source for the tools you need?</li>
+<li>Have the tools you are using been associated with biased products?</li>
+<li>Or, if you build from scratch: can you or a third-party test your tools for any features that can result in biased or unfair outcomes?</li>
+</ul>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+      
+      
+      TAGS:
+      
+      
+      <a class="meta" href="/tags/machine-learning">MACHINE-LEARNING</a>, 
+      
+      <a class="meta" href="/tags/projects">PROJECTS</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "cimentadaj-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  <span><a class="menu-item" href="/blog/2018-04-20-the-monty-hall-problem/the-monty-hall-problem/">&lt; prev | </a></span>
+  
+  
+  <span><a class="menu-item" href="/blog">blog</a></span>
+  
+  
+  <span><a class="menu-item" href="/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/"> | next &gt;</a></span>
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="/">home</a></h4>
+</section>
+
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2017. Jorge Cimentada. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+

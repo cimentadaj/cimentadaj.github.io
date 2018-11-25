@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Simple minimalist theme">
+<meta name="keywords" content="blog,goa,hugo,r,statistics,education">
+
+<base href="/">
+
+<title>Jorge Cimentada</title>
+
+<meta name="generator" content="Hugo 0.51" />
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
+<script src="/js/highlight.pack.js"></script>
+<script>
+hljs.configure({langauges: ['R']});
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="row text-left title">
+  <h1 class="title">Brief Analysis of Independent/Unionist Vote in Catalonia</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON DEC 14, 2017 
+      
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    
+
+
+<div id="catalan-elections" class="section level2">
+<h2>Catalan elections</h2>
+<p>On a train from Barcelona-Madrid I started working with an <code>R</code> package called <code>ggrides</code>. To my surprise, the package contains one dataset that documents the change in independent/unionist vote for all Catalan municipalities from 1980 to 2015. This is very cool! Needless to say, I left what I was doing and started to dive into the dataset.</p>
+<p>The data looks like this:</p>
+<pre class="r"><code>library(ggridges)
+Catalan_elections</code></pre>
+<pre><code>## # A tibble: 20,764 x 4
+##    Municipality        Year Option Percent
+##    &lt;chr&gt;              &lt;int&gt; &lt;chr&gt;    &lt;dbl&gt;
+##  1 Abella de la Conca  1980 Indy      68.4
+##  2 Abella de la Conca  1984 Indy      95.7
+##  3 Abella de la Conca  1988 Indy      89.4
+##  4 Abella de la Conca  1992 Indy      81.7
+##  5 Abella de la Conca  1995 Indy      80.0
+##  6 Abella de la Conca  1999 Indy      74.7
+##  7 Abella de la Conca  2003 Indy      84.4
+##  8 Abella de la Conca  2006 Indy      73.2
+##  9 Abella de la Conca  2010 Indy      75.9
+## 10 Abella de la Conca  2012 Indy      84.0
+## # ... with 20,754 more rows</code></pre>
+<p>Very straight forward. It’s the ‘Indy’ or Independent vote and the ‘Unionist’ vote from 1980 until 2015. The data is complete for nearly all Municipalities, meaning that the data is available for all years. Only a handful (~ 40) do not have data starting from 1980.</p>
+<p>Basically, I wanted to answer one question: has the indepence vote grown over time? This question is of general interest considering that the topic is being hotly debated in the media and next week new Catalan elections will be held in a scenario never seen before; after independent parties proclaimed unilateral independece and the government seized control of Catalunya. The elections are predicted to be very contested with Independent parties losing some votes.</p>
+<p>With that said, let’s dive into the data!</p>
+</div>
+<div id="analysis" class="section level2">
+<h2>Analysis</h2>
+<pre class="r"><code># Load my libraries
+library(scales)
+library(tidyverse)
+
+# Change abbreviated Indy and Unionist to long names
+Catalan_elections$Option &lt;- with(Catalan_elections, ifelse(Option == &quot;Indy&quot;, &quot;Independent&quot;, &quot;Unionist&quot;))
+
+
+# Summarize the median independence/unionist vote for
+# all municipalities on the first/last year recorded
+avg_pl &lt;-
+  Catalan_elections %&gt;%
+  group_by(Municipality, Option) %&gt;%
+  summarize(first_year = first(Percent, Year),
+            last_year = last(Percent, Year)) %&gt;%
+  group_by(Option) %&gt;%
+  summarize(first_year = median(first_year, na.rm = TRUE),
+            last_year = median(last_year, na.rm = TRUE)) %&gt;%
+  mutate(id = 1:nrow(.)) %&gt;%
+  gather(year, value, -id, -Option)
+
+# Summarize the indy/unionist vote for
+# the first/last year for Barcelona
+bcn_pl &lt;-
+  Catalan_elections %&gt;%
+  filter(Municipality == &quot;Barcelona&quot;) %&gt;%
+  group_by(Municipality, Option) %&gt;%
+  summarize(first_year = first(Percent, Year),
+            last_year = last(Percent, Year)) %&gt;%
+  mutate(id = 1:nrow(.)) %&gt;%
+  gather(year, value, ends_with(&quot;year&quot;))
+
+# Create a base parallel plot with both
+# unionist/independence votes pooled
+base_plot &lt;-
+  Catalan_elections %&gt;%
+  group_by(Municipality, Option) %&gt;%
+  summarize(first_year = first(Percent, Year),
+            last_year = last(Percent, Year)) %&gt;%
+  mutate(id = paste0(Municipality, &quot;_&quot;, Option)) %&gt;%
+  gather(year, value, ends_with(&quot;year&quot;)) %&gt;%
+  ggplot(aes(year, value)) +
+  geom_point(alpha = 0.1, size = 2) +
+  geom_line(aes(group = id), alpha = 0.1)
+
+# Add the median summary line for both indy/unionist
+median_plot &lt;-
+  base_plot +
+  geom_point(data = avg_pl, aes(year, value),
+            colour = &quot;red&quot;, alpha = 0.5, size = 2) +
+  geom_line(data = avg_pl, aes(year, value, group = id),
+            colour = &quot;red&quot;, alpha = 0.5, size = 2)
+
+# Add the change of Barcelona for both indy/unionist vote
+bcn_plot &lt;-
+  median_plot +
+  geom_point(data = bcn_pl, aes(year, value),
+             colour = &quot;blue&quot;, alpha = 0.5, size = 2) +
+  geom_line(data = bcn_pl, aes(year, value, group = id),
+            colour = &quot;blue&quot;, alpha = 0.5, size = 2)
+
+
+# Separate the plot for indy/unionist in different
+# panels and add pretty options
+pretty_plot &lt;-
+  bcn_plot +
+  scale_x_discrete(name = NULL,
+                   labels = c(&quot;1980&quot;,
+                              &quot;2015&quot;)) +
+  scale_y_continuous(name = &quot;% of votes in favour of:&quot;,
+                     breaks = seq(0, 100, 20),
+                     labels = percent(seq(0, 1, 0.2))) +
+  facet_wrap(~ Option, strip.position = &quot;bottom&quot;) +
+  labs(
+    title = &quot;Independence/Unionist vote in Catalonia in three decades&quot;,
+    subtitle = &quot;Red line is the median change for all municipalities - Blue line is Barcelona&quot;,
+    caption = &quot;Data collected by @marcbeldata - Plot and analisis by @cimentadaj&quot;
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, family = &quot;Arial-BoldMT&quot;),
+    plot.subtitle = element_text(size = 12, color = &quot;#666666&quot;),
+    plot.caption = element_text(size = 12, color = &quot;#666666&quot;),
+    strip.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 16),
+    axis.text.y = element_text(size = 12),
+    axis.text.x = element_text(size = 14)
+  )
+# Final plot
+pretty_plot</code></pre>
+<p><img src="/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/2017-12-14-brief-analysis-of-independent-unionist-vote-in-catalonia_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>I was very surprised with this plot. On the left panel we can see the increase of independence votes in the last 35 years. The red line is the median change for all municipalities. There is a huge average increase from around 49% to over 70%. In fact, it’s not just an artifact of mean/median with big variance. If we look at the bulk of the distribution on the right line and then the left line, we see an upwards shift in the whole distribution.</p>
+<p>On the other hand, the unionist vote seems to have decreased! The left/right distributions seem to be very similar (but it looks like the distribution of the right line has some outliers shifting upwards). But remember something: these are all municipalities. Municipalities might have 1000 citizen or even less! Consider the lonely town in a mountain with 50 people voting for independent parties: that’s also a municipality.</p>
+<p>It is for this reason that we need to pay attention to places like Barcelona, which have over 1 million residents and definately weigh in more in proportion. And that’s where the interesting thing about this plot arises: the Barcelona change is practically the same. Not only have the votes increased very very similarly for both sides, but they’re also at the same level of support. Both blue lines look pretty much identical.</p>
+<p>Don’t forget: small differences <strong>can</strong> make a difference, specially in elections. Perhaps they <strong>are</strong> different but we need to take a closer look.</p>
+<p>Let’s plot the independence/unionist evolution only for Barcelona.</p>
+<pre class="r"><code># Plot for indy/unionist vote over time only for Barcelona
+Catalan_elections %&gt;%
+  filter(Municipality == &quot;Barcelona&quot;) %&gt;%
+  ggplot(aes(Year, Percent, group = Option, colour = Option)) +
+  geom_line(alpha = 0.5, size = 2) +
+  scale_x_continuous(name = NULL) +
+  scale_colour_discrete(name = NULL) +
+  scale_y_continuous(name = &quot;% of votes in favour of:&quot;,
+                     lim = c(0, 100),
+                     breaks = seq(0, 100, 20),
+                     labels = percent(seq(0, 1, 0.2))) +
+  labs(
+    title = &quot;Overtime votes for independence/unionist in Barcelona&quot;,
+    caption = &quot;Data collected by @marcbeldata - Plot and analisis by @cimentadaj&quot;
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, family = &quot;Arial-BoldMT&quot;),
+    plot.subtitle = element_text(size = 12, color = &quot;#666666&quot;),
+    plot.caption = element_text(size = 12, color = &quot;#666666&quot;),
+    legend.position = &quot;top&quot;,
+    legend.text = element_text(size = 14),
+    strip.text.x = element_text(size = 14),
+    axis.title.y = element_text(size = 16),
+    axis.text.y = element_text(size = 12),
+    axis.text.x = element_text(size = 14)
+  )</code></pre>
+<p><img src="/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/2017-12-14-brief-analysis-of-independent-unionist-vote-in-catalonia_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Despite most municipalities are for independence, Barcelona, by only a small margin, has a majority of people voting for unionist parties. Be aware that these votes are not ‘referendums’ carried out every year. These are votes towards independence/unionist parties, which is a different thing. Also note that these are not predictions/forecasts, so they don’t have uncertainty intervals or margins of errors. This is empirical data from voter turnout.</p>
+<p>I also tried other big municipalities such as Sabadell and found that unionism trumps over independence much strongly. Yet in others like Lleida, Independence seems to be on top. For a look at specific municipalities, <a href="http://marcbeldata.github.io/ggjoy-Catalan-vote-2015/">check the post by Marc Belzunces</a></p>
+</div>
+<div id="a-note-on-next-weeks-elections" class="section level2">
+<h2>A note on next week’s elections</h2>
+<p>This data takes us as far as 2015. Catalonia has suffered dramatic changes since 2015 specially due to the independence movement. These data are most likely not a good representation of what’s gonna happen next week. Big municipalities have usually been majority unionists according to polls, but the differences are tiny and we’ve seen dramatic changes with independence parties proclaiming unilateral independence. There are good attempts at predicting catalan elections (<a href="https://politica.elpais.com/politica/2017/12/07/ratio/1512647178_322229.html">in Spanish</a>) so tune in next week to see what happens.</p>
+</div>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+      
+      
+      TAGS:
+      
+      
+      <a class="meta" href="/tags/eda">EDA</a>, 
+      
+      <a class="meta" href="/tags/r">R</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "cimentadaj-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  <span><a class="menu-item" href="/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/">&lt; prev | </a></span>
+  
+  
+  <span><a class="menu-item" href="/blog">blog</a></span>
+  
+  
+  <span><a class="menu-item" href="/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/"> | next &gt;</a></span>
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="/">home</a></h4>
+</section>
+
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2017. Jorge Cimentada. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+

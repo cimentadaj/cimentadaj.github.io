@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Simple minimalist theme">
+<meta name="keywords" content="blog,goa,hugo,r,statistics,education">
+
+<base href="/">
+
+<title>Jorge Cimentada</title>
+
+<meta name="generator" content="Hugo 0.51" />
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
+<script src="/js/highlight.pack.js"></script>
+<script>
+hljs.configure({langauges: ['R']});
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="row text-left title">
+  <h1 class="title">Obtaining robust standard errors and odds ratios for logistic regression in R</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON SEP 19, 2016 
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    
+
+
+<p>I’ve always found it frustrating how it’s so easy to produce robust standard errors in Stata and in R it’s so complicated. First, we have to estimate the standard errors separately and then replace the previous standard errors with the new ones. Second, if you want to estimate odds ratios instead of logit coefficients, then the robust standard errors need to be scaled. All of that is as simple as adding robust or in the Stata logit command.</p>
+<p>I decided to make it as simple in R.</p>
+<p>First, I have to give credit to <a href="http://stackoverflow.com/users/4233642/achim-zeileis">Achim Zeileis</a> in this <a href="http://stackoverflow.com/questions/27367974/different-robust-standard-errors-of-logit-regression-in-stata-and-r">question</a> because he provided part of code to generate the robust standard errors.</p>
+<p>The function accepts a glm object and can return logit coefficients with robust standard errors, odd ratios with adjusted robust standard errors or probability scaled coefficients with adjusted robust standard errors.</p>
+<p>Here’s the function:</p>
+<pre class="r"><code># This function estimates robust standad error for glm objects and
+# returns coefficients as either logit, odd ratios or probabilities.
+# logits are default
+# argument x must be glm model.
+
+
+# Credit to Achim here:
+# http://stackoverflow.com/questions/27367974/
+# different-robust-standard-errors-of-logit-regression-in-stata-and-r
+# for the code in line 14 and 15
+
+robustse &lt;- function(x, coef = c(&quot;logit&quot;, &quot;odd.ratio&quot;, &quot;probs&quot;)) {
+suppressMessages(suppressWarnings(library(lmtest)))
+suppressMessages(suppressWarnings(library(sandwich)))
+
+    sandwich1 &lt;- function(object, ...) sandwich(object) *
+                                       nobs(object) / (nobs(object) - 1)
+    # Function calculates SE&#39;s
+    mod1 &lt;- coeftest(x, vcov = sandwich1) 
+    # apply the function over the variance-covariance matrix
+    
+    if (coef == &quot;logit&quot;) {
+    return(mod1) # return logit with robust SE&#39;s
+    } else if (coef == &quot;odd.ratio&quot;) {
+    mod1[, 1] &lt;- exp(mod1[, 1]) # return odd ratios with robust SE&#39;s
+    mod1[, 2] &lt;- mod1[, 1] * mod1[, 2]
+    return(mod1)
+    } else {
+    mod1[, 1] &lt;- (mod1[, 1]/4) # return probabilites with robust SE&#39;s
+    mod1[, 2] &lt;- mod1[, 2]/4
+    return(mod1)
+    }
+}</code></pre>
+<p>Now let’s give it a try. Let’s estimate two models, one with logit coefficients and robust SE’s and the same for odds ratios. Just to make sure, let’s compare it with the Stata output.</p>
+<pre class="r"><code># In R for logit coefficients and robust standard errors:
+suppressMessages(suppressWarnings(library(haven)))
+
+dat &lt;- read_dta(&quot;http://www.stata-press.com/data/r9/quad1.dta&quot;)
+mod1 &lt;- glm(z ~ x1 + x2 + x3, dat, family = binomial)
+robustse(mod1, coef = &quot;logit&quot;)</code></pre>
+<pre><code>## 
+## z test of coefficients:
+## 
+##             Estimate Std. Error z value  Pr(&gt;|z|)    
+## (Intercept) 0.091740   0.025869  3.5464 0.0003905 ***
+## x1          0.024050   0.025869  0.9297 0.3525395    
+## x2          0.157143   0.089715  1.7516 0.0798448 .  
+## x3          0.190162   0.089418  2.1267 0.0334490 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code># In Stata for logit coefficients and robust standard errors:
+use http://www.stata-press.com/data/r9/quad1.dta, clear
+logit z x1 x2 x3, robust
+
+# ------------------------------------------------------------------------------
+#              |               Robust
+#            z |      Coef.   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+# -------------+----------------------------------------------------------------
+#           x1 |     .02405   .0258693     0.93   0.353    -.0266528    .0747529
+#           x2 |   .1571428   .0897145     1.75   0.080    -.0186944      .33298
+#           x3 |    .190162   .0894185     2.13   0.033      .014905    .3654189
+#        _cons |     .09174   .0258686     3.55   0.000     .0410386    .1424415
+# ------------------------------------------------------------------------------</code></pre>
+<pre class="r"><code># In R for odd ratios with adjusted standard errors
+robustse(mod1, coef = &quot;odd.ratio&quot;)</code></pre>
+<pre><code>## 
+## z test of coefficients:
+## 
+##             Estimate Std. Error z value  Pr(&gt;|z|)    
+## (Intercept) 1.096080   0.028354  3.5464 0.0003905 ***
+## x1          1.024342   0.026499  0.9297 0.3525395    
+## x2          1.170163   0.104981  1.7516 0.0798448 .  
+## x3          1.209445   0.108147  2.1267 0.0334490 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code># In Stata for odd ratios with adjusted standard errors
+logit z x1 x2 x3, robust or
+
+# ------------------------------------------------------------------------------
+#              |               Robust
+#            z | Odds Ratio   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+# -------------+----------------------------------------------------------------
+#           x1 |   1.024342    .026499     0.93   0.353     .9736992    1.077618
+#           x2 |   1.170163   .1049806     1.75   0.080     .9814792    1.395119
+#           x3 |   1.209445   .1081467     2.13   0.033     1.015017    1.441118
+#        _cons |    1.09608    .028354     3.55   0.000     1.041892    1.153086
+# ------------------------------------------------------------------------------</code></pre>
+<p>You can also use the <code>stargazer</code> package to produce nicely formatted tables with these new estimates and it should be exactly the same.</p>
+<hr />
+<p>UPDATE: I’ve included this function my personal package which you can install with <code>devtools::install_github(&quot;cimentadaj/cimentadaj&quot;)</code>. Feel free to make any pull requests in the github repo.</p>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+      
+      
+      TAGS:
+      
+      
+      <a class="meta" href="/tags/r">R</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "cimentadaj-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  <span><a class="menu-item" href="/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/">&lt; prev | </a></span>
+  
+  
+  <span><a class="menu-item" href="/blog">blog</a></span>
+  
+  
+  <span><a class="menu-item" href="/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/"> | next &gt;</a></span>
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="/">home</a></h4>
+</section>
+
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2017. Jorge Cimentada. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+
