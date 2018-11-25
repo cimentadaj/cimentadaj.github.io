@@ -14,7 +14,7 @@
 
 <title>Jorge Cimentada</title>
 
-<meta name="generator" content="Hugo 0.37.1" />
+<meta name="generator" content="Hugo 0.51" />
 
 
 
@@ -70,7 +70,10 @@ hljs.initHighlightingOnLoad();
 </section>
 <section id="content-pane" class="row">
   <div class="col-md-12 text-justify content">
-    <p>For a few months now I’ve started developing a project on which I download live bicycle usage from the API of Bicing, the public bicycle service from the city of Barcelona. Before I started analyzing the data I wanted to harvest a reasonable amount of data to be able to get a representative sample of bicycle usage.</p>
+    
+
+
+<p>For a few months now I’ve started developing a project on which I download live bicycle usage from the API of Bicing, the public bicycle service from the city of Barcelona. Before I started analyzing the data I wanted to harvest a reasonable amount of data to be able to get a representative sample of bicycle usage.</p>
 <ol style="list-style-type: decimal">
 <li><p>The first thing I did was to set up my Virtual Private Server (VPS) and set a <code>cron</code> job to email me every day after the scraping of the data is done. Check out a detailed tutorial on how to this <a href="blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/index.html">here</a></p></li>
 <li><p>The second thing I did was to set up a MySQL database in my VPS and develop a program that interacts with the Barcelona Public Bicycle System API and feeds the database on a daily basis. Check out a detailed tutorial on how I did it <a href="blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/index.html">here</a></p></li>
@@ -337,7 +340,7 @@ confusionMatrix(test$empty, pred_empty, positive = &quot;1&quot;)</code></pre>
 
 
 <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -389,12 +392,16 @@ confusionMatrix(test$empty, pred_empty, positive = &quot;1&quot;)</code></pre>
 </div>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'XYZ', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

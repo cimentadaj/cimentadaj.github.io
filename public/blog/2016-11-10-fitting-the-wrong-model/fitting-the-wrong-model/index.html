@@ -14,7 +14,7 @@
 
 <title>Jorge Cimentada</title>
 
-<meta name="generator" content="Hugo 0.37.1" />
+<meta name="generator" content="Hugo 0.51" />
 
 
 
@@ -70,7 +70,10 @@ hljs.initHighlightingOnLoad();
 </section>
 <section id="content-pane" class="row">
   <div class="col-md-12 text-justify content">
-    <p>These exercises are from the book <a href="http://www.stat.columbia.edu/~gelman/arm/">Data Analysis Using Regression and Multilevel/Hierarchical Models</a>. I’ve really gotten into completing these exercises and I guess that by posting them I’ve found an excuse to keep doing it. This time I went back to chapter 8 which deals with simulations. I picked the first exercise, page 165 exercise 8.6.1, which says:</p>
+    
+
+
+<p>These exercises are from the book <a href="http://www.stat.columbia.edu/~gelman/arm/">Data Analysis Using Regression and Multilevel/Hierarchical Models</a>. I’ve really gotten into completing these exercises and I guess that by posting them I’ve found an excuse to keep doing it. This time I went back to chapter 8 which deals with simulations. I picked the first exercise, page 165 exercise 8.6.1, which says:</p>
 <blockquote>
 <p>Fitting the wrong model: suppose you have 100 data points that arose from the following model: y = 3 + 0.1×1 + 0.5×2 + error, with errors having a t distribution with mean 0, scale 5, and 4 degrees of freedom.We shall explore the implications of fitting a standard linear regression to these data.</p>
 </blockquote>
@@ -212,7 +215,7 @@ cbind(repl_coef + (-1 * repl_se), repl_coef + (1 * repl_se))</code></pre>
 
 
 <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -237,13 +240,13 @@ cbind(repl_coef + (-1 * repl_se), repl_coef + (1 * repl_se))</code></pre>
 <section id="menu-pane" class="row menu text-center">
   
   
-  <span><a class="menu-item" href="/blog/2016-11-06-multilevel-modeling--part-1/multilevel-modeling--part-1/">&lt; prev | </a></span>
+  <span><a class="menu-item" href="/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/">&lt; prev | </a></span>
   
   
   <span><a class="menu-item" href="/blog">blog</a></span>
   
   
-  <span><a class="menu-item" href="/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/"> | next &gt;</a></span>
+  <span><a class="menu-item" href="/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/"> | next &gt;</a></span>
   
   
   <h4 class="text-center"><a class="menu-item" href="/">home</a></h4>
@@ -264,12 +267,16 @@ cbind(repl_coef + (-1 * repl_se), repl_coef + (1 * repl_se))</code></pre>
 </div>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'XYZ', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

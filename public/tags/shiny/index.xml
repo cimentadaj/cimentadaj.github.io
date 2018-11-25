@@ -17,7 +17,10 @@
       <pubDate>Tue, 19 Jun 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</guid>
-      <description>&lt;p&gt;I woke up today to read Maëlle Salmon’s latest blog entry in which she scraped her own &lt;a href=&#34;https://masalmon.eu/2018/06/18/mathtree/&#34;&gt;mathematical tree&lt;/a&gt;. Running through the code I had an idea about scraping the coauthorship list that a Google Scholar profile has. With this, I could visualize the network of coauthorship of important scientists and explore whether they have closed or open collaborations.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I woke up today to read Maëlle Salmon’s latest blog entry in which she scraped her own &lt;a href=&#34;https://masalmon.eu/2018/06/18/mathtree/&#34;&gt;mathematical tree&lt;/a&gt;. Running through the code I had an idea about scraping the coauthorship list that a Google Scholar profile has. With this, I could visualize the network of coauthorship of important scientists and explore whether they have closed or open collaborations.&lt;/p&gt;
 &lt;p&gt;I sat down this morning and created the &lt;code&gt;coauthornetwork&lt;/code&gt; package that allows you to do just that! It’s actually very simple. First, install it with the usual:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;devtools::install_github(&amp;quot;cimentadaj/coauthornetwork&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;There’s two functions: &lt;code&gt;grab_network&lt;/code&gt; and &lt;code&gt;plot_coauthors&lt;/code&gt;. The first scrapes and returns a data frame of a Google Scholar profile, their coauthors and the coauthors of their coauthors (what?). More simply, by default, the data frame returns this:&lt;/p&gt;
@@ -53,11 +56,14 @@ network&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Cognitive inequality around the world – Shiny app</title>
-      <link>/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</link>
+      <link>/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</link>
       <pubDate>Mon, 12 Dec 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</guid>
-      <description>&lt;p&gt;For the last month I’ve been working on this massive dataset that combines all PISA, TIMSS and PIRLS surveys into one major database. It has over 3 million students and over 2,000 variables, including student background and school and teacher information. I started playing around with it and ending up doing this: &lt;a href=&#34;https://cimentadaj.shinyapps.io/shiny/&#34; class=&#34;uri&#34;&gt;https://cimentadaj.shinyapps.io/shiny/&lt;/a&gt;. Feel free to check it out and drop any comments below.&lt;/p&gt;
+      <guid>/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</guid>
+      <description>
+
+
+&lt;p&gt;For the last month I’ve been working on this massive dataset that combines all PISA, TIMSS and PIRLS surveys into one major database. It has over 3 million students and over 2,000 variables, including student background and school and teacher information. I started playing around with it and ending up doing this: &lt;a href=&#34;https://cimentadaj.shinyapps.io/shiny/&#34; class=&#34;uri&#34;&gt;https://cimentadaj.shinyapps.io/shiny/&lt;/a&gt;. Feel free to check it out and drop any comments below.&lt;/p&gt;
 &lt;p&gt;If you want to contribute, &lt;a href=&#34;https://github.com/cimentadaj/Inequality_Shinyapp&#34;&gt;this&lt;/a&gt; is the Github repository. I plan to keep adding some stuff to the app, including new surveys and automatic plot downloading, so don’t forget to check it out.&lt;/p&gt;
 </description>
     </item>
