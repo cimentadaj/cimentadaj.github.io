@@ -12,7 +12,7 @@ echo Using R executable at /c/Program\ Files/R/R-3.5.1/bin/R.exe. Replace if the
 echo Git pull and commit in root
 git pull
 
-git add .
+git add --ignore-errors --force .
 
 git commit -m 'New blog post'
 
@@ -41,7 +41,7 @@ echo Remove temporary folder
 rm -rf ../tempfolder
 
 echo Add new changes in master
-git add .
+git add --ignore-errors --force .
 
 git commit -m 'New blog post'
 
