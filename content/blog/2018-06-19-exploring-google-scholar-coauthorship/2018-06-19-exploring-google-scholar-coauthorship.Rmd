@@ -34,7 +34,7 @@ network
 
 The main author here is Hans-Peter Blossfeld, a well known Sociologist. We also see that Melinda Mills is one of his coauthors, so we also have the coauthors of Melinda Mills right after him. `grab_networks` also has the `n_coauthors` argument to control how many coauthors you can extract (limited to 20 by Google Scholar). You'll notice that once you go over 10 coauthors things start to get very messy when we visualize this.
 
-```{r, echo = FALSE, warning = FALSE}
+```{r, warning = FALSE}
 plot_coauthors(network, size_labels = 3)
 ```
 
