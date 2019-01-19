@@ -1,5 +1,5 @@
 ---
-title: Test
+title: test
 author: Jorge Cimentada
 date: '2019-01-19'
 slug: test
@@ -10,5 +10,4 @@ showcomments: yes
 showpagemeta: yes
 ---
 
-
-Test, test, test!
+test

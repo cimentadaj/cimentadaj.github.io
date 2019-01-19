@@ -1,8 +1,8 @@
 ---
-title: Tesssstttt
+title: test
 author: Jorge Cimentada
 date: '2019-01-19'
-slug: tesssstttt
+slug: test
 categories: []
 tags: []
 comments: no
@@ -10,4 +10,4 @@ showcomments: yes
 showpagemeta: yes
 ---
 
-Test, test, test!
+test
