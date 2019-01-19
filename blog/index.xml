@@ -6,10 +6,23 @@
     <description>Recent content in Blogs on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Tue, 19 Jun 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 19 Jan 2019 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Tesssstttt</title>
+      <link>/blog/2019-01-19-tesssstttt/tesssstttt/</link>
+      <pubDate>Sat, 19 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2019-01-19-tesssstttt/tesssstttt/</guid>
+      <description>
+
+
+&lt;p&gt;Test, test, test!&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Exploring Google Scholar coauthorship</title>
