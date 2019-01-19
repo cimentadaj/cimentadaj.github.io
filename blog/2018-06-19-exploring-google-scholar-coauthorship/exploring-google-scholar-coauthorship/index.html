@@ -87,20 +87,21 @@ hljs.initHighlightingOnLoad();
 network &lt;- grab_network(&quot;citations?user=F0kCgy8AAAAJ&amp;hl=en&quot;)
 network</code></pre>
 <pre><code>## # A tibble: 21 x 4
-##    author               href            coauthors    coauthors_href       
-##    &lt;chr&gt;                &lt;chr&gt;           &lt;chr&gt;        &lt;chr&gt;                
-##  1 Hans-Peter Blossfeld citations?user~ Melinda Mil~ /citations?user=HX9K~
-##  2 Hans-Peter Blossfeld citations?user~ Karl Ulrich~ /citations?user=iuzu~
-##  3 Hans-Peter Blossfeld citations?user~ Yossi Shavit /citations?user=brfW~
-##  4 Hans-Peter Blossfeld citations?user~ Jan Skopek   /citations?user=Mmo1~
-##  5 Hans-Peter Blossfeld citations?user~ Andreas Timm /citations?user=NnRu~
-##  6 Melinda Mills        /citations?use~ Hans-Peter ~ /citations?user=F0kC~
-##  7 Melinda Mills        /citations?use~ Tanturri Ma~ /citations?user=xN3X~
-##  8 Melinda Mills        /citations?use~ René Veenst~ /citations?user=_9OV~
-##  9 Melinda Mills        /citations?use~ Francesco C~ /citations?user=-JR6~
-## 10 Karl Ulrich Mayer    /citations?use~ Paul B. Bal~ /citations?user=vcOZ~
+##    author       href                 coauthors     coauthors_href          
+##    &lt;fct&gt;        &lt;fct&gt;                &lt;fct&gt;         &lt;fct&gt;                   
+##  1 Hans-Peter ~ citations?user=F0kC~ Melinda Mills /citations?user=HX9KQ5M~
+##  2 Hans-Peter ~ citations?user=F0kC~ Karl Ulrich ~ /citations?user=iuzu9xw~
+##  3 Hans-Peter ~ citations?user=F0kC~ Florian Schu~ /citations?user=MWCt6hQ~
+##  4 Hans-Peter ~ citations?user=F0kC~ Yossi Shavit  /citations?user=brfWXKM~
+##  5 Hans-Peter ~ citations?user=F0kC~ Jan Skopek    /citations?user=Mmo1hFk~
+##  6 Melinda Mil~ /citations?user=HX9~ Hans-Peter B~ /citations?user=F0kCgy8~
+##  7 Melinda Mil~ /citations?user=HX9~ Tanturri Mar~ /citations?user=xN3XevQ~
+##  8 Melinda Mil~ /citations?user=HX9~ René Veenstra /citations?user=_9OVrqM~
+##  9 Melinda Mil~ /citations?user=HX9~ Francesco C.~ /citations?user=-JR6yo4~
+## 10 Karl Ulrich~ /citations?user=iuz~ Paul B. Balt~ /citations?user=vcOZeDg~
 ## # ... with 11 more rows</code></pre>
 <p>The main author here is Hans-Peter Blossfeld, a well known Sociologist. We also see that Melinda Mills is one of his coauthors, so we also have the coauthors of Melinda Mills right after him. <code>grab_networks</code> also has the <code>n_coauthors</code> argument to control how many coauthors you can extract (limited to 20 by Google Scholar). You’ll notice that once you go over 10 coauthors things start to get very messy when we visualize this.</p>
+<pre class="r"><code>plot_coauthors(network, size_labels = 3)</code></pre>
 <p><img src="/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>Cool eh? We can play around with more coauthors as well.</p>
 <pre class="r"><code>plot_coauthors(grab_network(&quot;citations?user=F0kCgy8AAAAJ&amp;hl=en&quot;, n_coauthors = 7), size_labels = 3)</code></pre>
@@ -169,8 +170,6 @@ network</code></pre>
   
   <span><a class="menu-item" href="/blog">blog</a></span>
   
-  
-  <span><a class="menu-item" href="/blog/2019-01-19-test/test/"> | next &gt;</a></span>
   
   
   <h4 class="text-center"><a class="menu-item" href="/">home</a></h4>
