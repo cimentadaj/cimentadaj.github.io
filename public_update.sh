@@ -6,7 +6,7 @@ cd $PWD
 echo Using R executable at /c/Program\ Files/R/R-3.5.1/bin/R.exe. Replace if the R version has changed.
 
 # Change this when computer changes
-/c/Program\ Files/R/R-3.5.1/bin/R.exe -e "blogdown::build_site(method = 'local')"
+/c/Program\ Files/R/R-3.5.1/bin/R.exe -e "blogdown::build_site(method = 'custom')"
 
 
 echo Git pull and commit in root
