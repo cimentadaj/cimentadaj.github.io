@@ -1,0 +1,458 @@
+"0","devtools::install_github(""cimentadaj/coauthornetwork"")
+"
+"2","Downloading GitHub repo cimentadaj/coauthornetwork@master
+"
+"1","These packages have more recent versions available.
+Which would you like to update?"
+"1",""
+"1","
+"
+"1",""
+"1","
+"
+"1"," 1:   BH         (1.66.0-1     -> 1.69.0-1    ) [CRAN]     2:   colorspace (1.3-2        -> 1.4-0       ) [CRAN]  
+ 3:   curl       (3.2          -> 3.3         ) [CRAN]     4:   dplyr      (7cd7afce2... -> 9aa5846d2...) [GitHub]
+ 5:   farver     (1.0          -> 1.1.0       ) [CRAN]     6:   openssl    (1.1          -> 1.2.1       ) [CRAN]  
+ 7:   pillar     (9cc3030b5... -> 3a54b8d6f...) [GitHub]   8:   rlang      (0.3.0.1      -> 0.3.1       ) [CRAN]  
+ 9:   tibble     (85823b718... -> 5a6e727a9...) [GitHub]  10:   tweenr     (1.0.0        -> 1.0.1       ) [CRAN]  
+11:   units      (0.6-1        -> 0.6-2       ) [CRAN]    12:   CRAN packages only                                
+13:   All                                                 14:   None                                              
+"
+"1","
+"
+"1","Enter one or more numbers separated by spaces, or an empty line to cancel
+"
+"0","13"
+"1","askpass    (NA           -> 1.1         ) [CRAN]"
+"1","
+"
+"1","BH         (1.66.0-1     -> 1.69.0-1    ) [CRAN]"
+"1","
+"
+"1","colorspace (1.3-2        -> 1.4-0       ) [CRAN]"
+"1","
+"
+"1","curl       (3.2          -> 3.3         ) [CRAN]"
+"1","
+"
+"1","dplyr      (7cd7afce2... -> 9aa5846d2...) [GitHub]"
+"1","
+"
+"1","farver     (1.0          -> 1.1.0       ) [CRAN]"
+"1","
+"
+"1","openssl    (1.1          -> 1.2.1       ) [CRAN]"
+"1","
+"
+"1","pillar     (9cc3030b5... -> 3a54b8d6f...) [GitHub]"
+"1","
+"
+"1","rlang      (0.3.0.1      -> 0.3.1       ) [CRAN]"
+"1","
+"
+"1","sys        (NA           -> 2.1         ) [CRAN]"
+"1","
+"
+"1","tibble     (85823b718... -> 5a6e727a9...) [GitHub]"
+"1","
+"
+"1","tweenr     (1.0.0        -> 1.0.1       ) [CRAN]"
+"1","
+"
+"1","units      (0.6-1        -> 0.6-2       ) [CRAN]"
+"1","
+"
+"2","Installing 10 packages: askpass, BH, colorspace, curl, farver, openssl, rlang, sys, tweenr, units
+"
+"2","Installing packages into ‘C:/Users/Cimentadaj/Documents/R/win-library/3.5’
+(as ‘lib’ is unspecified)
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.5/askpass_1.1.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 64374 bytes (62 KB)
+"
+"2","downloaded 62 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.5/BH_1.69.0-1.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 19008161 bytes (18.1 MB)
+"
+"2","downloaded 18.1 MB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.5/colorspace_1.4-0.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 2545271 bytes (2.4 MB)
+"
+"2","downloaded 2.4 MB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.5/curl_3.3.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 2995704 bytes (2.9 MB)
+"
+"2","downloaded 2.9 MB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.5/farver_1.1.0.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 711678 bytes (694 KB)
+"
+"2","downloaded 694 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.5/openssl_1.2.1.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 3944496 bytes (3.8 MB)
+"
+"2","downloaded 3.8 MB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.5/rlang_0.3.1.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 1079931 bytes (1.0 MB)
+"
+"2","downloaded 1.0 MB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.5/sys_2.1.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 71056 bytes (69 KB)
+"
+"2","downloaded 69 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.5/tweenr_1.0.1.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 860962 bytes (840 KB)
+"
+"2","downloaded 840 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.5/units_0.6-2.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 1707529 bytes (1.6 MB)
+"
+"2","downloaded 1.6 MB
+
+"
+"1","package â€˜askpassâ€™ successfully unpacked and MD5 sums checked
+"
+"1","package â€˜BHâ€™ successfully unpacked and MD5 sums checked
+"
+"1","package â€˜colorspaceâ€™ successfully unpacked and MD5 sums checked
+"
+"1","package â€˜curlâ€™ successfully unpacked and MD5 sums checked
+"
+"2","cannot remove prior installation of package ‘curl’"
+"1","package â€˜farverâ€™ successfully unpacked and MD5 sums checked
+"
+"1","package â€˜opensslâ€™ successfully unpacked and MD5 sums checked
+"
+"1","package â€˜rlangâ€™ successfully unpacked and MD5 sums checked
+"
+"2","cannot remove prior installation of package ‘rlang’"
+"1","package â€˜sysâ€™ successfully unpacked and MD5 sums checked
+"
+"1","package â€˜tweenrâ€™ successfully unpacked and MD5 sums checked
+"
+"1","package â€˜unitsâ€™ successfully unpacked and MD5 sums checked
+"
+"1","
+"
+"1",""
+"1","The downloaded binary packages are in
+	C:\Users\Cimentadaj\AppData\Local\Temp\Rtmp02LW7L\downloaded_packages"
+"1",""
+"1","
+"
+"2","Downloading GitHub repo tidyverse/dplyr@master
+"
+"1","These packages have more recent versions available.
+Which would you like to update?"
+"1",""
+"1","
+"
+"1",""
+"1","
+"
+"1","1:   pillar (9cc3030b5... -> 3a54b8d6f...) [GitHub]"
+"1","
+"
+"1","2:   tibble (85823b718... -> 5a6e727a9...) [GitHub]"
+"1","
+"
+"1","3:   CRAN packages only"
+"1","
+"
+"1","4:   All"
+"1","
+"
+"1","5:   None"
+"1","
+"
+"1",""
+"1","
+"
+"1","Enter one or more numbers separated by spaces, or an empty line to cancel
+"
+"0","4"
+"1","pillar (9cc3030b5... -> 3a54b8d6f...) [GitHub]"
+"1","
+"
+"1","rlang  (NA           -> 0.3.1       ) [CRAN]"
+"1","
+"
+"1","tibble (85823b718... -> 5a6e727a9...) [GitHub]"
+"1","
+"
+"2","Installing 1 packages: rlang
+"
+"2","Installing package into ‘C:/Users/Cimentadaj/Documents/R/win-library/3.5’
+(as ‘lib’ is unspecified)
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.5/rlang_0.3.1.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 1079931 bytes (1.0 MB)
+"
+"2","downloaded 1.0 MB
+
+"
+"1","package â€˜rlangâ€™ successfully unpacked and MD5 sums checked
+"
+"2","cannot remove prior installation of package ‘rlang’"
+"1","
+"
+"1",""
+"1","The downloaded binary packages are in
+	C:\Users\Cimentadaj\AppData\Local\Temp\Rtmp02LW7L\downloaded_packages"
+"1",""
+"1","
+"
+"2","Downloading GitHub repo r-lib/pillar@master
+"
+"2","Installing 1 packages: rlang
+"
+"2","Installing package into ‘C:/Users/Cimentadaj/Documents/R/win-library/3.5’
+(as ‘lib’ is unspecified)
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.5/rlang_0.3.1.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 1079931 bytes (1.0 MB)
+"
+"2","downloaded 1.0 MB
+
+"
+"1","package â€˜rlangâ€™ successfully unpacked and MD5 sums checked
+"
+"2","cannot remove prior installation of package ‘rlang’"
+"1","
+"
+"1",""
+"1","The downloaded binary packages are in
+	C:\Users\Cimentadaj\AppData\Local\Temp\Rtmp02LW7L\downloaded_packages"
+"1",""
+"1","
+"
+"1","  "
+"1","  "
+"1",""
+"1",""
+"1","  "
+"1","[32mâˆš[39m  [38;5;247mchecking for file 'C:\Users\Cimentadaj\AppData\Local\Temp\Rtmp02LW7L\remotes1e2c2b9954cb\r-lib-pillar-3a54b8d/DESCRIPTION'[39m[36m[36m (392ms)[36m[39m"
+"1",""
+"1","
+"
+"1",""
+"1",""
+"1",""
+"1","  "
+"1","  "
+"1",""
+"1",""
+"1","  "
+"1","[38;5;247m-[39m[38;5;247m  [39m[38;5;247mpreparing 'pillar':[39m[36m[36m (1.8s)[36m[39m"
+"1",""
+"1","
+"
+"1","[32mâˆš[39m  [38;5;247mchecking DESCRIPTION meta-information[39m[36m[39m"
+"1",""
+"1","
+"
+"1",""
+"1",""
+"1",""
+"1","  "
+"1","  "
+"1",""
+"1",""
+"1","  "
+"1","[38;5;247m-[39m[38;5;247m  [39m[38;5;247mchecking for LF line-endings in source and make files and shell scripts[39m[36m[39m"
+"1",""
+"1","
+"
+"1",""
+"1",""
+"1",""
+"1","  "
+"1","[38;5;247m-[39m[38;5;247m  [39m[38;5;247mchecking for empty or unneeded directories[39m[36m[39m"
+"1",""
+"1","
+"
+"1",""
+"1",""
+"1",""
+"1","  "
+"1","[38;5;247m-[39m[38;5;247m  [39m[38;5;247mbuilding 'pillar_1.3.1.9000.tar.gz'[39m[36m[39m"
+"1",""
+"1","
+"
+"1",""
+"1",""
+"1",""
+"1","  "
+"1","   "
+"1",""
+"1","
+"
+"1",""
+"1",""
+"1",""
+"2","Installing package into ‘C:/Users/Cimentadaj/Documents/R/win-library/3.5’
+(as ‘lib’ is unspecified)
+"
+"1","ERROR: dependency 'rlang' is not available for package 'pillar'
+"
+"1","* removing 'C:/Users/Cimentadaj/Documents/R/win-library/3.5/pillar'
+"
+"1","In R CMD INSTALL
+"
+"2","installation of package ‘C:/Users/Cimentadaj/AppData/Local/Temp/Rtmp02LW7L/file1e2c6cf726d1/pillar_1.3.1.9000.tar.gz’ had non-zero exit status"
+"2","Downloading GitHub repo tidyverse/tibble@master
+"
+"2","Installing 2 packages: pillar, rlang
+"
+"2","Installing packages into ‘C:/Users/Cimentadaj/Documents/R/win-library/3.5’
+(as ‘lib’ is unspecified)
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.5/pillar_1.3.1.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 154982 bytes (151 KB)
+"
+"2","downloaded 151 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/3.5/rlang_0.3.1.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 1079931 bytes (1.0 MB)
+"
+"2","downloaded 1.0 MB
+
+"
+"1","package â€˜pillarâ€™ successfully unpacked and MD5 sums checked
+"
+"1","package â€˜rlangâ€™ successfully unpacked and MD5 sums checked
+"
+"2","cannot remove prior installation of package ‘rlang’"
+"1","
+"
+"1",""
+"1","The downloaded binary packages are in
+	C:\Users\Cimentadaj\AppData\Local\Temp\Rtmp02LW7L\downloaded_packages"
+"1",""
+"1","
+"
+"1","  "
+"1","  "
+"1",""
+"1",""
+"1","  "
+"1","[32mâˆš[39m  [38;5;247mchecking for file 'C:\Users\Cimentadaj\AppData\Local\Temp\Rtmp02LW7L\remotes1e2cbbe15b6\tidyverse-tibble-5a6e727/DESCRIPTION'[39m[36m[36m (343ms)[36m[39m"
+"1",""
+"1","
+"
+"1",""
+"1",""
+"1",""
+"1","  "
+"1","  "
+"1",""
+"1",""
+"1","  "
+"1","[38;5;247m-[39m[38;5;247m  [39m[38;5;247mpreparing 'tibble':[39m[36m[36m (562ms)[36m[39m"
+"1",""
+"1","
+"
+"1","[32mâˆš[39m  [38;5;247mchecking DESCRIPTION meta-information[39m[36m[39m"
+"1",""
+"1","
+"
+"1","[38;5;247m-[39m[38;5;247m  [39m[38;5;247mcleaning src[39m[36m[39m"
+"1",""
+"1","
+"
+"1",""
+"1",""
+"1",""
+"1","  "
+"1","  "
+"1",""
+"1",""
+"1","  "
+"1","[38;5;247m-[39m[38;5;247m  [39m[38;5;247minstalling the package to process help pages[39m[36m[39m"
+"1",""
+"1","
+"
+"1",""
+"1",""
+"1",""
+"1","  "
+"1","         -----------------------------------"
+"1",""
+"1","
+"
+"1",""
+"1",""
+"1",""
+"1","  "
+"1","   ERROR: dependency 'rlang' is not available for package 'tibble'"
+"1",""
+"1","
+"
+"1","[38;5;247m-[39m[38;5;247m  [39m[38;5;247mremoving 'C:/Users/Cimentadaj/AppData/Local/Temp/RtmpCYyUsM/Rinst4d885c1e49d6/tibble'[39m[36m[39m"
+"1",""
+"1","
+"
+"1","   In R CMD INSTALL"
+"1",""
+"1","
+"
+"1","         -----------------------------------"
+"1",""
+"1","
+"
+"1","   ERROR: package installation failed"
+"1",""
+"1","
+"
+"1",""
+"1",""
+"1",""
+"2","Error in run(bin, args = real_cmdargs, stdout_line_callback = real_callback(stdout),  : 
+  System command error
+"
