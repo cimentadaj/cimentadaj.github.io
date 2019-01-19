@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1547902585792.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "AA6B4EDF",
+    "lastKnownWriteTime" : 1547902626,
+    "last_content_update" : 1547902626818,
+    "path" : "~/Downloads/repositories/cimentadaj.github.io/content/blog/2019-01-19-automating-blog-publishing-with-blogdown/2019-01-19-automating-blog-publishing-with-blogdown.Rmd",
+    "project_path" : "content/blog/2019-01-19-automating-blog-publishing-with-blogdown/2019-01-19-automating-blog-publishing-with-blogdown.Rmd",
+    "properties" : {
+        "cursorPosition" : "12,99",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
