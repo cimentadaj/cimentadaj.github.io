@@ -1,0 +1,13 @@
+---
+title: Automating blog publishing with blogdown
+author: Jorge Cimentada
+date: '2019-01-19'
+slug: automating-blog-publishing-with-blogdown
+categories: []
+tags: []
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+This is a mockup post where I'm testing some functionalities to streamling much of my blog posting.
