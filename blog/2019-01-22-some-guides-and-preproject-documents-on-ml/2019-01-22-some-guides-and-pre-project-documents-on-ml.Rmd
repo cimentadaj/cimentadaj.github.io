@@ -1,0 +1,15 @@
+---
+title: Some guides and pre-project documents on ML
+author: Jorge Cimentada
+date: '2019-01-22'
+slug: some-guides-and-pre-project-documents-on-ml
+categories: []
+tags: ['machine-learning', 'projects']
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+I was just browsing the web and found [this cool resource on ML from Google](https://developers.google.com/machine-learning/guides/rules-of-ml/). They're not like you're typical tutorial but rather bullet-point type questions with advice on what to do on certain scenarios. I just came up with the idea of an interesting series of posts where each of the questions outlined in the documents is accompanied with a concrete example that shows how it works under certain scenarios.
+
+There's also other tutorial on that website such as with [text classification](https://developers.google.com/machine-learning/guides/text-classification/). This reminds me of the [list I keep of interesting blog posts/books/courses](https://github.com/cimentadaj/info_to_read) I would to follow through in the future

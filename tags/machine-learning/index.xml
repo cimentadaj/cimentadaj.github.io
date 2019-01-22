@@ -6,10 +6,24 @@
     <description>Recent content in Machine Learning on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Wed, 23 May 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 22 Jan 2019 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/tags/machine-learning/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Some guides and pre-project documents on ML</title>
+      <link>/blog/2019-01-22-some-guides-and-preproject-documents-on-ml/some-guides-and-pre-project-documents-on-ml/</link>
+      <pubDate>Tue, 22 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2019-01-22-some-guides-and-preproject-documents-on-ml/some-guides-and-pre-project-documents-on-ml/</guid>
+      <description>
+
+
+&lt;p&gt;I was just browsing the web and found &lt;a href=&#34;https://developers.google.com/machine-learning/guides/rules-of-ml/&#34;&gt;this cool resource on ML from Google&lt;/a&gt;. They’re not like you’re typical tutorial but rather bullet-point type questions with advice on what to do on certain scenarios. I just came up with the idea of an interesting series of posts where each of the questions outlined in the documents is accompanied with a concrete example that shows how it works under certain scenarios.&lt;/p&gt;
+&lt;p&gt;There’s also other tutorial on that website such as with &lt;a href=&#34;https://developers.google.com/machine-learning/guides/text-classification/&#34;&gt;text classification&lt;/a&gt;. This reminds me of the &lt;a href=&#34;https://github.com/cimentadaj/info_to_read&#34;&gt;list I keep of interesting blog posts/books/courses&lt;/a&gt; I would to follow through in the future&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>A list of must pre-project questions</title>
