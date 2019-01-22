@@ -1,0 +1,3640 @@
+"0","map2(df2$urls, all_dirs, ~ {
+  print(glue(""Downloading {.y}""))
+  safe_download(.x, .y)
+})
+"
+"1","Downloading ../csv_data/l01280148-particulas-en-suspension-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/61dfabb8-d71a-4740-9012-565c52578bff/resource/18f0e5ec-05f7-4931-aa8a-daa36d55864d/download/particulas-en-suspension.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 202 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-patrimonio-cultural-arqueologico1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/15eadb9e-95e0-4e84-90df-b0b09c585278/resource/5dc3f560-82d7-4a7d-82d7-d846aefb37e8/download/patrimonioculturalarqueologia.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 2760 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-patrimonio-cultural-arquitectura-civil1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/5f4a015e-8d38-420b-a0c0-cabd3337314b/resource/80045c71-077f-48fc-b8c2-f34c6a95b6f3/download/patrimonioculturalarquitecturacivil.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 34 KB
+
+"
+"1","Downloading ../csv_data/l01280148-patrimonio-cultural-pinturas1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/d421fee4-4a34-4ad1-8c22-aff83daffb1c/resource/d8550174-267a-4981-bcba-ce82e927e99d/download/patrimonioculturalpintura.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 32 KB
+
+"
+"1","Downloading ../csv_data/l01280148-pleno-mociones-grupos-municipales-2015-2018_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/0dfdc795-6396-4053-ac69-a63571aca853/resource/d6e78d0d-e845-4e61-af95-75014480ba43/download/mociones-legislatura-2015-2018.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 54 KB
+
+"
+"1","Downloading ../csv_data/l01280148-poblacion-espanola-provincia-de-nacimiento-excepto-madrid1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/ce293e5a-c871-43be-ae37-ad5546a5bed6/resource/f3c589c3-8ea9-4c16-8357-07c3da4baa93/download/nacimiento-provincias.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 644 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-poblacion-habitantes-espanoles-por-secciones-010120171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/1a9b4116-78d0-4bc5-97dd-6a9dbae5957b/resource/0d904bdf-a2dd-4080-9831-a5c29e27dfe8/download/habitantes-por-seccionesespanoles.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 341 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-poblacion-mujeres-01-01-20181_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/054274a5-eae6-4744-b1e1-319d72dc2751/resource/5a6c3777-df7b-4096-98e3-681cb84f3376/download/poblacion.-total-mujeres-2018.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 441 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-patrimonio-cultural-arquitectura-religiosa1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/2710a060-7b20-4786-b068-5df1f8be36b4/resource/2b8170cd-4a82-4335-9041-f3f9436b0d66/download/patrimonioculturalarquitecturareligiosa.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 10 KB
+
+"
+"1","Downloading ../csv_data/l01280148-patrimonio-cultural-cancionero1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/c73fcd36-913c-4959-8b78-dd6970524edc/resource/1f3a8cb9-0e1b-4051-b75b-2babf7b04d6d/download/patrimonioculturalcancionero.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 10 KB
+
+"
+"1","Downloading ../csv_data/l01280148-poblacion-2018-edad-sexo-la-poveda1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/96fac7cf-8188-49ba-bb80-00ca7e65a90a/resource/5e4d627c-8e55-4552-a676-df694aeb6d2d/download/pobalcion-edad-y-sexo-sectores-la-poveda.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 754 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-poblacion-evolucion-1986-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/4e9e4b04-feed-4ef9-b5b9-193614395887/resource/d898cda0-8fd3-4d90-8200-351417edb3a0/download/poblacionarganda19862016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 388 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-poblacion-extranjera-010120161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/0dc684dc-228a-4b60-a131-c854a3ea4919/resource/f180b9f3-dbab-4859-a408-4c00a8b1a974/download/poblacion-extranjera-a-1-de-enero-2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1301 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-poblacion-extranjera-por-nacionalidades-010120181_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/03d816cf-8d91-4353-8d0a-adc727442da6/resource/fc90fd8f-439d-4636-aea5-4111af715e8a/download/poblacion-extranjera-por-nacionalidades.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1642 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-poblacion-habitantes-extranjeros-por-secciones-010120171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/8a5b4eb5-3704-4d58-a2b6-479490a1f833/resource/4723c597-1e02-4846-a76a-b5cccb9417fb/download/habitantes-por-seccionesextranjeros.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 330 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-poblacion-total-010120171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/68c7a951-6fc6-4561-b93a-e9425f50fe94/resource/2c56ca78-edbc-49db-a84a-ca5f2627f6a0/download/poblacion-total-por-edad-y-sexo-2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 509 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-precipitacion-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/10ac67d6-e188-4441-8623-4e68da1f7b5a/resource/b7e59e27-a328-4d7e-9fac-09a6f7ab6271/download/precipitacion.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 209 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-precipitacion-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b986ac46-a653-402a-ae53-017edf93d132/resource/248769b5-3f6c-418f-985a-ca35a7f0de72/download/precipitacion.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 192 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-programa-municipal-de-apoyo-a-la-educacion-2017-20181_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/be6cabdf-b353-417a-b140-e658b9d72542/resource/736d4648-1850-46e9-8c7f-5e044fe93f3f/download/buen-expediente-academico.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 207 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-programa-municipal-de-apoyo-a-la-educacion-2017-20181_2.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/be6cabdf-b353-417a-b140-e658b9d72542/resource/07e2ca75-148c-4b62-b319-4829cb74f45c/download/ayudas-comedor-social.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 181 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-programa-municipal-de-apoyo-a-la-educacion-2017-20181_3.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/be6cabdf-b353-417a-b140-e658b9d72542/resource/9116fa40-232f-4410-98f6-7b903b2af3a8/download/ayudas-libros-de-texto-y-material-escolar.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 276 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-proveedores-del-ayuntamiento-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/7b744ffd-c42d-4801-ae1e-e2f17fda26a1/resource/e0156968-89b4-49bb-8558-27681a970652/download/proveedoresayuntamiento.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 18 KB
+
+"
+"1","Downloading ../csv_data/l01280148-publicaciones-en-boletin-oficial-de-la-comunidad-de-madrid-bocm-2015-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/4272542e-683b-4094-b6a0-354bc3ae3bf6/resource/a15ef303-769f-4583-9a54-c360f7f4c6e4/download/tablabocckan2015-2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 102 KB
+
+"
+"1","Downloading ../csv_data/l01280148-publicaciones-en-boletin-oficial-del-estado-boe-1987-19911_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/9febf9e2-2d79-4d38-b535-737966abbdc3/resource/3a65ed72-f7f6-4a57-9612-1c9e89dd3a0a/download/boe-1987-1991.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 11 KB
+
+"
+"1","Downloading ../csv_data/l01280148-radiacion-solar-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/49afdddb-45d5-4944-93ff-75fcb377201f/resource/c2fc0f0a-f415-4ed2-8b22-397123619f2b/download/radiacion-solar.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 229 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-dias-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/7f401f76-4bb1-4764-b71b-553393d284e4/resource/6cf150f3-4f06-4b58-b0d1-9bd08e893816/download/2017-dias.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 80 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-oficinas-de-registro-2011_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/4a42d8df-08b7-4b4b-8a70-b12eea261041/resource/7ad017b5-317f-4c94-af16-119c7b297ad4/download/2011-ano.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 46 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-oficinas-de-registro-ano-2013_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/9fa8bdde-a2b9-4c18-9205-19388cd05db2/resource/83228285-47c4-4578-b508-b5c1b309fcf4/download/2013-ano.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 49 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-oficinas-de-registro-ano-2016_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/50f27263-96b1-450a-8ef6-eccbb99d8f66/resource/e182d2bf-5785-4e42-bcbd-284ac2c36221/download/2016-ano.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 67 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-registros-totales-2016_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/2476603a-c2cf-4ea7-afe7-baf8a24b45b7/resource/fb6eae45-5505-4ca2-ac35-959b543400f0/download/registro-de-entrada.-regsitros-totales.2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 4652 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registros-entrada-dias-1-trimestre-20181_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/3085c043-0b1f-4589-9e4e-a1fadf810857/resource/d6603125-4934-418d-945e-8cbbd43af28c/download/registros-entrada_dias_2018.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 81 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-relacion-subvenciones-asociaciones-20131_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/024fb52d-cde1-4012-80eb-c2e4564fdb48/resource/2374990b-3984-4b50-9448-2f16abd173c3/download/asociaciones-subvencionadas-2013-1.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1062 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-relacion-subvenciones-concedidas-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/fb491c3e-7fe2-4b40-9a71-bdf6d8113830/resource/907747ac-66dd-4d59-8cd4-88ef076b392f/download/subvencionesconcedidas-2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1397 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-salud-quejas-salubridad-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/79b1e979-d1ae-403d-9329-0925a5b36967/resource/4ea7c267-1cd8-47d6-8754-ba537fedca13/download/salud-quejas-salubridad-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 120 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-salud-tipo-de-reclamaciones-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/3a4b2106-7497-49f5-a39c-d20fc3e8b33b/resource/f81827ac-518b-4b35-924a-18cc5c678523/download/tipo-de-reclamaciones-2014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 103 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-salud-tipo-de-reclamaciones-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/1829728d-01d7-4c95-9793-b6a4b1fc14e6/resource/2419e3b8-4815-4a3f-b776-2ddbfdf2d7fc/download/tipo-de-reclamaciones-2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 103 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-sanciones-infraccion-omt-1-trimestre-20181_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/9934a392-a3ff-4136-bc0b-9d364b7e1e63/resource/f86e696e-81a9-4939-9a4e-b1841832d7b2/download/sanciones.-1-trimestre-2018coma.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 88 KB
+
+"
+"1","Downloading ../csv_data/l01280148-sanciones-infraccion-ordenanza-municipal-de-trafico-20172_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/5fbfd536-67ef-4b11-ac41-6b2aad8875eb/resource/80bfa212-cb52-4ca7-a07c-4331fc5e94e2/download/sanciones-2017-coma.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 283 KB
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-actuaciones-de-la-seccion-mujer-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/f22eb11c-ba08-47dc-bdbf-76b0006d376a/resource/92479218-f826-47d8-9daa-c4aeda0b07a3/download/mujer.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 933 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-actuaciones-de-seccion-menor-de-mediacion-en-educacion-vial-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b6c93339-9ae3-455d-b173-aedfaa5fbbdd/resource/d24e4642-8fc5-4275-a229-7caf50d1dd12/download/menor-y-educacion-vial2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1790 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-actuaciones-en-seguridad-vial-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/d19669f3-bbcc-4680-bf17-3b3d2a6f9318/resource/376091a5-dda7-4cb2-a900-526927f20781/download/trafico-dili-ates-infor2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 112 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-campana-dgt-control-de-velocidad-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/461f9ebf-53d8-4ac6-a93b-09e70abe028b/resource/45232d89-e0d4-41c9-918b-7abaa5c1f067/download/campanavelocidaddgt2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 130 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-campana-excrementos-caninos-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/57b9b670-fad7-43d7-a83a-bca5c1bf4ba7/resource/4886c77a-718f-4544-8f97-1fbb09a8eb4f/download/campanaexcrementos2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 150 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-denuncias-de-trafico-jefatura-provincial-de-trafico-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/307c909b-2eed-41f0-baca-87f0519a251a/resource/3a773a05-b893-417b-bb4c-99a96a41a250/download/seguridad-ciudadana-denuncias-de-trafico-jefatura-provincial-de-trafico.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 2322 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-denuncias-de-trafico-preceptos-infringidos-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/385c39a3-524b-4a48-a8a2-d8276f0b1269/resource/17ef6231-5163-465e-8ac7-169151ebefeb/download/seguridad-ciudadana.-denuncias-de-trafico.-preceptos-infringidos.-2014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 4593 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-licencias-de-industria-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/f19a2ff2-610d-40c3-89be-18efd430b567/resource/25b3ae07-2200-46cd-844e-fbe6f421075c/download/seguridad-ciudadana.-licencias-de-industria.-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 148 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-registro-de-entrada-de-documentos-por-tipos-de-actuacion-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/801be7bc-72aa-4776-b2e8-b96468ca8665/resource/93366d7d-d737-4623-9d2c-07d393f8d18b/download/seguridad-ciudadana.-registro-de-entrada-de-documentos-por-temas.-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 2684 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-registro-de-salida-de-documentos-por-tipos-de-actuacion-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/9fe0fe63-14a6-4df3-bb97-f73f33c59d20/resource/b575c6c1-0ab6-4742-a04b-3022bd3e5154/download/seguridad-ciudadana.-registro-de-salida-de-documentos-por-temas.-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 3830 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-tipo-de-objetos-perdidos-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/05e0eff0-6ff8-4eb8-a73b-d9c8b263f467/resource/b7314ef3-cfcc-475a-bf07-32818822f21c/download/seguridad-ciudadana.-tipo-de-objetos-perdidos.-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 123 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-vehiculos-abandonados-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/07a7ef0a-4a71-4f61-92e9-bad85a0d7cf3/resource/9eea6003-3825-4a69-84e5-b4dfb553430b/download/vehiculosabandonados2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 168 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-vehiculos-retirados-por-la-grua-municipal-sin-ingreso-de-tasa-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b969f8ac-95e9-48ad-8373-04388850ef48/resource/a2bd5d05-dbc9-42f0-9fd3-32cdd027d48c/download/seguridad-ciudadana.-vehiculos-retirados-por-la-grua-municipal-si-ingreso-de-tasa.2014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 220 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-sentencias-judiciales-2016_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/292569f6-80e6-436d-a4eb-4df17aab2450/resource/e7d9e4bc-3711-4efd-9a18-097adcb0aec5/download/sentencias-judiciales2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1882 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-siniestralidad-vial-vias-interurbanas-2013-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/c62195f0-497f-460f-bcbf-4b0a9d6cb569/resource/a3d2e75c-97cb-4e37-b35e-7b1b647be532/download/siniestralidad-vialvias-interurbanas20132015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 535 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-subvencion-participacion-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/c7cefc72-1794-4d6a-af31-ae2c368c9200/resource/88cd3aa4-d46d-4b08-8a75-9fe60d5a85eb/download/asociaciones-subvencionadas-2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1988 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-subvenciones-clubes-deportivos-y-entidades-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/cbea6dc8-31fa-4f8e-bf5e-79fe5c3c2dcf/resource/f4c41104-eb30-4c18-a0a7-353f9ca1673a/download/subvencionesclubesdeportivosentidades2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 905 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-bienestar-social-apoyo-familias-proceso-desahucio1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/eee4bbe6-663e-42da-ab5f-4d91e1fa88dd/resource/99fe3d16-8953-453d-a310-b1ca0863273b/download/apoyofamiliasprocesodesahucio.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 143 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-bienestar-social-emergencia-social1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/068ddb70-5b62-47dc-82b0-6dde03a80368/resource/dc98792b-28d9-4c71-8f0c-a0b12d5106b4/download/emergenciasocial.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 116 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-catastro-rustica-19451_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/6aaaa738-14bf-47bf-a0e7-0a25c3f15e16/resource/a210f327-0199-4285-850f-af67bed788d9/download/catastro1945completo-csv.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 128 KB
+
+"
+"1","Downloading ../csv_data/l01280148-concentracion-de-ozono-2006-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b7ce7868-f873-402f-951f-ec7e5ce8b854/resource/a709341f-e2bd-4ba4-8738-826407cf953e/download/concentracion-de-ozono.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 163 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-concentracion-de-ozono-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/1b6a99e0-1588-4e8e-aa93-f81c007ef424/resource/fd46f768-6de0-41f6-98a1-299683cea0c0/download/concentracion-de-ozono.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 173 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-mayores-1-trimestre-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/cc463c32-1dfe-4556-ae3e-66330dd240fb/resource/8313a1e5-9772-4728-ba20-03cac56cdf77/download/contratosmayores1-trismestre-2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1665 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-mayores-4-trimestre-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/c56c0a6a-14af-4ce3-9cd5-0089389437a4/resource/ee752b9b-0900-43b7-bd7a-fadf0e1032dd/download/contratos-mayores-4-trimestre2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1074 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-menores-1-trimestre-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/48403a4c-0296-44ce-8be6-4cc03e34312b/resource/58d66cdc-61eb-4f8a-b798-bb53ffec99bb/download/contratos-menores-1-trimestre-2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 40 KB
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-menores-2015-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/a43bcf4f-65e3-4f57-8d50-40636dc3052a/resource/72928ead-5a3f-4311-8f8e-d129d73c7c51/download/01contratosmenores20152016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 263 KB
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-menores-3-trimestre-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b33a5b73-4c3f-49e1-9bea-19c3de2ef27d/resource/f3d39166-02ac-43d7-8f7b-1e50098bd69b/download/contratosmenores3trimestre2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 47 KB
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-menores-relacion-de-proveedores-2015_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/de3d2e63-d524-439e-bd11-e14abdca3a4e/resource/0142a9e2-4b83-47fc-8a47-c2ad2313005b/download/contratos-menores.relacion-de-proveedores-ano-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 230 KB
+
+"
+"1","Downloading ../csv_data/l01280148-convenios-administrativos-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/5df687f4-bfb0-4f94-8758-ab78cddc1e90/resource/3a3db459-cb6a-4c5b-9e0a-14eb7d79338b/download/convenios-administrativos.-2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 3047 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-convenios-administrativos-20161_2.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/5df687f4-bfb0-4f94-8758-ab78cddc1e90/resource/f40bc2db-53a8-44a9-9774-48488e64f673/download/convenios-administrativos.-2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 3047 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-cuadro-de-clasificacion-de-documentos1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/1799e80c-4a9d-4900-a360-55586c230451/resource/6c078124-3d53-47a3-97f0-dcfdabc0b64d/download/cuadroclasificaciondocumentos.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 66 KB
+
+"
+"1","Downloading ../csv_data/l01280148-cursillos-deportivos-3-trimestre-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/5844f6bc-f2fc-46a6-ac88-a260be652caf/resource/37acc561-60b1-4c97-af1f-0f9f936276a0/download/cursillosdeportivos3-trimestre2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 374 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-cursillos-deportivos-4-trimestre-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/a3b7851b-f49b-4368-b8e1-f632eaa6ad92/resource/89df5c76-6232-435d-b179-b8d6a609bb57/download/cursillosdeportivos4-trimestre2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 404 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-dataodata1_1.csv"
+"1","
+"
+"2","trying URL 'http://services.odata.org/V3/OData/OData.svc/Products'
+"
+"2","Content type 'application/atom+xml;type=feed;charset=utf-8'"
+"2"," length 21007 bytes (20 KB)
+"
+"2","downloaded 20 KB
+
+"
+"1","Downloading ../csv_data/l01280148-decretos-de-alcaldia-delegacion-de-competencias-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/f1ee6b29-cf0e-4f94-a189-16f8d1b8c1ea/resource/93ee0eb0-df30-476d-86bf-3e8ddd3dfb1e/download/competencias-concejalia-de-empleo-industria-desarrollo-local-turismo-innovacion-medio-ambiente-y.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 7032 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-decretos-de-alcaldia-delegacion-de-competencias-20151_2.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/f1ee6b29-cf0e-4f94-a189-16f8d1b8c1ea/resource/221cc067-7f1c-4f1a-9e7e-aa526a8114cf/download/competencias-concejalia-de-deportes-y-actividades-saludables.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 3121 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-decretos-de-alcaldia-delegacion-de-competencias-20151_3.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/f1ee6b29-cf0e-4f94-a189-16f8d1b8c1ea/resource/28743b79-8d8a-4ec6-bca4-365fdda727ef/download/competencias-concejalia-de-hacienda-regimen-interior-e-inspeccion.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 9827 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-directorio-de-asociaciones1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/f1ea46f6-9cf2-4cfb-9877-9bea35e051de/resource/d5996617-89a9-4c6f-95ff-155bc34146fd/download/zzdirectorio-asociaciones.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 14 KB
+
+"
+"1","Downloading ../csv_data/l01280148-directorio-de-centros-educativos1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/3c0f6f1b-c9d0-4ef6-a9b6-c24672b801ae/resource/53f6531f-09ff-487f-a17f-097ab0d22b21/download/directorio-centros-educativos.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 4173 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-directorio-de-centros-religiosos1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/d0bb42c3-34f2-45b6-8f6d-75a47a956a1b/resource/450c53c7-23ec-4afc-9bcb-4ea161e3ea07/download/directorio-centros-religiosos.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1559 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-directorio-de-instalaciones-deportivas1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/3914be75-1671-4aa6-9ae7-23c6e2e25ad8/resource/bd3c53fc-3ed3-4bed-93e1-0635d56f70f2/download/directorioinstalacionesdeportivas.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1061 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-directorio-edificios-municipales1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/24537fbe-bbaf-41b9-bb8c-2ceac1c46cc7/resource/2bc499ba-15b5-489b-bd82-338522a94d09/download/edificios-municipales.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1889 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-educacion-infantil-centros-publicos-alumnos-matriculados-2010-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/f9c7a60f-52eb-4ce4-b828-9ea647470b00/resource/c8f246b0-f7b3-4423-b35d-65b46930cc5e/download/colegioscentros-publicosalumnosinf.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 245 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-educacion-infantil-centros-publicos-unidades-2010-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/fcbd109b-6e9f-4663-9379-ebcf56383999/resource/45b09d45-6027-4a0d-a21f-e282a4f0980a/download/colegioscentros-publicosunidadesinf.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 210 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-educacion-infantil-unidades-2010-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b9a79501-db38-4e59-b9a4-0e863a935364/resource/94b19425-1e54-4b99-935b-0d0a1f021207/download/colegiostotalunidadesinf.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 210 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-educacion-primaria-centros-concertados-alumnos-2010-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/0500e695-5daa-4365-9855-1ac92841fb4d/resource/61606671-3728-4430-95da-5ad553dbedbd/download/colegioscentros-concertadosalumnosprimaria.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 354 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-educacion-primaria-centros-concertados-unidades-2011-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/d19e09e7-7e32-4a42-ad3e-0f7b2d7ac2aa/resource/fce87ae0-0fc5-4e9b-9651-e2c0dbdd5204/download/colegioscentros-concertadosunidadesprimaria.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 261 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-educacion-primaria-centros-publicos-alumnos-con-necesidades-educativas-especiales-2015-2016_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/c584c1ef-13b3-497c-97ee-888ad2118d6c/resource/69f35328-3b94-4583-8d6e-8f2068638504/download/colegioscentros-publicosacneeprimaria.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 112 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-educacion-primaria-centros-publicos-unidades-2010-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/c6b182eb-1e62-4ae8-913e-efecfcaf22e9/resource/8e2411ee-2b62-4331-968f-c83ed15a36a7/download/colegioscentros-publicosunidadesprimaria.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 310 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-elecciones-congreso-1977-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/e13b586a-b749-4ac7-9ba7-f2dc012d4959/resource/55ed18a8-4bcb-41c5-9e46-60797f7ca2b6/download/eleccionescongreso2011datosparticipacion.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 387 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-elecciones-congreso-1977-20161_2.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/e13b586a-b749-4ac7-9ba7-f2dc012d4959/resource/0665a90a-eda2-4041-a15d-ba576b5631a4/download/eleccionescongreso2004datosescrutinio.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1487 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-elecciones-congreso-1977-20161_3.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/e13b586a-b749-4ac7-9ba7-f2dc012d4959/resource/7b59e85c-3431-4316-a938-aa108b8b2a4c/download/eleccionescongreso1979datosparticipacion.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 353 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-elecciones-municipales-1979-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/8dd6b904-9eb9-4ebc-b087-3320053b197e/resource/44b5bbe7-d4e4-4c46-9213-a206f91da888/download/eleccionesmunicipales2003datosparticipacion.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 352 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-elecciones-municipales-1979-20151_2.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/8dd6b904-9eb9-4ebc-b087-3320053b197e/resource/2e1c4c98-7830-4661-a43c-43566c00cfc1/download/eleccionesmunicipales1991datosparticipacion.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 350 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-elecciones-municipales-1979-20151_3.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/8dd6b904-9eb9-4ebc-b087-3320053b197e/resource/a8964c5f-297f-4fdb-acd5-9d050a4106aa/download/eleccionesmunicipales2011datosescrutinio.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 440 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-escuela-infantil-alumnos-matriculados-2010-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/3b9e2138-a3c9-45da-8086-7eba0abce047/resource/e9c0b4a3-8955-46b4-a63b-ad619609588d/download/escuela-infantilalumnos.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 185 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-eso-centros-concertados-alumnos-matriculados-2010-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/384762f4-2aea-4188-b0c0-3c679de167e6/resource/c5000748-35a0-4b95-a479-ec21a7cfdfd7/download/institutocentros-concertadosalumnoseso.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 248 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-eso-centros-publicos-vacantes-2010-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/afd91cba-3372-40ff-b7a7-fd0ca313b93e/resource/eebb06bb-71a7-46f8-b511-38a7b008a831/download/institutocentros-publicosvacanteseso.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 223 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-eventos-deportivos-diciembre-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/7037cdf7-7101-412c-a911-b6bac34d8d4d/resource/b1058c4b-7b48-439d-9524-6baa9add56df/download/deporteseventosdiciembre2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1763 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-evolucion-de-la-deuda-municipal-2008-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/806c6118-e3d7-453d-bf22-0e98f0db58a6/resource/2a65b035-9dfe-450d-b658-30b7911544bd/download/evolucion-deuda-municipal-20082017-.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 165 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-fiestas-patronales-ganadores-concurso-recortes-1994-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/5000c847-c322-4b72-b21c-ccd11a93bed7/resource/b2f73ca0-fef2-4394-8a1e-21383727114c/download/ganadores-concurso-de-recortes-1994-2018.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 2088 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-fototeca-archivo-de-la-ciudad-1840-19391_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/c090702e-d1ea-4b87-9e9a-4c6aa93074da/resource/424401c4-2ff4-4848-9120-b6ef69e1f314/download/fototeca.-archivo-de-la-ciudad.-1840-1939.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 283 KB
+
+"
+"1","Downloading ../csv_data/l01280148-fototeca-archivo-de-la-ciudad-1940-19491_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/af40cbbd-6d2d-45c8-8da6-93e85a0cba43/resource/2292ee0d-c2cf-4d37-8cc2-b06e557071bd/download/fototeca.-archivo-de-la-ciudad.-1940-1949.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 93 KB
+
+"
+"1","Downloading ../csv_data/l01280148-fototeca-archivo-de-la-ciudad-1960-19691_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/fc9177c9-e19a-4d01-a481-8c8330ac38a0/resource/789e0733-2e46-4753-9cc5-4ced8b890058/download/fototeca.-archivo-de-la-ciudad.-1960-1969.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 95 KB
+
+"
+"1","Downloading ../csv_data/l01280148-hemeroteca-archivo-de-la-ciudad-revista-suplementos-diario-alcazar1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/f42688a2-d949-4219-9f11-a8461a56fd0a/resource/dfe3dde4-f3d1-4cdb-95ca-50458ea2e733/download/hemeroteca-suplementos-diario-alcazar.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 449 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-horarios-bus-linea-312-a-madrid-arganda1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/2803c5a4-8f82-4f34-a3bc-94f1cb2e24a0/resource/116e3b5e-d41f-4d71-8473-35c74870fbc2/download/horariosbuslinea-312amadridargandapor-la-poveda.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 974 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-horarios-bus-linea-312-arganda-madrid1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/12e7bdfd-d80a-46f5-8d50-41376eb6187d/resource/38c8e84e-1453-499c-9516-3685d837854a/download/horariosbuslinea312argandamadrid.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1549 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-indemnizaciones-asistencia-a-la-sesion-constitucion-corporacion1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/51c19d81-81f2-4fef-92cb-5315f952bb01/resource/d989f6bb-7f4c-4156-a42b-b58907579644/download/indemnizacionesasistenciaefectiva-a-la-sesion-de-constitucion-de-la-corporacion.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 586 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-indemnizaciones-asistencia-sesiones-ordinarias-pleno-concejales-sin-dedicacion-exclusiva1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/c9e70fa5-fae2-4d73-8384-332bb9b3df4f/resource/a8e066f3-ea6e-4170-99ac-04b2920a7486/download/indemnizacionesasistenciasesionesordinariasplenosindedicacionexclusiva.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 221 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-lineas-telefonicas-2012-2016_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/3d507468-1ee2-4d97-97d3-9613c3c7c269/resource/4f985e1a-2eb4-457b-943d-f7f3038f8540/download/lineastelefonicas2012-2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 137 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-ordenanzas-y-reglamentos1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/5c2ad083-8878-46b6-b665-ff0398810406/resource/a7b3331a-a67e-4524-a58d-38f9d7e946ea/download/ordenanzas-y-reglamentos.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 12 KB
+
+"
+"1","Downloading ../csv_data/l01280148-paro-registrado-2006-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/0c7ae480-54b9-40a6-8ea4-3b4138370d13/resource/1a76933b-214f-4008-a3a7-123b29f2bbc5/download/paroregistradototal20062016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 148 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-presupuestos-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/50bb6c92-6050-49a6-a06b-094418d18af6/resource/790044b8-173e-405e-94d3-65097619109a/download/2016presupuesto-gastos-economico.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 18 KB
+
+"
+"1","Downloading ../csv_data/l01280148-presupuestos-20161_2.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/50bb6c92-6050-49a6-a06b-094418d18af6/resource/4f83566c-b66b-4db3-b96c-03283e304d65/download/2016presupuesto-gastos-funcional.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 9325 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-presupuestos-20161_3.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/50bb6c92-6050-49a6-a06b-094418d18af6/resource/097898f3-03f4-4931-9964-1ead90e75ba0/download/2016presupuesto-ingresos-economico.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 18 KB
+
+"
+"1","Downloading ../csv_data/l01280148-presupuestos-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/a06ca689-232c-472b-9403-1aa1905018b1/resource/37da33ba-95b8-4ac6-93ea-fc583117aa4d/download/gastosfuncionales.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 9963 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-presupuestos-20171_2.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/a06ca689-232c-472b-9403-1aa1905018b1/resource/ae759e9b-ec7a-44b4-8061-4ced07ec1993/download/ingresos.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 17 KB
+
+"
+"1","Downloading ../csv_data/l01280148-presupuestos-20171_3.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/a06ca689-232c-472b-9403-1aa1905018b1/resource/6262aaed-18db-4492-a01a-a7003ed5fb51/download/gastos.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 17 KB
+
+"
+"1","Downloading ../csv_data/l01280148-publicaciones-en-boletin-oficial-de-la-comunidad-de-madrid-bocm-2005-20091_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/e7efaec6-87a2-45e8-920e-46a40f83cfca/resource/c90e5bd0-08ca-4a40-a12f-ec9a52bae40e/download/bocm-2005-2009.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 173 KB
+
+"
+"1","Downloading ../csv_data/l01280148-publicaciones-en-boletin-oficial-de-la-comunidad-de-madrid-bocm-2010-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/10fe815a-8f9e-4c49-b558-4b9ad89aa21a/resource/6c271dd6-9e43-443b-acc5-efdc2ec23ba6/download/bocm-2010-2014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 208 KB
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-horas-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/18d24b33-4de0-4262-83c2-8b6d59a4aa14/resource/4903e92c-248d-4eea-a1b8-19b6a66b628c/download/2016-ano.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 137 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-oficinas-de-registro-ano-2015_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/3960afe9-8e81-4616-8228-8fef10638218/resource/791a6dea-cee7-4224-8df2-563d551e1d3b/download/2015-ano.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 66 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-registros-totales-2010_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/6bfedcc0-674d-4ddf-b56d-22109e499a4e/resource/942af3b4-9536-4e7f-bf45-73b9ffaaee70/download/2010-anox.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 4682 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-registros-totales-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/4d0aa935-bb1a-4a2d-a72a-dfa541f8a457/resource/8d173dad-14a8-4ac8-91c1-722d100e9856/download/registro-de-entrada.registros-totales-2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 3913 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-unidades-administrativas-20131_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/af4cac69-dc33-478a-8254-a43b92bca480/resource/1c36d7f3-712b-47c4-8857-58505cdfd44b/download/ano-2013.csv2.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 810 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-unidades-administrativas-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/e32cace4-705e-4434-87a8-c556a51fa6f3/resource/e5caf8c0-d640-4ae8-b616-21373c85ae87/download/ano-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 959 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-relacion-de-fallecidos-en-la-batalla-del-jarama-sepultados-en-arganda-del-rey-19371_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/e6cad8a6-db68-47ca-a18d-9ee1481b816a/resource/95b71d39-e15a-4aad-8045-3550f86c6e11/download/fallecidos-guerra-civil-1.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 27 KB
+
+"
+"1","Downloading ../csv_data/l01280148-relacion-subvenciones-asociaciones-20081_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/5bcffa40-6784-431c-bd25-3b10a7b2517a/resource/04649e6c-a244-467f-9afa-b330424026f7/download/asociaciones-subvencionadas-2008.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 621 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-relacion-subvenciones-asociaciones-20091_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/04471d3a-87e7-46a3-b647-14453b8f5b49/resource/09b52a75-c86c-46f1-8750-0c51c503f477/download/asociaciones-subvencionadas-2009-2.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 721 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-relacion-subvenciones-asociaciones-20121_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/f965ac07-19a8-4584-b7aa-859414b333da/resource/bda27b6a-d985-406e-ac04-abec845a9b23/download/asociaciones-subvencionadas-2012.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 666 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-secciones-censales-del-municipio1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/112a5ed9-1a65-4f0a-80b0-a0722aa3ada7/resource/473d1728-7723-4877-88fa-0734edf80090/download/mapa-sin-nombre.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 720 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-accidentes-de-trafico-con-victimas-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/7c76db37-90ea-48cc-b1a5-898e846f5eba/resource/52bd128c-4c97-448b-bb28-f56411f3b9d4/download/accidentes-de-trafico-con-victimas.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 246 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-actuaciones-intervencion-obras-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/73cf8f34-4d87-4994-a164-003984d24c26/resource/fd48813f-8d01-4505-ac7f-08185d09c532/download/seguridad-ciudadana.-actuaciones-intervencion-obras.-2014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 913 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-actuaciones-mayores-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/2cadfa62-d048-4c90-ae3f-dbf95f1c60a6/resource/825d7744-46a9-4b85-b16c-5858550da224/download/mayores2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 342 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-atestados-diligencia-e-informes-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/590775a3-4cdb-4d12-b075-6cbf5952bd84/resource/912062aa-a53c-46d3-8ce6-80dafb72d865/download/seguridad-ciudadana.-atestados-diligencia-e-informes.-2014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 132 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-campana-vigilancia-de-camiones-y-furgonetas-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/5cd48c26-332a-49d1-ac86-eaeb2007ff6d/resource/f3cf8a31-1b0a-4473-8885-26005b7bd8c6/download/controdgtcamiones2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 99 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-gestion-de-llamadas-de-trafico-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/7f96d860-7dad-4131-915c-2779fade3420/resource/b3a7baf2-b326-4745-9d11-566ab3e4f4c6/download/seguridad-ciudadana.-gestion-de-llamadas-de-trafico.-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 251 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-infracciones-campana-control-alcohol-y-drogas-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/0145e80c-afc2-45b4-b19a-4a27f75d4b82/resource/97e791ff-48a6-402a-93d1-10a02fe276ef/download/campana-control-alcohol-drogas-dgt2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 248 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-licencias-de-industria-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/caeedfe7-438c-4e9b-8339-1f4eb79cf9c1/resource/e1ae6e1c-8d56-4672-8e70-adae3801da5e/download/seguridad-ciudadana.-licencias-de-industria.2014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 327 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-objetos-perdidos-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/7bc07fe7-7a84-402f-8997-f29e220735e1/resource/cccc10a6-2236-4144-b40b-d05f8299dd74/download/seguridad-ciudadanaobjetos-perdidos.2014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 107 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-solicitudes-de-servicios-por-via-telefonica-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/81161cf0-4845-4971-aa88-549c4a2d8641/resource/b38e7e1b-a633-4890-9bca-8dc019dc9fa7/download/seguridad-ciudadana.-requerimientos-telefonicos-generales.-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 456 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-solicitudes-de-servicios-por-via-telefonica-colaboracion-ciudadana-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/21c03e6f-c187-4db8-a4b6-ec459de66cdc/resource/cffb6555-d372-4f2c-b5d2-ce3c58e32908/download/seguridad-ciudadana.-requerimientos-telefonicos.-colaboracion-ciudadana.-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 273 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-solicitudes-de-servicios-por-via-telefonica-de-trafico-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/548dba70-4f7f-4c8b-bdbd-12af4762fc0f/resource/0203887f-88f7-4b8d-83c7-c5f3b7936dec/download/seguridad-ciudadana.-requerimientos-telefonicos-de-trafico.-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 264 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-vehiculos-retirados-por-la-grua-municipal-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/e4cf82d8-a296-4053-a119-1b9afaa3c719/resource/ef07077e-60a5-44ae-bc1c-e3f5b7e61282/download/seguridad-ciudadana.-vehiculos-retirados-por-la-grua-municipal.2014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 195 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-vehiculos-retirados-por-la-grua-municipal-sin-ingreso-de-tasa-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/4c3dbff0-f621-4cac-97af-e262cecfa46c/resource/2d48c9b6-6edf-484e-b279-a17c5efe9f09/download/gruasnocobradas2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 119 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-solicitudes-de-licencia-de-actividades-inocuas-2005-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/9ee2b390-4dea-44b0-8ed6-ac4e2beb6edc/resource/deb83704-0b1b-4ba1-ab54-626887593923/download/licencias-de-actividades-inocuas2005-2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 132 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-subvenciones-clubes-deportivos-y-entidades-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/14b0d01a-69b6-4383-9439-6b9e9df515ea/resource/cd9a50b0-9134-4651-a595-943e5df3a830/download/subvencionesclubesdeportivosentidades2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 687 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-temperatura-2006-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/61adb79c-165e-4843-9173-92f0a568d7b1/resource/136d95ae-b932-45e4-8fb3-cfe015f8683e/download/temperatura.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 151 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-temperatura-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/c15b15b0-e5d7-4d85-be4b-1a31fe2c9870/resource/45510922-a8ca-4eba-88b7-359cb6afd2e2/download/temperatura.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 198 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-tramites-relacion-completa1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/71fe6f4b-cb36-4f7e-b7bc-a331adba875e/resource/a29280fc-0b27-4750-bd7c-dd4afaa432a4/download/tramites222.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 35 KB
+
+"
+"1","Downloading ../csv_data/l01280148-tramites-servicios-de-la-ciudad1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/29da990e-5aab-4ce3-ae75-bf24aa522814/resource/f2c76aea-a8b0-4d47-af28-d1076ac4daa0/download/tramitesservicios-de-la-ciudad.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 978 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-velocidad-del-viento-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/d5599bb4-4630-491f-a0cf-0619baea397b/resource/2c7c4c0d-826d-4237-80f4-d65978cfff99/download/velocidad-del-viento.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 212 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-videoteca-archivo-de-la-ciudad-videos-1990-19951_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/ebfb4c88-2b7e-41bf-b1e1-0483bebdec80/resource/607f94ec-016b-4ee0-9cbd-b9b5c4878c62/download/videos-1990-a-1995.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 6847 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-videoteca-archivo-de-la-ciudad-videos-19971_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/42e53f49-fbf3-4cb8-aeee-d648ffcab08c/resource/7920f624-0cb8-47f5-9fa3-64bab8f6cf3c/download/videos-1997.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 293 KB
+
+"
+"1","Downloading ../csv_data/l01280148-abonos-deportivos-4-trimestre-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/d923eeb3-41fb-4958-abec-feae79931545/resource/cac5c86a-1f21-4b69-8cbc-ad3ef9cb6d0c/download/abonos-deportivos-4-trimestre-2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 252 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-actas-de-pleno-1900-19391_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/29cad4a1-bcfa-4d18-8470-e41bb2c66a05/resource/edd8b8b9-f79e-4a22-a776-6de619496675/download/actaspleno1900-1939-1.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 137 KB
+
+"
+"1","Downloading ../csv_data/l01280148-actas-de-pleno-1900-19391_2.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/29cad4a1-bcfa-4d18-8470-e41bb2c66a05/resource/ee8ef92b-424d-4f31-b61a-41872718a5ee/download/actaspleno1900-1939-1.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 137 KB
+
+"
+"1","Downloading ../csv_data/l01280148-actas-de-pleno-1979-19811_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/c7945ddb-af8b-4168-937b-b08078c0660c/resource/47cb4df4-445d-41be-962a-b801797f7519/download/actas-1979-1981.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 5648 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-agenda-eventos-deportivos-febrero-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/e4506889-ffb3-411c-bc3a-50f4b9c4049a/resource/b2ba5200-f3fa-4949-83d5-b0c819054194/download/deporteseventosfebrero-2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1520 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-agenda-eventos-deportivos-julio-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/adf2ff56-fc2e-470a-9c3d-3f7f1dc40a24/resource/0161edde-2c33-4ba7-a339-9ddef70852da/download/deporteseventosjulio-2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 876 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-bachillerato-centros-publicos-alumnos-con-necesidades-educativas-especiales-2015-2016_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/07210aa3-84dc-4a6d-a82f-488548ac1591/resource/864d866c-bfa8-4fe0-af98-0414ed0c4946/download/institutocentros-publicosacneebachill.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 53 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-bachillerato-centros-publicos-vacantes-2013-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/8f8d6261-c9a4-469c-a7fc-2e0c37e60460/resource/827fa879-23a5-4759-9eb3-f44c4e56088b/download/institutocentros-publicosvacantesbachill.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 123 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-becas-y-ayudas-a-la-educacion-curso-escolar-2014-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/1c53d05f-2292-4c47-9fcd-1479ec082ad0/resource/71e1c9fe-280c-4188-88e9-ebf61ac6f8f2/download/becas-y-ayudas-a-la-educacion-curso-escolar-20142015-1.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 387 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-becas-y-ayudas-a-la-educacion-curso-escolar-2015-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/e5d2168b-8bcf-4af2-a31c-6a73cdc87daa/resource/90850e2b-2fed-436c-acc0-cbbfb4d7690c/download/becas-y-ayudas-a-la-educacion-curso-escolar-20152016-1.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 480 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-bibliotecas-municipales-asistencias-actividades-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/861cb1fa-9562-4877-a0b8-d359c3aae09e/resource/14e206c2-d04f-4c81-8e4c-ecd44557c719/download/bibliotecasmunicpalesasistencia-actividades2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 122 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-bibliotecas-municipales-prestamos-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/34462352-6301-47db-8286-113463e40840/resource/f6355539-c028-4a00-89bb-8ae4dfbf6a4f/download/bibliotecasmunicipalesprestamos2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 107 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-bienestar-social-gastos-en-emergencia-social1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/76690f59-c070-48eb-8a13-f694ba2d2197/resource/02bf3a17-7819-4a8b-89fc-c54d47a22316/download/bienestar-social-emergencia-social.-desglosado.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 369 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-concentracion-de-ozono-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/1cf5b526-a132-4240-b1eb-63c110284136/resource/c5d972cc-ad9c-4cf2-a186-b6488c47898d/download/concentracion-de-ozono.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 222 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-concentracion-de-ozono-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/bd39d02d-10c0-4d6d-a0dc-cff1b77692a6/resource/49d73f5d-6e7a-4804-a3f6-568814ce6d94/download/concentracion-de-ozono.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 197 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-mayores-2-trimestre-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/89fd5944-2b7d-4bcc-a402-fd160820f701/resource/05fc7e36-2cb9-40be-9e31-62af0ecf6ee2/download/contratos-mayores-2-trimestre2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1160 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-mayores-3-trimestre-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/369191ac-4d44-4e45-8a39-297907f0cd89/resource/0e2a73f1-d6f9-44e2-ba3f-a6ccb029546c/download/contratos-mayores-3-trimestre2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1628 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-menores-3-trimestre-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/a7ed987c-56b7-4793-b40b-f16db4cd2c23/resource/4425b31b-ffab-4285-b77c-41231e66d058/download/contratosmenores3-trimestre-2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 34 KB
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-menores-4-trimestre-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/7e04d56a-f2f1-41dd-91d2-6c862c972a67/resource/b8153b39-d5d2-4258-905f-7d4259b7ce25/download/contratosmenores4-trimestre-2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 47 KB
+
+"
+"1","Downloading ../csv_data/l01280148-convenios-urbanisticos-1995-20111_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/901cc3dd-4e47-4cca-adcf-ed7ddfdaf344/resource/c50a52ab-0a30-4dcf-894d-072ca200c67e/download/convenios-urbanisticos-1995-2011.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 7475 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-cursillos-deportivos-1-trimestre-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/81f6189a-2a3f-4f60-bdeb-fc052731eaea/resource/bb9daf46-dd89-41bc-b42d-b70249164bd6/download/cursillosdeportivos1-trimestre2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 367 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-curso-escolar-2016-2017-campana-artes1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/81e987b7-494f-4736-a23e-0ab8fca22b67/resource/7d3cee6b-8794-4321-a0ae-05f8eced841c/download/campana-escolar-artes-curso-escolar2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 441 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-decretos-y-resoluciones-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/56ac8d56-dc9e-40d3-a3cc-6ce0a622e5f0/resource/0cb982b7-5c39-462e-b48c-5ae5c120b9de/download/2017decretosresoluciones.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 373 KB
+
+"
+"1","Downloading ../csv_data/l01280148-deportes-abonados-deportes-2015-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/8c81235c-c7be-4e45-b708-05def7a4605d/resource/af4359b4-69af-43eb-b273-d7d8e5795603/download/estadisticas-abonados-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1510 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-directorio-de-centros-sanitarios1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/3594167e-5407-4ef0-adf8-a28eefd3659e/resource/edab4c1a-09d9-47ad-b35f-d9003c736777/download/directorio-centros-sanitarios.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 572 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-educacion-infantil-centros-publicos-vacantes-2010-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/48102da3-613d-445e-a962-64eddffa865d/resource/f0a5d5b2-22ed-4ab4-81ee-e7589201ab66/download/colegioscentros-publicosvacantesinf.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 223 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-educacion-infantil-vacantes-2013-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/6a741822-bfd0-429a-b8b8-bd038998110e/resource/7dee2980-d34e-4145-8977-d965d68525e5/download/escuela-infantilvacantes.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 120 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-educacion-primaria-alumnos-matriculados-2010-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/5aca7b02-6d16-458c-9eb6-5c12cf6af297/resource/a58713da-4c71-4bf3-abb0-af8c68c244ef/download/colegiostotalalumnosprimaria..csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 359 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-encomiendas-de-gestion-a-la-empresa-de-servicios-municipales-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/04ad73a1-0995-4eda-b0e8-8dadb5cf1092/resource/7d5d8e58-3e0b-4472-b020-5ef69a29b2ec/download/encomiendasgestion2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 2206 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-escuela-infantil-alumnos-con-necesidades-educativas-especiales-2015-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/d8be792f-cf96-4418-ba37-6ec74a20ec26/resource/999e3df8-52a9-49a7-8404-910c94e8a93a/download/escuela-infantilacnee.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 74 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-escuela-musica-y-danza-evolucion-de-alumnos-matriculados-2012-2016_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/0288be6e-c3d1-42c5-8fd2-b0b4e620a86c/resource/a1bbdb3c-0ffa-49bf-8ef3-adbf02d9ca98/download/escuela-musica-y-danza.-evolucion-de-alumnos-matriculados.-2012-2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 64 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-escuela-musica-y-danza-oferta-de-plazas-y-solicitudes-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/ef76d0f1-e39c-456d-9f18-98fdb5c9ce37/resource/782ec2d1-119b-4f29-8b74-869c9fd7d33e/download/escuela-musica-y-danza.-oferta-de-plazas-y-solicitudes.-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 221 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-eso-centros-publicos-alumnos-matriculados-2010-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/c84a4deb-531a-4422-bddd-aca19abce214/resource/a0673b73-b71f-4446-8498-5c3aa268b838/download/institutocentros-publicosalumnoseso.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 265 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-eso-centros-publicos-unidades-2010-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/12948489-2132-4679-8f02-21d6904d0024/resource/7b7715ec-20cc-4c20-ac97-7ebc34e98a2a/download/institutocentros-publicosunidadeseso.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 223 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-fonoteca-archivo-de-la-ciudad-1984-20071_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/59bd61e9-f9c2-4c06-bb0f-19212fa29b36/resource/26ac9219-0824-48a5-a643-99e3020b1bf2/download/audios-1984-2007.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 93 KB
+
+"
+"1","Downloading ../csv_data/l01280148-fototeca-archivo-de-la-ciudad-1970-19791_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/7b0fc4f7-ed9f-443d-94fa-9992deb8322a/resource/611572b9-673e-494d-8ab2-d882dcb61447/download/fototeca.-archivo-de-la-ciudad.-1970-1979.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 58 KB
+
+"
+"1","Downloading ../csv_data/l01280148-fototeca-archivo-de-la-ciudad-1980-19891_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/2899be8f-cc3c-4042-b63f-e19bde2ce4c2/resource/b9a59720-5546-4911-9e27-00b3c417c111/download/fototeca.-archivo-de-la-ciudad.-1980-1989.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 254 KB
+
+"
+"1","Downloading ../csv_data/l01280148-hemeroteca-archivo-de-la-ciudad-revista-arganda-informativo1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/2ce398ca-cced-4267-8b91-7c8bd59d107a/resource/6fcf915e-17ec-4daf-8ba3-656a4af847b3/download/hemeroteca-arganda-informativo.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 40 KB
+
+"
+"1","Downloading ../csv_data/l01280148-hemeroteca-archivo-de-la-ciudad-revista-brujula1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b778c4a1-9f05-4b4a-b945-e2c6f9e10deb/resource/abdd6fc0-3c5c-4b66-ac3a-260fe2e351cd/download/hemeroteca-brujula.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 6788 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-hemeroteca-archivo-de-la-ciudad-revista-la-poveda1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/57b52442-47b4-4ef8-9b59-0dd7479e597e/resource/c7de0dfe-2f92-448f-841c-e81922e4058b/download/hemeroteca-la-poveda-1.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1748 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-hemeroteca-archivo-de-la-ciudad-revista-la-poveda1_2.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/57b52442-47b4-4ef8-9b59-0dd7479e597e/resource/c6721a98-9a27-4161-8ff9-68262b7aa955/download/hemeroteca-la-poveda-3.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1596 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-hemeroteca-archivo-de-la-ciudad-revista-la-poveda1_3.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/57b52442-47b4-4ef8-9b59-0dd7479e597e/resource/13ea0235-0823-4e3d-ae72-c957bd73f8fd/download/hemeroteca-la-poveda-2.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1594 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-horario-bus-linea-312-a-arganda-madrid1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b7142e84-9955-4f8e-b789-9499bd8d7f88/resource/106e5406-ad9a-4d40-b984-444f5c6f2469/download/horariosbuslinea312aargandapor-la-povedamadrid.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 957 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-horarios-bus-linea-312-madrid-arganda1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/23fc966d-8003-48d5-8050-de478ebcb1eb/resource/b61a8629-1f8e-40eb-a40b-b5eec8b4c6fa/download/horariosbuslinea-312amadridarganda.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 979 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-humedad-relativa-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/819a858a-0e27-4127-89eb-e402be274db8/resource/966dc5e8-9d08-4f99-86c6-b896a2f8b06e/download/humedad-relativa.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 218 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-inventario-arboles-casco-urbano-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/bc20e1e3-0c6c-4f0e-817b-c95f052e3783/resource/f41cfeb0-6d98-48c1-b8be-fa50c3b958aa/download/arbolado.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1.9 MB
+
+"
+"1","Downloading ../csv_data/l01280148-licencias-de-actividades-calificadas-1980-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/60594a01-fae8-4f2f-b832-d70dfe428621/resource/53af1ce8-709d-4381-9c85-6ef7733afb11/download/licencias-de-actividades-calificadas1980-2014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 361 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-paradas-de-autobus1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/1e9cedd4-d335-441b-bc92-5de83c7bc87a/resource/b5afcc7a-677d-4381-9e11-4ccf2088bc53/download/transporteurbanoparadaslineasautobus.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 13 KB
+
+"
+"1","Downloading ../csv_data/l01280148-paro-registrado-por-sexo-2006-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b49457f7-f2a2-4e59-9310-8f83de06fe85/resource/ec32c0a6-6478-4ff2-a280-f468fdbf2e12/download/paroregistradoporsexo20062016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 197 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-periodo-medio-de-pago-a-proveedores-2014-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/1cdf535d-f46d-4354-91ed-14fbcb09e5c2/resource/7d27431d-4d49-43b3-b192-b2541ebb2cfd/download/periodomediodepagoaproveedores2018.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 650 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-poblacion-espanola-010120161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/1e9c5f93-1d25-449e-bec7-1da700368b4f/resource/d648b1d5-c402-4623-8601-24e0f7ecda78/download/poblacion-espanola-a-1-de-enero-2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1602 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-poblacion-extranjera-por-nacionalidades-010120171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/ec6cba91-3ecb-4f79-9a36-8e6a389c2526/resource/adc04141-e29b-4259-96aa-d5b3197c95b8/download/comparativa-espanoles-y-extranjeros-2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 103 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-poblacion-extranjera-por-nacionalidades-010120171_2.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/ec6cba91-3ecb-4f79-9a36-8e6a389c2526/resource/bb0b1336-38b2-47ef-98d5-2f46ac32b1a2/download/poblacion-extranjera-por-nacionalidades-2017-hecha-2.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1573 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-poblacion-hombres-01012017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/cc0ca5fa-9820-47bb-8c4f-3b3249503501/resource/cd054fe8-acbd-4abf-bfcc-cc807aaf58ba/download/poblacion-total-hombres.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1469 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-poblacion-por-secciones-electorales-01-01-20181_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/58873eb2-529b-4804-8cfd-ed7e35b5b1a6/resource/667dc5f3-a4b3-4006-bff0-854ef5ddd393/download/poblacion-por-secciones-electorales.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 512 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-presion-barometrica-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/05752f91-3d69-4fbe-9ff4-e6a7798d33ea/resource/5e5ecd87-484b-4738-8fbb-0e059ff5623b/download/presion-barometrica.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 236 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-presion-barometrica-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/48920408-f30b-4026-85a8-c32cda0264d8/resource/501d917e-1cb2-40e9-a844-51a59c8fa6f5/download/presion-barometrica.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 212 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-publicaciones-en-boletin-oficial-del-estado-boe-1992-19961_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/35bdcc4b-5578-41f7-b5eb-de09ac136377/resource/ba2d8864-c3e9-417a-9691-f5e7b91b74e2/download/boe-1992-1996.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 5678 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-publicaciones-en-boletin-oficial-del-estado-boe-2007-20111_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/729f923c-5279-41db-b154-a0cbf3d32801/resource/e828db99-99e0-4307-a505-ce399594b6bf/download/boe-2007-2011.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 3906 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-publicaciones-en-boletin-oficial-del-estado-boe-2013-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b3abea29-a964-4919-9047-7cad23cbb113/resource/9de536cc-3172-4c8a-9415-bf84fbfdc893/download/tablaboeckan2013-2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 9875 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-radiacion-solar-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/6a88c84e-6c7c-447e-a9ec-70ccd8996b2a/resource/0fad0213-eb09-4035-bc83-7c208e2bc7d7/download/radiacion-solar.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 229 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-horas-20121_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b44b9fa2-d900-4e48-8f3b-a81140caed8b/resource/1e718fe6-c1ef-4093-82bd-847cbf3194cc/download/2012-ano.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 131 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-horas-20131_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/5d779dc8-86dd-4542-baad-9743244ab2b2/resource/2ed8e695-ff7b-4e62-95b1-811a0777844e/download/2013-ano.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 133 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-oficinas-de-registro-2010_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/0717b057-b1cf-4392-8329-5a5abd4c6e14/resource/ebc4ebcb-644b-4643-8126-b27afedff827/download/2010-ano.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 36 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-oficinas-de-registro-2014_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/2b592596-f4ed-41aa-8004-46dee4b6bd18/resource/6f9ca8c4-4f56-43e5-b843-8e17d087b84c/download/2014-ano.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 65 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-oficinas-de-registro-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/0c6dfeba-1c41-46f0-b6f5-1ba8b7d89ee6/resource/44045b67-37d6-40a5-90b5-43c166fb27af/download/registro-de-entrada.-oficinas-registro.2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 108 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-personas-fisicas-juridicas-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/d446a51d-0bb4-4936-b9d2-2f56f7e5f7a4/resource/ac012868-503b-49ab-bf6b-c843e9e47d3b/download/personas.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 46 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-registros-totales-2015_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/cec8a65e-1fe8-40fd-ba0c-8765defee48c/resource/507db97c-4868-43d4-b6a9-bfd507c5d628/download/2015-ano-copia.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 4705 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-unidades-administrativas-20101_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/05885f0e-8c47-4d39-9e5e-5462b85c40e6/resource/c450104b-b4ea-4cdb-b1c9-d8ad5ddc2eed/download/ano-2010.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 735 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-unidades-administrativas-20111_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/ac21d44d-d756-42bc-8788-aac206b0b43c/resource/8691bf7f-ada5-40b1-9e95-55a2d424cbea/download/ano-2011.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1186 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-de-entrada-unidades-administrativas-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/1d6dadd9-fdc7-48b4-aa4c-86a6b514ceea/resource/a64e3202-8ed8-4e08-b8d3-4d54a8288dcf/download/rentradaunidadesadministrativas-2017buena.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 666 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-registro-entrada-oficinas-registro-evolucion-2010-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/3fd1b93e-3a39-4166-ae6e-857f9fca06fc/resource/52747964-c89b-4a27-8941-a57be53224ef/download/rentradaoficinas-registroevolucion-2010-2018.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 631 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-relacion-subvenciones-asociaciones-20111_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/2b86a3bf-0fca-47dc-a48f-37c8b61a0b25/resource/334634af-43f7-407b-81db-45d4e50dfff2/download/asociaciones-subvencionadas-2011.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 809 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-relaciones-de-puesto-de-trabajo-1995-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/04e6453e-a09c-4115-9a1b-9ba4b1edbede/resource/f30be275-4ac3-4a91-8e9b-07c4eef7c3cd/download/rpt19952017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 602 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-retribuciones-miembros-corporacion-dedicacion-exclusiva1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/318bf7a6-bf2b-49e0-89f9-68ca80034d22/resource/d54294d4-2e6d-434a-a9be-9388d2899b97/download/retribucionesmiembroscorporaciondedicacionexclusiva.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 237 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-salud-quejas-salubridad-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/0126ff37-99bc-4c28-8a7e-b569797ffd7f/resource/124a3238-aa2a-41e5-8290-5770b1521237/download/salud-quejas-salubridad-2014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 120 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-accidentes-de-trafico-accidentes-con-heridos-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/5d467591-d6bc-4617-aa05-a5da21302ecb/resource/ddcd1458-414a-4364-a8ad-53eac7ac0d21/download/seguridad-ciudadana.-accidentesde-trafico-accidentes-con-heridos.-2014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 137 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-actuaciones-mayores-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/223ce36c-0fe2-4560-b452-6cf7dc35e55c/resource/3fd20548-2852-4fe7-b14b-fe8a1b8b406f/download/seguridad-ciudadana.-actuaciones-mayores.2014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 342 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-denuncias-de-trafico-preceptos-infringidos-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/e980705a-6ecc-4cb2-b1e2-c9d05d5534d2/resource/12d83599-48eb-4297-a48d-4a2f1be17809/download/denunciastrafico2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 5194 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-estadistica-de-actuaciones-por-comparecencia-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/2a8fcd89-9cb4-4e12-aa18-526d1e65e3b6/resource/f7928758-6045-478e-986d-1544eccab784/download/detenidospor-motivoscomparecencia.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 679 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-gestion-de-llamadas-de-trafico-por-horas-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/3e265d99-39e8-448f-bb30-ba8141c389d0/resource/7d00ca39-de7e-426f-93ed-1fb93775cfb8/download/seguridad-ciudadana.-gestion-de-llamadas-de-trafico-por-horas.-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 436 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-inspeccion-de-obras-de-vertido-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/969aa399-63f5-4087-8c6c-3065877f2250/resource/fcbacf52-6c1a-4548-9467-7718c8b2882c/download/seguridad-ciudadana.-inspeccion-de-obras-de-vertido.-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 910 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-seccion-del-menor-y-mediacion-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/968668a7-dee3-4428-946b-cfaa359582cd/resource/f87196ce-f1aa-48e7-9fc8-ed0e1a5d6826/download/seguridad-ciudadana.-seccion-del-menor-y-mediacion.-2014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1433 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-siniestralidad-trafico-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/4c77a850-7623-47fb-9235-b55653195945/resource/5b0cff31-7613-4518-bad1-687a85ba598b/download/seguridad-ciudadana.-siniestralidad-trafico.-2014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 147 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-vehiculos-retirados-por-la-grua-municipal-forma-de-pago-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/4b80eaa4-54be-40df-8823-7c8e08b91b79/resource/1fe03010-b22b-4e9a-84ce-3612462a4512/download/seguridad-ciudadana.-vehiculos-retirados-por-la-grua-municipal-forma-de-pago.2014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 72 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-solicitudes-de-licencia-expedientes-sancionadores-industria-2005-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/c6ac4f67-f2b7-46c3-91ae-a89fec911816/resource/de4b6945-810b-4a34-b575-e42237d06b3c/download/solicitudes-de-licencias-expedientes-sancionadores-industria.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 130 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-subvenciones-deportivas-ampas-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/8215875d-5116-497a-9ae8-eb381fce36a0/resource/98f5e441-54c5-407b-8b2c-e62561b80830/download/subvencionesdeportivasampas2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 341 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-temperatura-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/ebf9d29e-fe6b-4542-9fe4-2ced4b5b6baa/resource/9c98618b-6b37-4b7d-80d5-9637226f6520/download/temperatura.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 206 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-tramites-educacion1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/071ebade-ccc7-4f6b-9148-29c2b4bc3d82/resource/eace63d0-4b3c-48ec-88bf-6017d03eb4c5/download/tramiteseducacion.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1831 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-tramites-empadronamiento1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/4483ce2d-ee09-467a-92b5-972a8c4f6812/resource/272952c4-1270-4288-a79c-568a4e47d14c/download/tramitespadron.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 3425 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-unidades-ganaderas-1989-1999-20091_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/c6d2f326-5dda-4641-b3c6-ae7cb85d7264/resource/637fcd1e-f3fc-49ea-bd60-e0c59415449e/download/sector-agrarioganaderiaunidades-ganaderasarganda1989-1999-2009.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 144 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-velocidad-del-viento-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/8e93f29e-853d-4483-af37-2f6719412546/resource/c2f2ec45-b42a-4be5-84f2-ef2b09790525/download/velocidad-del-viento.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 182 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-viajes-institucionales-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/068b2e81-ce5d-43f7-aaf3-d7a8adc2aaeb/resource/2feb47b8-026b-44fd-908e-c647b1dd7ac9/download/viajesinstitucionales2017.xls'
+"
+"2","Content type 'application/vnd.ms-excel'"
+"2"," length unknown
+"
+"2","downloaded 25 KB
+
+"
+"1","Downloading ../csv_data/l01280148-videoteca-archivo-de-la-ciudad-videos-19991_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/ff83a78d-bc35-4bb0-b72d-7cdf2633fca2/resource/eaa65887-609e-40c7-8048-5bdd50b39b99/download/videos-1999.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 5200 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-actas-de-pleno-1992-20011_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/e8810dc2-d7d0-477b-807f-8216c6ce455b/resource/14e1cadf-e9ca-4a75-b800-ddbd065fe19b/download/actas-1992-2001.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 17 KB
+
+"
+"1","Downloading ../csv_data/l01280148-actas-de-pleno-2002-20111_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/bb4d9325-4f43-4a2d-9040-881c6cce6cf9/resource/390645cb-c838-4fcb-89ab-308f199a8623/download/actas-2002-2011.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 12 KB
+
+"
+"1","Downloading ../csv_data/l01280148-acuerdos-de-pleno-municipal-2015-2018_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/c59d06f3-0a8a-4239-8e94-94d9fce1fc10/resource/a1db0f79-8c8f-4157-b882-5a509320d2da/download/acuerdospleno2015-2018.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 137 KB
+
+"
+"1","Downloading ../csv_data/l01280148-afiliaciones-seguridad-social-1999-20121_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/dc12641d-1fb3-4c10-b557-da27e090685a/resource/6d339755-ae23-4466-adcb-5abf687720c2/download/afiliadosalas.s.porregimenestotalmunicipio19992015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 631 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-agenda-eventos-deportivos-junio-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/532b34c6-d1bf-4ebc-9512-f26496388fdc/resource/457fd81c-d4d4-4258-9543-12805b6a0dc0/download/deporteseventosjunio-2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 2687 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-agenda-eventos-deportivos-septiembre-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/5a3d7d6c-88ff-490a-879e-15cab79f45bb/resource/457f0401-e635-484e-abfb-1e5602a210bd/download/deporteseventosseptiembre2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 2897 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-alcaldes1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/0ec5f271-8637-4887-b21f-b7b62a8b16e2/resource/6c6daa58-5820-4b0d-9d70-424f5c28829b/download/alcaldes.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1583 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-bachillerato-centros-publicos-unidades-2013-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/620f87ed-dfb4-41cc-82b7-8963e98f5765/resource/ff3683bc-9317-4056-be69-dfb82c4f0e6b/download/institutocentros-publicosunidadesbachill.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 132 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-bibliotecas-municipales-fondos-1985-2015_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/4e9ff743-1376-4801-9555-fe2bebe3d2c0/resource/6e891e05-3cef-4c94-a57a-5c818c99db8f/download/estadistica-bibliotecas-publicas.-total-fondos.-1985-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 420 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-bibliotecas-municipales-prestamos-1985-2015_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/caf6d40f-671f-4672-9b72-4b265b4be901/resource/08dc5d01-4277-4438-9502-356c943914a7/download/estadistica-bibliotecas-publicas.-total-prestamos.-1985-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 649 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-bibliotecas-municipales-usuarios-1985-2015_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/edb466c5-8525-463d-bae9-f022dfadbb54/resource/103948ae-6c4f-46bd-a9e8-ae148c03b12f/download/estadistica-bibliotecas-publicas.-usuarios-inscritos.-1985-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 369 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-bibliotecas-municipales-usuarios-mediateca-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/f651b71a-a89c-47ab-b83a-c757f5f47784/resource/deba2ba0-6337-40cf-abb2-2681858c38a2/download/bibliotecasmunicipalesusuariosmediateca2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 110 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-consumo-energia-electrica-alumbrado-publico-2016_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/912ea2d5-713a-4b0e-922a-ca6397edeab8/resource/f4898447-19e2-438d-8d36-18b3d53df1a9/download/consumos-energia-electrica-alumbrado-publico-2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 693 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-consumo-energia-electrica-centros-municipales-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/4f1154de-dff2-4d33-b685-0a987abea3b9/resource/a422aa55-8a5f-4e1c-adc5-4b8a2f4248bb/download/consumos-energia-electrica-centros-municipales2016-.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 428 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-consumo-gas-centros-publicos-municipales-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/331f868d-ebf3-4053-bb6b-487f098c91b2/resource/889acb6b-158e-46f8-9a38-8d1e5d47896e/download/consumos-gas.centros-municipales-2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 125 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-mayores-1980-20101_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/63687bf2-d45e-4bd2-9c13-f23c6401411b/resource/3379360e-5d31-4974-89ff-ec6bdde45da4/download/expedientes-de-contratos-mayores19802010.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 322 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-mayores-3-trimestre-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/f53c0e53-2f5a-41a5-90a7-03748cae3148/resource/1cebd77a-c4df-4a9a-aa22-71504ce8df14/download/contratosmayores3-trismestre-2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1846 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-mayores-4-trimestre-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/a3694a61-7e1b-4797-b138-39e4f88c22b4/resource/9357220c-4e5c-4ab6-a695-41564fb1badf/download/macontratosmayores4trimestres-2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 2079 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-menores-1-trimestre-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/9b014db0-81c6-46ab-9d83-e6128df86e53/resource/051832ef-9f8c-491e-95a1-3183634eb8ab/download/contratosmenores1-trimestre-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 6602 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-menores-1-trimestre-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/7a3486ab-ed82-4b32-93d3-381ae1e194ef/resource/9212b93b-4cd5-41ba-84b0-6c39e8d6dbc7/download/contratosmenores1trimestre2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 11 KB
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-menores-2-trimestre-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/32a84f42-2d5a-44cf-9265-3ef1775768d7/resource/3d053b37-f774-4daf-958f-0d3a0cbda9c1/download/contratosmenores2trimestre2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 53 KB
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-menores-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/20a23c89-eb59-47ef-883e-44a2c671b4f0/resource/5acb0ae0-558b-4ca8-9278-a8d1cd659eb0/download/contratosmenores2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 156 KB
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-menores-3-trimestre-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/7679b92b-9ad5-41c2-ba5c-32bdc7e0af86/resource/579d86b9-d55b-4911-b5e8-9e94771ede1e/download/contratosmenores3-trimestre-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 43 KB
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-menores-4-trimestre-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/0a41c244-ec25-4889-a3bf-0c7878d9edf3/resource/507e88f8-4ea9-46b5-b05d-5209f57a2aa5/download/contratosmenores4trimestre2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 43 KB
+
+"
+"1","Downloading ../csv_data/l01280148-convenios-administrativos-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/bdec3f3a-01f6-46a9-a5bb-9232789500a0/resource/02e371fa-f482-426c-9b17-3aabbcd6acee/download/convenios-administrativos-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1875 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-cursillos-deportivos-2-trimestre-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/8684f0eb-7931-400b-aef5-9cd4d14ca299/resource/2bf8ed3f-1cd6-4ca9-8cc3-67b02fb9044b/download/cursillosdeportivos2-trimestre2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 386 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-directorio-de-servicios-municipales1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/9e7e2656-2304-4fd7-8264-5dbde9985417/resource/bfadc23d-ddb2-48dc-958d-4484c524838c/download/directorio-servicios-municipales.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 5798 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-documentacion-notarial-municipio-2010-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/bb8079e5-1425-467c-ab87-860e3d1aba6d/resource/d3dfeb5b-fc76-4bf0-9577-0975a0342479/download/sectorpublicodocumentacionnotarialhistoricototalmunicipio20102014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1348 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-educacion-infantil-alumnos-con-necesidades-educativas-especiales-2015-2016_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/e720053c-fc89-40b2-9fc9-38c041b4a5f2/resource/eed6a95d-c4a9-4502-adc4-614431d40b8b/download/colegiostotalacneeprimaria.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 112 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-educacion-infantil-centros-concertados-alumnos-2010-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/99f61940-eed8-422c-94c5-e98da1211db1/resource/0a1c448c-2058-404a-9b03-494a1ce5d724/download/colegioscentros-concertadosalumnosinf.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 246 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-educacion-infantil-centros-concertados-alumnos-con-necesidades-educativas-especiales-2015-2016_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/6433f8fe-db8a-4ebc-9c7c-34c9578b653c/resource/5d5c10d8-0866-47c0-a103-5615f5a5f48f/download/colegioscentros-concertadosacneeinf.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 68 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-educacion-para-la-salud-ambito-educativo-2014-2015-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/334832fd-a7ea-4644-bcba-645f0267cd14/resource/bb5bb4aa-93f0-45f4-8da1-f648d84533ae/download/educacion-para-la-salud-ambito-educativo201420152016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 201 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-educacion-primaria-alumnos-con-necesidades-educativas-especiales-2015-2016_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/0a2b5d54-6c1b-4371-af02-3bc83db0531b/resource/9b385cc8-7a50-43c9-abaa-24118e84e082/download/colegiostotalacneeprimaria.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 112 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-educacion-primaria-centros-concertados-vacantes-2011-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/83157fd0-2974-4d61-a248-8d6443676247/resource/93eda0e7-3568-455b-ace6-07a49761f0f1/download/colegioscentros-concertadosvacantesprimaria.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 291 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-educacion-primaria-centros-publicos-vacantes-2010-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/bc1378a3-77ec-424a-b340-996793a881b9/resource/5a9c9106-db7b-4f38-90be-06014d41cb76/download/colegioscentros-publicosvacantesprimaria.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 302 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-elecciones-senado-1986-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b4cfab32-048e-4eba-876d-dc558d207865/resource/f90ad0c0-5762-439f-81d4-ca809d5ce4d1/download/eleccionessenado1989datosparticipacion.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 274 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-elecciones-senado-1986-20161_2.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b4cfab32-048e-4eba-876d-dc558d207865/resource/f8d1b0ba-65c1-4b38-afe2-d3f41849bfa8/download/eleccionessenado2008datosescrutinio.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 5369 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-elecciones-senado-1986-20161_3.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b4cfab32-048e-4eba-876d-dc558d207865/resource/16653d9a-8300-47ec-9226-25bc89af392f/download/eleccionessenado2004datosparticipacion.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 274 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-escuela-de-musica-y-danza-oferta-de-plazas-y-preinscripciones-2015-2016_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b1c84584-4791-41e4-95c5-7c564657f47e/resource/e7b38f91-c082-4e06-b168-0b246de56317/download/escuela-de-musica.-2015-2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 196 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-eso-centros-concertados-alumnos-con-necesidades-educativas-especiales-2015-2016_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/40e9aaa3-c0d2-4f5e-913a-3382d5f17016/resource/1a4f59cf-cfd0-4e87-97aa-2bdeb4ddac09/download/institutocentros-concertadosacneeeso.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 63 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-expedientes-de-seleccion-de-personal-1980-20061_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/ed738cc4-9a6f-4bdc-92b5-8fbf513f8509/resource/4b0243ab-f0cd-4704-b194-beaf3e5d729a/download/expedientesdeselecciondepersonal19802006.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 252 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-expedientes-disciplina-industrial-1980-2016_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/321029ed-5109-40a5-a7ff-3a6beb5cbb31/resource/346a68ee-a32d-45b8-8fe8-03855604e53d/download/expedientes-disciplinarios-industria.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 415 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-expedientes-disciplina-urbanistica-1980-2004_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/e4c0a90f-1e11-410b-81fd-6072d422b442/resource/0700b0fb-a399-40f7-aede-507ab9154d7f/download/expedientes-disciplina-urbanismo1980-2004.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 246 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-hemeroteca-archivo-de-la-ciudad-revista-la-voz-de-arganda1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/0eade8d2-6485-4278-969d-58d3ed78aa84/resource/bbbf8d9c-502c-4bb6-91b1-836d97ec78a6/download/hemeroteca-la-voz-de-arganda.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 7137 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-humedad-relativa-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/5d3fd3c1-2ac2-414b-bed1-4a15c358d75f/resource/3f69afdd-6ea0-4837-af8e-8908cae73f51/download/humedad-relativa.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 204 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-inventario-patrimonio-municipal-bienes-inmuebles-19911_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b3efcf62-9588-4feb-8f98-9565f6325429/resource/fb9de7b7-8de3-43a1-a56d-20be6994d2b5/download/inventario-patrimonio-municipal-bienes-inmuebles.-1991.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 55 KB
+
+"
+"1","Downloading ../csv_data/l01280148-parque-de-vehiculos-automoviles-antiguedad-media-2013-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/838b5966-e3e1-40cf-a3ea-aaaa3f0faebb/resource/d8a91646-8255-4c01-afb4-24e549a3c7c1/download/parque-de-vehiculos-automovilesantiguedad-media20132015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 151 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-patrimonio-cultural-arquitectura-militar1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/7614b097-de3c-4774-8960-acbb9501c51f/resource/891d3c94-2b8c-40d3-bf0e-57c192ee826f/download/patrimonioculturalarquitecturamilitar.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 59 KB
+
+"
+"1","Downloading ../csv_data/l01280148-patrimonio-cultural-esculturas1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b7e805f6-83dd-41ac-8340-806516d60f18/resource/ab84992e-58e3-49ec-9d04-d87074da3049/download/patrimonioculturalescultura.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 107 KB
+
+"
+"1","Downloading ../csv_data/l01280148-pensiones-contributivas-municipio-2013-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/c720c699-7214-4704-b6d5-31cc30ca261f/resource/ce7a50cb-5fb3-4cc7-b598-be8bd48d6519/download/pensiones-contributivas-municipio-20132016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 467 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-poblacion-extranjera-por-nacionalidades-010120161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/57966372-bd0f-424b-94a0-0392fd16294c/resource/52150c9f-7c5c-4d57-b6bc-3ddb64e8127e/download/poblacion-por-nacionalidades-2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1525 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-poblacion-extranjera-por-nacionalidades-010120161_2.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/57966372-bd0f-424b-94a0-0392fd16294c/resource/73731ae1-25fe-48a7-a6c3-07ba46c0a9ae/download/comparativa-espanoles-y-extranjeros-2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 103 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-poblacion-hombres-01-01-20181_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/345dd4e0-888b-4722-b885-366abb1b80cd/resource/39610491-f3de-4e9a-a203-8765f9f6c445/download/poblacion.-total-hombres-2018.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 443 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-poblacion-total-010120161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/3ac58774-6117-491c-bd13-046a9a53663e/resource/51208933-1a79-4b0a-b092-49e4fe32c3a1/download/poblacion-total-por-edades-y-sexo.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 465 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-poblacion-total-mujeres-010120171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/8139ed2d-8a19-4a00-8cee-1fb8a2e62f15/resource/c98580fe-c154-4302-a48b-6e14e7fce73c/download/poblacion-total-mujeres.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1511 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-precipitacion-2006-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/9a2559b3-b05a-41d5-b429-5aa74a1d643d/resource/2efeb2e2-5d61-4417-a7b4-79754f51a329/download/precipitacion.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 151 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-presion-barometrica-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/5d173b9c-31d9-436d-bf51-777c06164f0e/resource/a4e1af7d-fd8b-4752-833c-d9d2f3ed2905/download/presion-barometrica.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 236 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-presupuestos-municipales-liquidados-2001-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/94e3aa6d-e759-4961-b873-544fc21c7fef/resource/fa47028f-fa41-446b-95e9-e9f444e39d0e/download/presupuestos-municipales-liquidadosarganda20012014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 2551 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-procedimientos-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/462f0331-c05b-4575-8428-6d008c4088c8/resource/6d4a8457-23ee-4ef9-92df-6d4ae1a4fb80/download/procedimientos2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1.1 MB
+
+"
+"1","Downloading ../csv_data/l01280148-salud-prevencion-drogadiccion-secundaria-2014-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/986186a8-60f7-4540-90ba-b4fd866374fb/resource/e29d394a-a49b-4afe-80fe-d7e5f82acded/download/salud-prevencion-drogadiccion-secundaria20142016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 490 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-salud-reclamaciones-y-consultas-2014-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/ed63280a-d7bb-4b66-9f74-57f36aa9f64e/resource/af082849-5e06-4cb1-ba2f-5812e3f14d87/download/reclamaciones-consultas-recibidas-2014-2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 438 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-actuaciones-de-seccion-del-menor-en-educacion-vial-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/5641955c-6b04-4413-bd13-3c956201deee/resource/ea352f76-e7e3-40a4-be55-312a4e47e1f6/download/seguridad-ciudadana.-actuaciones-de-seccion-menor-en-educacion-vial.-2014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 122 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-actuaciones-de-unidad-de-planificacion-atencion-ciudadana-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/0e7e2432-6e20-4d79-bb17-ca9bd196eafb/resource/62b67166-74ed-4d31-a19d-8a54a44234b1/download/controdgtcamiones2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 99 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-delitos-contra-la-seguridad-vial-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b66642b3-437a-41e2-a49c-8c3cf7f403c5/resource/dc6f3fbd-2162-40fd-b42c-77fdd18385a4/download/trafico-delitos-s-v2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 217 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-denuncias-de-trafico-jefatura-provincial-de-trafico-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/e3ba9423-9eaf-45af-b2df-872d064f6b10/resource/6a102df2-8e56-4181-a278-75a831465e3b/download/denunciastraficojpt2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 3002 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-objetos-perdidos-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/07568695-905f-4ba2-947e-dacc362aad9f/resource/d5bf1d2c-5dc2-40a8-ba69-f2a4f55de80d/download/seguridad-ciudadana.-objetos-perdidos.-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 164 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-tipo-de-objetos-perdidos-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/59c8a56f-83df-4824-aa9c-d922d411e24d/resource/4f116945-1403-4dca-8518-f2975a985994/download/seguridad-ciudadana-tipo-de-objetos-perdidos-2014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 124 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-tipo-de-siniestralidad-de-trafico-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/4e936cf2-0b7a-4fce-a110-6d76e5607200/resource/0b10d3a1-1073-4427-a1a4-f662d98497d4/download/seguridad-ciudadana.-tipo-de-siniestralidad-de-trafico.-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 117 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-trafico-delitoso-seguridad-vial-20141_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/5be03646-0e6e-4669-b87b-f84a184ebe8f/resource/e5c060e7-e2e6-4f66-9909-324fb2c35d5b/download/seguridad-ciudadana.-trafico-delitoso.-seguridad-vial.-2014.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 185 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-vehiculos-implicados-en-accidentes-de-trafico-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/85506684-4f92-43e8-9376-fc0e8837b3ee/resource/7ae2cbea-be5f-49a0-96a5-519ebe7e773f/download/seguridad-ciudadana.-vehiculos-implicados-en-accidentes-de-trafico.-2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 184 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-vehiculos-retirados-por-la-grua-municipal-forma-de-pago-20151_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/32dc1bbe-3da7-40aa-867a-e0d0cc395aae/resource/53991be5-d1dc-41fc-8ac2-f0373466bdb8/download/forma-de-cobrogruas2015.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 73 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-subvencion-participacion-20171_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/64dbb16a-663f-46b4-989c-3aac421f2f75/resource/e13ed104-eeeb-4443-9934-619318b941b5/download/asociaciones-subvencionadas-2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1242 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-subvenciones-deportivas-ampas-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/45f476e3-5878-441c-9ec3-e57443ef81a0/resource/c6686506-a57a-406c-bd69-88187682a6bd/download/subvencionesdeportivasampas2016.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 343 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-tramites-secretaria1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/a53d5764-e964-4836-a128-e8fd4c419527/resource/13357578-0a4f-494d-adcb-7ff1f445367e/download/tramitessecretaria.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 785 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-tramites-solicitudes-genericas1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/e59800ea-00cb-422a-bed0-2a2128b6b833/resource/2e96aa4b-f171-43bd-a02e-bb9d357f0805/download/tramites-generales.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 3264 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-tramites-urbanismo1_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/cefdc216-9007-4f4d-bcf3-977e7b77882b/resource/eba4cf93-83fd-40e9-bdba-839b362a1138/download/tramitesurbanismo.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 6740 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-velocidad-del-viento-20161_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/a69b23a8-a802-438c-8a40-4099694a5f7e/resource/b32e21e6-c3f2-434b-a392-ca66c3da7be7/download/velocidad-del-viento.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 199 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-videoteca-archivo-de-la-ciudad-videos-19981_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/884d92a4-202d-44d1-b40e-2ec22b928ddd/resource/3ed5071d-d144-4926-82e5-8fa26c406b79/download/videos-1998.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 81 KB
+
+"
+"1","Downloading ../csv_data/l01280148-eventos-deportivos-septiembre-2018_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b37fb5b4-9389-4128-a684-4d6d14d8ac9b/resource/83c03652-70f8-4c1a-b207-113437620fa1/download/eventos-deportivos-septiembre-2018.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1877 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-contratos-menores-3-trimestre-2018_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/9d990e5e-da48-4f9b-ae7c-a697cd396afd/resource/1fcf5248-e0f6-42c4-86b9-cec8254d081b/download/tercer-trimestre-menores-2018.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 44 KB
+
+"
+"1","Downloading ../csv_data/l01280148-sanciones-infraccion-omt-3-trimestre-2018_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/7ea5bbac-753b-4dd6-8c52-f3da4fb32920/resource/c621d371-e0ee-4f3d-b891-4769fa4bec60/download/sanciones-3trimestre-2018.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 87 KB
+
+"
+"1","Downloading ../csv_data/l01280148-eventos-deportivos-noviembre2018_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/b9d11fff-c1bb-4796-bb59-82d9193510dd/resource/15135fe9-df26-4abc-b639-12bc56ddf1cb/download/eventos_noviembre.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 1029 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-inspeccion-de-obras-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/759d8d4d-f795-43fa-b16c-f840f039bbc2/resource/321db45c-3cda-4443-a85d-ae62eb9f0def/download/seguridad-ciudadana_obras_2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 228 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-accidentes-atendidos-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/1dd3622a-c031-44fe-8e71-664723e9a950/resource/a8b1360a-8deb-4f32-bf9c-ad4d51400f53/download/accidentes_atendidos_2017.csv'
+"
+"2","Content type 'text/csv'"
+"2"," length unknown
+"
+"2","downloaded 137 bytes
+
+"
+"1","Downloading ../csv_data/l01280148-seguridad-ciudadana-drogas-detectadas-en-pruebas-2017_1.csv"
+"1","
+"
+"2","trying URL 'https://datosabiertos.ayto-arganda.es/dataset/967eb95e-f75d-4453-b4ca-25027e9096fa/resource/e08d3eb9-b9f7-4b14-b538-fd5c8e4b69fb/download/seguridad-ciudadana.-drogas-detectadas-en-pruebas.-2017.csv'
+"
