@@ -1,0 +1,2 @@
+"0","page_four <- magick::image_read_pdf(all_pages[4])"
+"0","image_resize(page_four, geometry_size_percent(width = 40))"

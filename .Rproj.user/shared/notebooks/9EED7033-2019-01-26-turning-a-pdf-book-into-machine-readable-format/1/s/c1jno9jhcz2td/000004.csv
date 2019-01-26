@@ -1,0 +1,15 @@
+"0","library(magick)"
+"0","Sys.setenv(JAVA_HOME=""C:/Program Files/Java/jdk-11.0.2/"")"
+"0","library(tabulizer)"
+"0",""
+"0","url <- ""https://www.ssc.wisc.edu/~wright/Published%20writing/FallingIntoMarxismChoosingToStay.pdf"""
+"0","all_pages <- tabulizer::split_pdf(url)"
+"2","WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by RJavaTools to method java.util.ArrayList$Itr.hasNext()
+WARNING: Please consider reporting this to the maintainers of RJavaTools
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release"
+"2","
+"
+"0","page <- magick::image_read_pdf(all_pages[4])"
+"0","image_resize(page, geometry_size_percent(width = 40))"

@@ -1,0 +1,8 @@
+"0",""
+"0","first_page <- image_ocr(first_page)"
+"0","###"
+"0",""
+"0",""
+"0","### Last page"
+"0","last_page <- magick::image_read_pdf(all_pages[14])"
+"0","image_resize(last_page, geometry_size_percent(width = 30))"

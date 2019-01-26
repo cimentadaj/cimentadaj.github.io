@@ -1,0 +1,477 @@
+---
+title: Turning a pdf book into machine readable format
+author: Jorge Cimentada
+date: '2019-01-26'
+slug: turning-a-pdf-book-into-machine-readable-format
+categories: []
+tags: ['machine-learning', 'R', 'projects']
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+
+
+<p>A few days ago a well known Sociologist, Erik Olin Wright, died from Leukemia. Torkild Lyngstand then <a href="https://twitter.com/torkildl/status/1088325262758969344">posted on twitter</a> his <a href="https://www.ssc.wisc.edu/~wright/Published%20writing/FallingIntoMarxismChoosingToStay.pdf">‘intellectual biography’</a> which is an interesting document that outlines how he ended up being a Marxist. This document is a pdf book that has two actual book pages per pdf page.</p>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-1-1.png" width="702" /></p>
+<p>Although this is perfectly fine for reading on a computer, I usually don’t like to read anything longer than 15 pages on my computer. So I decided I would turn this book into machine readable text with R for my Kindle.</p>
+<p>Spoiler: I couldn’t do it, so help me out!</p>
+<p>Firs things first. I will use the <code>magick</code> and <code>tabulizer</code> packages. <code>tabulizer</code> has a dependency with <code>rJava</code> which is a bit difficult to handle. I wrote <a href="blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/index.html">this blogpost</a> explaining how to install <code>rJava</code> on Windows 10 and it’s helped me inmensely not to waste time in the installation process.</p>
+<p>After installing both packages successfully, I loaded them, and split the pdf into separate pages using <code>tabulizer::split_pdf</code>.</p>
+<pre class="r"><code>library(magick)
+Sys.setenv(JAVA_HOME=&quot;C:/Program Files/Java/jdk-11.0.2/&quot;)
+library(tabulizer)
+
+url &lt;- &quot;https://www.ssc.wisc.edu/~wright/Published%20writing/FallingIntoMarxismChoosingToStay.pdf&quot;
+all_pages &lt;- tabulizer::split_pdf(url)
+
+all_pages</code></pre>
+<pre><code>##  [1] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac401.pdf&quot;
+##  [2] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac402.pdf&quot;
+##  [3] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac403.pdf&quot;
+##  [4] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac404.pdf&quot;
+##  [5] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac405.pdf&quot;
+##  [6] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac406.pdf&quot;
+##  [7] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac407.pdf&quot;
+##  [8] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac408.pdf&quot;
+##  [9] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac409.pdf&quot;
+## [10] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac410.pdf&quot;
+## [11] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac411.pdf&quot;
+## [12] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac412.pdf&quot;
+## [13] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac413.pdf&quot;
+## [14] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac414.pdf&quot;</code></pre>
+<p><code>tabulizer::split_df</code> saved each page on a separate pdf in a temporary directory. Now we only have to develop a function to clean one page and apply it to all middle pages (that is, excluding the first and last because they have a slightly different format).</p>
+<p>After hard work, I developed the function <code>convert_page</code> which accepts one pdf page crops all the corners so that only text is available.</p>
+<pre class="r"><code>convert_page &lt;- function(page) {
+  page &lt;- magick::image_read_pdf(page)
+  separator &lt;- image_info(page)$width / 2
+  first_page &lt;- image_crop(page, geometry_area(width = separator))
+  second_page &lt;- image_crop(page, geometry_area(x_off = separator, y_off = 1))
+  
+  size &lt;- geometry_area(width = 1400,
+                        height = 2200,
+                        x_off = 300,
+                        y_off = 200)
+  
+  first_page &lt;- image_crop(first_page, size)
+  
+  
+  size &lt;- geometry_area(width = 1400,
+                        height = 2200,
+                        x_off = 130,
+                        y_off = 200)
+  
+  second_page &lt;- image_crop(second_page, size)
+  
+  f_text &lt;- image_ocr(first_page)
+  s_text &lt;- image_ocr(second_page)
+  
+  complete_page &lt;- paste0(f_text, s_text)
+  
+  complete_page
+}</code></pre>
+<p>Let’s look at an actual example. Below is a picture of page 4:</p>
+<pre class="r"><code>page_four &lt;- magick::image_read_pdf(all_pages[4])
+image_resize(page_four, geometry_size_percent(width = 40))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-5-1.png" width="702" /></p>
+<p><code>convert_page</code> crops the sides to obtain the leftmost page:</p>
+<pre class="r"><code>separator &lt;- image_info(page_four)$width / 2
+first_page &lt;- image_crop(page_four, geometry_area(width = separator))
+second_page &lt;- image_crop(page_four, geometry_area(x_off = separator, y_off = 1))
+
+size &lt;- geometry_area(width = 1400,
+                      height = 2200,
+                      x_off = 300,
+                      y_off = 200)
+
+first_page &lt;- image_crop(first_page, size)
+
+
+size &lt;- geometry_area(width = 1400,
+                      height = 2200,
+                      x_off = 130,
+                      y_off = 200)
+
+second_page &lt;- image_crop(second_page, size)
+
+image_resize(first_page, geometry_size_percent(width = 40))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-6-1.png" width="280" /></p>
+<p>And for the rightmost page:</p>
+<pre class="r"><code>image_resize(second_page, geometry_size_percent(width = 40))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-7-1.png" width="280" /></p>
+<p>Finally, it converts and merges both pages into text with:</p>
+<pre class="r"><code>f_text &lt;- image_ocr(first_page)
+s_text &lt;- image_ocr(second_page)
+
+complete_page &lt;- paste0(f_text, s_text)
+
+cat(complete_page)</code></pre>
+<pre><code>## thusiastic and involved in their children’s school projects and intellectual pur-
+## suits. My mother would carefully go over term papers with each of us, giving us
+## both editorial advice and substantive suggestions. We were members of the Law-
+## rence Unitarian Fellowship, which was made up of, to a substantial extent, uni-
+## versity families. Sunday morning services were basically interdisciplinary semi-
+## nars on matters of philosophical and social concern; Sunday school was an
+## extended curriculum on world religions. | knew by about age ten that | wanted
+## to be a professor. Both of my parents were academics. Both of my siblings be-
+## came academics. Both of their spouses are academics. (Only my wife, a clinical
+## psychologist, is not an academic, although her father was a professor.) ‘The only
+## social mobility in my family was interdepartmental. It just felt natural to go into
+## the family business.
+## 
+## Lawrence was a delightful, easy place to grow up. Although Kansas was a po-
+## litically conservative state, Lawrence was a vibrant, liberal community. My ear-
+## liest form of political activism centered on religion: | was an active member of a
+## Unitarian youth group called Liberal Religious Youth, and in high school { went
+## out of my way to argue with Bible Belt Christians about their belief in God. The
+## early 1960s also witnessed my earliest engagement with social activism. The civil
+## rights movement came to Lawrence first in the form of an organized boycott of
+## a local segregated swimming pool in the 1950s and then in the form of civil rights
+## rallies in the 1960s. In 1963 I went to the Civil Rights March on Washington and
+## heard Martin Luther King Jr’s “I have a dream” speech. My earliest sense of pol-
+## itics was that at its core it was about moral questions of social justice, not prob-
+## lems of economic power and interests.
+## 
+## My family, also, was liberal, supporting the civil rights movement and other
+## liberal causes; but while the family culture encouraged an intellectual interest in
+## social and moral concerns, it was not intensely political. We would often talk
+## about values, and the Unitarian Fellowship we attended also stressed humanis-
+## tic, socially concerned values, but these were mostly framed as matters of indi-
+## vidual responsibility and morality not as the grounding of a coherent political
+## challenge to social injustice. My only real exposure toa more radical political per-
+## spective came through my maternal grandparents, Russian Jewish immigrants
+## who had come to the United States before World War I and lived near us in Law-
+## rence, and my mother’s sister’s family in New York. Although I was not aware of
+## this at the time, my grandparents and the New York relatives were Communists.
+## This was never openly talked about, but from time to time I would hear glowing
+## things said about the Soviet Union, socialism would be held out as an ideal, and
+## America and capitalism would be criticized in emotionally laden ways. My cous-
+## ins in New York were especially vocal about this, and in the mid-1g60s when I be-
+## came more engaged in political matters, intense political discussions with my
+## New York relatives contributed significantly to anchoring my radical sensibilities.
+## 
+## My interest in social sciences began in earnest in high school. fn Lawrence it
+## was easy for academically oriented kids to take courses at the University of Kan-
+## sas, and in my senior year | took a political science course on American politics.
+## For my term project | decided to do a survey of children’s attitudes toward the
+## American presidency and got permission to administer a questionnaire to several
+## hundred students from grades 1-12 in the public schools. | then organized a party
+## with my friends to code the data and produce graphs of how various attitudes
+## changed by age. I&#39;he most striking finding was that, in response to the question,
+## “Would you like to be President of the United States when you grow up?” there
+## were more girls who said yes than boys through third grade, after which the rate
+## for girls declined dramatically.
+## 
+## By the time I graduated from high school in 1964, I had enough university
+## credits and advanced placement credits to enter KU as a second-semester soph-
+## omore, and that is what | had planned to do. Nearly all of my friends were going
+## to KU. It just seemed like the thing to do. A friend of my parents, Karl Heider,
+## gave me, as a Christmas present in my senior year in high school, an application
+## form to Harvard. He was a graduate student at Harvard in anthropology at the
+## time. I filled it out and sent it in. Harvard was the only place to which I applied,
+## not out of inflated self-confidence but because it was the only application I got as
+## a Christmas present. When | eventually was accepted (initially I was on the wait-
+## ing list), the choice was thus between KU and Harvard. I suppose this was a
+## “choice” since I could have decided to stay at KU. However, it just seemed so ob-
+## vious; there was no angst, no weighing of alternatives, no thinking about the pros
+## and cons. Thus, going to Harvard in a way just happened.
+## 
+## Like many students who began university in the mid-1960s, my political ideas
+## were rapidly radicalized as the Viet Nam War escalated and began to impinge on
+## our lives. I was not a student leader in activist politics, but I did actively partici-
+## pate in demonstrations, rallies, fasts for peace, and endless political debate. At
+## Harvard I majored in social studies, an intense interdisciplinary social science
+## major centering on the classics of social theory, and in that program I was first ex-
+## posed to the more abstract theoretical issues that bore on the political concerns
+## of the day: the dynamics of capitalism, the nature of power and domination, the
+## importance of elites in shaping American foreign policy, and the problem of</code></pre>
+<p>If we pass the pdf page directly to <code>convert_page</code>, it will do it all in one take:</p>
+<pre class="r"><code>cat(convert_page(all_pages[4]))</code></pre>
+<pre><code>## thusiastic and involved in their children’s school projects and intellectual pur-
+## suits. My mother would carefully go over term papers with each of us, giving us
+## both editorial advice and substantive suggestions. We were members of the Law-
+## rence Unitarian Fellowship, which was made up of, to a substantial extent, uni-
+## versity families. Sunday morning services were basically interdisciplinary semi-
+## nars on matters of philosophical and social concern; Sunday school was an
+## extended curriculum on world religions. | knew by about age ten that | wanted
+## to be a professor. Both of my parents were academics. Both of my siblings be-
+## came academics. Both of their spouses are academics. (Only my wife, a clinical
+## psychologist, is not an academic, although her father was a professor.) ‘The only
+## social mobility in my family was interdepartmental. It just felt natural to go into
+## the family business.
+## 
+## Lawrence was a delightful, easy place to grow up. Although Kansas was a po-
+## litically conservative state, Lawrence was a vibrant, liberal community. My ear-
+## liest form of political activism centered on religion: | was an active member of a
+## Unitarian youth group called Liberal Religious Youth, and in high school { went
+## out of my way to argue with Bible Belt Christians about their belief in God. The
+## early 1960s also witnessed my earliest engagement with social activism. The civil
+## rights movement came to Lawrence first in the form of an organized boycott of
+## a local segregated swimming pool in the 1950s and then in the form of civil rights
+## rallies in the 1960s. In 1963 I went to the Civil Rights March on Washington and
+## heard Martin Luther King Jr’s “I have a dream” speech. My earliest sense of pol-
+## itics was that at its core it was about moral questions of social justice, not prob-
+## lems of economic power and interests.
+## 
+## My family, also, was liberal, supporting the civil rights movement and other
+## liberal causes; but while the family culture encouraged an intellectual interest in
+## social and moral concerns, it was not intensely political. We would often talk
+## about values, and the Unitarian Fellowship we attended also stressed humanis-
+## tic, socially concerned values, but these were mostly framed as matters of indi-
+## vidual responsibility and morality not as the grounding of a coherent political
+## challenge to social injustice. My only real exposure toa more radical political per-
+## spective came through my maternal grandparents, Russian Jewish immigrants
+## who had come to the United States before World War I and lived near us in Law-
+## rence, and my mother’s sister’s family in New York. Although I was not aware of
+## this at the time, my grandparents and the New York relatives were Communists.
+## This was never openly talked about, but from time to time I would hear glowing
+## things said about the Soviet Union, socialism would be held out as an ideal, and
+## America and capitalism would be criticized in emotionally laden ways. My cous-
+## ins in New York were especially vocal about this, and in the mid-1g60s when I be-
+## came more engaged in political matters, intense political discussions with my
+## New York relatives contributed significantly to anchoring my radical sensibilities.
+## 
+## My interest in social sciences began in earnest in high school. fn Lawrence it
+## was easy for academically oriented kids to take courses at the University of Kan-
+## sas, and in my senior year | took a political science course on American politics.
+## For my term project | decided to do a survey of children’s attitudes toward the
+## American presidency and got permission to administer a questionnaire to several
+## hundred students from grades 1-12 in the public schools. | then organized a party
+## with my friends to code the data and produce graphs of how various attitudes
+## changed by age. I&#39;he most striking finding was that, in response to the question,
+## “Would you like to be President of the United States when you grow up?” there
+## were more girls who said yes than boys through third grade, after which the rate
+## for girls declined dramatically.
+## 
+## By the time I graduated from high school in 1964, I had enough university
+## credits and advanced placement credits to enter KU as a second-semester soph-
+## omore, and that is what | had planned to do. Nearly all of my friends were going
+## to KU. It just seemed like the thing to do. A friend of my parents, Karl Heider,
+## gave me, as a Christmas present in my senior year in high school, an application
+## form to Harvard. He was a graduate student at Harvard in anthropology at the
+## time. I filled it out and sent it in. Harvard was the only place to which I applied,
+## not out of inflated self-confidence but because it was the only application I got as
+## a Christmas present. When | eventually was accepted (initially I was on the wait-
+## ing list), the choice was thus between KU and Harvard. I suppose this was a
+## “choice” since I could have decided to stay at KU. However, it just seemed so ob-
+## vious; there was no angst, no weighing of alternatives, no thinking about the pros
+## and cons. Thus, going to Harvard in a way just happened.
+## 
+## Like many students who began university in the mid-1960s, my political ideas
+## were rapidly radicalized as the Viet Nam War escalated and began to impinge on
+## our lives. I was not a student leader in activist politics, but I did actively partici-
+## pate in demonstrations, rallies, fasts for peace, and endless political debate. At
+## Harvard I majored in social studies, an intense interdisciplinary social science
+## major centering on the classics of social theory, and in that program I was first ex-
+## posed to the more abstract theoretical issues that bore on the political concerns
+## of the day: the dynamics of capitalism, the nature of power and domination, the
+## importance of elites in shaping American foreign policy, and the problem of</code></pre>
+<p>We pass all middle pages to <code>convert_page</code> to conver them to text and check out the result:</p>
+<pre class="r"><code>middle_pages &lt;- lapply(all_pages[3:(length(all_pages) - 1)], convert_page)
+cat(middle_pages[[1]])</code></pre>
+<pre><code>## versity of Western Australia); music camp (1 played viola); assisting in a lab. And
+## in college, it was much the same: volunteering as a photographer on an archae-
+## ological dig in Hawaii; teaching in a high school enrichment program for mi-
+## nority kids; traveling in urope. The closest thing to an ordinary paying job |
+## ever had was occasionally selling hot dogs at football games in my freshman year
+## in college. What is more, the ivory towers that [ have inhabited since the mid-
+## 1960s have been located in beautiful physical settings, filled with congenial and
+## interesting colleagues and students, and animated by exciting ideas. This, then,
+## is the first fundamental fact of my life as an academic: [ have been extraordinar-
+## ily lucky and have always lived what can only be considered a life of extreme priv-
+## ilege. Nearly all of the time [ am doing what [ want to do; what I do gives me a
+## sense of fulfillment and purpose; and | am paid well for doing it.
+## 
+## Here is the second fundamental fact of my academic life: since the early
+## 19708, my intellectual life has been firmly anchored in the Marxist tradition. The
+## core of my teaching as a professor has centered on communicating the central
+## ideas and debates of contemporary Marxism and allied traditions of emancipa-
+## tory social theory. The courses I have taught have had names like Class, State and
+## Ideology: An Introduction to Marxist Sociology; Envisioning Real Utopias; Mars-
+## ist Theories of the State; Alternative Foundations of Class Analysis. My energies
+## in institution building have all involved creating and expanding arenas within
+## which radical system-challenging ideas could flourish: creating a graduate pro-
+## gram in class analysis and historical change in the Sociology Department at the
+## University of Wisconsin—Madison; establishing the A. E. Havens Center, a re-
+## search institute for critical scholarship at Wisconsin; organizing an annual con-
+## ference for activists and academics, now called RadFest, which has been held
+## every year since 1983. And my scholarship has been primarily devoted to recon-
+## structing Marxism as a theoretical framework and research tradition. While the
+## substantive preoccupations of this scholarship have shifted over the past thirty
+## years, its central mission has not.
+## 
+## As in any biography, this pair of facts is the result of a trajectory of circum-
+## stances and choices: circumstances that formed me and shaped the range of
+## choices I encountered, and choices that in turn shaped my future circumstances.
+## Some of these choices were made easily, with relatively little weighing of alter-
+## natives, sometimes even without much awareness that a choice was actually be-
+## ing made; others were the result of protracted reflection and conscious decision
+## making, sometimes with the explicit understanding that the choice being made
+## would constrain possible choices in the future. Six such junctures of circum-
+## stance and choice seem especially important to me in shaping the contours of
+## my academic career. ‘The first was posed incrementally in the early 1970s: the
+## choice to identify my work primarily as contributing to Marxism rather than
+## simply using Marxism. The second concerns the choice, made just before grad-
+## uate school at the University of California, Berkeley, to be a sociologist, rather
+## than some other ist. ‘The third was the choice to become what some people de-
+## scribe as multivariate Marxist: to be a Marxist sociologist who engages in grandi-
+## ose, perhaps overblown, quantitative research, The fourth choice was the choice
+## of which academic department to be in. This choice was acutely posed to me
+## in 1987 when I spent a year as a visiting professor at the University of Califor-
+## nia, Berkeley. | had been offered a position there, and | had to decide whether
+## I wanted to return to Wisconsin. Returning to Madison was unquestionably a
+## choice that shaped subsequent contexts of choice. The fifth choice has been
+## posed and reposed to me with increasing intensity since the late 1980s: the
+## choice to stay a Marxist in this world of post-Marxisms when many of my intel-
+## lectual comrades have decided for various good, and sometimes perhaps not so
+## good, reasons to recast their intellectual agenda as being perhaps friendly to, but
+## outside of, the Marxist tradition. Finally, the sixth important choice was to shift
+## my central academic work from the study of class structure to the problem of en-
+## visioning real utopias.
+## 
+## To set the stage for this reflection on choice and constraint, I need to give a
+## brief account of the circumstances of my life that brought me into the arena of
+## these choices.
+## 
+## Growing Up
+## 
+## I was born in Berkeley, California, in 1947 while my father, who had received a
+## PhD in psychology before World War II, was in medical school on the GI Bill.
+## When he finished his medical training in 1951, we moved to Lawrence, Kansas,
+## where he became the head of the program in clinical psychology at Kansas Uni-
+## versity (KU) and a professor of psychiatry in the KU Medical School. Because of
+## antinepotism rules at the time, my mother, who also had a PhD in psychology,
+## was not allowed to be employed at the university, so throughout the 1950s she did
+## research on various research grants. In 1961, when the state law on such things
+## changed, she became a professor of rehabilitation psychology.
+## 
+## Life in my family was intensely intellectual. Dinner table conversation would
+## often revolve around intellectual matters, and my parents were always deeply en-</code></pre>
+<p>Ok, everything’s looking good. Because the first and last pages have different croping dimensions, I slightly adapt the <code>geometry_area</code> to do it manually:</p>
+<pre class="r"><code>### First page
+first_page &lt;- magick::image_read_pdf(all_pages[2])
+image_resize(first_page, geometry_size_percent(width = 40))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-11-1.png" width="702" /></p>
+<pre class="r"><code>separator &lt;- image_info(first_page)$width / 2
+
+size &lt;- geometry_area(width = 1400,
+                      height = 1700,
+                      x_off = separator + 100,
+                      y_off = 650)
+
+first_page &lt;- image_crop(first_page, size)
+image_resize(first_page, geometry_size_percent(width = 40))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-11-2.png" width="280" /></p>
+<pre class="r"><code>first_page &lt;- image_ocr(first_page)
+###
+
+
+### Last page
+last_page &lt;- magick::image_read_pdf(all_pages[14])
+image_resize(last_page, geometry_size_percent(width = 40))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-11-3.png" width="702" /></p>
+<pre class="r"><code>separator &lt;- image_info(last_page)$width / 2
+
+size &lt;- geometry_area(width = separator - 400,
+                      height = 500,
+                      x_off = 150,
+                      y_off = 260)
+
+last_page &lt;- image_crop(last_page, size)
+image_resize(last_page, geometry_size_percent(width = 70))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-11-4.png" width="474" /></p>
+<pre class="r"><code>last_page &lt;- image_ocr(last_page)
+###</code></pre>
+<p>Ok, the hard work is over! Now we need to merge all of the pages together and print a subset of the text:</p>
+<pre class="r"><code>final_document &lt;- paste0(first_page, Reduce(paste0, middle_pages), last_page)
+cat(paste0(substring(final_document, 0, 5000), &quot;...&quot;))</code></pre>
+<pre><code>## Falling into Marxism; Choosing to Stay
+## 
+## Erik Olin Wright received his PhD from the University of California, Berkeley, and
+## has taught at the University of Wisconsin since then. His academic work has been
+## centrally concerned with reconstructing the Marxist tradition of social theory and
+## research in ways that attempt to make it more relevant to contemporary concerns
+## and more cogent as a scientific framework of analysis. His empirical research has
+## focused especially on the changing character of class relations in developed capi-
+## talist societies. Since 1992 he has directed the Real Utopias Project, which explores
+## a range of proposals for new institutional designs that embody emancipatory ideals
+## and yet are attentive to issues of pragmatic feasibility. His principle publications
+## include The Politics of Punishment: A Critical Analysis of Prisons in America;
+## Class, Crisis and the State; Classes; Reconstructing Marxism (with Elliott Sober
+## and Andrew Levine); Interrogating Inequality; Class Counts: Comparative Stud-
+## ies in Class Analysis; and Deepening Democracy: Innovations in Empowered
+## Participatory Governance (with Archon Fung). He is married to Marcia Kahn
+## Wright, a clinical psychologist working in community mental health, and has tvo
+## grown daughters, Jennifer and Rebecca.
+## 
+## [ have been in school continuously for more than fifty vears: since I entered
+## kindergarten in 1952, there has never been a September when I wasn’t beginning
+## a school year. | have never held a nine-to-five job with fixed hours and a boss
+## telling me what to do. In high school, my summers were always spent in vari-
+## ous kinds of interesting and engaging activities — traveling home from Australia
+## where my family spent a year (my parents were Fulbright professors at the Uni-
+## versity of Western Australia); music camp (1 played viola); assisting in a lab. And
+## in college, it was much the same: volunteering as a photographer on an archae-
+## ological dig in Hawaii; teaching in a high school enrichment program for mi-
+## nority kids; traveling in urope. The closest thing to an ordinary paying job |
+## ever had was occasionally selling hot dogs at football games in my freshman year
+## in college. What is more, the ivory towers that [ have inhabited since the mid-
+## 1960s have been located in beautiful physical settings, filled with congenial and
+## interesting colleagues and students, and animated by exciting ideas. This, then,
+## is the first fundamental fact of my life as an academic: [ have been extraordinar-
+## ily lucky and have always lived what can only be considered a life of extreme priv-
+## ilege. Nearly all of the time [ am doing what [ want to do; what I do gives me a
+## sense of fulfillment and purpose; and | am paid well for doing it.
+## 
+## Here is the second fundamental fact of my academic life: since the early
+## 19708, my intellectual life has been firmly anchored in the Marxist tradition. The
+## core of my teaching as a professor has centered on communicating the central
+## ideas and debates of contemporary Marxism and allied traditions of emancipa-
+## tory social theory. The courses I have taught have had names like Class, State and
+## Ideology: An Introduction to Marxist Sociology; Envisioning Real Utopias; Mars-
+## ist Theories of the State; Alternative Foundations of Class Analysis. My energies
+## in institution building have all involved creating and expanding arenas within
+## which radical system-challenging ideas could flourish: creating a graduate pro-
+## gram in class analysis and historical change in the Sociology Department at the
+## University of Wisconsin—Madison; establishing the A. E. Havens Center, a re-
+## search institute for critical scholarship at Wisconsin; organizing an annual con-
+## ference for activists and academics, now called RadFest, which has been held
+## every year since 1983. And my scholarship has been primarily devoted to recon-
+## structing Marxism as a theoretical framework and research tradition. While the
+## substantive preoccupations of this scholarship have shifted over the past thirty
+## years, its central mission has not.
+## 
+## As in any biography, this pair of facts is the result of a trajectory of circum-
+## stances and choices: circumstances that formed me and shaped the range of
+## choices I encountered, and choices that in turn shaped my future circumstances.
+## Some of these choices were made easily, with relatively little weighing of alter-
+## natives, sometimes even without much awareness that a choice was actually be-
+## ing made; others were the result of protracted reflection and conscious decision
+## making, sometimes with the explicit understanding that the choice being made
+## would constrain possible choices in the future. Six such junctures of circum-
+## stance and choice seem especially important to me in shaping the contours of
+## my academic career. ‘The first was posed incrementally in the early 1970s: the
+## choice to identify my work primarily as contributing to Marxism rather than
+## simply using Marxism. The second concerns the choice, made just before grad-
+## uate school at the University ...</code></pre>
+<p>There we go, nicely formatted text all obtained from pdf images (after carefully revising the text there are many mistakes, but this was a lightning post, so no time to tidy up the text).</p>
+<div id="converting-the-text-to-an-epub" class="section level3">
+<h3>Converting the text to an epub</h3>
+<p>I thought this was going to be much easier, but <code>knitr</code> seems to crash when compiling this text. According to <a href="https://bookdown.org/yihui/bookdown/build-the-book.html">bookdown</a>, I would need a <code>.Rmd</code> file and then use <code>bookdown::render_book(&quot;my_book.Rmd&quot;, bookdown::epub_book())</code>. However, I cannot compile the <code>.Rmd</code> file using this text because it runs out of memory. Run the example below:</p>
+<pre class="r"><code>rmd_path &lt;- tempfile(pattern = &#39;our_book&#39;, fileext = &quot;.Rmd&quot;)
+
+rmd_preamble &lt;-&quot;---
+  title: &#39;Final Book&#39;
+  output: html_document
+---\n\n&quot;
+
+final_document &lt;- paste0(rmd_preamble, final_document)
+  
+writeLines(final_document, con = rmd_path, useBytes = TRUE)
+
+# Bookdown compiles all .Rmd in the working directory, so we move
+# to the temporary directory where the book is
+setwd(dirname(rmd_path))
+bookdown::render_book(rmd_path, bookdown::epub_book())</code></pre>
+<p>If you figure out how make to this work, I’d love to hear about it in the comment section.</p>
+</div>
