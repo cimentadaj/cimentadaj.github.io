@@ -139,7 +139,7 @@ If we pass the pdf page directly to `convert_page`, it will do it all in one tak
 cat(convert_page(all_pages[4]))
 ```
 
-We pass all middle pages to `convert_page` to conver them to text and check out the result:
+We pass all middle pages to `convert_page` to convert them to text:
 
 ```{r}
 middle_pages <- lapply(all_pages[3:(length(all_pages) - 1)], convert_page)
