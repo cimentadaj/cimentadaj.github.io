@@ -1,0 +1,219 @@
+---
+title: Turning a pdf book into machine readable format
+author: Jorge Cimentada
+date: '2019-01-26'
+slug: turning-a-pdf-book-into-machine-readable-format
+categories: []
+tags: ['machine-learning', 'R', 'projects']
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+A few days ago a well known Sociologist, Erik Olin Wright, died from Leukemia. Torkild Lyngstand then [posted on twitter](https://twitter.com/torkildl/status/1088325262758969344) his ['intellectual biography'](https://www.ssc.wisc.edu/~wright/Published%20writing/FallingIntoMarxismChoosingToStay.pdf) which is an interesting document that outlines how he ended up being a Marxist. This document is a pdf book that has two actual book pages per pdf page.
+
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+library(magick)
+Sys.setenv(JAVA_HOME="C:/Program Files/Java/jdk-11.0.2/")
+library(tabulizer)
+
+url <- "https://www.ssc.wisc.edu/~wright/Published%20writing/FallingIntoMarxismChoosingToStay.pdf"
+all_pages <- tabulizer::split_pdf(url)
+
+page <- magick::image_read_pdf(all_pages[4])
+image_resize(page, geometry_size_percent(width = 40))
+```
+
+Although this is perfectly fine for reading on a computer, I usually don't like to read anything longer than 15 pages on my computer. So I decided I would turn this book into machine readable text with R for my Kindle. 
+
+Spoiler: I couldn't do it, so help me out!
+
+Firs things first. I will use the `magick` and `tabulizer` packages. `tabulizer` has a dependency with `rJava` which is a bit difficult to handle. I wrote [this blogpost](blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/index.html) explaining how to install `rJava` on Windows 10 and it's helped me inmensely not to waste time in the installation process.
+
+After installing both packages successfully, I loaded them, and split the pdf into separate pages using `tabulizer::split_pdf`.
+
+```{r, eval = FALSE}
+library(magick)
+Sys.setenv(JAVA_HOME="C:/Program Files/Java/jdk-11.0.2/")
+library(tabulizer)
+
+url <- "https://www.ssc.wisc.edu/~wright/Published%20writing/FallingIntoMarxismChoosingToStay.pdf"
+all_pages <- tabulizer::split_pdf(url)
+
+all_pages
+```
+
+```{r, echo = FALSE}
+all_pages
+```
+
+`tabulizer::split_df` saved each page on a separate pdf in a temporary directory. Now we only have to develop a function to clean one page and apply it to all middle pages (that is, excluding the first and last because they have a slightly different format).
+
+After hard work, I developed the function `convert_page` which accepts one pdf page crops all the corners so that only text is available.
+
+```{r}
+convert_page <- function(page) {
+  page <- magick::image_read_pdf(page)
+  separator <- image_info(page)$width / 2
+  first_page <- image_crop(page, geometry_area(width = separator))
+  second_page <- image_crop(page, geometry_area(x_off = separator, y_off = 1))
+  
+  size <- geometry_area(width = 1400,
+                        height = 2200,
+                        x_off = 300,
+                        y_off = 200)
+  
+  first_page <- image_crop(first_page, size)
+  
+  
+  size <- geometry_area(width = 1400,
+                        height = 2200,
+                        x_off = 130,
+                        y_off = 200)
+  
+  second_page <- image_crop(second_page, size)
+  
+  f_text <- image_ocr(first_page)
+  s_text <- image_ocr(second_page)
+  
+  complete_page <- paste0(f_text, s_text)
+  
+  complete_page
+}
+```
+
+Let's look at an actual example. Below is a picture of page 4:
+
+```{r}
+page_four <- magick::image_read_pdf(all_pages[4])
+image_resize(page_four, geometry_size_percent(width = 40))
+```
+
+`convert_page` crops the sides to obtain the leftmost page:
+
+```{r}
+separator <- image_info(page_four)$width / 2
+first_page <- image_crop(page_four, geometry_area(width = separator))
+second_page <- image_crop(page_four, geometry_area(x_off = separator, y_off = 1))
+
+size <- geometry_area(width = 1400,
+                      height = 2200,
+                      x_off = 300,
+                      y_off = 200)
+
+first_page <- image_crop(first_page, size)
+
+
+size <- geometry_area(width = 1400,
+                      height = 2200,
+                      x_off = 130,
+                      y_off = 200)
+
+second_page <- image_crop(second_page, size)
+
+image_resize(first_page, geometry_size_percent(width = 40))
+```
+
+And for the rightmost page:
+
+```{r}
+image_resize(second_page, geometry_size_percent(width = 40))
+```
+
+Finally, it converts and merges both pages into text with:
+
+```{r}
+f_text <- image_ocr(first_page)
+s_text <- image_ocr(second_page)
+
+complete_page <- paste0(f_text, s_text)
+
+cat(complete_page)
+```
+
+
+If we pass the pdf page directly to `convert_page`, it will do it all in one take:
+
+```{r}
+cat(convert_page(all_pages[4]))
+```
+
+We pass all middle pages to `convert_page` to conver them to text and check out the result:
+
+```{r}
+middle_pages <- lapply(all_pages[3:(length(all_pages) - 1)], convert_page)
+cat(middle_pages[[1]])
+```
+
+Ok, everything's looking good. Because the first and last pages have different croping dimensions, I slightly adapt the `geometry_area` to do it manually:
+
+```{r}
+### First page
+first_page <- magick::image_read_pdf(all_pages[2])
+image_resize(first_page, geometry_size_percent(width = 40))
+
+separator <- image_info(first_page)$width / 2
+
+size <- geometry_area(width = 1400,
+                      height = 1700,
+                      x_off = separator + 100,
+                      y_off = 650)
+
+first_page <- image_crop(first_page, size)
+image_resize(first_page, geometry_size_percent(width = 40))
+
+first_page <- image_ocr(first_page)
+###
+
+
+### Last page
+last_page <- magick::image_read_pdf(all_pages[14])
+image_resize(last_page, geometry_size_percent(width = 40))
+
+separator <- image_info(last_page)$width / 2
+
+size <- geometry_area(width = separator - 400,
+                      height = 500,
+                      x_off = 150,
+                      y_off = 260)
+
+last_page <- image_crop(last_page, size)
+image_resize(last_page, geometry_size_percent(width = 70))
+
+last_page <- image_ocr(last_page)
+###
+```
+
+Ok, the hard work is over! Now we need to merge all of the pages together and print a subset of the text:
+
+```{r}
+final_document <- paste0(first_page, Reduce(paste0, middle_pages), last_page)
+cat(paste0(substring(final_document, 0, 5000), "..."))
+```
+
+There we go, nicely formatted text all obtained from pdf images (after carefully revising the text there are many mistakes, but this was a lightning post, so no time to tidy up the text).
+
+### Converting the text to an epub
+
+I thought this was going to be much easier, but `knitr` seems to crash when compiling this text. According to [bookdown](https://bookdown.org/yihui/bookdown/build-the-book.html), I would need a `.Rmd` file and then use `bookdown::render_book("my_book.Rmd", bookdown::epub_book())`. However, I cannot compile the `.Rmd` file using this text because it runs out of memory. Run the example below:
+
+```{r, eval = FALSE}
+rmd_path <- tempfile(pattern = 'our_book', fileext = ".Rmd")
+
+rmd_preamble <-"---
+  title: 'Final Book'
+  output: html_document
+---\n\n"
+
+final_document <- paste0(rmd_preamble, final_document)
+  
+writeLines(final_document, con = rmd_path, useBytes = TRUE)
+
+# Bookdown compiles all .Rmd in the working directory, so we move
+# to the temporary directory where the book is
+setwd(dirname(rmd_path))
+bookdown::render_book(rmd_path, bookdown::epub_book())
+```
+
+If you figure out how make to this work, I'd love to hear about it in the comment section.
