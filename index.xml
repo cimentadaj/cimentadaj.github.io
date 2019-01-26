@@ -34,20 +34,20 @@ url &amp;lt;- &amp;quot;https://www.ssc.wisc.edu/~wright/Published%20writing/Fal
 all_pages &amp;lt;- tabulizer::split_pdf(url)
 
 all_pages&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac401.pdf&amp;quot;
-##  [2] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac402.pdf&amp;quot;
-##  [3] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac403.pdf&amp;quot;
-##  [4] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac404.pdf&amp;quot;
-##  [5] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac405.pdf&amp;quot;
-##  [6] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac406.pdf&amp;quot;
-##  [7] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac407.pdf&amp;quot;
-##  [8] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac408.pdf&amp;quot;
-##  [9] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac409.pdf&amp;quot;
-## [10] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac410.pdf&amp;quot;
-## [11] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac411.pdf&amp;quot;
-## [12] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac412.pdf&amp;quot;
-## [13] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac413.pdf&amp;quot;
-## [14] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpQr74sS\\file63144f96ac414.pdf&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6001.pdf&amp;quot;
+##  [2] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6002.pdf&amp;quot;
+##  [3] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6003.pdf&amp;quot;
+##  [4] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6004.pdf&amp;quot;
+##  [5] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6005.pdf&amp;quot;
+##  [6] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6006.pdf&amp;quot;
+##  [7] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6007.pdf&amp;quot;
+##  [8] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6008.pdf&amp;quot;
+##  [9] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6009.pdf&amp;quot;
+## [10] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6010.pdf&amp;quot;
+## [11] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6011.pdf&amp;quot;
+## [12] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6012.pdf&amp;quot;
+## [13] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6013.pdf&amp;quot;
+## [14] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6014.pdf&amp;quot;&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;code&gt;tabulizer::split_df&lt;/code&gt; saved each page on a separate pdf in a temporary directory. Now we only have to develop a function to clean one page and apply it to all middle pages (that is, excluding the first and last because they have a slightly different format).&lt;/p&gt;
 &lt;p&gt;After hard work, I developed the function &lt;code&gt;convert_page&lt;/code&gt; which accepts one pdf page crops all the corners so that only text is available.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;convert_page &amp;lt;- function(page) {
@@ -274,7 +274,7 @@ cat(complete_page)&lt;/code&gt;&lt;/pre&gt;
 ## posed to the more abstract theoretical issues that bore on the political concerns
 ## of the day: the dynamics of capitalism, the nature of power and domination, the
 ## importance of elites in shaping American foreign policy, and the problem of&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We pass all middle pages to &lt;code&gt;convert_page&lt;/code&gt; to conver them to text and check out the result:&lt;/p&gt;
+&lt;p&gt;We pass all middle pages to &lt;code&gt;convert_page&lt;/code&gt; to convert them to text:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;middle_pages &amp;lt;- lapply(all_pages[3:(length(all_pages) - 1)], convert_page)
 cat(middle_pages[[1]])&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## versity of Western Australia); music camp (1 played viola); assisting in a lab. And
