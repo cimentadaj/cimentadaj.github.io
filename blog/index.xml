@@ -34,20 +34,20 @@ url &amp;lt;- &amp;quot;https://www.ssc.wisc.edu/~wright/Published%20writing/Fal
 all_pages &amp;lt;- tabulizer::split_pdf(url)
 
 all_pages&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6001.pdf&amp;quot;
-##  [2] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6002.pdf&amp;quot;
-##  [3] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6003.pdf&amp;quot;
-##  [4] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6004.pdf&amp;quot;
-##  [5] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6005.pdf&amp;quot;
-##  [6] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6006.pdf&amp;quot;
-##  [7] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6007.pdf&amp;quot;
-##  [8] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6008.pdf&amp;quot;
-##  [9] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6009.pdf&amp;quot;
-## [10] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6010.pdf&amp;quot;
-## [11] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6011.pdf&amp;quot;
-## [12] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6012.pdf&amp;quot;
-## [13] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6013.pdf&amp;quot;
-## [14] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpMTCk6O\\file450c66967d6014.pdf&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce401.pdf&amp;quot;
+##  [2] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce402.pdf&amp;quot;
+##  [3] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce403.pdf&amp;quot;
+##  [4] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce404.pdf&amp;quot;
+##  [5] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce405.pdf&amp;quot;
+##  [6] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce406.pdf&amp;quot;
+##  [7] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce407.pdf&amp;quot;
+##  [8] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce408.pdf&amp;quot;
+##  [9] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce409.pdf&amp;quot;
+## [10] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce410.pdf&amp;quot;
+## [11] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce411.pdf&amp;quot;
+## [12] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce412.pdf&amp;quot;
+## [13] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce413.pdf&amp;quot;
+## [14] &amp;quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce414.pdf&amp;quot;&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;code&gt;tabulizer::split_df&lt;/code&gt; saved each page on a separate pdf in a temporary directory. Now we only have to develop a function to clean one page and apply it to all middle pages (that is, excluding the first and last because they have a slightly different format).&lt;/p&gt;
 &lt;p&gt;After hard work, I developed the function &lt;code&gt;convert_page&lt;/code&gt; which accepts one pdf page crops all the corners so that only text is available.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;convert_page &amp;lt;- function(page) {
@@ -482,6 +482,16 @@ writeLines(final_document, con = rmd_path, useBytes = TRUE)
 setwd(dirname(rmd_path))
 bookdown::render_book(rmd_path, bookdown::epub_book())&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;If you figure out how make to this work, I’d love to hear about it in the comment section.&lt;/p&gt;
+&lt;p&gt;EDIT:&lt;/p&gt;
+&lt;p&gt;Thanks to the &lt;a href=&#34;https://twitter.com/leonawicz/status/1089537068550651907&#34;&gt;tweet by Matthew Leonawicz&lt;/a&gt; I managed to do it!&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;txt_path &amp;lt;- tempfile(pattern = &amp;#39;our_book&amp;#39;, fileext = &amp;quot;.txt&amp;quot;)
+
+writeLines(final_document, con = txt_path, useBytes = TRUE)
+
+# First download Calibre
+path &amp;lt;- paste0(Sys.getenv(&amp;quot;PATH&amp;quot;), &amp;quot;;&amp;quot;, &amp;quot;C:\\Program Files\\Calibre2&amp;quot;)
+Sys.setenv(PATH = path)
+bookdown::calibre(txt_path, paste0(dirname(txt_path), &amp;quot;/erik_wright.mobi&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 </description>
     </item>

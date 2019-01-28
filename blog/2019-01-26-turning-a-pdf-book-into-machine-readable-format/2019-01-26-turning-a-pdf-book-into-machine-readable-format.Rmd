@@ -217,3 +217,19 @@ bookdown::render_book(rmd_path, bookdown::epub_book())
 ```
 
 If you figure out how make to this work, I'd love to hear about it in the comment section.
+
+EDIT:
+
+Thanks to the [tweet by Matthew Leonawicz](https://twitter.com/leonawicz/status/1089537068550651907) I managed to do it!
+
+```{r, eval = FALSE}
+txt_path <- tempfile(pattern = 'our_book', fileext = ".txt")
+
+writeLines(final_document, con = txt_path, useBytes = TRUE)
+
+# First download Calibre
+path <- paste0(Sys.getenv("PATH"), ";", "C:\\Program Files\\Calibre2")
+Sys.setenv(PATH = path)
+bookdown::calibre(txt_path, paste0(dirname(txt_path), "/erik_wright.mobi"))
+```
+
