@@ -7,7 +7,7 @@ slug: "about"
 
 <br>
 
-Hi, I’m Jorge Cimentada and I’m a Data Scientist at [Kernel Analytics](https://kernel-analytics.com/en/analytics/). I'm finishing my PhD candidacy in Quantitative Sociology at Pompeu Fabra University and belong to the [Research and Expertise Centre for Survey Methodology (RECSM)](https://www.upf.edu/web/survey). My main research interests are the study of achievement inequality, the role of schools in reproducing these inequalities and early education as a remedy to achievement inequalities. I enjoy programming with R, scraping educational data and applying machine learning and data science to help people. If this matches your profile, let's work on something together!
+Hi, I’m Jorge Cimentada and I’m a Data Scientist at [Kernel Analytics](https://kernel-analytics.com/en/analytics/). I'm finishing my PhD candidacy in Quantitative Sociology at Pompeu Fabra University and belong to the [Research and Expertise Centre for Survey Methodology (RECSM)](https://www.upf.edu/web/survey). My main research interests are the study of achievement inequality, population dynamics and inequality in spatial segregation/mobility. I enjoy programming with R, scraping data and applying statistics, machine learning and data science to help people. If this matches your profile, let's work on something together!
 
 I am very passionate about statistical programming with R, machine learning, data visualization, statistics and drums.
 

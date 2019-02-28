@@ -4328,7 +4328,7 @@ lm(income ~ gender + kids)&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;&lt;br&gt;&lt;/p&gt;
 
-&lt;p&gt;Hi, I’m Jorge Cimentada and I’m a Data Scientist at &lt;a href=&#34;https://kernel-analytics.com/en/analytics/&#34;&gt;Kernel Analytics&lt;/a&gt;. I&amp;rsquo;m finishing my PhD candidacy in Quantitative Sociology at Pompeu Fabra University and belong to the &lt;a href=&#34;https://www.upf.edu/web/survey&#34;&gt;Research and Expertise Centre for Survey Methodology (RECSM)&lt;/a&gt;. My main research interests are the study of achievement inequality, the role of schools in reproducing these inequalities and early education as a remedy to achievement inequalities. I enjoy programming with R, scraping educational data and applying machine learning and data science to help people. If this matches your profile, let&amp;rsquo;s work on something together!&lt;/p&gt;
+&lt;p&gt;Hi, I’m Jorge Cimentada and I’m a Data Scientist at &lt;a href=&#34;https://kernel-analytics.com/en/analytics/&#34;&gt;Kernel Analytics&lt;/a&gt;. I&amp;rsquo;m finishing my PhD candidacy in Quantitative Sociology at Pompeu Fabra University and belong to the &lt;a href=&#34;https://www.upf.edu/web/survey&#34;&gt;Research and Expertise Centre for Survey Methodology (RECSM)&lt;/a&gt;. My main research interests are the study of achievement inequality, population dynamics and inequality in spatial segregation/mobility. I enjoy programming with R, scraping data and applying statistics, machine learning and data science to help people. If this matches your profile, let&amp;rsquo;s work on something together!&lt;/p&gt;
 
 &lt;p&gt;I am very passionate about statistical programming with R, machine learning, data visualization, statistics and drums.&lt;/p&gt;
 
@@ -4366,11 +4366,15 @@ lm(income ~ gender + kids)&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;&lt;b&gt; Data science &lt;/b&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&#34;blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/index.html&#34;&gt;How long should I wait for my bike?&lt;/a&gt;: This is a series of posts (currently active) in which I set up a private server and interact with the Barcelona public bicycle system API. I&amp;rsquo;ve performed analysis of waiting times and I plan to add a live predictive model of waiting time for stations.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/index.html&#34;&gt;How long should I wait for my bike?&lt;/a&gt;: This is a series of posts in which I set up a private server and interact with the Barcelona public bicycle system API. I&amp;rsquo;ve performed analysis of waiting times and I plan to add a live predictive model of waiting time for stations.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/index.html&#34;&gt;Analyzing &amp;ldquo;How I Met Your Mother&amp;rdquo;&lt;/a&gt;: In this blog post I scraped and analyzed the scripts of the American TV series &amp;ldquo;How I Met Your Mother&amp;rdquo;.&lt;/p&gt;
 
 &lt;p&gt;&lt;b&gt; R packages &lt;/b&gt;&lt;/p&gt;
+
+&lt;p&gt;opendataes: (&lt;a href=&#34;https://github.com/cimentadaj/opendataes&#34;&gt;Github&lt;/a&gt;, &lt;a href=&#34;https://ropenspain.github.io/opendataes/&#34;&gt;Pkg website&lt;/a&gt;) Interact with the &lt;a href=&#34;http://datos.gob.es&#34;&gt;datos.gob.es&lt;/a&gt; API&lt;/p&gt;
+
+&lt;p&gt;sqpr: (&lt;a href=&#34;https://github.com/asqm/sqpr&#34;&gt;Github&lt;/a&gt;) Access the SQP API and adjust your estimations for measurement error&lt;/p&gt;
 
 &lt;p&gt;perccalc (&lt;a href=&#34;https://cran.r-project.org/web/packages/perccalc/index.html&#34;&gt;CRAN&lt;/a&gt;, &lt;a href=&#34;https://github.com/cimentadaj/perccalc&#34;&gt;Github&lt;/a&gt;): An implementation of two functions that estimate values for percentiles from an ordered categorical variable as described by Reardon (2011, isbn:978-0-87154-372-1).&lt;/p&gt;
 

@@ -17,12 +17,16 @@ slug: projects
 
 <b> Data science </b>
 
-[How long should I wait for my bike?](blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/index.html): This is a series of posts (currently active) in which I set up a private server and interact with the Barcelona public bicycle system API. I've performed analysis of waiting times and I plan to add a live predictive model of waiting time for stations.
+[How long should I wait for my bike?](blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/index.html): This is a series of posts in which I set up a private server and interact with the Barcelona public bicycle system API. I've performed analysis of waiting times and I plan to add a live predictive model of waiting time for stations.
 
 
 [Analyzing "How I Met Your Mother"](blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/index.html): In this blog post I scraped and analyzed the scripts of the American TV series "How I Met Your Mother".
 
 <b> R packages </b>
+
+opendataes: ([Github](https://github.com/cimentadaj/opendataes), [Pkg website](https://ropenspain.github.io/opendataes/)) Interact with the [datos.gob.es](http://datos.gob.es) API 
+
+sqpr: ([Github](https://github.com/asqm/sqpr)) Access the SQP API and adjust your estimations for measurement error
 
 perccalc ([CRAN](https://cran.r-project.org/web/packages/perccalc/index.html), [Github](https://github.com/cimentadaj/perccalc)): An implementation of two functions that estimate values for percentiles from an ordered categorical variable as described by Reardon (2011, isbn:978-0-87154-372-1).
 

@@ -24,7 +24,7 @@ enableRobotsTXT = true
 ## Site Settings
 [params]
 author = "Jorge Cimentada"
-intro = "PhD Sociology/Machine Learning/R/Statistics"
+intro = "Sociology//R/Statistics"
 
 # Ignored description but this goes under the intro in the
 # root website
