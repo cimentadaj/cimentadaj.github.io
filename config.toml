@@ -1,4 +1,4 @@
-## Basic Configuration
+﻿## Basic Configuration
 
 baseurl = "/"
 builddrafts = false
@@ -24,7 +24,7 @@ enableRobotsTXT = true
 ## Site Settings
 [params]
 author = "Jorge Cimentada"
-intro = "Sociology//R/Statistics"
+intro = "Sociology/R/Statistics"
 
 # Ignored description but this goes under the intro in the
 # root website
