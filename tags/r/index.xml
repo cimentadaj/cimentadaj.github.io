@@ -212,10 +212,10 @@ recode_stata_labels(tst)&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Why does R drop attributes when subsetting?</title>
-      <link>/blog/2019-03-16-one-thing-i-hate-about-r/one-thing-i-hate-about-r/</link>
+      <link>/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/</link>
       <pubDate>Sat, 16 Mar 2019 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2019-03-16-one-thing-i-hate-about-r/one-thing-i-hate-about-r/</guid>
+      <guid>/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/</guid>
       <description>
 
 
