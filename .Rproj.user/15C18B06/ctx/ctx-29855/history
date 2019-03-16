@@ -1,0 +1,512 @@
+rmarkdown::render(input = rmd, encoding = "UTF-8")
+}
+?rmarkdown::render
+blogdown::build_site(local = TRUE, method = 'custom')
+blogdown::serve_site()
+blogdown::stop_server()
+blogdown::serve_site()
+blogdown::stop_server()
+?blogdown::serve_site
+blogdown::Rscript
+install.packages("callr")
+r(function() var(iris[, 1:4]))
+library(callr)
+r(function() var(iris[, 1:4]))
+r(function() Sys.sleep(10))
+r(function() Sys.sleep(10), timeout = 5)
+blogdown::serve_site()
+cimentadaj::my_new_post('Tesssstttt')
+blogdown::serve_site()
+cimentadaj::my_new_post('test')
+blogdown::serve_site()
+blogdown::serve_site()
+cimentadaj::my_new_post("Some guides and pre-project documents on ML")
+blogdown::count_yaml()
+blogdown::find_yaml()
+blogdown::find_yaml
+blogdown:::scan_yaml()
+blogdown:::scan_yaml
+blogdown::serve_site()
+blogdown::serve_site()
+blogdown::serve_site()
+blogdown::stop_server()
+library(magick)
+Sys.setenv(JAVA_HOME="C:/Program Files/Java/jdk-11.0.2/")
+library(tabulizer)
+url <- "https://www.ssc.wisc.edu/~wright/Published%20writing/FallingIntoMarxismChoosingToStay.pdf"
+all_pages <- tabulizer::split_pdf(url)
+page <- magick::image_read_pdf(all_pages[4])
+image_resize(page, geometry_size_percent(width = 55))
+convert_page <- function(page) {
+page <- magick::image_read_pdf(page)
+separator <- image_info(page)$width / 2
+first_page <- image_crop(page, geometry_area(width = separator))
+second_page <- image_crop(page, geometry_area(x_off = separator, y_off = 1))
+size <- geometry_area(width = 1400,
+height = 2200,
+x_off = 300,
+y_off = 200)
+first_page <- image_crop(first_page, size)
+size <- geometry_area(width = 1400,
+height = 2200,
+x_off = 130,
+y_off = 200)
+second_page <- image_crop(second_page, size)
+f_text <- image_ocr(first_page)
+s_text <- image_ocr(second_page)
+complete_page <- paste0(f_text, s_text)
+complete_page
+}
+page_four <- magick::image_read_pdf(all_pages[4])
+image_resize(page_four, geometry_size_percent(width = 55))
+convert_page(page_four)
+page_four
+convert_page(all_pages[4])
+blogdown::serve_site()
+separator <- image_info(page_four)$width / 2
+first_page <- image_crop(page_four, geometry_area(width = separator))
+second_page <- image_crop(page_four, geometry_area(x_off = separator, y_off = 1))
+size <- geometry_area(width = 1400,
+height = 2200,
+x_off = 300,
+y_off = 200)
+first_page <- image_crop(first_page, size)
+size <- geometry_area(width = 1400,
+height = 2200,
+x_off = 130,
+y_off = 200)
+second_page <- image_crop(second_page, size)
+first_page
+image_resize(first_page, geometry_size_percent(width = 40))
+image_resize(second_page, geometry_size_percent(width = 40))
+f_text <- image_ocr(first_page)
+s_text <- image_ocr(second_page)
+complete_page <- paste0(f_text, s_text)
+cat(complete_page)
+cat(convert_page(all_pages[4]))
+middle_pages <- lapply(all_pages[3:(length(all_pages) - 1)], convert_page)
+cat(middle_pages[1])
+middle_pages[1]
+cat(middle_pages[[1]])
+rmd_path <- tempfile(pattern = 'our_book', fileext = ".Rmd")
+rmd_preamble <-"---
+title: 'Final Book'
+output: html_document
+---\n\n"
+final_document <- paste0(rmd_preamble, final_document)
+### First page
+first_page <- magick::image_read_pdf(all_pages[2])
+image_resize(first_page, geometry_size_percent(width = 30))
+separator <- image_info(first_page)$width / 2
+size <- geometry_area(width = 1400,
+height = 1700,
+x_off = separator + 100,
+y_off = 650)
+first_page <- image_crop(first_page, size)
+image_resize(first_page, geometry_size_percent(width = 30))
+first_page <- image_ocr(first_page)
+###
+### Last page
+last_page <- magick::image_read_pdf(all_pages[14])
+image_resize(last_page, geometry_size_percent(width = 30))
+separator <- image_info(last_page)$width / 2
+size <- geometry_area(width = separator - 400,
+height = 500,
+x_off = 150,
+y_off = 260)
+last_page <- image_crop(last_page, size)
+image_resize(last_page, geometry_size_percent(width = 40))
+last_page <- image_ocr(last_page)
+final_document <- paste0(first_page, Reduce(paste0, middle_pages), last_page)
+cat(paste0(substring(final_document, 0, 5000), "..."))
+rmd_path <- tempfile(pattern = 'our_book', fileext = ".Rmd")
+rmd_preamble <-"---
+title: 'Final Book'
+output: html_document
+---\n\n"
+final_document <- paste0(rmd_preamble, final_document)
+final_document
+writeLines(final_document, con = rmd_path)
+bookdown::render_book(rmd_path, bookdown::epub_book())
+library(magick)
+Sys.setenv(JAVA_HOME="C:/Program Files/Java/jdk-11.0.2/")
+library(tabulizer)
+url <- "https://www.ssc.wisc.edu/~wright/Published%20writing/FallingIntoMarxismChoosingToStay.pdf"
+all_pages <- tabulizer::split_pdf(url)
+page <- magick::image_read_pdf(all_pages[4])
+image_resize(page, geometry_size_percent(width = 40))
+all_pages
+convert_page <- function(page) {
+page <- magick::image_read_pdf(page)
+separator <- image_info(page)$width / 2
+first_page <- image_crop(page, geometry_area(width = separator))
+second_page <- image_crop(page, geometry_area(x_off = separator, y_off = 1))
+size <- geometry_area(width = 1400,
+height = 2200,
+x_off = 300,
+y_off = 200)
+first_page <- image_crop(first_page, size)
+size <- geometry_area(width = 1400,
+height = 2200,
+x_off = 130,
+y_off = 200)
+second_page <- image_crop(second_page, size)
+f_text <- image_ocr(first_page)
+s_text <- image_ocr(second_page)
+complete_page <- paste0(f_text, s_text)
+complete_page
+}
+page_four <- magick::image_read_pdf(all_pages[4])
+image_resize(page_four, geometry_size_percent(width = 40))
+separator <- image_info(page_four)$width / 2
+first_page <- image_crop(page_four, geometry_area(width = separator))
+second_page <- image_crop(page_four, geometry_area(x_off = separator, y_off = 1))
+size <- geometry_area(width = 1400,
+height = 2200,
+x_off = 300,
+y_off = 200)
+first_page <- image_crop(first_page, size)
+size <- geometry_area(width = 1400,
+height = 2200,
+x_off = 130,
+y_off = 200)
+second_page <- image_crop(second_page, size)
+image_resize(first_page, geometry_size_percent(width = 40))
+image_resize(second_page, geometry_size_percent(width = 40))
+f_text <- image_ocr(first_page)
+s_text <- image_ocr(second_page)
+complete_page <- paste0(f_text, s_text)
+cat(complete_page)
+cat(convert_page(all_pages[4]))
+### First page
+first_page <- magick::image_read_pdf(all_pages[2])
+image_resize(first_page, geometry_size_percent(width = 30))
+separator <- image_info(first_page)$width / 2
+size <- geometry_area(width = 1400,
+height = 1700,
+x_off = separator + 100,
+y_off = 650)
+first_page <- image_crop(first_page, size)
+image_resize(first_page, geometry_size_percent(width = 30))
+first_page <- image_ocr(first_page)
+###
+### Last page
+last_page <- magick::image_read_pdf(all_pages[14])
+image_resize(last_page, geometry_size_percent(width = 30))
+separator <- image_info(last_page)$width / 2
+size <- geometry_area(width = separator - 400,
+height = 500,
+x_off = 150,
+y_off = 260)
+last_page <- image_crop(last_page, size)
+image_resize(last_page, geometry_size_percent(width = 40))
+last_page <- image_ocr(last_page)
+###
+final_document <- paste0(first_page, Reduce(paste0, middle_pages), last_page)
+middle_pages
+middle_pages <- lapply(all_pages[3:(length(all_pages) - 1)], convert_page)
+cat(middle_pages[[1]])
+final_document <- paste0(first_page, Reduce(paste0, middle_pages), last_page)
+cat(paste0(substring(final_document, 0, 5000), "..."))
+rmd_path
+rmd_path <- tempfile(pattern = 'our_book', fileext = ".Rmd")
+rmd_preamble <-"---
+title: 'Final Book'
+output: html_document
+---\n\n"
+final_document <- paste0(rmd_preamble, final_document)
+rmd_path
+basename(rmd_path)
+dirname(rmd_path)
+getwd()
+old_wd <- getwd()
+# Bookdown compiles all .Rmd in the working directory, so we move
+# to the temporary directory where the book is
+setwd(dirname(rmd_path))
+bookdown::render_book(rmd_path, bookdown::epub_book())
+setwd(dirname(rmd_path))
+bookdown::render_book(rmd_path, bookdown::epub_book())
+list.files()
+rmd_path <- tempfile(pattern = 'our_book', fileext = ".Rmd")
+rmd_preamble <-"---
+title: 'Final Book'
+output: html_document
+---\n\n"
+final_document <- paste0(rmd_preamble, final_document)
+writeLines(final_document, con = rmd_path)
+list.files()
+bookdown::render_book(rmd_path, bookdown::epub_book())
+final_document
+encoding(final_document)
+Encoding(final_document)
+stringi::stri_enc_toutf8(final_document)
+final_document <- paste0(rmd_preamble, final_document)
+writeLines(stringi::stri_enc_toutf8(final_document), con = rmd_path, useBytes = TRUE)
+setwd(dirname(rmd_path))
+bookdown::render_book(rmd_path, bookdown::epub_book())
+library(magick)
+Sys.setenv(JAVA_HOME="C:/Program Files/Java/jdk-11.0.2/")
+library(tabulizer)
+url <- "https://www.ssc.wisc.edu/~wright/Published%20writing/FallingIntoMarxismChoosingToStay.pdf"
+all_pages <- tabulizer::split_pdf(url)
+page <- magick::image_read_pdf(all_pages[4])
+image_resize(page, geometry_size_percent(width = 40))
+all_pages
+convert_page <- function(page) {
+page <- magick::image_read_pdf(page)
+separator <- image_info(page)$width / 2
+first_page <- image_crop(page, geometry_area(width = separator))
+second_page <- image_crop(page, geometry_area(x_off = separator, y_off = 1))
+size <- geometry_area(width = 1400,
+height = 2200,
+x_off = 300,
+y_off = 200)
+first_page <- image_crop(first_page, size)
+size <- geometry_area(width = 1400,
+height = 2200,
+x_off = 130,
+y_off = 200)
+second_page <- image_crop(second_page, size)
+f_text <- image_ocr(first_page)
+s_text <- image_ocr(second_page)
+complete_page <- paste0(f_text, s_text)
+complete_page
+}
+page_four <- magick::image_read_pdf(all_pages[4])
+image_resize(page_four, geometry_size_percent(width = 40))
+separator <- image_info(page_four)$width / 2
+first_page <- image_crop(page_four, geometry_area(width = separator))
+second_page <- image_crop(page_four, geometry_area(x_off = separator, y_off = 1))
+size <- geometry_area(width = 1400,
+height = 2200,
+x_off = 300,
+y_off = 200)
+first_page <- image_crop(first_page, size)
+size <- geometry_area(width = 1400,
+height = 2200,
+x_off = 130,
+y_off = 200)
+second_page <- image_crop(second_page, size)
+image_resize(first_page, geometry_size_percent(width = 40))
+image_resize(second_page, geometry_size_percent(width = 40))
+f_text <- image_ocr(first_page)
+s_text <- image_ocr(second_page)
+complete_page <- paste0(f_text, s_text)
+cat(complete_page)
+cat(convert_page(all_pages[4]))
+middle_pages <- lapply(all_pages[3:(length(all_pages) - 1)], convert_page)
+cat(middle_pages[[1]])
+### First page
+first_page <- magick::image_read_pdf(all_pages[2])
+image_resize(first_page, geometry_size_percent(width = 30))
+separator <- image_info(first_page)$width / 2
+size <- geometry_area(width = 1400,
+height = 1700,
+x_off = separator + 100,
+y_off = 650)
+first_page <- image_crop(first_page, size)
+image_resize(first_page, geometry_size_percent(width = 30))
+first_page <- image_ocr(first_page)
+###
+### Last page
+last_page <- magick::image_read_pdf(all_pages[14])
+image_resize(last_page, geometry_size_percent(width = 30))
+separator <- image_info(last_page)$width / 2
+size <- geometry_area(width = separator - 400,
+height = 500,
+x_off = 150,
+y_off = 260)
+last_page <- image_crop(last_page, size)
+image_resize(last_page, geometry_size_percent(width = 40))
+last_page <- image_ocr(last_page)
+###
+final_document <- paste0(first_page, Reduce(paste0, middle_pages), last_page)
+cat(paste0(substring(final_document, 0, 5000), "..."))
+rmd_path <- tempfile(pattern = 'our_book', fileext = ".Rmd")
+rmd_preamble <-"---
+title: 'Final Book'
+output: html_document
+---\n\n"
+final_document <- paste0(rmd_preamble, final_document)
+writeLines(final_document, con = rmd_path, useBytes = TRUE)
+setwd("~/Downloads/repositories/cimentadaj.github.io")
+blogdown::serve_site()
+blogdown::stop_server()
+5 + 5
+blogdown::serve_site()
+blogdown::stop_server()
+blogdown::serve_site()
+blogdown::stop_server()
+blogdown::serve_site()
+blogdown::stop_server()
+blogdown::serve_site()
+blogdown::serve_site()
+blogdown::serve_site()
+blogdown::serve_site()
+blogdown::stop_server()
+blogdown::serve_site()
+blogdown::stop_server()
+blogdown::serve_site()
+blogdown::serve_site()
+blogdown::serve_site()
+cimentadaj::my_new_post("Saving missing categories from R to Stata")
+tst <-
+labelled(c(1:5,
+tagged_na('d'),
+## Only added this
+tagged_na('c')
+),
+c('Agree Strongly' = 1,
+'Agree' = 2,
+'Neither agree nor disagree' = 3,
+'Disagree' = 4,
+'Disagree strongly' = 5,
+'No answer' = tagged_na('d'),
+## And this
+'Dont know' = tagged_na('c')
+)
+)
+library(haven)
+tst <-
+labelled(c(1:5,
+tagged_na('d'),
+## Only added this
+tagged_na('c')
+),
+c('Agree Strongly' = 1,
+'Agree' = 2,
+'Neither agree nor disagree' = 3,
+'Disagree' = 4,
+'Disagree strongly' = 5,
+'No answer' = tagged_na('d'),
+## And this
+'Dont know' = tagged_na('c')
+)
+)
+tst
+tst
+old_label_names <- c("a", "b", "c", "d")
+na_available <- unname(gsub("NA|\\(|\\)", "", sjlabelled::get_na(tst, TRUE)))
+na_available
+library(sjlabelled)
+library(sjlabelled)
+library(sjmisc)
+old_label_names <- c("a", "b", "c", "d")
+na_available <- unname(gsub("NA|\\(|\\)", "", get_na(tst, TRUE)))
+na_available
+which_ones_use <- old_label_names %in% na_available
+value_code <- c(666, 777, 888, 999)[which_ones_use]
+new_label_names <- c(".a", ".b", ".c", ".d")[which_ones_use]
+for (i in seq_along(na_available)) {
+tst <- replace_na(tst,
+value = value_code[i],
+na.label = new_label_names[i],
+tagged.na = na_available[i]
+)
+}
+tst
+tst
+library(haven)
+tst <-
+labelled(c(1:5,
+tagged_na('d'),
+## Only added this
+tagged_na('c')
+),
+c('Agree Strongly' = 1,
+'Agree' = 2,
+'Neither agree nor disagree' = 3,
+'Disagree' = 4,
+'Disagree strongly' = 5,
+'No answer' = tagged_na('d'),
+## And this
+'Dont know' = tagged_na('c')
+)
+)
+tst
+library(sjlabelled)
+library(sjmisc)
+# Labels tags present in the ESS data
+old_label_names <- c("a", "b", "c", "d")
+# Grab the labels with tagged NA's with a regex
+na_available <- unname(gsub("NA|\\(|\\)", "", get_na(tst, TRUE)))
+# Identify which of the existent labels are actually valid ESS missings
+which_ones_use <- old_label_names %in% na_available
+# Subset only the ones which need recoding
+value_code <- c(666, 777, 888, 999)[which_ones_use]
+new_label_names <- c(".a", ".b", ".c", ".d")[which_ones_use]
+for (i in seq_along(na_available)) {
+tst <- replace_na(tst,
+value = value_code[i],
+na.label = new_label_names[i],
+tagged.na = na_available[i]
+)
+}
+tst
+tst
+tst
+tst
+recode_stata_labels <- function(x) {
+# Labels tags present in the ESS data
+old_label_names <- c("a", "b", "c", "d")
+# Grab the labels with tagged NA's with a regex
+na_available <- unname(gsub("NA|\\(|\\)", "", get_na(x, TRUE)))
+# Identify which of the existent labels are actually valid ESS missings
+which_ones_use <- old_label_names %in% na_available
+# Subset only the ones which need recoding
+value_code <- c(666, 777, 888, 999)[which_ones_use]
+new_label_names <- c(".a", ".b", ".c", ".d")[which_ones_use]
+for (i in seq_along(na_available)) {
+x <- replace_na(x,
+value = value_code[i],
+na.label = new_label_names[i],
+tagged.na = na_available[i]
+)
+}
+x
+}
+tst
+tst <-
+labelled(c(1:5,
+tagged_na('d'),
+## Only added this
+tagged_na('c')
+),
+c('Agree Strongly' = 1,
+'Agree' = 2,
+'Neither agree nor disagree' = 3,
+'Disagree' = 4,
+'Disagree strongly' = 5,
+'No answer' = tagged_na('d'),
+## And this
+'Dont know' = tagged_na('c')
+)
+)
+recode_stata_labels(tst)
+recode_stata_labels(tst)
+tst <-
+labelled(c(1:5,
+tagged_na('d'),
+tagged_na('c')
+),
+c('No answer' = tagged_na('d'), 'Dont know' = tagged_na('c')))
+tst
+recode_stata_labels(tst)
+recode_stata_labels <- function(x) {
+# I add a random label (here) and delete it at the end (end of the function)
+x <- add_labels(x, labels = c('test' = 111111))
+# Note that this vector is in the same order as the `value_code` and `new_label_names`
+# because they're values correspond to each other in this order.
+old_label_names <- c("a", "b", "c", "d")
+na_available <- unname(gsub("NA|\\(|\\)", "", sjlabelled::get_na(x, TRUE)))
+which_ones_use <- old_label_names %in% na_available
+value_code <- c(666, 777, 888, 999)[which_ones_use]
+new_label_names <- c(".a", ".b", ".c", ".d")[which_ones_use]
+for (i in seq_along(na_available)) {
+x <- replace_na(x, value = value_code[i], na.label = new_label_names[i], tagged.na = na_available[i])
+}
+x <- remove_labels(x, labels = "test")
+x
+}
+recode_stata_labels(tst)
+recode_stata_labels(tst)

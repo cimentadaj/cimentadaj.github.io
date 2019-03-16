@@ -1,0 +1,43 @@
+---
+title: Why does R drop attributes when subsetting?
+author: Jorge Cimentada
+date: '2019-03-16'
+slug: one-thing-i-hate-about-r
+categories: ['R']
+tags: ['R']
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+
+
+<p>I had to spend about 1 hour yesterday because R did something completely unpredictable (for my taste). It dropped an attribute without a warning.</p>
+<pre class="r"><code>df &lt;- data.frame(x = rep(c(1, 2), 20))
+
+attr(df$x, &quot;label&quot;) &lt;- &quot;This is clearly a label&quot;
+
+df$x</code></pre>
+<pre><code>##  [1] 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1
+## [36] 2 1 2 1 2
+## attr(,&quot;label&quot;)
+## [1] &quot;This is clearly a label&quot;</code></pre>
+<p>The label is clearly there. To my surprise, if I subset this data frame, R drops the attribute.</p>
+<pre class="r"><code>new_df &lt;- df[df$x == 2, , drop = FALSE]
+
+new_df$x</code></pre>
+<pre><code>##  [1] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2</code></pre>
+<p>It doesn’t matter if it’s using bracket subsetting (<code>[</code>) or <code>subset</code>.</p>
+<pre class="r"><code>new_df &lt;- subset(df, x == 2)
+
+new_df$x</code></pre>
+<pre><code>##  [1] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2</code></pre>
+<p>That’s not good. R’s dropping attributes silently. For my specific purpose I ended up using <code>dplyr::filter</code> which safely enough preserves attributes.</p>
+<pre class="r"><code>library(dplyr)
+
+df %&gt;% 
+  filter(df, x == 2) %&gt;% 
+  pull(x)</code></pre>
+<pre><code>##  [1] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+## attr(,&quot;label&quot;)
+## [1] &quot;This is clearly a label&quot;</code></pre>

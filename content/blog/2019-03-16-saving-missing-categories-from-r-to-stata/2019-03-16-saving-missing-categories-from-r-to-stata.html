@@ -1,0 +1,201 @@
+---
+title: Saving missing categories from R to Stata
+author: Jorge Cimentada
+date: '2019-03-16'
+slug: saving-missing-categories-from-r-to-stata
+categories: ['R']
+tags: ['R']
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+
+
+<p>I’m finishing a project from the RECSM institute where we developed a <a href="https://essurvey.shinyapps.io/ess_castellano/">Shiny application</a> to download data from the European Social Survey with Spanish translated labels. This was one hell of a project since I had to build some wrappers around the Google Translate API to generate translations for over 1300 questions and stream line this to be interactive while users download the data. That’s a long story which I will not delve into.</p>
+<p>This post is about a bug I found in the <code>haven</code> package while doing the project. The bug is simple to explain and <a href="https://github.com/tidyverse/haven/issues/435">I filed it in <code>haven</code> already</a>:</p>
+<p>Let’s define a labelled double with only one tagged NA value.</p>
+<pre class="r"><code>library(haven)
+#&gt; Warning: package &#39;haven&#39; was built under R version 3.4.4
+
+tst &lt;-
+  labelled(
+    c(
+      1:5,
+      tagged_na(&quot;d&quot;)
+    ),
+    c(
+      &quot;Agree Strongly&quot; = 1,
+      &quot;Agree&quot; = 2,
+      &quot;Neither agree nor disagree&quot; = 3,
+      &quot;Disagree&quot; = 4,
+      &quot;Disagree strongly&quot; = 5,
+      &quot;No answer&quot; = tagged_na(&quot;d&quot;)
+    )
+  )
+
+tst</code></pre>
+<pre><code>## &lt;Labelled double&gt;
+## [1]     1     2     3     4     5 NA(d)
+## 
+## Labels:
+##  value                      label
+##      1             Agree Strongly
+##      2                      Agree
+##      3 Neither agree nor disagree
+##      4                   Disagree
+##      5          Disagree strongly
+##  NA(d)                  No answer</code></pre>
+<pre class="r"><code>write_dta(data.frame(freehms = tst), &quot;test.dta&quot;, version = 13)</code></pre>
+<p>If I load this in Stata and type tab freehms, all labels are correct:</p>
+<p><img src="/img/stata1.png" /></p>
+<p>Now, if I take the code above and add another tagged NA value, then <code>write_dta</code> drops the last label for some reason:</p>
+<pre class="r"><code>library(haven)
+
+tst &lt;-
+  labelled(c(1:5,
+             tagged_na(&#39;d&#39;),
+             ## Only added this
+             tagged_na(&#39;c&#39;)
+          ),
+        c(&#39;Agree Strongly&#39; = 1,
+          &#39;Agree&#39; = 2,
+          &#39;Neither agree nor disagree&#39; = 3,
+          &#39;Disagree&#39; = 4,
+          &#39;Disagree strongly&#39; = 5,
+          &#39;No answer&#39; = tagged_na(&#39;d&#39;),
+            ## And this
+          &#39;Dont know&#39; = tagged_na(&#39;c&#39;)
+          )
+        )
+
+tst</code></pre>
+<pre><code>## &lt;Labelled double&gt;
+## [1]     1     2     3     4     5 NA(d) NA(c)
+## 
+## Labels:
+##  value                      label
+##      1             Agree Strongly
+##      2                      Agree
+##      3 Neither agree nor disagree
+##      4                   Disagree
+##      5          Disagree strongly
+##  NA(d)                  No answer
+##  NA(c)                  Dont know</code></pre>
+<pre class="r"><code>write_dta(data.frame(freehms = tst), &quot;test.dta&quot;, version = 13)</code></pre>
+<p><img src="/img/stata2.png" /></p>
+<p>Well, the bug is evident (notice the 5 without a label?). However, since the project is on a deadline I had to come up with a solution. It’s very simple: avoid tagged NA’s but recode them as traditional labels. Here’s a solution:</p>
+<pre class="r"><code>library(sjlabelled)
+library(sjmisc)
+
+# Labels tags present in the ESS data
+old_label_names &lt;- c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;)
+
+# Grab the labels with tagged NA&#39;s with a regex
+na_available &lt;- unname(gsub(&quot;NA|\\(|\\)&quot;, &quot;&quot;, get_na(tst, TRUE)))
+
+# Identify which of the existent labels are actually valid ESS missings
+which_ones_use &lt;- old_label_names %in% na_available
+
+# Subset only the ones which need recoding
+value_code &lt;- c(666, 777, 888, 999)[which_ones_use]
+new_label_names &lt;- c(&quot;.a&quot;, &quot;.b&quot;, &quot;.c&quot;, &quot;.d&quot;)[which_ones_use]
+
+# Recode them
+for (i in seq_along(na_available)) {
+  tst &lt;- replace_na(tst,
+                    value = value_code[i],
+                    na.label = new_label_names[i],
+                    tagged.na = na_available[i]
+                    )
+}
+
+tst</code></pre>
+<pre><code>## &lt;Labelled double&gt;
+## [1]   1   2   3   4   5 888 999
+## 
+## Labels:
+##  value                      label
+##      1             Agree Strongly
+##      2                      Agree
+##      3 Neither agree nor disagree
+##      4                   Disagree
+##      5          Disagree strongly
+##    888                         .c
+##    999                         .d</code></pre>
+<p>There we go. Those labels would clearly be interpreted as missings and Stata would read them as traditional labels (well, it’s not perfect, but it’s a workaround). What I did was wrap the above code into a function and apply it to all questions in all rounds (&gt; 1300!).</p>
+<pre class="r"><code>recode_stata_labels &lt;- function(x) {
+  # Labels tags present in the ESS data
+  old_label_names &lt;- c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;)
+
+  # Grab the labels with tagged NA&#39;s with a regex
+  na_available &lt;- unname(gsub(&quot;NA|\\(|\\)&quot;, &quot;&quot;, get_na(x, TRUE)))
+
+  # Identify which of the existent labels are actually valid ESS missings
+  which_ones_use &lt;- old_label_names %in% na_available
+
+  # Subset only the ones which need recoding
+  value_code &lt;- c(666, 777, 888, 999)[which_ones_use]
+  new_label_names &lt;- c(&quot;.a&quot;, &quot;.b&quot;, &quot;.c&quot;, &quot;.d&quot;)[which_ones_use]
+
+  for (i in seq_along(na_available)) {
+    x &lt;- replace_na(x,
+                    value = value_code[i],
+                    na.label = new_label_names[i],
+                    tagged.na = na_available[i]
+    )
+  }
+
+  x
+}</code></pre>
+<p>Now, what happens if a <code>labelled</code> class only has tagged NA’s?</p>
+<pre class="r"><code>tst &lt;-
+  labelled(c(1:5,
+             tagged_na(&#39;d&#39;),
+             tagged_na(&#39;c&#39;)
+             ),
+           c(&#39;No answer&#39; = tagged_na(&#39;d&#39;), &#39;Dont know&#39; = tagged_na(&#39;c&#39;)))
+
+tst</code></pre>
+<pre><code>## &lt;Labelled double&gt;
+## [1]     1     2     3     4     5 NA(d) NA(c)
+## 
+## Labels:
+##  value     label
+##  NA(d) No answer
+##  NA(c) Dont know</code></pre>
+<pre class="r"><code>recode_stata_labels(tst)</code></pre>
+<pre><code>## Error: `x` must be a double vector</code></pre>
+<p>That’s weird. I was in such a rush that I didn’t really want to debug the source code in <code>haven</code>. However, I had the intuition that this was related to the fact that there were only tagged NA’s as labels. How do I fixed it? Just add a toy label at the beginning of the function and remove it after the recoding.</p>
+<pre class="r"><code>recode_stata_labels &lt;- function(x) {
+    # I add a random label (here) and delete it at the end (end of the function)
+    x &lt;- add_labels(x, labels = c(&#39;test&#39; = 111111))
+
+    # Note that this vector is in the same order as the `value_code` and `new_label_names`
+    # because they&#39;re values correspond to each other in this order.
+    old_label_names &lt;- c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;)
+
+    na_available &lt;- unname(gsub(&quot;NA|\\(|\\)&quot;, &quot;&quot;, sjlabelled::get_na(x, TRUE)))
+    which_ones_use &lt;- old_label_names %in% na_available
+
+    value_code &lt;- c(666, 777, 888, 999)[which_ones_use]
+    new_label_names &lt;- c(&quot;.a&quot;, &quot;.b&quot;, &quot;.c&quot;, &quot;.d&quot;)[which_ones_use]
+
+    for (i in seq_along(na_available)) {
+      x &lt;- replace_na(x, value = value_code[i], na.label = new_label_names[i], tagged.na = na_available[i])
+    }
+
+    x &lt;- remove_labels(x, labels = &quot;test&quot;)
+
+  x
+}
+
+recode_stata_labels(tst)</code></pre>
+<pre><code>## &lt;Labelled double&gt;
+## [1]   1   2   3   4   5 888 999
+## 
+## Labels:
+##  value label
+##    888    .c
+##    999    .d</code></pre>
+<p>There we are. The <code>replace_na</code> function is actually doing most of the work and I found it extremely useful (comes from the <code>sjmisc</code> package).</p>

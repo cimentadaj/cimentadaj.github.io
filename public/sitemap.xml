@@ -3,6 +3,16 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/blog/2019-03-16-saving-missing-categories-from-r-to-stata/saving-missing-categories-from-r-to-stata/</loc>
+    <lastmod>2019-03-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/2019-03-16-one-thing-i-hate-about-r/one-thing-i-hate-about-r/</loc>
+    <lastmod>2019-03-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/turning-a-pdf-book-into-machine-readable-format/</loc>
     <lastmod>2019-01-26T00:00:00+00:00</lastmod>
   </url>
@@ -183,7 +193,7 @@
   
   <url>
     <loc>/blog/</loc>
-    <lastmod>2019-01-26T00:00:00+00:00</lastmod>
+    <lastmod>2019-03-16T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -222,7 +232,7 @@
   
   <url>
     <loc>/</loc>
-    <lastmod>2019-01-26T00:00:00+00:00</lastmod>
+    <lastmod>2019-03-16T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -286,7 +296,13 @@
   
   <url>
     <loc>/tags/r/</loc>
-    <lastmod>2019-01-26T00:00:00+00:00</lastmod>
+    <lastmod>2019-03-16T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/categories/r/</loc>
+    <lastmod>2019-03-16T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

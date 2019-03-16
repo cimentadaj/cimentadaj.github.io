@@ -1,0 +1,21 @@
+"0","
+tst <-
+  labelled(c(1:5,
+             tagged_na('d'),
+             ## Only added this
+             tagged_na('c')
+          ),
+        c('Agree Strongly' = 1,
+          'Agree' = 2,
+          'Neither agree nor disagree' = 3,
+          'Disagree' = 4,
+          'Disagree strongly' = 5,
+          'No answer' = tagged_na('d'),
+            ## And this
+          'Dont know' = tagged_na('c')
+          )
+        )
+"
+"2","Error in labelled(c(1:5, tagged_na(""d""), tagged_na(""c"")), c(`Agree Strongly` = 1,  : 
+  could not find function ""labelled""
+"

@@ -6,10 +6,250 @@
     <description>Recent content in R on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sat, 26 Jan 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 16 Mar 2019 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/tags/r/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Saving missing categories from R to Stata</title>
+      <link>/blog/2019-03-16-saving-missing-categories-from-r-to-stata/saving-missing-categories-from-r-to-stata/</link>
+      <pubDate>Sat, 16 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2019-03-16-saving-missing-categories-from-r-to-stata/saving-missing-categories-from-r-to-stata/</guid>
+      <description>
+
+
+&lt;p&gt;I’m finishing a project from the RECSM institute where we developed a &lt;a href=&#34;https://essurvey.shinyapps.io/ess_castellano/&#34;&gt;Shiny application&lt;/a&gt; to download data from the European Social Survey with Spanish translated labels. This was one hell of a project since I had to build some wrappers around the Google Translate API to generate translations for over 1300 questions and stream line this to be interactive while users download the data. That’s a long story which I will not delve into.&lt;/p&gt;
+&lt;p&gt;This post is about a bug I found in the &lt;code&gt;haven&lt;/code&gt; package while doing the project. The bug is simple to explain and &lt;a href=&#34;https://github.com/tidyverse/haven/issues/435&#34;&gt;I filed it in &lt;code&gt;haven&lt;/code&gt; already&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;Let’s define a labelled double with only one tagged NA value.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(haven)
+#&amp;gt; Warning: package &amp;#39;haven&amp;#39; was built under R version 3.4.4
+
+tst &amp;lt;-
+  labelled(
+    c(
+      1:5,
+      tagged_na(&amp;quot;d&amp;quot;)
+    ),
+    c(
+      &amp;quot;Agree Strongly&amp;quot; = 1,
+      &amp;quot;Agree&amp;quot; = 2,
+      &amp;quot;Neither agree nor disagree&amp;quot; = 3,
+      &amp;quot;Disagree&amp;quot; = 4,
+      &amp;quot;Disagree strongly&amp;quot; = 5,
+      &amp;quot;No answer&amp;quot; = tagged_na(&amp;quot;d&amp;quot;)
+    )
+  )
+
+tst&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## &amp;lt;Labelled double&amp;gt;
+## [1]     1     2     3     4     5 NA(d)
+## 
+## Labels:
+##  value                      label
+##      1             Agree Strongly
+##      2                      Agree
+##      3 Neither agree nor disagree
+##      4                   Disagree
+##      5          Disagree strongly
+##  NA(d)                  No answer&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;write_dta(data.frame(freehms = tst), &amp;quot;test.dta&amp;quot;, version = 13)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If I load this in Stata and type tab freehms, all labels are correct:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/stata1.png&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Now, if I take the code above and add another tagged NA value, then &lt;code&gt;write_dta&lt;/code&gt; drops the last label for some reason:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(haven)
+
+tst &amp;lt;-
+  labelled(c(1:5,
+             tagged_na(&amp;#39;d&amp;#39;),
+             ## Only added this
+             tagged_na(&amp;#39;c&amp;#39;)
+          ),
+        c(&amp;#39;Agree Strongly&amp;#39; = 1,
+          &amp;#39;Agree&amp;#39; = 2,
+          &amp;#39;Neither agree nor disagree&amp;#39; = 3,
+          &amp;#39;Disagree&amp;#39; = 4,
+          &amp;#39;Disagree strongly&amp;#39; = 5,
+          &amp;#39;No answer&amp;#39; = tagged_na(&amp;#39;d&amp;#39;),
+            ## And this
+          &amp;#39;Dont know&amp;#39; = tagged_na(&amp;#39;c&amp;#39;)
+          )
+        )
+
+tst&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## &amp;lt;Labelled double&amp;gt;
+## [1]     1     2     3     4     5 NA(d) NA(c)
+## 
+## Labels:
+##  value                      label
+##      1             Agree Strongly
+##      2                      Agree
+##      3 Neither agree nor disagree
+##      4                   Disagree
+##      5          Disagree strongly
+##  NA(d)                  No answer
+##  NA(c)                  Dont know&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;write_dta(data.frame(freehms = tst), &amp;quot;test.dta&amp;quot;, version = 13)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/img/stata2.png&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Well, the bug is evident (notice the 5 without a label?). However, since the project is on a deadline I had to come up with a solution. It’s very simple: avoid tagged NA’s but recode them as traditional labels. Here’s a solution:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(sjlabelled)
+library(sjmisc)
+
+# Labels tags present in the ESS data
+old_label_names &amp;lt;- c(&amp;quot;a&amp;quot;, &amp;quot;b&amp;quot;, &amp;quot;c&amp;quot;, &amp;quot;d&amp;quot;)
+
+# Grab the labels with tagged NA&amp;#39;s with a regex
+na_available &amp;lt;- unname(gsub(&amp;quot;NA|\\(|\\)&amp;quot;, &amp;quot;&amp;quot;, get_na(tst, TRUE)))
+
+# Identify which of the existent labels are actually valid ESS missings
+which_ones_use &amp;lt;- old_label_names %in% na_available
+
+# Subset only the ones which need recoding
+value_code &amp;lt;- c(666, 777, 888, 999)[which_ones_use]
+new_label_names &amp;lt;- c(&amp;quot;.a&amp;quot;, &amp;quot;.b&amp;quot;, &amp;quot;.c&amp;quot;, &amp;quot;.d&amp;quot;)[which_ones_use]
+
+# Recode them
+for (i in seq_along(na_available)) {
+  tst &amp;lt;- replace_na(tst,
+                    value = value_code[i],
+                    na.label = new_label_names[i],
+                    tagged.na = na_available[i]
+                    )
+}
+
+tst&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## &amp;lt;Labelled double&amp;gt;
+## [1]   1   2   3   4   5 888 999
+## 
+## Labels:
+##  value                      label
+##      1             Agree Strongly
+##      2                      Agree
+##      3 Neither agree nor disagree
+##      4                   Disagree
+##      5          Disagree strongly
+##    888                         .c
+##    999                         .d&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There we go. Those labels would clearly be interpreted as missings and Stata would read them as traditional labels (well, it’s not perfect, but it’s a workaround). What I did was wrap the above code into a function and apply it to all questions in all rounds (&amp;gt; 1300!).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;recode_stata_labels &amp;lt;- function(x) {
+  # Labels tags present in the ESS data
+  old_label_names &amp;lt;- c(&amp;quot;a&amp;quot;, &amp;quot;b&amp;quot;, &amp;quot;c&amp;quot;, &amp;quot;d&amp;quot;)
+
+  # Grab the labels with tagged NA&amp;#39;s with a regex
+  na_available &amp;lt;- unname(gsub(&amp;quot;NA|\\(|\\)&amp;quot;, &amp;quot;&amp;quot;, get_na(x, TRUE)))
+
+  # Identify which of the existent labels are actually valid ESS missings
+  which_ones_use &amp;lt;- old_label_names %in% na_available
+
+  # Subset only the ones which need recoding
+  value_code &amp;lt;- c(666, 777, 888, 999)[which_ones_use]
+  new_label_names &amp;lt;- c(&amp;quot;.a&amp;quot;, &amp;quot;.b&amp;quot;, &amp;quot;.c&amp;quot;, &amp;quot;.d&amp;quot;)[which_ones_use]
+
+  for (i in seq_along(na_available)) {
+    x &amp;lt;- replace_na(x,
+                    value = value_code[i],
+                    na.label = new_label_names[i],
+                    tagged.na = na_available[i]
+    )
+  }
+
+  x
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now, what happens if a &lt;code&gt;labelled&lt;/code&gt; class only has tagged NA’s?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tst &amp;lt;-
+  labelled(c(1:5,
+             tagged_na(&amp;#39;d&amp;#39;),
+             tagged_na(&amp;#39;c&amp;#39;)
+             ),
+           c(&amp;#39;No answer&amp;#39; = tagged_na(&amp;#39;d&amp;#39;), &amp;#39;Dont know&amp;#39; = tagged_na(&amp;#39;c&amp;#39;)))
+
+tst&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## &amp;lt;Labelled double&amp;gt;
+## [1]     1     2     3     4     5 NA(d) NA(c)
+## 
+## Labels:
+##  value     label
+##  NA(d) No answer
+##  NA(c) Dont know&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;recode_stata_labels(tst)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Error: `x` must be a double vector&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;That’s weird. I was in such a rush that I didn’t really want to debug the source code in &lt;code&gt;haven&lt;/code&gt;. However, I had the intuition that this was related to the fact that there were only tagged NA’s as labels. How do I fixed it? Just add a toy label at the beginning of the function and remove it after the recoding.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;recode_stata_labels &amp;lt;- function(x) {
+    # I add a random label (here) and delete it at the end (end of the function)
+    x &amp;lt;- add_labels(x, labels = c(&amp;#39;test&amp;#39; = 111111))
+
+    # Note that this vector is in the same order as the `value_code` and `new_label_names`
+    # because they&amp;#39;re values correspond to each other in this order.
+    old_label_names &amp;lt;- c(&amp;quot;a&amp;quot;, &amp;quot;b&amp;quot;, &amp;quot;c&amp;quot;, &amp;quot;d&amp;quot;)
+
+    na_available &amp;lt;- unname(gsub(&amp;quot;NA|\\(|\\)&amp;quot;, &amp;quot;&amp;quot;, sjlabelled::get_na(x, TRUE)))
+    which_ones_use &amp;lt;- old_label_names %in% na_available
+
+    value_code &amp;lt;- c(666, 777, 888, 999)[which_ones_use]
+    new_label_names &amp;lt;- c(&amp;quot;.a&amp;quot;, &amp;quot;.b&amp;quot;, &amp;quot;.c&amp;quot;, &amp;quot;.d&amp;quot;)[which_ones_use]
+
+    for (i in seq_along(na_available)) {
+      x &amp;lt;- replace_na(x, value = value_code[i], na.label = new_label_names[i], tagged.na = na_available[i])
+    }
+
+    x &amp;lt;- remove_labels(x, labels = &amp;quot;test&amp;quot;)
+
+  x
+}
+
+recode_stata_labels(tst)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## &amp;lt;Labelled double&amp;gt;
+## [1]   1   2   3   4   5 888 999
+## 
+## Labels:
+##  value label
+##    888    .c
+##    999    .d&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There we are. The &lt;code&gt;replace_na&lt;/code&gt; function is actually doing most of the work and I found it extremely useful (comes from the &lt;code&gt;sjmisc&lt;/code&gt; package).&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Why does R drop attributes when subsetting?</title>
+      <link>/blog/2019-03-16-one-thing-i-hate-about-r/one-thing-i-hate-about-r/</link>
+      <pubDate>Sat, 16 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2019-03-16-one-thing-i-hate-about-r/one-thing-i-hate-about-r/</guid>
+      <description>
+
+
+&lt;p&gt;I had to spend about 1 hour yesterday because R did something completely unpredictable (for my taste). It dropped an attribute without a warning.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df &amp;lt;- data.frame(x = rep(c(1, 2), 20))
+
+attr(df$x, &amp;quot;label&amp;quot;) &amp;lt;- &amp;quot;This is clearly a label&amp;quot;
+
+df$x&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1
+## [36] 2 1 2 1 2
+## attr(,&amp;quot;label&amp;quot;)
+## [1] &amp;quot;This is clearly a label&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The label is clearly there. To my surprise, if I subset this data frame, R drops the attribute.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;new_df &amp;lt;- df[df$x == 2, , drop = FALSE]
+
+new_df$x&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It doesn’t matter if it’s using bracket subsetting (&lt;code&gt;[&lt;/code&gt;) or &lt;code&gt;subset&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;new_df &amp;lt;- subset(df, x == 2)
+
+new_df$x&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;That’s not good. R’s dropping attributes silently. For my specific purpose I ended up using &lt;code&gt;dplyr::filter&lt;/code&gt; which safely enough preserves attributes.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dplyr)
+
+df %&amp;gt;% 
+  filter(df, x == 2) %&amp;gt;% 
+  pull(x)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+## attr(,&amp;quot;label&amp;quot;)
+## [1] &amp;quot;This is clearly a label&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>Turning a pdf book into machine readable format</title>
