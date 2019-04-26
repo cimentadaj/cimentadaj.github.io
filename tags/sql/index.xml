@@ -17,10 +17,7 @@
       <pubDate>Wed, 31 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/</guid>
-      <description>
-
-
-&lt;p&gt;I’ve been working on a personal project to gather daily data from public bicycles in Barcelona to create a historical timeline of a few stations. Since the data is only available live, I had to scrape the data and store in a database daily. This is a short tutorial showing the steps I had to take to setup a database on my remote server and connect both from my local computer as well as from my server. I also show the R script that scrapes data, connects to the server and appends the information every day for a certain amouint of time.&lt;/p&gt;
+      <description>&lt;p&gt;I’ve been working on a personal project to gather daily data from public bicycles in Barcelona to create a historical timeline of a few stations. Since the data is only available live, I had to scrape the data and store in a database daily. This is a short tutorial showing the steps I had to take to setup a database on my remote server and connect both from my local computer as well as from my server. I also show the R script that scrapes data, connects to the server and appends the information every day for a certain amouint of time.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Note: This worked for my Digital Ocean droplet 512 MB and 20 GB disk with Ubuntu 16.04.3 x64.&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;Let’s get to it. It’s better to do &lt;em&gt;ALL&lt;/em&gt; of this as a user in your server but remember to append &lt;code&gt;sudo&lt;/code&gt; to everything. Nonetheless, beware of problems like the ones I encountered. For example, when installing R packages that where ran by &lt;code&gt;cron&lt;/code&gt; in a script, if installed through a non-root user the packages were said to be &lt;code&gt;&#39;not installed&#39;&lt;/code&gt; (when I fact running the script separately was fine). However, when I installed the packages logged in as root the packages were installed successfully.&lt;/p&gt;
 &lt;div id=&#34;setting-up-the-data-base&#34; class=&#34;section level2&#34;&gt;

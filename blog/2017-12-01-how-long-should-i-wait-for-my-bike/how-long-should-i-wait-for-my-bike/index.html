@@ -14,7 +14,7 @@
 
 <title>Jorge Cimentada</title>
 
-<meta name="generator" content="Hugo 0.51" />
+<meta name="generator" content="Hugo 0.30.2" />
 
 
 
@@ -73,10 +73,7 @@ hljs.initHighlightingOnLoad();
 </section>
 <section id="content-pane" class="row">
   <div class="col-md-12 text-justify content">
-    
-
-
-<p>I’ve just started a project which I’m very excited about. Everyday I take my bike to work and most days I have one of two problems. First, whenever I get to my station there are no bikes available; no problem, there’s an app that shows the closest stations with bikes available. The problem is that these stations might be far and sometimes I’m relucant to walk that much. I’d love for bicing to give me some time estimation until a new bike arrives.</p>
+    <p>I’ve just started a project which I’m very excited about. Everyday I take my bike to work and most days I have one of two problems. First, whenever I get to my station there are no bikes available; no problem, there’s an app that shows the closest stations with bikes available. The problem is that these stations might be far and sometimes I’m relucant to walk that much. I’d love for bicing to give me some time estimation until a new bike arrives.</p>
 <p>Second, whenever you’re trying to return a bike the station might not have any parking spaces available. Similarly, it would be very cool if bicing (the public bicycle company) gave me an estimate of how much time I should wait until a new bike will be taken. I started thinking on how I could implement this and started looking for bicing data online. To my surprise, bicing actually releases their <strong>live</strong> data as a json! But for this type of estimation I need historical data. I want to know the pattern usage of the station and use that information for the prediction.</p>
 <p>With that idea in mind, I got to work. I needed to set up my Virtual Private Server (VPS) to pull the data from the bicing API everyday. Because this is still a work in progress, I will only describe here how I set my VPS to scrape the bicing API everyday and how I set <code>cron</code> to send me an email after every scrape.</p>
 <p>I have a VPS from <a href="https://www.digitalocean.com/">Digital Ocean</a> with an Ubuntu OS and 512 mb of RAM and 2 GB of hard disk. That’s enough for this task because the data should not be very big, even in the long run. In any case you can adjust for your VPS to have more memory/ram without losing information. Assuming you have <a href="https://www.digitalocean.com/community/tutorials/how-to-install-r-on-ubuntu-16-04-2">R installed in your Ubuntu VPS</a> with your favorite packages, then make sure your script works by running <code>Rscript path/to/your/script.R</code>. It might be better to type <code>which Rscript</code> in the terminal and paste the path to the executable, similar to <code>/usr/bin/Rscript path/to/your/script.R</code></p>
@@ -168,7 +165,7 @@ hostname=your_host_name
 
 
 <div id="disqus_thread"></div>
-<script type="application/javascript">
+<script>
     var disqus_config = function () {
     
     
@@ -220,16 +217,12 @@ hostname=your_host_name
 </div>
 
 
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'XYZ', 'auto');
-	
-	ga('send', 'pageview');
-}
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'XYZ', 'auto');
+ga('send', 'pageview');
 </script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

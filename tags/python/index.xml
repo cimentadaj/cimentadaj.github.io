@@ -17,10 +17,7 @@
       <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-04-20-the-monty-hall-problem/the-monty-hall-problem/</guid>
-      <description>
-
-
-&lt;p&gt;Just recently, I’ve been completing the online version of &lt;code&gt;CS109&lt;/code&gt; from Harvard which is a class for understanding machine learning algorithms in Python. In the very first section the homework of the class asked us to develope a working simulation of the Monty Hall problem.&lt;/p&gt;
+      <description>&lt;p&gt;Just recently, I’ve been completing the online version of &lt;code&gt;CS109&lt;/code&gt; from Harvard which is a class for understanding machine learning algorithms in Python. In the very first section the homework of the class asked us to develope a working simulation of the Monty Hall problem.&lt;/p&gt;
 &lt;p&gt;The Monty Hall problem is very simple. In a gameshow, contestants try to guess which of 3 closed doors contain a cash prize (goats are behind the other two doors). Of course, the odds of choosing the correct door are 1 in 3. As a twist, the host of the show occasionally opens a door after a contestant makes his or her choice. This door is always one of the two the contestant did not pick, and is also always one of the goat doors (note that it is always possible to do this, since there are two goat doors). At this point, the contestant has the option of keeping his or her original choice, or swtiching to the other unopened door. The question is: is there any benefit to switching doors?&lt;/p&gt;
 &lt;p&gt;I implemented this in Python below. Let’s go step by step. Let’s load the packages we’ll use.&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
