@@ -17,10 +17,7 @@
       <pubDate>Mon, 26 Mar 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</guid>
-      <description>
-
-
-&lt;p&gt;My &lt;code&gt;ess&lt;/code&gt; package has be renamed to &lt;code&gt;essurvey&lt;/code&gt;. For quite some time I’ve been pondering whether I should change the name. All of this comes from a dicussion we had on the &lt;a href=&#34;http://r.789695.n4.nabble.com/R-pkgs-Release-of-ess-0-0-1-td4746540.html&#34;&gt;R-pkg mailing list&lt;/a&gt; where many R users suggested that the name was unfortunate given that Emacs Speaks Statistics (ESS) has a long precedence in the R community and the names are very similar. Later on, when submitting the package to &lt;a href=&#34;https://ropensci.org/&#34;&gt;rOpensci&lt;/a&gt;, Jim Hester &lt;a href=&#34;https://github.com/ropensci/onboarding/issues/201#issuecomment-372304003&#34;&gt;raised the fact once again&lt;/a&gt;, without being aware of the previous email thread.&lt;/p&gt;
+      <description>&lt;p&gt;My &lt;code&gt;ess&lt;/code&gt; package has be renamed to &lt;code&gt;essurvey&lt;/code&gt;. For quite some time I’ve been pondering whether I should change the name. All of this comes from a dicussion we had on the &lt;a href=&#34;http://r.789695.n4.nabble.com/R-pkgs-Release-of-ess-0-0-1-td4746540.html&#34;&gt;R-pkg mailing list&lt;/a&gt; where many R users suggested that the name was unfortunate given that Emacs Speaks Statistics (ESS) has a long precedence in the R community and the names are very similar. Later on, when submitting the package to &lt;a href=&#34;https://ropensci.org/&#34;&gt;rOpensci&lt;/a&gt;, Jim Hester &lt;a href=&#34;https://github.com/ropensci/onboarding/issues/201#issuecomment-372304003&#34;&gt;raised the fact once again&lt;/a&gt;, without being aware of the previous email thread.&lt;/p&gt;
 &lt;p&gt;Considering that I was already changing some of the functionalities of the package due to the &lt;a href=&#34;https://github.com/ropensci/onboarding/issues/201&#34;&gt;rOpensci review&lt;/a&gt;, I decided to change the package name and republish an improved version of &lt;code&gt;ess&lt;/code&gt; as &lt;code&gt;essurvey 1.0.0&lt;/code&gt;. &lt;code&gt;essurvey&lt;/code&gt; is now on CRAN and the repository has been moved to rOpensci’s &lt;a href=&#34;https://github.com/ropensci/essurvey&#34;&gt;github account&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;The new package is mostly similar although there are now some deprecated functions and new features. Below are the main changes.&lt;/p&gt;
 &lt;ul&gt;
@@ -46,10 +43,7 @@
       <pubDate>Mon, 12 Feb 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/</guid>
-      <description>
-
-
-&lt;p&gt;For a few months now I’ve started developing a project on which I download live bicycle usage from the API of Bicing, the public bicycle service from the city of Barcelona. Before I started analyzing the data I wanted to harvest a reasonable amount of data to be able to get a representative sample of bicycle usage.&lt;/p&gt;
+      <description>&lt;p&gt;For a few months now I’ve started developing a project on which I download live bicycle usage from the API of Bicing, the public bicycle service from the city of Barcelona. Before I started analyzing the data I wanted to harvest a reasonable amount of data to be able to get a representative sample of bicycle usage.&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;&lt;p&gt;The first thing I did was to set up my Virtual Private Server (VPS) and set a &lt;code&gt;cron&lt;/code&gt; job to email me every day after the scraping of the data is done. Check out a detailed tutorial on how to this &lt;a href=&#34;blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/index.html&#34;&gt;here&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;The second thing I did was to set up a MySQL database in my VPS and develop a program that interacts with the Barcelona Public Bicycle System API and feeds the database on a daily basis. Check out a detailed tutorial on how I did it &lt;a href=&#34;blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/index.html&#34;&gt;here&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;

@@ -17,10 +17,7 @@
       <pubDate>Thu, 10 Nov 2016 00:00:00 +0000</pubDate>
       
       <guid>/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</guid>
-      <description>
-
-
-&lt;p&gt;These exercises are from the book &lt;a href=&#34;http://www.stat.columbia.edu/~gelman/arm/&#34;&gt;Data Analysis Using Regression and Multilevel/Hierarchical Models&lt;/a&gt;. I’ve really gotten into completing these exercises and I guess that by posting them I’ve found an excuse to keep doing it. This time I went back to chapter 8 which deals with simulations. I picked the first exercise, page 165 exercise 8.6.1, which says:&lt;/p&gt;
+      <description>&lt;p&gt;These exercises are from the book &lt;a href=&#34;http://www.stat.columbia.edu/~gelman/arm/&#34;&gt;Data Analysis Using Regression and Multilevel/Hierarchical Models&lt;/a&gt;. I’ve really gotten into completing these exercises and I guess that by posting them I’ve found an excuse to keep doing it. This time I went back to chapter 8 which deals with simulations. I picked the first exercise, page 165 exercise 8.6.1, which says:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Fitting the wrong model: suppose you have 100 data points that arose from the following model: y = 3 + 0.1×1 + 0.5×2 + error, with errors having a t distribution with mean 0, scale 5, and 4 degrees of freedom.We shall explore the implications of fitting a standard linear regression to these data.&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -139,14 +136,11 @@ cbind(repl_coef + (-1 * repl_se), repl_coef + (1 * repl_se))&lt;/code&gt;&lt;/pr
     
     <item>
       <title>Multilevel modeling – Part 1</title>
-      <link>/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/</link>
+      <link>/blog/2016-11-06-multilevel-modeling--part-1/multilevel-modeling--part-1/</link>
       <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/</guid>
-      <description>
-
-
-&lt;p&gt;I’ve been reading Andrew Gelman’s and Jennifer Hill’s book again but this time concentrating on the multilevel section of the book. I finished the first chapter (chapter 12) and got fixed on the exercises 12.2, 12.3 and 12.4. I finally completed them and I thought I’d share the three exercises in two posts, mostly for me to come back to these in the future. The first exercise goes as follows:&lt;/p&gt;
+      <guid>/blog/2016-11-06-multilevel-modeling--part-1/multilevel-modeling--part-1/</guid>
+      <description>&lt;p&gt;I’ve been reading Andrew Gelman’s and Jennifer Hill’s book again but this time concentrating on the multilevel section of the book. I finished the first chapter (chapter 12) and got fixed on the exercises 12.2, 12.3 and 12.4. I finally completed them and I thought I’d share the three exercises in two posts, mostly for me to come back to these in the future. The first exercise goes as follows:&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
 &lt;li&gt;&lt;p&gt;Write a model predicting CD4 percentage as a function of time with varying intercepts across children. Fit using lmer() and interpret the coefficient for time.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Extend the model in (a) to include child-level predictors (that is, group-level predictors) for treatment and age at baseline. Fit using lmer() and interpret the coefficients on time, treatment, and age at baseline.&lt;/p&gt;&lt;/li&gt;
@@ -313,14 +307,11 @@ display(mod2)&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Multilevel modeling – Part 2</title>
-      <link>/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/</link>
+      <link>/blog/2016-11-06-multilevel-modeling--part-2/multilevel-modeling--part-2/</link>
       <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/</guid>
-      <description>
-
-
-&lt;p&gt;This is a continuation of the multilevel exercise 12.2 from chapter 12 of Data Analysis Using Regression and Multilevel/Hierarchical Models. In the last post (link to previous post) we explored the basic interpretation of multilevel modeling with a varying intercept and delved into comparing models and understanding partial pooling.&lt;/p&gt;
+      <guid>/blog/2016-11-06-multilevel-modeling--part-2/multilevel-modeling--part-2/</guid>
+      <description>&lt;p&gt;This is a continuation of the multilevel exercise 12.2 from chapter 12 of Data Analysis Using Regression and Multilevel/Hierarchical Models. In the last post (link to previous post) we explored the basic interpretation of multilevel modeling with a varying intercept and delved into comparing models and understanding partial pooling.&lt;/p&gt;
 &lt;p&gt;This was all done by completing the exercise 12.2 from chapter 12 of the book Data Analysis Using Regression and Multilevel/Hierarchical Models. Exercises 12.3 and 12.4 continue using the same dataset and the same models, so I figured I’d post them here. Let’s start.&lt;/p&gt;
 &lt;p&gt;Exercise 12.3 asks:&lt;/p&gt;
 &lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
@@ -420,10 +411,7 @@ cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Tue, 13 Sep 2016 00:00:00 +0000</pubDate>
       
       <guid>/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</guid>
-      <description>
-
-
-&lt;p&gt;I was on a flight from Asturias to Barcelona yesterday and I finally had some free time to open Gelman and Hill’s book and submerge in some studying. After finishing the chapter on simulations, I tried doing the first exercise and enjoyed it very much.&lt;/p&gt;
+      <description>&lt;p&gt;I was on a flight from Asturias to Barcelona yesterday and I finally had some free time to open Gelman and Hill’s book and submerge in some studying. After finishing the chapter on simulations, I tried doing the first exercise and enjoyed it very much.&lt;/p&gt;
 &lt;p&gt;The exercise goes as follows:&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Discrete probability simulation: suppose that a basketball player has a 60% chance of making a shot, and he keeps taking shots until he misses two in a row. Also assume his shots are independent (so that each shot has 60% probability of success, no matter what happened before).&lt;/em&gt;&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;

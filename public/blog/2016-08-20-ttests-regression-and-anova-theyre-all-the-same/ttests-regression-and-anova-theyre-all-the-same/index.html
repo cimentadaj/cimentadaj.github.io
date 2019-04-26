@@ -14,7 +14,7 @@
 
 <title>Jorge Cimentada</title>
 
-<meta name="generator" content="Hugo 0.51" />
+<meta name="generator" content="Hugo 0.30.2" />
 
 
 
@@ -70,10 +70,7 @@ hljs.initHighlightingOnLoad();
 </section>
 <section id="content-pane" class="row">
   <div class="col-md-12 text-justify content">
-    
-
-
-<p>Upon reading “How Not To Lie with Statistics: Avoiding Common Mistakes in Quantitative Political Science” from Gary King, I stumbled into a section which proved that t-tests, ANOVA and Linear Regression are intimately related, both conceptually and algebraically. As a late-comer in statistics, one usually does not pay attention to these nuances. I decided to make a short simulation in R just to make sure my intuition was right.</p>
+    <p>Upon reading “How Not To Lie with Statistics: Avoiding Common Mistakes in Quantitative Political Science” from Gary King, I stumbled into a section which proved that t-tests, ANOVA and Linear Regression are intimately related, both conceptually and algebraically. As a late-comer in statistics, one usually does not pay attention to these nuances. I decided to make a short simulation in R just to make sure my intuition was right.</p>
 <pre class="r"><code>set.seed(1)
 
 income &lt;- sample(1000:5000, 100, replace = T)
@@ -132,7 +129,7 @@ lm(income ~ gender + kids)</code></pre>
 
 
 <div id="disqus_thread"></div>
-<script type="application/javascript">
+<script>
     var disqus_config = function () {
     
     
@@ -182,16 +179,12 @@ lm(income ~ gender + kids)</code></pre>
 </div>
 
 
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'XYZ', 'auto');
-	
-	ga('send', 'pageview');
-}
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'XYZ', 'auto');
+ga('send', 'pageview');
 </script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

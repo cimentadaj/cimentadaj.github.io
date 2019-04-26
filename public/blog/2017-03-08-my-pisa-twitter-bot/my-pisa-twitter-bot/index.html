@@ -14,7 +14,7 @@
 
 <title>Jorge Cimentada</title>
 
-<meta name="generator" content="Hugo 0.51" />
+<meta name="generator" content="Hugo 0.30.2" />
 
 
 
@@ -70,10 +70,7 @@ hljs.initHighlightingOnLoad();
 </section>
 <section id="content-pane" class="row">
   <div class="col-md-12 text-justify content">
-    
-
-
-<p>I’ve long wanted to prepare a project with R related to education. I knew I’d found the idea when I read Thomas Lumley’s <a href="http://notstatschat.tumblr.com/post/156007757906/a-bus-watching-bot">attempt to create a Twitter bot in which he tweeted bus arrivals in New Zealand</a>. Quoting him, “Is it really hard to write a bot? No. Even I can do it. And I’m old.”</p>
+    <p>I’ve long wanted to prepare a project with R related to education. I knew I’d found the idea when I read Thomas Lumley’s <a href="http://notstatschat.tumblr.com/post/156007757906/a-bus-watching-bot">attempt to create a Twitter bot in which he tweeted bus arrivals in New Zealand</a>. Quoting him, “Is it really hard to write a bot? No. Even I can do it. And I’m old.”</p>
 <p>So I said to myself, alright, you have to create a Twitter bot but it has to be related to education. It’s an easy project which shouldn’t take a lot of your time. I then came up with this idea: what if you could randomly sample questions from the <a href="http://www.oecd.org/pisa/aboutpisa/">PISA databases</a> and create a sort of random facts generator. The result would be one graph a day, showing a question for some random sample of countries. I figured, why not prepare a post (both for me to remember how I did it but also so others can contribute to the project) where I explained step-by-step how I did it?</p>
 <p>The repository for the project is <a href="https://github.com/cimentadaj/PISAfacts_twitterBot">here</a>, so feel free to drop any comments or improvements. The idea is to load the <a href="http://vs-web-fs-1.oecd.org/pisa/PUF_SPSS_COMBINED_CMB_STU_QQQ.zip">PISA 2015 data</a>, randomly pick a question that doesn’t have a lot of labels (because then it’s very difficult to plot it nicely), and based on the type of question create an appropriate graph. Of course, all of this needs to be done on the fly, without human assistance. You can follow this twitter account at <span class="citation">@DailyPISA_Facts</span>. Let’s start!</p>
 <div id="data-wrangling" class="section level2">
@@ -452,7 +449,7 @@ press Control + X (to exit nano). If all went well, then you should see “cront
 
 
 <div id="disqus_thread"></div>
-<script type="application/javascript">
+<script>
     var disqus_config = function () {
     
     
@@ -477,7 +474,7 @@ press Control + X (to exit nano). If all went well, then you should see “cront
 <section id="menu-pane" class="row menu text-center">
   
   
-  <span><a class="menu-item" href="/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/">&lt; prev | </a></span>
+  <span><a class="menu-item" href="/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/">&lt; prev | </a></span>
   
   
   <span><a class="menu-item" href="/blog">blog</a></span>
@@ -504,16 +501,12 @@ press Control + X (to exit nano). If all went well, then you should see “cront
 </div>
 
 
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'XYZ', 'auto');
-	
-	ga('send', 'pageview');
-}
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'XYZ', 'auto');
+ga('send', 'pageview');
 </script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

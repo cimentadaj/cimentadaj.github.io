@@ -1,0 +1,10 @@
+"0","# Add the change of Barcelona for both indy/unionist vote
+bcn_plot <-
+  median_plot +
+  geom_point(data = bcn_pl, aes(year, value),
+             colour = ""blue"", alpha = 0.5, size = 2) +
+  geom_line(data = bcn_pl, aes(year, value, group = id),
+            colour = ""blue"", alpha = 0.5, size = 2)
+"
+"2","Error: object 'median_plot' not found
+"
