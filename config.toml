@@ -56,6 +56,33 @@ twitter = "cimentadaj"
 stackoverflow = "3617958/cimentadaj"
 email = "cimentadaj@gmail.com"
 
+# Trying to add ORCID following this example:
+# https://ab604.github.io/docs/website_bookdown/adding-content-to-the-site.html
+# [[params.social]]
+#     icon = "github"
+#     icon_pack = "ai"
+#     link = "cimentadaj"
+
+# [[params.social]]
+#     icon = "linkedin"
+#     icon_pack = "fa"
+#     link = "jorge-cimentada-1740877a/"
+
+# [[params.social]]
+#     icon = "twitter"
+#     icon_pack = "fa"
+#     link = "cimentadaj"
+
+# [[params.social]]
+#     icon = "envelope"
+#     icon_pack = "fa"
+#     link = "cimentadaj@gmail.com"
+
+# [[params.social]]
+#     icon = "orcid"
+#     icon_pack = "ai"
+#     link = "https://orcid.org/0000-0001-5594-1156"
+
 ## Extras
 [params.extra]
 copyright = "© 2017. Jorge Cimentada. [Some Rights Reserved](http://creativecommons.org/licenses/by/3.0/)."
