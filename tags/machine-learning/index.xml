@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Machine Learning on Jorge Cimentada</title>
+    <title>machine-learning on Jorge Cimentada</title>
     <link>/tags/machine-learning/</link>
-    <description>Recent content in Machine Learning on Jorge Cimentada</description>
+    <description>Recent content in machine-learning on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Sat, 26 Jan 2019 00:00:00 +0000</lastBuildDate>
@@ -17,7 +16,10 @@
       <pubDate>Sat, 26 Jan 2019 00:00:00 +0000</pubDate>
       
       <guid>/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/turning-a-pdf-book-into-machine-readable-format/</guid>
-      <description>&lt;p&gt;A few days ago a well known Sociologist, Erik Olin Wright, died from Leukemia. Torkild Lyngstand then &lt;a href=&#34;https://twitter.com/torkildl/status/1088325262758969344&#34;&gt;posted on twitter&lt;/a&gt; his &lt;a href=&#34;https://www.ssc.wisc.edu/~wright/Published%20writing/FallingIntoMarxismChoosingToStay.pdf&#34;&gt;‘intellectual biography’&lt;/a&gt; which is an interesting document that outlines how he ended up being a Marxist. This document is a pdf book that has two actual book pages per pdf page.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;A few days ago a well known Sociologist, Erik Olin Wright, died from Leukemia. Torkild Lyngstand then &lt;a href=&#34;https://twitter.com/torkildl/status/1088325262758969344&#34;&gt;posted on twitter&lt;/a&gt; his &lt;a href=&#34;https://www.ssc.wisc.edu/~wright/Published%20writing/FallingIntoMarxismChoosingToStay.pdf&#34;&gt;‘intellectual biography’&lt;/a&gt; which is an interesting document that outlines how he ended up being a Marxist. This document is a pdf book that has two actual book pages per pdf page.&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;702&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Although this is perfectly fine for reading on a computer, I usually don’t like to read anything longer than 15 pages on my computer. So I decided I would turn this book into machine readable text with R for my Kindle.&lt;/p&gt;
 &lt;p&gt;Spoiler: I couldn’t do it, so help me out!&lt;/p&gt;
@@ -499,7 +501,10 @@ bookdown::calibre(txt_path, paste0(dirname(txt_path), &amp;quot;/erik_wright.mob
       <pubDate>Tue, 22 Jan 2019 00:00:00 +0000</pubDate>
       
       <guid>/blog/2019-01-22-some-guides-and-preproject-documents-on-ml/some-guides-and-pre-project-documents-on-ml/</guid>
-      <description>&lt;p&gt;I was just browsing the web and found &lt;a href=&#34;https://developers.google.com/machine-learning/guides/rules-of-ml/&#34;&gt;this cool resource on ML from Google&lt;/a&gt;. They’re not like you’re typical tutorial but rather bullet-point type questions with advice on what to do on certain scenarios. I just came up with the idea of an interesting series of posts where each of the questions outlined in the documents is accompanied with a concrete example that shows how it works under certain scenarios.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I was just browsing the web and found &lt;a href=&#34;https://developers.google.com/machine-learning/guides/rules-of-ml/&#34;&gt;this cool resource on ML from Google&lt;/a&gt;. They’re not like you’re typical tutorial but rather bullet-point type questions with advice on what to do on certain scenarios. I just came up with the idea of an interesting series of posts where each of the questions outlined in the documents is accompanied with a concrete example that shows how it works under certain scenarios.&lt;/p&gt;
 &lt;p&gt;There’s also other tutorial on that website such as with &lt;a href=&#34;https://developers.google.com/machine-learning/guides/text-classification/&#34;&gt;text classification&lt;/a&gt;. This reminds me of the &lt;a href=&#34;https://github.com/cimentadaj/info_to_read&#34;&gt;list I keep of interesting blog posts/books/courses&lt;/a&gt; I would to follow through in the future&lt;/p&gt;
 </description>
     </item>
@@ -510,7 +515,10 @@ bookdown::calibre(txt_path, paste0(dirname(txt_path), &amp;quot;/erik_wright.mob
       <pubDate>Wed, 23 May 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-05-23-a-list-of-must-preproject-questions/a-list-of-must-pre-project-questions/</guid>
-      <description>&lt;p&gt;Rumbling through Twitter I found a Jupyter Notebook of Paige Bailey written at the rOpensci unconf about Ethical Machine Learning which you can read &lt;a href=&#34;https://github.com/ropenscilabs/proxy-bias-vignette/blob/master/EthicalMachineLearning.ipynb&#34;&gt;here&lt;/a&gt;. It was very interesting to look at her workflow but even more interesting was the set of questions she asked herself before and during the analysis. I paste them here just to keep them as a reference.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;Rumbling through Twitter I found a Jupyter Notebook of Paige Bailey written at the rOpensci unconf about Ethical Machine Learning which you can read &lt;a href=&#34;https://github.com/ropenscilabs/proxy-bias-vignette/blob/master/EthicalMachineLearning.ipynb&#34;&gt;here&lt;/a&gt;. It was very interesting to look at her workflow but even more interesting was the set of questions she asked herself before and during the analysis. I paste them here just to keep them as a reference.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;As you design the goal and the purpose of your machine learning product, you must first ask: Who is your audience?&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Is your product or analysis meant to include all people?&lt;/li&gt;
@@ -580,7 +588,10 @@ Would this use of the data surprise the data subjects?&lt;/li&gt;
       <pubDate>Thu, 07 Sep 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</guid>
-      <description>&lt;p&gt;This is the second entry, and probably the last, on model validation methods. These posts are inspired by the work of Kohavi (1995), which I totally recommend reading. This post will talk talk about the Leave-One-Out Cross Validation (LOOCV), which is the extreme version of the K-Fold Cross Validation and the Bootstrap for model assessment.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;This is the second entry, and probably the last, on model validation methods. These posts are inspired by the work of Kohavi (1995), which I totally recommend reading. This post will talk talk about the Leave-One-Out Cross Validation (LOOCV), which is the extreme version of the K-Fold Cross Validation and the Bootstrap for model assessment.&lt;/p&gt;
 &lt;p&gt;Let’s dive in!&lt;/p&gt;
 &lt;div id=&#34;the-leave-one-out-cv-method&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;The Leave-One-Out CV method&lt;/h2&gt;
@@ -679,7 +690,10 @@ summary(bootstrap)
       <pubDate>Wed, 06 Sep 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</guid>
-      <description>&lt;p&gt;In a recent attempt to bring a bit of discipline into my life, I’ve been forcing myself to read papers after lunch, specifically concentrated on data science topics. The whole idea is to educated myself every day, but if I find something cool that I can implement in R, I’ll do it right away.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;In a recent attempt to bring a bit of discipline into my life, I’ve been forcing myself to read papers after lunch, specifically concentrated on data science topics. The whole idea is to educated myself every day, but if I find something cool that I can implement in R, I’ll do it right away.&lt;/p&gt;
 &lt;p&gt;This blogpost is the first of a series of entries I plan to post explaining the main concepts of Kohavi (1995), which compares cross-validation methods and bootstrap methods for model selection. This first post will implement a K-Fold cross validation from scratch in order to understand more deeply what’s going on behind the scenes.&lt;/p&gt;
 &lt;p&gt;Before we explain the concept of K-Fold cross validation, we need to define what the ‘Holdout’ method is.&lt;/p&gt;
 &lt;div id=&#34;holdout-method&#34; class=&#34;section level2&#34;&gt;

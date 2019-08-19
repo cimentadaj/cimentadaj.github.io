@@ -14,7 +14,7 @@
 
 <title>Jorge Cimentada</title>
 
-<meta name="generator" content="Hugo 0.30.2" />
+<meta name="generator" content="Hugo 0.57.0" />
 
 
 
@@ -73,7 +73,10 @@ hljs.initHighlightingOnLoad();
 </section>
 <section id="content-pane" class="row">
   <div class="col-md-12 text-justify content">
-    <p>I woke up today to read Maëlle Salmon’s latest blog entry in which she scraped her own <a href="https://masalmon.eu/2018/06/18/mathtree/">mathematical tree</a>. Running through the code I had an idea about scraping the coauthorship list that a Google Scholar profile has. With this, I could visualize the network of coauthorship of important scientists and explore whether they have closed or open collaborations.</p>
+    
+
+
+<p>I woke up today to read Maëlle Salmon’s latest blog entry in which she scraped her own <a href="https://masalmon.eu/2018/06/18/mathtree/">mathematical tree</a>. Running through the code I had an idea about scraping the coauthorship list that a Google Scholar profile has. With this, I could visualize the network of coauthorship of important scientists and explore whether they have closed or open collaborations.</p>
 <p>I sat down this morning and created the <code>coauthornetwork</code> package that allows you to do just that! It’s actually very simple. First, install it with the usual:</p>
 <pre class="r"><code>devtools::install_github(&quot;cimentadaj/coauthornetwork&quot;)</code></pre>
 <p>There’s two functions: <code>grab_network</code> and <code>plot_coauthors</code>. The first scrapes and returns a data frame of a Google Scholar profile, their coauthors and the coauthors of their coauthors (what?). More simply, by default, the data frame returns this:</p>
@@ -118,9 +121,9 @@ network</code></pre>
       TAGS:
       
       
-      <a class="meta" href="/tags/r">R</a>, 
-      
       <a class="meta" href="/tags/packages">PACKAGES</a>, 
+      
+      <a class="meta" href="/tags/r">R</a>, 
       
       <a class="meta" href="/tags/scraping">SCRAPING</a>, 
       
@@ -137,7 +140,7 @@ network</code></pre>
 
 
 <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -189,12 +192,16 @@ network</code></pre>
 </div>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'XYZ', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
