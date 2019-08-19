@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>R on Jorge Cimentada</title>
@@ -17,7 +16,10 @@
       <pubDate>Sat, 16 Mar 2019 00:00:00 +0000</pubDate>
       
       <guid>/blog/2019-03-16-saving-missing-categories-from-r-to-stata/saving-missing-categories-from-r-to-stata/</guid>
-      <description>&lt;p&gt;I’m finishing a project from the RECSM institute where we developed a &lt;a href=&#34;https://essurvey.shinyapps.io/ess_castellano/&#34;&gt;Shiny application&lt;/a&gt; to download data from the European Social Survey with Spanish translated labels. This was one hell of a project since I had to build some wrappers around the Google Translate API to generate translations for over 1300 questions and stream line this to be interactive while users download the data. That’s a long story which I will not delve into.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I’m finishing a project from the RECSM institute where we developed a &lt;a href=&#34;https://essurvey.shinyapps.io/ess_castellano/&#34;&gt;Shiny application&lt;/a&gt; to download data from the European Social Survey with Spanish translated labels. This was one hell of a project since I had to build some wrappers around the Google Translate API to generate translations for over 1300 questions and stream line this to be interactive while users download the data. That’s a long story which I will not delve into.&lt;/p&gt;
 &lt;p&gt;This post is about a bug I found in the &lt;code&gt;haven&lt;/code&gt; package while doing the project. The bug is simple to explain and &lt;a href=&#34;https://github.com/tidyverse/haven/issues/435&#34;&gt;I filed it in &lt;code&gt;haven&lt;/code&gt; already&lt;/a&gt;:&lt;/p&gt;
 &lt;p&gt;Let’s define a labelled double with only one tagged NA value.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(haven)
@@ -213,7 +215,10 @@ recode_stata_labels(tst)&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Sat, 16 Mar 2019 00:00:00 +0000</pubDate>
       
       <guid>/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/</guid>
-      <description>&lt;p&gt;I had to spend about 1 hour yesterday because R did something completely unpredictable (for my taste). It dropped an attribute without a warning.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I had to spend about 1 hour yesterday because R did something completely unpredictable (for my taste). It dropped an attribute without a warning.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df &amp;lt;- data.frame(x = rep(c(1, 2), 20))
 
 attr(df$x, &amp;quot;label&amp;quot;) &amp;lt;- &amp;quot;This is clearly a label&amp;quot;

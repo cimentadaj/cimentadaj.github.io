@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Blogs on Jorge Cimentada</title>
@@ -17,7 +16,10 @@
       <pubDate>Sat, 16 Mar 2019 00:00:00 +0000</pubDate>
       
       <guid>/blog/2019-03-16-saving-missing-categories-from-r-to-stata/saving-missing-categories-from-r-to-stata/</guid>
-      <description>&lt;p&gt;I’m finishing a project from the RECSM institute where we developed a &lt;a href=&#34;https://essurvey.shinyapps.io/ess_castellano/&#34;&gt;Shiny application&lt;/a&gt; to download data from the European Social Survey with Spanish translated labels. This was one hell of a project since I had to build some wrappers around the Google Translate API to generate translations for over 1300 questions and stream line this to be interactive while users download the data. That’s a long story which I will not delve into.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I’m finishing a project from the RECSM institute where we developed a &lt;a href=&#34;https://essurvey.shinyapps.io/ess_castellano/&#34;&gt;Shiny application&lt;/a&gt; to download data from the European Social Survey with Spanish translated labels. This was one hell of a project since I had to build some wrappers around the Google Translate API to generate translations for over 1300 questions and stream line this to be interactive while users download the data. That’s a long story which I will not delve into.&lt;/p&gt;
 &lt;p&gt;This post is about a bug I found in the &lt;code&gt;haven&lt;/code&gt; package while doing the project. The bug is simple to explain and &lt;a href=&#34;https://github.com/tidyverse/haven/issues/435&#34;&gt;I filed it in &lt;code&gt;haven&lt;/code&gt; already&lt;/a&gt;:&lt;/p&gt;
 &lt;p&gt;Let’s define a labelled double with only one tagged NA value.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(haven)
@@ -213,7 +215,10 @@ recode_stata_labels(tst)&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Sat, 16 Mar 2019 00:00:00 +0000</pubDate>
       
       <guid>/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/</guid>
-      <description>&lt;p&gt;I had to spend about 1 hour yesterday because R did something completely unpredictable (for my taste). It dropped an attribute without a warning.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I had to spend about 1 hour yesterday because R did something completely unpredictable (for my taste). It dropped an attribute without a warning.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df &amp;lt;- data.frame(x = rep(c(1, 2), 20))
 
 attr(df$x, &amp;quot;label&amp;quot;) &amp;lt;- &amp;quot;This is clearly a label&amp;quot;
@@ -251,7 +256,10 @@ df %&amp;gt;%
       <pubDate>Sat, 26 Jan 2019 00:00:00 +0000</pubDate>
       
       <guid>/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/turning-a-pdf-book-into-machine-readable-format/</guid>
-      <description>&lt;p&gt;A few days ago a well known Sociologist, Erik Olin Wright, died from Leukemia. Torkild Lyngstand then &lt;a href=&#34;https://twitter.com/torkildl/status/1088325262758969344&#34;&gt;posted on twitter&lt;/a&gt; his &lt;a href=&#34;https://www.ssc.wisc.edu/~wright/Published%20writing/FallingIntoMarxismChoosingToStay.pdf&#34;&gt;‘intellectual biography’&lt;/a&gt; which is an interesting document that outlines how he ended up being a Marxist. This document is a pdf book that has two actual book pages per pdf page.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;A few days ago a well known Sociologist, Erik Olin Wright, died from Leukemia. Torkild Lyngstand then &lt;a href=&#34;https://twitter.com/torkildl/status/1088325262758969344&#34;&gt;posted on twitter&lt;/a&gt; his &lt;a href=&#34;https://www.ssc.wisc.edu/~wright/Published%20writing/FallingIntoMarxismChoosingToStay.pdf&#34;&gt;‘intellectual biography’&lt;/a&gt; which is an interesting document that outlines how he ended up being a Marxist. This document is a pdf book that has two actual book pages per pdf page.&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;702&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Although this is perfectly fine for reading on a computer, I usually don’t like to read anything longer than 15 pages on my computer. So I decided I would turn this book into machine readable text with R for my Kindle.&lt;/p&gt;
 &lt;p&gt;Spoiler: I couldn’t do it, so help me out!&lt;/p&gt;
@@ -733,7 +741,10 @@ bookdown::calibre(txt_path, paste0(dirname(txt_path), &amp;quot;/erik_wright.mob
       <pubDate>Tue, 22 Jan 2019 00:00:00 +0000</pubDate>
       
       <guid>/blog/2019-01-22-some-guides-and-preproject-documents-on-ml/some-guides-and-pre-project-documents-on-ml/</guid>
-      <description>&lt;p&gt;I was just browsing the web and found &lt;a href=&#34;https://developers.google.com/machine-learning/guides/rules-of-ml/&#34;&gt;this cool resource on ML from Google&lt;/a&gt;. They’re not like you’re typical tutorial but rather bullet-point type questions with advice on what to do on certain scenarios. I just came up with the idea of an interesting series of posts where each of the questions outlined in the documents is accompanied with a concrete example that shows how it works under certain scenarios.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I was just browsing the web and found &lt;a href=&#34;https://developers.google.com/machine-learning/guides/rules-of-ml/&#34;&gt;this cool resource on ML from Google&lt;/a&gt;. They’re not like you’re typical tutorial but rather bullet-point type questions with advice on what to do on certain scenarios. I just came up with the idea of an interesting series of posts where each of the questions outlined in the documents is accompanied with a concrete example that shows how it works under certain scenarios.&lt;/p&gt;
 &lt;p&gt;There’s also other tutorial on that website such as with &lt;a href=&#34;https://developers.google.com/machine-learning/guides/text-classification/&#34;&gt;text classification&lt;/a&gt;. This reminds me of the &lt;a href=&#34;https://github.com/cimentadaj/info_to_read&#34;&gt;list I keep of interesting blog posts/books/courses&lt;/a&gt; I would to follow through in the future&lt;/p&gt;
 </description>
     </item>
@@ -744,7 +755,10 @@ bookdown::calibre(txt_path, paste0(dirname(txt_path), &amp;quot;/erik_wright.mob
       <pubDate>Tue, 19 Jun 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</guid>
-      <description>&lt;p&gt;I woke up today to read Maëlle Salmon’s latest blog entry in which she scraped her own &lt;a href=&#34;https://masalmon.eu/2018/06/18/mathtree/&#34;&gt;mathematical tree&lt;/a&gt;. Running through the code I had an idea about scraping the coauthorship list that a Google Scholar profile has. With this, I could visualize the network of coauthorship of important scientists and explore whether they have closed or open collaborations.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I woke up today to read Maëlle Salmon’s latest blog entry in which she scraped her own &lt;a href=&#34;https://masalmon.eu/2018/06/18/mathtree/&#34;&gt;mathematical tree&lt;/a&gt;. Running through the code I had an idea about scraping the coauthorship list that a Google Scholar profile has. With this, I could visualize the network of coauthorship of important scientists and explore whether they have closed or open collaborations.&lt;/p&gt;
 &lt;p&gt;I sat down this morning and created the &lt;code&gt;coauthornetwork&lt;/code&gt; package that allows you to do just that! It’s actually very simple. First, install it with the usual:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;devtools::install_github(&amp;quot;cimentadaj/coauthornetwork&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;There’s two functions: &lt;code&gt;grab_network&lt;/code&gt; and &lt;code&gt;plot_coauthors&lt;/code&gt;. The first scrapes and returns a data frame of a Google Scholar profile, their coauthors and the coauthors of their coauthors (what?). More simply, by default, the data frame returns this:&lt;/p&gt;
@@ -785,7 +799,10 @@ network&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Fri, 25 May 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/</guid>
-      <description>&lt;p&gt;Struggled for about two hours to install &lt;code&gt;rJava&lt;/code&gt; on my Windows 10 machine. Post here the steps that made it work in case anyone is interested (that is, future me).&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;Struggled for about two hours to install &lt;code&gt;rJava&lt;/code&gt; on my Windows 10 machine. Post here the steps that made it work in case anyone is interested (that is, future me).&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Check whether R is 32/64 bit with &lt;code&gt;sessionInfo()&lt;/code&gt;. Check Platform.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Download the specific 32/64 bit of Java. This is &lt;strong&gt;really&lt;/strong&gt; important. R and Java must have the same memory signature, either 32 or 64 bit. I had 64 bit so I downloaded the Offline 64-bit version from &lt;a href=&#34;https://www.java.com/en/download/manual.jsp&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
@@ -805,7 +822,10 @@ network&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Wed, 23 May 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-05-23-a-list-of-must-preproject-questions/a-list-of-must-pre-project-questions/</guid>
-      <description>&lt;p&gt;Rumbling through Twitter I found a Jupyter Notebook of Paige Bailey written at the rOpensci unconf about Ethical Machine Learning which you can read &lt;a href=&#34;https://github.com/ropenscilabs/proxy-bias-vignette/blob/master/EthicalMachineLearning.ipynb&#34;&gt;here&lt;/a&gt;. It was very interesting to look at her workflow but even more interesting was the set of questions she asked herself before and during the analysis. I paste them here just to keep them as a reference.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;Rumbling through Twitter I found a Jupyter Notebook of Paige Bailey written at the rOpensci unconf about Ethical Machine Learning which you can read &lt;a href=&#34;https://github.com/ropenscilabs/proxy-bias-vignette/blob/master/EthicalMachineLearning.ipynb&#34;&gt;here&lt;/a&gt;. It was very interesting to look at her workflow but even more interesting was the set of questions she asked herself before and during the analysis. I paste them here just to keep them as a reference.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;As you design the goal and the purpose of your machine learning product, you must first ask: Who is your audience?&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Is your product or analysis meant to include all people?&lt;/li&gt;
@@ -875,7 +895,10 @@ Would this use of the data surprise the data subjects?&lt;/li&gt;
       <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-04-20-the-monty-hall-problem/the-monty-hall-problem/</guid>
-      <description>&lt;p&gt;Just recently, I’ve been completing the online version of &lt;code&gt;CS109&lt;/code&gt; from Harvard which is a class for understanding machine learning algorithms in Python. In the very first section the homework of the class asked us to develope a working simulation of the Monty Hall problem.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;Just recently, I’ve been completing the online version of &lt;code&gt;CS109&lt;/code&gt; from Harvard which is a class for understanding machine learning algorithms in Python. In the very first section the homework of the class asked us to develope a working simulation of the Monty Hall problem.&lt;/p&gt;
 &lt;p&gt;The Monty Hall problem is very simple. In a gameshow, contestants try to guess which of 3 closed doors contain a cash prize (goats are behind the other two doors). Of course, the odds of choosing the correct door are 1 in 3. As a twist, the host of the show occasionally opens a door after a contestant makes his or her choice. This door is always one of the two the contestant did not pick, and is also always one of the goat doors (note that it is always possible to do this, since there are two goat doors). At this point, the contestant has the option of keeping his or her original choice, or swtiching to the other unopened door. The question is: is there any benefit to switching doors?&lt;/p&gt;
 &lt;p&gt;I implemented this in Python below. Let’s go step by step. Let’s load the packages we’ll use.&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
@@ -968,7 +991,10 @@ print(second_perc)&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Thu, 05 Apr 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-04-05-login-in-scraping-and-hidden-fields/login-in-scraping-and-hidden-fields/</guid>
-      <description>&lt;p&gt;Lightning post. Earlier today I was trying to scrape the emails from all the PhD candidates in my program and I had to log in from our ‘Aula Global’. I did so using &lt;code&gt;httr&lt;/code&gt; but something was off: I introduced both my username and password but the website did not log in. Apparently, when loging in through &lt;code&gt;POST&lt;/code&gt;, sometimes there’s a thing call hidden fields that you need to fill out! I would’ve never though about this. Below is a case study, that excludes my credentials.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;Lightning post. Earlier today I was trying to scrape the emails from all the PhD candidates in my program and I had to log in from our ‘Aula Global’. I did so using &lt;code&gt;httr&lt;/code&gt; but something was off: I introduced both my username and password but the website did not log in. Apparently, when loging in through &lt;code&gt;POST&lt;/code&gt;, sometimes there’s a thing call hidden fields that you need to fill out! I would’ve never though about this. Below is a case study, that excludes my credentials.&lt;/p&gt;
 &lt;p&gt;The first thing we have to do is identify the &lt;code&gt;POST&lt;/code&gt; method and the inputs to the request. Using Google Chrome, go to the website &lt;a href=&#34;https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php&#34;&gt;https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php&lt;/a&gt; and then on the Google Chrome menu go to -&amp;gt; Settings -&amp;gt; More tools -&amp;gt; Developer tools. Here we have the complete html of the website.&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;We identify the POST method and the URL&lt;/li&gt;
@@ -1052,7 +1078,10 @@ access &amp;lt;- POST(login,
       <pubDate>Mon, 26 Mar 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</guid>
-      <description>&lt;p&gt;My &lt;code&gt;ess&lt;/code&gt; package has be renamed to &lt;code&gt;essurvey&lt;/code&gt;. For quite some time I’ve been pondering whether I should change the name. All of this comes from a dicussion we had on the &lt;a href=&#34;http://r.789695.n4.nabble.com/R-pkgs-Release-of-ess-0-0-1-td4746540.html&#34;&gt;R-pkg mailing list&lt;/a&gt; where many R users suggested that the name was unfortunate given that Emacs Speaks Statistics (ESS) has a long precedence in the R community and the names are very similar. Later on, when submitting the package to &lt;a href=&#34;https://ropensci.org/&#34;&gt;rOpensci&lt;/a&gt;, Jim Hester &lt;a href=&#34;https://github.com/ropensci/onboarding/issues/201#issuecomment-372304003&#34;&gt;raised the fact once again&lt;/a&gt;, without being aware of the previous email thread.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;My &lt;code&gt;ess&lt;/code&gt; package has be renamed to &lt;code&gt;essurvey&lt;/code&gt;. For quite some time I’ve been pondering whether I should change the name. All of this comes from a dicussion we had on the &lt;a href=&#34;http://r.789695.n4.nabble.com/R-pkgs-Release-of-ess-0-0-1-td4746540.html&#34;&gt;R-pkg mailing list&lt;/a&gt; where many R users suggested that the name was unfortunate given that Emacs Speaks Statistics (ESS) has a long precedence in the R community and the names are very similar. Later on, when submitting the package to &lt;a href=&#34;https://ropensci.org/&#34;&gt;rOpensci&lt;/a&gt;, Jim Hester &lt;a href=&#34;https://github.com/ropensci/onboarding/issues/201#issuecomment-372304003&#34;&gt;raised the fact once again&lt;/a&gt;, without being aware of the previous email thread.&lt;/p&gt;
 &lt;p&gt;Considering that I was already changing some of the functionalities of the package due to the &lt;a href=&#34;https://github.com/ropensci/onboarding/issues/201&#34;&gt;rOpensci review&lt;/a&gt;, I decided to change the package name and republish an improved version of &lt;code&gt;ess&lt;/code&gt; as &lt;code&gt;essurvey 1.0.0&lt;/code&gt;. &lt;code&gt;essurvey&lt;/code&gt; is now on CRAN and the repository has been moved to rOpensci’s &lt;a href=&#34;https://github.com/ropensci/essurvey&#34;&gt;github account&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;The new package is mostly similar although there are now some deprecated functions and new features. Below are the main changes.&lt;/p&gt;
 &lt;ul&gt;
@@ -1078,7 +1107,10 @@ access &amp;lt;- POST(login,
       <pubDate>Thu, 22 Mar 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-03-22-rselenium-and-scraping-catalan-educational-data/rselenium-and-scraping-catalan-educational-data/</guid>
-      <description>&lt;p&gt;Yesterday I found this public dataset on schools from Barcelona and their performance on tests on 6th grade. I wanted to scrape them to investigate the relationship between performance and schools that receive special government funds for social integration. I found this dataset &lt;a href=&#34;https://view-awesome-table.com/-L4lo3r-JA2iaWk1puUT/view&#34;&gt;here&lt;/a&gt; but it was different from the types of websites I usually scape (&lt;code&gt;html&lt;/code&gt; or &lt;code&gt;xml&lt;/code&gt;). Although the website has some &lt;code&gt;html&lt;/code&gt; the engine swiping the schools is actually based on &lt;code&gt;Javascript&lt;/code&gt;. Well, that’s a job for &lt;code&gt;RSelenium&lt;/code&gt;, an R package that allows you to browse a website with R.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;Yesterday I found this public dataset on schools from Barcelona and their performance on tests on 6th grade. I wanted to scrape them to investigate the relationship between performance and schools that receive special government funds for social integration. I found this dataset &lt;a href=&#34;https://view-awesome-table.com/-L4lo3r-JA2iaWk1puUT/view&#34;&gt;here&lt;/a&gt; but it was different from the types of websites I usually scape (&lt;code&gt;html&lt;/code&gt; or &lt;code&gt;xml&lt;/code&gt;). Although the website has some &lt;code&gt;html&lt;/code&gt; the engine swiping the schools is actually based on &lt;code&gt;Javascript&lt;/code&gt;. Well, that’s a job for &lt;code&gt;RSelenium&lt;/code&gt;, an R package that allows you to browse a website with R.&lt;/p&gt;
 &lt;p&gt;The process was actually much easier than I thought using Docker. I follow the answer of setting docker from &lt;a href=&#34;https://stackoverflow.com/questions/45395849/cant-execute-rsdriver-connection-refused&#34;&gt;this&lt;/a&gt; post. Note that this is for Windows 10.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://download.docker.com/win/stable/DockerToolbox.exe&#34;&gt;install docker&lt;/a&gt;&lt;/li&gt;
@@ -1167,7 +1199,10 @@ remDr$navigate(&amp;quot;https://view-awesome-table.com/-L4lo3r-JA2iaWk1puUT/vie
       <pubDate>Sun, 04 Mar 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/</guid>
-      <description>&lt;p&gt;The new version of the ess package is out! &lt;code&gt;ess 0.1.1&lt;/code&gt; fixes some bugs and inconsistencies across the package and has one important new feature and a change that breaks backward compatibility. You can see all changes &lt;a href=&#34;https://cimentadaj.github.io/ess/news/index.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;The new version of the ess package is out! &lt;code&gt;ess 0.1.1&lt;/code&gt; fixes some bugs and inconsistencies across the package and has one important new feature and a change that breaks backward compatibility. You can see all changes &lt;a href=&#34;https://cimentadaj.github.io/ess/news/index.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Install the latest version &lt;code&gt;0.1.1&lt;/code&gt; from CRAN with &lt;code&gt;install.packages(&amp;quot;ess&amp;quot;)&lt;/code&gt;.&lt;/p&gt;
 &lt;div id=&#34;new-features&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;New features&lt;/h2&gt;
@@ -1254,7 +1289,10 @@ all_countries&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Mon, 12 Feb 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/</guid>
-      <description>&lt;p&gt;For a few months now I’ve started developing a project on which I download live bicycle usage from the API of Bicing, the public bicycle service from the city of Barcelona. Before I started analyzing the data I wanted to harvest a reasonable amount of data to be able to get a representative sample of bicycle usage.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;For a few months now I’ve started developing a project on which I download live bicycle usage from the API of Bicing, the public bicycle service from the city of Barcelona. Before I started analyzing the data I wanted to harvest a reasonable amount of data to be able to get a representative sample of bicycle usage.&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;&lt;p&gt;The first thing I did was to set up my Virtual Private Server (VPS) and set a &lt;code&gt;cron&lt;/code&gt; job to email me every day after the scraping of the data is done. Check out a detailed tutorial on how to this &lt;a href=&#34;blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/index.html&#34;&gt;here&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;The second thing I did was to set up a MySQL database in my VPS and develop a program that interacts with the Barcelona Public Bicycle System API and feeds the database on a daily basis. Check out a detailed tutorial on how I did it &lt;a href=&#34;blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/index.html&#34;&gt;here&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
@@ -1502,7 +1540,10 @@ confusionMatrix(test$empty, pred_empty, positive = &amp;quot;1&amp;quot;)&lt;/co
       <pubDate>Tue, 06 Feb 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-02-06-rewriting-duplicated/rewriting-duplicated/</guid>
-      <description>&lt;p&gt;Lightning post. I got very confused earlier today on how to use &lt;code&gt;duplicated&lt;/code&gt;. Basically, I didn’t know if it was picking only one duplicate or many of the duplicates at the same time. I figure it out but I still was a bit confused so I decided to rewrite the function from scratch. Below you can see it. Please post any other solutions or feedback.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;Lightning post. I got very confused earlier today on how to use &lt;code&gt;duplicated&lt;/code&gt;. Basically, I didn’t know if it was picking only one duplicate or many of the duplicates at the same time. I figure it out but I still was a bit confused so I decided to rewrite the function from scratch. Below you can see it. Please post any other solutions or feedback.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dupl_identifier &amp;lt;- function(vec, where) {
   intm &amp;lt;- x %in% vec
   pos &amp;lt;- which(intm)
@@ -1541,7 +1582,10 @@ identical(my_duplicated(x),
       <pubDate>Sat, 03 Feb 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-02-03-predicting-location-via-indoor-positioning-systems/predicting-location-via-indoor-positioning-systems/</guid>
-      <description>&lt;p&gt;I’ve just started reading the wonderful book &lt;a href=&#34;http://rdatasciencecases.org/&#34;&gt;Data Science in R: A Case Studies Approach to Computational Reasoning and Problem Solving&lt;/a&gt;. I’ve just begun the first chapter and I wanted to document some of the things I found interesting. In this post I’ll walkthrough the example on how to transform a text file with GPS locations into a well formatted rectangular dataset. For a detailed explanation see their book, which I highly recommend buying.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I’ve just started reading the wonderful book &lt;a href=&#34;http://rdatasciencecases.org/&#34;&gt;Data Science in R: A Case Studies Approach to Computational Reasoning and Problem Solving&lt;/a&gt;. I’ve just begun the first chapter and I wanted to document some of the things I found interesting. In this post I’ll walkthrough the example on how to transform a text file with GPS locations into a well formatted rectangular dataset. For a detailed explanation see their book, which I highly recommend buying.&lt;/p&gt;
 &lt;p&gt;Note: When it makes senses/it’s possible, I always try to find an equivalent tidyverse solution to everything they do in the book.&lt;/p&gt;
 &lt;p&gt;This is the data.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
@@ -1804,7 +1848,10 @@ final_data&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Wed, 31 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/</guid>
-      <description>&lt;p&gt;I’ve been working on a personal project to gather daily data from public bicycles in Barcelona to create a historical timeline of a few stations. Since the data is only available live, I had to scrape the data and store in a database daily. This is a short tutorial showing the steps I had to take to setup a database on my remote server and connect both from my local computer as well as from my server. I also show the R script that scrapes data, connects to the server and appends the information every day for a certain amouint of time.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I’ve been working on a personal project to gather daily data from public bicycles in Barcelona to create a historical timeline of a few stations. Since the data is only available live, I had to scrape the data and store in a database daily. This is a short tutorial showing the steps I had to take to setup a database on my remote server and connect both from my local computer as well as from my server. I also show the R script that scrapes data, connects to the server and appends the information every day for a certain amouint of time.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Note: This worked for my Digital Ocean droplet 512 MB and 20 GB disk with Ubuntu 16.04.3 x64.&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;Let’s get to it. It’s better to do &lt;em&gt;ALL&lt;/em&gt; of this as a user in your server but remember to append &lt;code&gt;sudo&lt;/code&gt; to everything. Nonetheless, beware of problems like the ones I encountered. For example, when installing R packages that where ran by &lt;code&gt;cron&lt;/code&gt; in a script, if installed through a non-root user the packages were said to be &lt;code&gt;&#39;not installed&#39;&lt;/code&gt; (when I fact running the script separately was fine). However, when I installed the packages logged in as root the packages were installed successfully.&lt;/p&gt;
 &lt;div id=&#34;setting-up-the-data-base&#34; class=&#34;section level2&#34;&gt;
@@ -2069,7 +2116,10 @@ appended between the time the script should&amp;#39;ve started and should&amp;#3
       <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/brief-analysis-of-independent-unionist-vote-in-catalonia/</guid>
-      <description>&lt;div id=&#34;catalan-elections&#34; class=&#34;section level2&#34;&gt;
+      <description>
+
+
+&lt;div id=&#34;catalan-elections&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Catalan elections&lt;/h2&gt;
 &lt;p&gt;On a train from Barcelona-Madrid I started working with an &lt;code&gt;R&lt;/code&gt; package called &lt;code&gt;ggrides&lt;/code&gt;. To my surprise, the package contains one dataset that documents the change in independent/unionist vote for all Catalan municipalities from 1980 to 2015. This is very cool! Needless to say, I left what I was doing and started to dive into the dataset.&lt;/p&gt;
 &lt;p&gt;The data looks like this:&lt;/p&gt;
@@ -2235,7 +2285,10 @@ Catalan_elections %&amp;gt;%
       <pubDate>Fri, 01 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/</guid>
-      <description>&lt;p&gt;I’ve just started a project which I’m very excited about. Everyday I take my bike to work and most days I have one of two problems. First, whenever I get to my station there are no bikes available; no problem, there’s an app that shows the closest stations with bikes available. The problem is that these stations might be far and sometimes I’m relucant to walk that much. I’d love for bicing to give me some time estimation until a new bike arrives.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I’ve just started a project which I’m very excited about. Everyday I take my bike to work and most days I have one of two problems. First, whenever I get to my station there are no bikes available; no problem, there’s an app that shows the closest stations with bikes available. The problem is that these stations might be far and sometimes I’m relucant to walk that much. I’d love for bicing to give me some time estimation until a new bike arrives.&lt;/p&gt;
 &lt;p&gt;Second, whenever you’re trying to return a bike the station might not have any parking spaces available. Similarly, it would be very cool if bicing (the public bicycle company) gave me an estimate of how much time I should wait until a new bike will be taken. I started thinking on how I could implement this and started looking for bicing data online. To my surprise, bicing actually releases their &lt;strong&gt;live&lt;/strong&gt; data as a json! But for this type of estimation I need historical data. I want to know the pattern usage of the station and use that information for the prediction.&lt;/p&gt;
 &lt;p&gt;With that idea in mind, I got to work. I needed to set up my Virtual Private Server (VPS) to pull the data from the bicing API everyday. Because this is still a work in progress, I will only describe here how I set my VPS to scrape the bicing API everyday and how I set &lt;code&gt;cron&lt;/code&gt; to send me an email after every scrape.&lt;/p&gt;
 &lt;p&gt;I have a VPS from &lt;a href=&#34;https://www.digitalocean.com/&#34;&gt;Digital Ocean&lt;/a&gt; with an Ubuntu OS and 512 mb of RAM and 2 GB of hard disk. That’s enough for this task because the data should not be very big, even in the long run. In any case you can adjust for your VPS to have more memory/ram without losing information. Assuming you have &lt;a href=&#34;https://www.digitalocean.com/community/tutorials/how-to-install-r-on-ubuntu-16-04-2&#34;&gt;R installed in your Ubuntu VPS&lt;/a&gt; with your favorite packages, then make sure your script works by running &lt;code&gt;Rscript path/to/your/script.R&lt;/code&gt;. It might be better to type &lt;code&gt;which Rscript&lt;/code&gt; in the terminal and paste the path to the executable, similar to &lt;code&gt;/usr/bin/Rscript path/to/your/script.R&lt;/code&gt;&lt;/p&gt;
@@ -2308,7 +2361,10 @@ hostname=your_host_name
       <pubDate>Thu, 23 Nov 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-11-23-an-introduction-to-the-ess-package/an-introduction-to-the-ess-package/</guid>
-      <description>&lt;p&gt;The &lt;code&gt;ess&lt;/code&gt; package is designed to download the ESS data as easily as possible. It has a few helper functions to download rounds, rounds for a selected country and to show which rounds/countries are available. In this tutorial I will walk you through how these functions work.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;The &lt;code&gt;ess&lt;/code&gt; package is designed to download the ESS data as easily as possible. It has a few helper functions to download rounds, rounds for a selected country and to show which rounds/countries are available. In this tutorial I will walk you through how these functions work.&lt;/p&gt;
 &lt;p&gt;Before using the package it is necessary for you to sign up at &lt;a href=&#34;http://www.europeansocialsurvey.org/&#34; class=&#34;uri&#34;&gt;http://www.europeansocialsurvey.org/&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Let’s do it together.&lt;/p&gt;
 &lt;p&gt;When you enter the website go the to topmost left corner and click on &lt;code&gt;Sign in/Register&lt;/code&gt;. Under the email box, click on &lt;code&gt;New user?&lt;/code&gt; and fill out your personal information. Click on &lt;code&gt;Register&lt;/code&gt; and check your email inbox. You should’ve received an email from the ESS with an activation link. Click on that link and voila! We’re ready to go.&lt;/p&gt;
@@ -2389,7 +2445,10 @@ three_rounds[[1]]&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Sat, 18 Nov 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-11-18-123check/1-2-3-check/</guid>
-      <description>&lt;p&gt;1..2..3..check! This is my first post using &lt;a href=&#34;https://cran.r-project.org/web/packages/blogdown/index.html&#34;&gt;blogdown&lt;/a&gt;. I migrated my website from &lt;code&gt;Jekyll&lt;/code&gt; to &lt;code&gt;Hugo&lt;/code&gt; and although it took me around 2 days to tweak everything to where I wanted it, the process wasn’t so bad after all. As a celebration, I though of doing a quick analysis!&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;1..2..3..check! This is my first post using &lt;a href=&#34;https://cran.r-project.org/web/packages/blogdown/index.html&#34;&gt;blogdown&lt;/a&gt;. I migrated my website from &lt;code&gt;Jekyll&lt;/code&gt; to &lt;code&gt;Hugo&lt;/code&gt; and although it took me around 2 days to tweak everything to where I wanted it, the process wasn’t so bad after all. As a celebration, I though of doing a quick analysis!&lt;/p&gt;
 &lt;p&gt;I live in Barcelona, a city known for sunny weather, great football and for wanting to become an independent state. In fact, just recently there was an unsuccessful attempt to break parts with the Spanish nation. Without delving too much into it, I searched for any question related to nationalism into the European Social Survey and downloaded the last available wave using the &lt;a href=&#34;https://cran.r-project.org/web/packages/ess/index.html&#34;&gt;ess&lt;/a&gt; package.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(essurvey)
 library(cimentadaj)
@@ -2475,7 +2534,10 @@ perc_table %&amp;gt;%
       <pubDate>Tue, 24 Oct 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-10-24-phd-thesis-template-with-sweave-and-knitr/phd-thesis-template-with-sweave-and-knitr/</guid>
-      <description>&lt;p&gt;Writing my thesis with &lt;code&gt;Sweave&lt;/code&gt; and &lt;code&gt;knitr&lt;/code&gt; was very nice at the beginning, but then I began running into problems when I wanted to combine different chapters into one single document. Most of the problems were related to having each chapter be compilable on its own with separate bibliographies, among other things. I wrote a detailed guide on how I did it and you can read it &lt;a href=&#34;https://cimentadaj.github.io/phd_thesis/thesis_template_example/2017-10-24-thesis-template.html&#34;&gt;here&lt;/a&gt;. I’d love some feedback as workflow is still very rudimentary. You can post a comment on this post or email me at &lt;a href=&#34;mailto:cimentadaj@gmail.com&#34;&gt;cimentadaj@gmail.com&lt;/a&gt;.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;Writing my thesis with &lt;code&gt;Sweave&lt;/code&gt; and &lt;code&gt;knitr&lt;/code&gt; was very nice at the beginning, but then I began running into problems when I wanted to combine different chapters into one single document. Most of the problems were related to having each chapter be compilable on its own with separate bibliographies, among other things. I wrote a detailed guide on how I did it and you can read it &lt;a href=&#34;https://cimentadaj.github.io/phd_thesis/thesis_template_example/2017-10-24-thesis-template.html&#34;&gt;here&lt;/a&gt;. I’d love some feedback as workflow is still very rudimentary. You can post a comment on this post or email me at &lt;a href=&#34;mailto:cimentadaj@gmail.com&#34;&gt;cimentadaj@gmail.com&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Hope it’s useful.&lt;/p&gt;
 </description>
     </item>
@@ -2486,7 +2548,10 @@ perc_table %&amp;gt;%
       <pubDate>Mon, 16 Oct 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</guid>
-      <description>&lt;p&gt;How I Met Your Mother (HIMYM from here after) is a television series very similar to the classical ‘Friends’ series from the 90’s. Following the release of the &lt;a href=&#34;http://tidytextmining.com/&#34;&gt;tidy text&lt;/a&gt; book I was looking for a project in which I could apply these skills. I decided I would scrape all the transcripts from HIMYM and analyze patterns between characters. This post really took me to the limit in terms of web scraping and pattern matching, which was specifically what I wanted to improve in the first place. Let’s begin!&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;How I Met Your Mother (HIMYM from here after) is a television series very similar to the classical ‘Friends’ series from the 90’s. Following the release of the &lt;a href=&#34;http://tidytextmining.com/&#34;&gt;tidy text&lt;/a&gt; book I was looking for a project in which I could apply these skills. I decided I would scrape all the transcripts from HIMYM and analyze patterns between characters. This post really took me to the limit in terms of web scraping and pattern matching, which was specifically what I wanted to improve in the first place. Let’s begin!&lt;/p&gt;
 &lt;p&gt;My first task was whether there was any consistency in the URL’s that stored the transcripts. If you ever watched HIMYM, we know there’s around nine seasons, each one with about 22 episodes. This makes about 200 episodes give or take. It would be a big pain to manually write down 200 complicated URL’s. Luckily, there is a way of finding the 200 links without writing them down manually.&lt;/p&gt;
 &lt;p&gt;First, we create the links for the 9 websites that contain all episodes (1 through season 9)&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rvest)
@@ -2778,7 +2843,10 @@ cowplot::plot_grid(plotlist = all_season_plots, labels = seasons)&lt;/code&gt;&l
       <pubDate>Thu, 07 Sep 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</guid>
-      <description>&lt;p&gt;This is the second entry, and probably the last, on model validation methods. These posts are inspired by the work of Kohavi (1995), which I totally recommend reading. This post will talk talk about the Leave-One-Out Cross Validation (LOOCV), which is the extreme version of the K-Fold Cross Validation and the Bootstrap for model assessment.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;This is the second entry, and probably the last, on model validation methods. These posts are inspired by the work of Kohavi (1995), which I totally recommend reading. This post will talk talk about the Leave-One-Out Cross Validation (LOOCV), which is the extreme version of the K-Fold Cross Validation and the Bootstrap for model assessment.&lt;/p&gt;
 &lt;p&gt;Let’s dive in!&lt;/p&gt;
 &lt;div id=&#34;the-leave-one-out-cv-method&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;The Leave-One-Out CV method&lt;/h2&gt;
@@ -2877,7 +2945,10 @@ summary(bootstrap)
       <pubDate>Wed, 06 Sep 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</guid>
-      <description>&lt;p&gt;In a recent attempt to bring a bit of discipline into my life, I’ve been forcing myself to read papers after lunch, specifically concentrated on data science topics. The whole idea is to educated myself every day, but if I find something cool that I can implement in R, I’ll do it right away.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;In a recent attempt to bring a bit of discipline into my life, I’ve been forcing myself to read papers after lunch, specifically concentrated on data science topics. The whole idea is to educated myself every day, but if I find something cool that I can implement in R, I’ll do it right away.&lt;/p&gt;
 &lt;p&gt;This blogpost is the first of a series of entries I plan to post explaining the main concepts of Kohavi (1995), which compares cross-validation methods and bootstrap methods for model selection. This first post will implement a K-Fold cross validation from scratch in order to understand more deeply what’s going on behind the scenes.&lt;/p&gt;
 &lt;p&gt;Before we explain the concept of K-Fold cross validation, we need to define what the ‘Holdout’ method is.&lt;/p&gt;
 &lt;div id=&#34;holdout-method&#34; class=&#34;section level2&#34;&gt;
@@ -3000,7 +3071,10 @@ k_fold_cv %&amp;gt;%
       <pubDate>Tue, 01 Aug 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-08-01-perccalc-package/perccalc-package/</guid>
-      <description>&lt;p&gt;Reardon (2011) introduced a very interesting concept in which he calculates percentile differences from ordered categorical variables. He explains his procedure very much in detail in the appendix of the book chapter but no formal implementation has been yet available on the web. With this package I introduce a function that applies the procedure, following a step-by-step Stata script that Sean Reardon kindly sent me.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;Reardon (2011) introduced a very interesting concept in which he calculates percentile differences from ordered categorical variables. He explains his procedure very much in detail in the appendix of the book chapter but no formal implementation has been yet available on the web. With this package I introduce a function that applies the procedure, following a step-by-step Stata script that Sean Reardon kindly sent me.&lt;/p&gt;
 &lt;p&gt;In this vignette I show you how to use the function and match the results to the Stata code provided by Reardon himself.&lt;/p&gt;
 &lt;p&gt;For this example, we’ll use a real world data set, one I’m very much familiar with: PISA. We’ll use the PISA 2012 wave for Germany because it asked parents about their income category. For this example we’ll need the packages below.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# install.packages(c(&amp;quot;devtools&amp;quot;, &amp;quot;matrixStats&amp;quot;, &amp;quot;tidyverse&amp;quot;))
@@ -3210,7 +3284,10 @@ postclose `memhold&amp;#39;
       <pubDate>Thu, 13 Apr 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-04-13-replicating-dupriez-and-dumay-2006/replicating-dupriez-and-dumay-2006/</guid>
-      <description>&lt;p&gt;So, I was bored for two days and decided I’d replicate a paper I had read. The paper is called ‘Inequalities in school systems: effect of school structure or of society structure?’ written by Vincent Dupriez and Xavier Dumay which you can read from &lt;a href=&#34;http://www.tandfonline.com/doi/full/10.1080/03050060600628074?scroll=top&amp;amp;needAccess=true&#34;&gt;here&lt;/a&gt;. I made available two version, one in &lt;a href=&#34;https://github.com/cimentadaj/Inequality_schools_replication/raw/master/replication_tracking_pisa.pdf&#34;&gt;pdf&lt;/a&gt; and another in &lt;a href=&#34;https://cimentadaj.github.io/Inequality_schools_replication/replication_tracking_pisa.html&#34;&gt;html&lt;/a&gt;.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;So, I was bored for two days and decided I’d replicate a paper I had read. The paper is called ‘Inequalities in school systems: effect of school structure or of society structure?’ written by Vincent Dupriez and Xavier Dumay which you can read from &lt;a href=&#34;http://www.tandfonline.com/doi/full/10.1080/03050060600628074?scroll=top&amp;amp;needAccess=true&#34;&gt;here&lt;/a&gt;. I made available two version, one in &lt;a href=&#34;https://github.com/cimentadaj/Inequality_schools_replication/raw/master/replication_tracking_pisa.pdf&#34;&gt;pdf&lt;/a&gt; and another in &lt;a href=&#34;https://cimentadaj.github.io/Inequality_schools_replication/replication_tracking_pisa.html&#34;&gt;html&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;If you’re interested in looking at the code or suggesting some changes, do send me an email at &lt;code&gt;cimentadaj@gmail.com&lt;/code&gt; or check the &lt;a href=&#34;https://github.com/cimentadaj/Inequality_schools_replication&#34;&gt;Github repository&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
@@ -3221,7 +3298,10 @@ postclose `memhold&amp;#39;
       <pubDate>Wed, 08 Mar 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</guid>
-      <description>&lt;p&gt;I’ve long wanted to prepare a project with R related to education. I knew I’d found the idea when I read Thomas Lumley’s &lt;a href=&#34;http://notstatschat.tumblr.com/post/156007757906/a-bus-watching-bot&#34;&gt;attempt to create a Twitter bot in which he tweeted bus arrivals in New Zealand&lt;/a&gt;. Quoting him, “Is it really hard to write a bot? No. Even I can do it. And I’m old.”&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I’ve long wanted to prepare a project with R related to education. I knew I’d found the idea when I read Thomas Lumley’s &lt;a href=&#34;http://notstatschat.tumblr.com/post/156007757906/a-bus-watching-bot&#34;&gt;attempt to create a Twitter bot in which he tweeted bus arrivals in New Zealand&lt;/a&gt;. Quoting him, “Is it really hard to write a bot? No. Even I can do it. And I’m old.”&lt;/p&gt;
 &lt;p&gt;So I said to myself, alright, you have to create a Twitter bot but it has to be related to education. It’s an easy project which shouldn’t take a lot of your time. I then came up with this idea: what if you could randomly sample questions from the &lt;a href=&#34;http://www.oecd.org/pisa/aboutpisa/&#34;&gt;PISA databases&lt;/a&gt; and create a sort of random facts generator. The result would be one graph a day, showing a question for some random sample of countries. I figured, why not prepare a post (both for me to remember how I did it but also so others can contribute to the project) where I explained step-by-step how I did it?&lt;/p&gt;
 &lt;p&gt;The repository for the project is &lt;a href=&#34;https://github.com/cimentadaj/PISAfacts_twitterBot&#34;&gt;here&lt;/a&gt;, so feel free to drop any comments or improvements. The idea is to load the &lt;a href=&#34;http://vs-web-fs-1.oecd.org/pisa/PUF_SPSS_COMBINED_CMB_STU_QQQ.zip&#34;&gt;PISA 2015 data&lt;/a&gt;, randomly pick a question that doesn’t have a lot of labels (because then it’s very difficult to plot it nicely), and based on the type of question create an appropriate graph. Of course, all of this needs to be done on the fly, without human assistance. You can follow this twitter account at &lt;span class=&#34;citation&#34;&gt;@DailyPISA_Facts&lt;/span&gt;. Let’s start!&lt;/p&gt;
 &lt;div id=&#34;data-wrangling&#34; class=&#34;section level2&#34;&gt;
@@ -3575,11 +3655,14 @@ press Control + X (to exit nano). If all went well, then you should see “cront
     
     <item>
       <title>Cognitive inequality around the world – Shiny app</title>
-      <link>/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</link>
+      <link>/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</link>
       <pubDate>Mon, 12 Dec 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-12-12-cognitive-inequality-around-the-world--shiny-app/cognitive-inequality-around-the-world--shiny-app/</guid>
-      <description>&lt;p&gt;For the last month I’ve been working on this massive dataset that combines all PISA, TIMSS and PIRLS surveys into one major database. It has over 3 million students and over 2,000 variables, including student background and school and teacher information. I started playing around with it and ending up doing this: &lt;a href=&#34;https://cimentadaj.shinyapps.io/shiny/&#34; class=&#34;uri&#34;&gt;https://cimentadaj.shinyapps.io/shiny/&lt;/a&gt;. Feel free to check it out and drop any comments below.&lt;/p&gt;
+      <guid>/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</guid>
+      <description>
+
+
+&lt;p&gt;For the last month I’ve been working on this massive dataset that combines all PISA, TIMSS and PIRLS surveys into one major database. It has over 3 million students and over 2,000 variables, including student background and school and teacher information. I started playing around with it and ending up doing this: &lt;a href=&#34;https://cimentadaj.shinyapps.io/shiny/&#34; class=&#34;uri&#34;&gt;https://cimentadaj.shinyapps.io/shiny/&lt;/a&gt;. Feel free to check it out and drop any comments below.&lt;/p&gt;
 &lt;p&gt;If you want to contribute, &lt;a href=&#34;https://github.com/cimentadaj/Inequality_Shinyapp&#34;&gt;this&lt;/a&gt; is the Github repository. I plan to keep adding some stuff to the app, including new surveys and automatic plot downloading, so don’t forget to check it out.&lt;/p&gt;
 </description>
     </item>
@@ -3590,7 +3673,10 @@ press Control + X (to exit nano). If all went well, then you should see “cront
       <pubDate>Thu, 10 Nov 2016 00:00:00 +0000</pubDate>
       
       <guid>/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</guid>
-      <description>&lt;p&gt;These exercises are from the book &lt;a href=&#34;http://www.stat.columbia.edu/~gelman/arm/&#34;&gt;Data Analysis Using Regression and Multilevel/Hierarchical Models&lt;/a&gt;. I’ve really gotten into completing these exercises and I guess that by posting them I’ve found an excuse to keep doing it. This time I went back to chapter 8 which deals with simulations. I picked the first exercise, page 165 exercise 8.6.1, which says:&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;These exercises are from the book &lt;a href=&#34;http://www.stat.columbia.edu/~gelman/arm/&#34;&gt;Data Analysis Using Regression and Multilevel/Hierarchical Models&lt;/a&gt;. I’ve really gotten into completing these exercises and I guess that by posting them I’ve found an excuse to keep doing it. This time I went back to chapter 8 which deals with simulations. I picked the first exercise, page 165 exercise 8.6.1, which says:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Fitting the wrong model: suppose you have 100 data points that arose from the following model: y = 3 + 0.1×1 + 0.5×2 + error, with errors having a t distribution with mean 0, scale 5, and 4 degrees of freedom.We shall explore the implications of fitting a standard linear regression to these data.&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -3709,11 +3795,14 @@ cbind(repl_coef + (-1 * repl_se), repl_coef + (1 * repl_se))&lt;/code&gt;&lt;/pr
     
     <item>
       <title>Multilevel modeling – Part 1</title>
-      <link>/blog/2016-11-06-multilevel-modeling--part-1/multilevel-modeling--part-1/</link>
+      <link>/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/</link>
       <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-11-06-multilevel-modeling--part-1/multilevel-modeling--part-1/</guid>
-      <description>&lt;p&gt;I’ve been reading Andrew Gelman’s and Jennifer Hill’s book again but this time concentrating on the multilevel section of the book. I finished the first chapter (chapter 12) and got fixed on the exercises 12.2, 12.3 and 12.4. I finally completed them and I thought I’d share the three exercises in two posts, mostly for me to come back to these in the future. The first exercise goes as follows:&lt;/p&gt;
+      <guid>/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/</guid>
+      <description>
+
+
+&lt;p&gt;I’ve been reading Andrew Gelman’s and Jennifer Hill’s book again but this time concentrating on the multilevel section of the book. I finished the first chapter (chapter 12) and got fixed on the exercises 12.2, 12.3 and 12.4. I finally completed them and I thought I’d share the three exercises in two posts, mostly for me to come back to these in the future. The first exercise goes as follows:&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
 &lt;li&gt;&lt;p&gt;Write a model predicting CD4 percentage as a function of time with varying intercepts across children. Fit using lmer() and interpret the coefficient for time.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Extend the model in (a) to include child-level predictors (that is, group-level predictors) for treatment and age at baseline. Fit using lmer() and interpret the coefficients on time, treatment, and age at baseline.&lt;/p&gt;&lt;/li&gt;
@@ -3880,11 +3969,14 @@ display(mod2)&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Multilevel modeling – Part 2</title>
-      <link>/blog/2016-11-06-multilevel-modeling--part-2/multilevel-modeling--part-2/</link>
+      <link>/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/</link>
       <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-11-06-multilevel-modeling--part-2/multilevel-modeling--part-2/</guid>
-      <description>&lt;p&gt;This is a continuation of the multilevel exercise 12.2 from chapter 12 of Data Analysis Using Regression and Multilevel/Hierarchical Models. In the last post (link to previous post) we explored the basic interpretation of multilevel modeling with a varying intercept and delved into comparing models and understanding partial pooling.&lt;/p&gt;
+      <guid>/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/</guid>
+      <description>
+
+
+&lt;p&gt;This is a continuation of the multilevel exercise 12.2 from chapter 12 of Data Analysis Using Regression and Multilevel/Hierarchical Models. In the last post (link to previous post) we explored the basic interpretation of multilevel modeling with a varying intercept and delved into comparing models and understanding partial pooling.&lt;/p&gt;
 &lt;p&gt;This was all done by completing the exercise 12.2 from chapter 12 of the book Data Analysis Using Regression and Multilevel/Hierarchical Models. Exercises 12.3 and 12.4 continue using the same dataset and the same models, so I figured I’d post them here. Let’s start.&lt;/p&gt;
 &lt;p&gt;Exercise 12.3 asks:&lt;/p&gt;
 &lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
@@ -3984,7 +4076,10 @@ cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Sat, 24 Sep 2016 00:00:00 +0000</pubDate>
       
       <guid>/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</guid>
-      <description>&lt;p&gt;Hace poco escribí un artículo sobre la desigualdad educativa en países Latinoamericanos y describí como la República Dominicana no parece estar tan mal como creemos. Ofrecí dos posibles explicaciones de porque esto pudiera ser bueno o malo, dependiendo del enfoque con que se ve (missing link after the ‘,’ with this: &lt;a href=&#34;http://www.jorgecimentada.com/?p=137&#34; class=&#34;uri&#34;&gt;http://www.jorgecimentada.com/?p=137&lt;/a&gt;). Luego de escribirlo me quedé pensando en algo que di por sentado: ¿realmente los ‘peores’ estudiantes son los estudiantes pobres? ¿son los estudiantes pobres los ‘peores’ en las escuelas públicas y privadas? Y a raíz del artículo de &lt;a href=&#34;http://acento.com.do/2016/opinion/8377420-desigualdad-educativa-interpela-desafia/&#34;&gt;Dinorah Garcia&lt;/a&gt;, ¿existe desigualdad entre las zonas rurales y urbanas?&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;Hace poco escribí un artículo sobre la desigualdad educativa en países Latinoamericanos y describí como la República Dominicana no parece estar tan mal como creemos. Ofrecí dos posibles explicaciones de porque esto pudiera ser bueno o malo, dependiendo del enfoque con que se ve (missing link after the ‘,’ with this: &lt;a href=&#34;http://www.jorgecimentada.com/?p=137&#34; class=&#34;uri&#34;&gt;http://www.jorgecimentada.com/?p=137&lt;/a&gt;). Luego de escribirlo me quedé pensando en algo que di por sentado: ¿realmente los ‘peores’ estudiantes son los estudiantes pobres? ¿son los estudiantes pobres los ‘peores’ en las escuelas públicas y privadas? Y a raíz del artículo de &lt;a href=&#34;http://acento.com.do/2016/opinion/8377420-desigualdad-educativa-interpela-desafia/&#34;&gt;Dinorah Garcia&lt;/a&gt;, ¿existe desigualdad entre las zonas rurales y urbanas?&lt;/p&gt;
 &lt;p&gt;Estas preguntas no solo ayudan a diagnosticar el estado actual de la desigualdad, más que eso, permiten inferir de donde pudieran provenir las fuentes de desigualdad. Si encontramos una diferencia bastante amplia entre los ‘mejores’ y ‘peores’ estudiantes, pero la diferencia es menor entre escuelas públicas y privada, pues la causa no es necesariamente las diferencias en calidad entre las tipos de escuelas. Sin embargo, si existen diferencias similares entre los estudiantes de escuelas rurales y urbanas, pues la razón puede ser precisamente en temas como la calidad educativa entre sectores pobres y ricos. Lo interesante de estas preguntas es que son todas preguntas empíricas, y se pueden responder con bases de datos como las de TERCE.&lt;/p&gt;
 &lt;div id=&#34;realmente-los-peores-estudiantes-son-los-estudiantes-pobres&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;1. ¿realmente los ‘peores’ estudiantes son los estudiantes pobres?&lt;/h2&gt;
@@ -4029,7 +4124,10 @@ cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Mon, 19 Sep 2016 00:00:00 +0000</pubDate>
       
       <guid>/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</guid>
-      <description>&lt;p&gt;I’ve always found it frustrating how it’s so easy to produce robust standard errors in Stata and in R it’s so complicated. First, we have to estimate the standard errors separately and then replace the previous standard errors with the new ones. Second, if you want to estimate odds ratios instead of logit coefficients, then the robust standard errors need to be scaled. All of that is as simple as adding robust or in the Stata logit command.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I’ve always found it frustrating how it’s so easy to produce robust standard errors in Stata and in R it’s so complicated. First, we have to estimate the standard errors separately and then replace the previous standard errors with the new ones. Second, if you want to estimate odds ratios instead of logit coefficients, then the robust standard errors need to be scaled. All of that is as simple as adding robust or in the Stata logit command.&lt;/p&gt;
 &lt;p&gt;I decided to make it as simple in R.&lt;/p&gt;
 &lt;p&gt;First, I have to give credit to &lt;a href=&#34;http://stackoverflow.com/users/4233642/achim-zeileis&#34;&gt;Achim Zeileis&lt;/a&gt; in this &lt;a href=&#34;http://stackoverflow.com/questions/27367974/different-robust-standard-errors-of-logit-regression-in-stata-and-r&#34;&gt;question&lt;/a&gt; because he provided part of code to generate the robust standard errors.&lt;/p&gt;
 &lt;p&gt;The function accepts a glm object and can return logit coefficients with robust standard errors, odd ratios with adjusted robust standard errors or probability scaled coefficients with adjusted robust standard errors.&lt;/p&gt;
@@ -4133,7 +4231,10 @@ logit z x1 x2 x3, robust or
       <pubDate>Tue, 13 Sep 2016 00:00:00 +0000</pubDate>
       
       <guid>/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</guid>
-      <description>&lt;p&gt;I was on a flight from Asturias to Barcelona yesterday and I finally had some free time to open Gelman and Hill’s book and submerge in some studying. After finishing the chapter on simulations, I tried doing the first exercise and enjoyed it very much.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;I was on a flight from Asturias to Barcelona yesterday and I finally had some free time to open Gelman and Hill’s book and submerge in some studying. After finishing the chapter on simulations, I tried doing the first exercise and enjoyed it very much.&lt;/p&gt;
 &lt;p&gt;The exercise goes as follows:&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Discrete probability simulation: suppose that a basketball player has a 60% chance of making a shot, and he keeps taking shots until he misses two in a row. Also assume his shots are independent (so that each shot has 60% probability of success, no matter what happened before).&lt;/em&gt;&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
@@ -4192,7 +4293,10 @@ plot(df[, 2], df[, 1])&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Mon, 29 Aug 2016 00:00:00 +0000</pubDate>
       
       <guid>/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</guid>
-      <description>&lt;p&gt;The role of the welfare state, as agreed by many scholars, is to de-commodify its citizens. Some argue that this should be the way that the generosity of the state should be measured; instead of net public and private social expenditure, it should be the extent to which citizens are de-commodified by the services and transfers of the welfare state.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;The role of the welfare state, as agreed by many scholars, is to de-commodify its citizens. Some argue that this should be the way that the generosity of the state should be measured; instead of net public and private social expenditure, it should be the extent to which citizens are de-commodified by the services and transfers of the welfare state.&lt;/p&gt;
 &lt;p&gt;The aim of educational investment can be seen from different lenses, but today we’ll focus on the economic and social returns to education. An important share of the state budget is aimed at the formation and education of citizens through public education. In countries where there is a substantial investment, human capital, innovation and production are maximized creating a highly productive working population that can sustain the young and the elderly through pensions, health and child care; note that in some scenarios an uneducated workforce can sustain those who depend on them but it will possible be with more quantity of work (hours) and less quality [1]. Following this logic, it is arguable that because most of today’s workers will benefit from pensions, retirement schemes, care assistance and healthcare, they are to take care of their young population, the next generation’s workers. Covering kids’ education through higher taxes could be seen as loan: A young worker covers the expenses of a child, and that child, eventually, will cover the pension of that worker; this is a simplified version of the argument.&lt;/p&gt;
 &lt;p&gt;The scheme I just outlined is virtually widespread across western European countries. But it is important to note that in other countries, due to the intrinsic organization of the state, it is unimaginable to do so. In the counterfactual situation where you don’t have a strong welfare state, maybe it’s unfair to tax those who are not benefiting from the goods that the taxes are being spent on. In places like the United States, where the generosity of the welfare system is minimal, some people don’t find it reasonable to pay for everyone’s kids, even more, when you’re paying already, for instance, a private school for your own.&lt;/p&gt;
 &lt;p&gt;There’s also another important case: childless couples. Perhaps the exact reason why they didn’t have children was not to have to spend a big proportion of their lifelong income. So, why should they pay? According to their position it seems very unfair. Their long held argument can be synthesized in one sentence: those who want children should be the ones who pay for them.&lt;/p&gt;
@@ -4221,7 +4325,10 @@ plot(df[, 2], df[, 1])&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Mon, 22 Aug 2016 00:00:00 +0000</pubDate>
       
       <guid>/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</guid>
-      <description>&lt;p&gt;Whoa, what a day. I’ve been using the stargazer package for producing my (beautiful) regression tables in R for a while now. Among all the arguments of its main function (&lt;code&gt;stargazer()&lt;/code&gt; ) are &lt;code&gt;apply.coef&lt;/code&gt;, &lt;code&gt;apply.se&lt;/code&gt;, &lt;code&gt;apply.ci&lt;/code&gt;, … and so on for all the other statistics of a regression output. Each of these arguments, if specified, applies a function over the specified statistic. So, for calculating the odds ratios I would simply apply the &lt;code&gt;exp()&lt;/code&gt; function over the set of log odds. It turns out that if you apply any function over the coefficients (or any other statistic), stargazer automatically recalculates t values with the new coefficients! This means that the significance of my model will depend on the new values and we surely wouldn’t want that.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;Whoa, what a day. I’ve been using the stargazer package for producing my (beautiful) regression tables in R for a while now. Among all the arguments of its main function (&lt;code&gt;stargazer()&lt;/code&gt; ) are &lt;code&gt;apply.coef&lt;/code&gt;, &lt;code&gt;apply.se&lt;/code&gt;, &lt;code&gt;apply.ci&lt;/code&gt;, … and so on for all the other statistics of a regression output. Each of these arguments, if specified, applies a function over the specified statistic. So, for calculating the odds ratios I would simply apply the &lt;code&gt;exp()&lt;/code&gt; function over the set of log odds. It turns out that if you apply any function over the coefficients (or any other statistic), stargazer automatically recalculates t values with the new coefficients! This means that the significance of my model will depend on the new values and we surely wouldn’t want that.&lt;/p&gt;
 &lt;p&gt;Let’s show a reproducible example:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# install.packages(&amp;quot;stargazer&amp;quot;) # in case you don&amp;#39;t have this package
 suppressMessages(library(stargazer))
@@ -4411,7 +4518,10 @@ devtools::install_github(&amp;quot;cimentadaj/cimentadaj&amp;quot;)&lt;/code&gt;
       <pubDate>Sat, 20 Aug 2016 00:00:00 +0000</pubDate>
       
       <guid>/blog/2016-08-20-ttests-regression-and-anova-theyre-all-the-same/ttests-regression-and-anova-theyre-all-the-same/</guid>
-      <description>&lt;p&gt;Upon reading “How Not To Lie with Statistics: Avoiding Common Mistakes in Quantitative Political Science” from Gary King, I stumbled into a section which proved that t-tests, ANOVA and Linear Regression are intimately related, both conceptually and algebraically. As a late-comer in statistics, one usually does not pay attention to these nuances. I decided to make a short simulation in R just to make sure my intuition was right.&lt;/p&gt;
+      <description>
+
+
+&lt;p&gt;Upon reading “How Not To Lie with Statistics: Avoiding Common Mistakes in Quantitative Political Science” from Gary King, I stumbled into a section which proved that t-tests, ANOVA and Linear Regression are intimately related, both conceptually and algebraically. As a late-comer in statistics, one usually does not pay attention to these nuances. I decided to make a short simulation in R just to make sure my intuition was right.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(1)
 
 income &amp;lt;- sample(1000:5000, 100, replace = T)

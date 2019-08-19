@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Multilevel on Jorge Cimentada</title>
+    <title>multilevel on Jorge Cimentada</title>
     <link>/tags/multilevel/</link>
-    <description>Recent content in Multilevel on Jorge Cimentada</description>
+    <description>Recent content in multilevel on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Sun, 06 Nov 2016 00:00:00 +0000</lastBuildDate>
@@ -13,11 +12,14 @@
     
     <item>
       <title>Multilevel modeling – Part 1</title>
-      <link>/blog/2016-11-06-multilevel-modeling--part-1/multilevel-modeling--part-1/</link>
+      <link>/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/</link>
       <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-11-06-multilevel-modeling--part-1/multilevel-modeling--part-1/</guid>
-      <description>&lt;p&gt;I’ve been reading Andrew Gelman’s and Jennifer Hill’s book again but this time concentrating on the multilevel section of the book. I finished the first chapter (chapter 12) and got fixed on the exercises 12.2, 12.3 and 12.4. I finally completed them and I thought I’d share the three exercises in two posts, mostly for me to come back to these in the future. The first exercise goes as follows:&lt;/p&gt;
+      <guid>/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/</guid>
+      <description>
+
+
+&lt;p&gt;I’ve been reading Andrew Gelman’s and Jennifer Hill’s book again but this time concentrating on the multilevel section of the book. I finished the first chapter (chapter 12) and got fixed on the exercises 12.2, 12.3 and 12.4. I finally completed them and I thought I’d share the three exercises in two posts, mostly for me to come back to these in the future. The first exercise goes as follows:&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
 &lt;li&gt;&lt;p&gt;Write a model predicting CD4 percentage as a function of time with varying intercepts across children. Fit using lmer() and interpret the coefficient for time.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Extend the model in (a) to include child-level predictors (that is, group-level predictors) for treatment and age at baseline. Fit using lmer() and interpret the coefficients on time, treatment, and age at baseline.&lt;/p&gt;&lt;/li&gt;
@@ -184,11 +186,14 @@ display(mod2)&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Multilevel modeling – Part 2</title>
-      <link>/blog/2016-11-06-multilevel-modeling--part-2/multilevel-modeling--part-2/</link>
+      <link>/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/</link>
       <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-11-06-multilevel-modeling--part-2/multilevel-modeling--part-2/</guid>
-      <description>&lt;p&gt;This is a continuation of the multilevel exercise 12.2 from chapter 12 of Data Analysis Using Regression and Multilevel/Hierarchical Models. In the last post (link to previous post) we explored the basic interpretation of multilevel modeling with a varying intercept and delved into comparing models and understanding partial pooling.&lt;/p&gt;
+      <guid>/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/</guid>
+      <description>
+
+
+&lt;p&gt;This is a continuation of the multilevel exercise 12.2 from chapter 12 of Data Analysis Using Regression and Multilevel/Hierarchical Models. In the last post (link to previous post) we explored the basic interpretation of multilevel modeling with a varying intercept and delved into comparing models and understanding partial pooling.&lt;/p&gt;
 &lt;p&gt;This was all done by completing the exercise 12.2 from chapter 12 of the book Data Analysis Using Regression and Multilevel/Hierarchical Models. Exercises 12.3 and 12.4 continue using the same dataset and the same models, so I figured I’d post them here. Let’s start.&lt;/p&gt;
 &lt;p&gt;Exercise 12.3 asks:&lt;/p&gt;
 &lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;

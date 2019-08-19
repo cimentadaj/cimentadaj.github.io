@@ -14,7 +14,7 @@
 
 <title>Jorge Cimentada</title>
 
-<meta name="generator" content="Hugo 0.30.2" />
+<meta name="generator" content="Hugo 0.57.0" />
 
 
 
@@ -73,7 +73,10 @@ hljs.initHighlightingOnLoad();
 </section>
 <section id="content-pane" class="row">
   <div class="col-md-12 text-justify content">
-    <p>Yesterday I found this public dataset on schools from Barcelona and their performance on tests on 6th grade. I wanted to scrape them to investigate the relationship between performance and schools that receive special government funds for social integration. I found this dataset <a href="https://view-awesome-table.com/-L4lo3r-JA2iaWk1puUT/view">here</a> but it was different from the types of websites I usually scape (<code>html</code> or <code>xml</code>). Although the website has some <code>html</code> the engine swiping the schools is actually based on <code>Javascript</code>. Well, that’s a job for <code>RSelenium</code>, an R package that allows you to browse a website with R.</p>
+    
+
+
+<p>Yesterday I found this public dataset on schools from Barcelona and their performance on tests on 6th grade. I wanted to scrape them to investigate the relationship between performance and schools that receive special government funds for social integration. I found this dataset <a href="https://view-awesome-table.com/-L4lo3r-JA2iaWk1puUT/view">here</a> but it was different from the types of websites I usually scape (<code>html</code> or <code>xml</code>). Although the website has some <code>html</code> the engine swiping the schools is actually based on <code>Javascript</code>. Well, that’s a job for <code>RSelenium</code>, an R package that allows you to browse a website with R.</p>
 <p>The process was actually much easier than I thought using Docker. I follow the answer of setting docker from <a href="https://stackoverflow.com/questions/45395849/cant-execute-rsdriver-connection-refused">this</a> post. Note that this is for Windows 10.</p>
 <ul>
 <li><a href="https://download.docker.com/win/stable/DockerToolbox.exe">install docker</a></li>
@@ -173,7 +176,7 @@ remDr$navigate(&quot;https://view-awesome-table.com/-L4lo3r-JA2iaWk1puUT/view&qu
 
 
 <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -225,12 +228,16 @@ remDr$navigate(&quot;https://view-awesome-table.com/-L4lo3r-JA2iaWk1puUT/view&qu
 </div>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'XYZ', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

@@ -14,7 +14,7 @@
 
 <title>Jorge Cimentada</title>
 
-<meta name="generator" content="Hugo 0.30.2" />
+<meta name="generator" content="Hugo 0.57.0" />
 
 
 
@@ -79,7 +79,10 @@ hljs.initHighlightingOnLoad();
 </section>
 <section id="content-pane" class="row">
   <div class="col-md-12 text-justify content">
-    <p>I’m finishing a project from the RECSM institute where we developed a <a href="https://essurvey.shinyapps.io/ess_castellano/">Shiny application</a> to download data from the European Social Survey with Spanish translated labels. This was one hell of a project since I had to build some wrappers around the Google Translate API to generate translations for over 1300 questions and stream line this to be interactive while users download the data. That’s a long story which I will not delve into.</p>
+    
+
+
+<p>I’m finishing a project from the RECSM institute where we developed a <a href="https://essurvey.shinyapps.io/ess_castellano/">Shiny application</a> to download data from the European Social Survey with Spanish translated labels. This was one hell of a project since I had to build some wrappers around the Google Translate API to generate translations for over 1300 questions and stream line this to be interactive while users download the data. That’s a long story which I will not delve into.</p>
 <p>This post is about a bug I found in the <code>haven</code> package while doing the project. The bug is simple to explain and <a href="https://github.com/tidyverse/haven/issues/435">I filed it in <code>haven</code> already</a>:</p>
 <p>Let’s define a labelled double with only one tagged NA value.</p>
 <pre class="r"><code>library(haven)
@@ -292,7 +295,7 @@ recode_stata_labels(tst)</code></pre>
 
 
 <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -342,12 +345,16 @@ recode_stata_labels(tst)</code></pre>
 </div>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'XYZ', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

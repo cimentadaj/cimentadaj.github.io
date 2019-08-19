@@ -14,7 +14,7 @@
 
 <title>Jorge Cimentada</title>
 
-<meta name="generator" content="Hugo 0.30.2" />
+<meta name="generator" content="Hugo 0.57.0" />
 
 
 
@@ -73,7 +73,10 @@ hljs.initHighlightingOnLoad();
 </section>
 <section id="content-pane" class="row">
   <div class="col-md-12 text-justify content">
-    <p>1..2..3..check! This is my first post using <a href="https://cran.r-project.org/web/packages/blogdown/index.html">blogdown</a>. I migrated my website from <code>Jekyll</code> to <code>Hugo</code> and although it took me around 2 days to tweak everything to where I wanted it, the process wasn’t so bad after all. As a celebration, I though of doing a quick analysis!</p>
+    
+
+
+<p>1..2..3..check! This is my first post using <a href="https://cran.r-project.org/web/packages/blogdown/index.html">blogdown</a>. I migrated my website from <code>Jekyll</code> to <code>Hugo</code> and although it took me around 2 days to tweak everything to where I wanted it, the process wasn’t so bad after all. As a celebration, I though of doing a quick analysis!</p>
 <p>I live in Barcelona, a city known for sunny weather, great football and for wanting to become an independent state. In fact, just recently there was an unsuccessful attempt to break parts with the Spanish nation. Without delving too much into it, I searched for any question related to nationalism into the European Social Survey and downloaded the last available wave using the <a href="https://cran.r-project.org/web/packages/ess/index.html">ess</a> package.</p>
 <pre class="r"><code>library(essurvey)
 library(cimentadaj)
@@ -178,7 +181,7 @@ perc_table %&gt;%
 
 
 <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -230,12 +233,16 @@ perc_table %&gt;%
 </div>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'XYZ', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

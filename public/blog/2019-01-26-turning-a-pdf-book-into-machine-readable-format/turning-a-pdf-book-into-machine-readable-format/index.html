@@ -14,7 +14,7 @@
 
 <title>Jorge Cimentada</title>
 
-<meta name="generator" content="Hugo 0.30.2" />
+<meta name="generator" content="Hugo 0.57.0" />
 
 
 
@@ -73,7 +73,10 @@ hljs.initHighlightingOnLoad();
 </section>
 <section id="content-pane" class="row">
   <div class="col-md-12 text-justify content">
-    <p>A few days ago a well known Sociologist, Erik Olin Wright, died from Leukemia. Torkild Lyngstand then <a href="https://twitter.com/torkildl/status/1088325262758969344">posted on twitter</a> his <a href="https://www.ssc.wisc.edu/~wright/Published%20writing/FallingIntoMarxismChoosingToStay.pdf">‘intellectual biography’</a> which is an interesting document that outlines how he ended up being a Marxist. This document is a pdf book that has two actual book pages per pdf page.</p>
+    
+
+
+<p>A few days ago a well known Sociologist, Erik Olin Wright, died from Leukemia. Torkild Lyngstand then <a href="https://twitter.com/torkildl/status/1088325262758969344">posted on twitter</a> his <a href="https://www.ssc.wisc.edu/~wright/Published%20writing/FallingIntoMarxismChoosingToStay.pdf">‘intellectual biography’</a> which is an interesting document that outlines how he ended up being a Marxist. This document is a pdf book that has two actual book pages per pdf page.</p>
 <p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-1-1.png" width="702" /></p>
 <p>Although this is perfectly fine for reading on a computer, I usually don’t like to read anything longer than 15 pages on my computer. So I decided I would turn this book into machine readable text with R for my Kindle.</p>
 <p>Spoiler: I couldn’t do it, so help me out!</p>
@@ -559,11 +562,11 @@ bookdown::calibre(txt_path, paste0(dirname(txt_path), &quot;/erik_wright.mobi&qu
       TAGS:
       
       
-      <a class="meta" href="/tags/r">R</a>, 
-      
       <a class="meta" href="/tags/machine-learning">MACHINE-LEARNING</a>, 
       
-      <a class="meta" href="/tags/projects">PROJECTS</a>
+      <a class="meta" href="/tags/projects">PROJECTS</a>, 
+      
+      <a class="meta" href="/tags/r">R</a>
       
       
       
@@ -576,7 +579,7 @@ bookdown::calibre(txt_path, paste0(dirname(txt_path), &quot;/erik_wright.mobi&qu
 
 
 <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -628,12 +631,16 @@ bookdown::calibre(txt_path, paste0(dirname(txt_path), &quot;/erik_wright.mobi&qu
 </div>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'XYZ', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

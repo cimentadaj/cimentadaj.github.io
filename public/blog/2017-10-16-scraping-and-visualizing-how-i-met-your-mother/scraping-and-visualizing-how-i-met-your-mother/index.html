@@ -14,7 +14,7 @@
 
 <title>Jorge Cimentada</title>
 
-<meta name="generator" content="Hugo 0.30.2" />
+<meta name="generator" content="Hugo 0.57.0" />
 
 
 
@@ -70,7 +70,10 @@ hljs.initHighlightingOnLoad();
 </section>
 <section id="content-pane" class="row">
   <div class="col-md-12 text-justify content">
-    <p>How I Met Your Mother (HIMYM from here after) is a television series very similar to the classical ‘Friends’ series from the 90’s. Following the release of the <a href="http://tidytextmining.com/">tidy text</a> book I was looking for a project in which I could apply these skills. I decided I would scrape all the transcripts from HIMYM and analyze patterns between characters. This post really took me to the limit in terms of web scraping and pattern matching, which was specifically what I wanted to improve in the first place. Let’s begin!</p>
+    
+
+
+<p>How I Met Your Mother (HIMYM from here after) is a television series very similar to the classical ‘Friends’ series from the 90’s. Following the release of the <a href="http://tidytextmining.com/">tidy text</a> book I was looking for a project in which I could apply these skills. I decided I would scrape all the transcripts from HIMYM and analyze patterns between characters. This post really took me to the limit in terms of web scraping and pattern matching, which was specifically what I wanted to improve in the first place. Let’s begin!</p>
 <p>My first task was whether there was any consistency in the URL’s that stored the transcripts. If you ever watched HIMYM, we know there’s around nine seasons, each one with about 22 episodes. This makes about 200 episodes give or take. It would be a big pain to manually write down 200 complicated URL’s. Luckily, there is a way of finding the 200 links without writing them down manually.</p>
 <p>First, we create the links for the 9 websites that contain all episodes (1 through season 9)</p>
 <pre class="r"><code>library(rvest)
@@ -368,9 +371,9 @@ cowplot::plot_grid(plotlist = all_season_plots, labels = seasons)</code></pre>
       
       <a class="meta" href="/tags/eda">EDA</a>, 
       
-      <a class="meta" href="/tags/r">R</a>, 
-      
       <a class="meta" href="/tags/projects">PROJECTS</a>, 
+      
+      <a class="meta" href="/tags/r">R</a>, 
       
       <a class="meta" href="/tags/scraping">SCRAPING</a>
       
@@ -385,7 +388,7 @@ cowplot::plot_grid(plotlist = all_season_plots, labels = seasons)</code></pre>
 
 
 <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -437,12 +440,16 @@ cowplot::plot_grid(plotlist = all_season_plots, labels = seasons)</code></pre>
 </div>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'XYZ', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
