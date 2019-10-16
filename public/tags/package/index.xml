@@ -1,0 +1,97 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>package on Jorge Cimentada</title>
+    <link>/tags/package/</link>
+    <description>Recent content in package on Jorge Cimentada</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sat, 16 Nov 2019 00:00:00 +0000</lastBuildDate>
+    
+        <atom:link href="/tags/package/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>essurvey release</title>
+      <link>/blog/essurvey-release/</link>
+      <pubDate>Sat, 16 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/essurvey-release/</guid>
+      <description>
+
+
+&lt;p&gt;The new &lt;code&gt;essurvey&lt;/code&gt; 1.0.3 is here! This release is mainly about downloading weight data from the European Social Survey (ESS), which &lt;a href=&#34;https://github.com/ropensci/essurvey/issues/9&#34;&gt;has been on the works since&lt;/a&gt; 2017! As usual, you can install from CRAN or Github with:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# From CRAN
+install.packages(&amp;quot;essurvey&amp;quot;)
+
+# or development version from Github
+devtools::install_github(&amp;quot;ropensci/essurvey&amp;quot;)
+
+# and load
+library(essurvey)
+set_email(&amp;quot;your@email.com&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Remember to set your registered email with &lt;code&gt;set_email&lt;/code&gt; to download ESS data. This is as easy as running &lt;code&gt;set_email(&#34;your@email.com&#34;)&lt;/code&gt;, with your email. The package now has two main functions to download weight data (called SDDF by the ESS): &lt;code&gt;show_sddf_cntrounds&lt;/code&gt; and &lt;code&gt;import_sddf_country&lt;/code&gt;. The first one returns the available weight rounds for a specific country. For example, for which rounds does Italy have weight data?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ita_rnds &amp;lt;- show_sddf_cntrounds(&amp;quot;Italy&amp;quot;)
+
+ita_rnds&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 6 8&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;How about Germany?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;show_sddf_cntrounds(&amp;quot;Germany&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 1 2 3 4 5 6 7 8&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;For some rounds, some countries used complete random sampling, so they didn’t need any weight data for correct estimation. Italy did not use a random sample for round 8 so let’s focus on that wave for the example. To actually download this round, we use &lt;code&gt;import_sddf_country&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Download weight data
+ita_dt &amp;lt;- import_sddf_country(&amp;quot;Italy&amp;quot;, 8)
+
+ita_dt&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2,626 x 10
+##    name  essround edition proddate cntry  idno   psu domain stratum    prob
+##    &amp;lt;chr&amp;gt;    &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;  &amp;lt;dbl&amp;gt;   &amp;lt;dbl&amp;gt;   &amp;lt;dbl&amp;gt;
+##  1 ESS8…        8 1.2     11.02.2… IT        1 11029      2     658 1.01e-4
+##  2 ESS8…        8 1.2     11.02.2… IT        2 11170      2     665 1.11e-4
+##  3 ESS8…        8 1.2     11.02.2… IT        4 11127      2     660 1.03e-4
+##  4 ESS8…        8 1.2     11.02.2… IT        5 10771      2     671 1.04e-4
+##  5 ESS8…        8 1.2     11.02.2… IT        6 11148      2     666 1.06e-4
+##  6 ESS8…        8 1.2     11.02.2… IT        9 11163      1     667 1.05e-4
+##  7 ESS8…        8 1.2     11.02.2… IT       14 11183      1     657 1.06e-4
+##  8 ESS8…        8 1.2     11.02.2… IT       15 11184      2     661 9.97e-5
+##  9 ESS8…        8 1.2     11.02.2… IT       16 10928      2     652 1.01e-4
+## 10 ESS8…        8 1.2     11.02.2… IT       22 11171      2     664 9.97e-5
+## # … with 2,616 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Notice that the weight data has an &lt;code&gt;idno&lt;/code&gt; column. This column can be used to match each respondent from each country to the main ESS data. This means that you can now actually do proper weighted analysis using the ESS data on the fly! How would we match the data for Italy, for example?&lt;/p&gt;
+&lt;p&gt;We download the main data:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dplyr)
+
+# Download main data
+ita_main &amp;lt;- import_country(&amp;quot;Italy&amp;quot;, 8)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And then merge it with the weight data:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Let&amp;#39;s keep only the important weight columns
+ita_dt &amp;lt;- ita_dt %&amp;gt;% select(idno, psu, domain, stratum, prob)
+
+# Merged main data and weight data
+complete_data &amp;lt;- inner_join(ita_main, ita_dt, by = &amp;quot;idno&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: Column `idno` has different attributes on LHS and RHS of join&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# There we have the matched data
+complete_data %&amp;gt;%
+  select(essround, idno, cntry, psu, stratum, prob)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2,626 x 6
+##    essround  idno cntry   psu stratum      prob
+##       &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;dbl&amp;gt;   &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;
+##  1        8     1 IT    11029     658 0.000101 
+##  2        8     2 IT    11170     665 0.000111 
+##  3        8     4 IT    11127     660 0.000103 
+##  4        8     5 IT    10771     671 0.000104 
+##  5        8     6 IT    11148     666 0.000106 
+##  6        8     9 IT    11163     667 0.000105 
+##  7        8    14 IT    11183     657 0.000106 
+##  8        8    15 IT    11184     661 0.0000997
+##  9        8    16 IT    10928     652 0.000101 
+## 10        8    22 IT    11171     664 0.0000997
+## # … with 2,616 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There we have the matched data! This can be easily piped to the &lt;code&gt;survey&lt;/code&gt; package and perform properly weighted analysis of the ESS data. In fact, an official ESS package for analyzing data is something we’re thinking of developing to making analyzing ESS data very easy.&lt;/p&gt;
+&lt;p&gt;Weight data (or SDDF data) is a bit tricky because not all country/rounds data have the same extension (some have SPSS, some have Stata, etc..) nor the same format (number of columns, name of columns, etc..). We would appreciate if you can submit any errors you find on &lt;a href=&#34;https://github.com/ropensci/essurvey/issues&#34;&gt;Github&lt;/a&gt; and we’ll try taking care of them as soon as possible.&lt;/p&gt;
+&lt;p&gt;Special thanks to &lt;a href=&#34;https://twitter.com/phnk?lang=en&#34;&gt;phnk&lt;/a&gt;, &lt;a href=&#34;https://twitter.com/djhurio/&#34;&gt;djhurio&lt;/a&gt; and Stefan Zins for helping out to push this.&lt;/p&gt;
+&lt;p&gt;Enjoy this new release!&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
