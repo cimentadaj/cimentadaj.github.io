@@ -1,0 +1,147 @@
+---
+title: Locating parts of a string with `stringr`
+author: Jorge Cimentada
+date: '2019-12-08'
+slug: locating-parts-of-a-string-with-stringr
+categories: ["R"]
+tags: ["R", "regex"]
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+
+
+<p>I was wondering the realms of StackOver Flow answering some questions when I encoutered a question that looked to extract some parts of a string based on a regex. I thought I knew how to do this with the package <code>stringr</code> using, for example, <code>str_sub</code> but I found it a bit difficult to map how <code>str_locate</code> complements <code>str_sub</code>.</p>
+<p><code>str_locate</code> and <code>str_locate_all</code> give back the locations of your regex inside the desired string as a <code>matrix</code> or a <code>list</code> respectively. However, that didn’t look very intuitive to pass on to <code>str_sub</code> which (I thought) only accepted numeric vectors with the indices of the parts of the strings that you want to extract. However, to my surprise, <code>str_sub</code> accepts not only numeric vectors but also a matrix with two columns, precisely the result of <code>str_locate</code>.</p>
+<p>Let’s create a set of random strings from which we want to extract the word <code>special*word</code>, where <code>*</code> represents a random number.</p>
+<pre class="r"><code>library(stringr)    
+
+test_string &lt;-
+  replicate(
+    100,
+    paste0(
+      sample(c(letters, LETTERS, paste0(&quot;special&quot;, sample(1:10, 1),&quot;word&quot;)), 15),
+      collapse = &quot;&quot;)
+  )
+
+head(test_string)</code></pre>
+<pre><code>## [1] &quot;pZTQHcDVObnaCFS&quot;             &quot;qBxfbIHjauyEmgspecial10word&quot;
+## [3] &quot;TKgbmQAEFoJHOVh&quot;             &quot;VoBdUAuzfPrmCGX&quot;            
+## [5] &quot;dGgJOspecial5wordiFpbvXzUD&quot;  &quot;WOfLjNospecial4wordEeGkyTA&quot;</code></pre>
+<p>Using <code>str_locate</code> returns a matrix with the positions of all matches for <strong>every string</strong>. This is what’s called <strong>vectorised</strong> functions in R.</p>
+<pre class="r"><code>location_matrix &lt;-
+  str_locate(test_string, pattern =  &quot;special[0-9]word&quot;)
+
+head(location_matrix)</code></pre>
+<pre><code>##      start end
+## [1,]    NA  NA
+## [2,]    NA  NA
+## [3,]    NA  NA
+## [4,]    NA  NA
+## [5,]     6  17
+## [6,]     8  19</code></pre>
+<p>For this example this wouldn’t work, but I was also interested in checking how the result of <code>str_locate_all</code> would fit in this workflow. <code>str_locate_all</code> is the same as <code>str_locate</code> but since it can find <strong>more</strong> than one match per string, it returns a list with the same slots as there are strings in <code>test_string</code> with a matrix per slot showing the indices of the matches. Since many of the strings in <code>test_string</code> might not have <code>special*word</code>, we need to fill out those matches with <code>NA</code>:</p>
+<pre class="r"><code>location_list &lt;-
+  str_locate_all(test_string, pattern =  &quot;special[0-9]word&quot;) %&gt;% 
+  lapply(function(.x) if (all(is.na(.x))) matrix(c(NA, NA), ncol = 2) else .x) %&gt;%
+  {do.call(rbind, .)}
+
+head(location_list)</code></pre>
+<pre><code>##      start end
+## [1,]    NA  NA
+## [2,]    NA  NA
+## [3,]    NA  NA
+## [4,]    NA  NA
+## [5,]     6  17
+## [6,]     8  19</code></pre>
+<p>Now that we have everything ready, <code>str_sub</code> can give our desires results using both numeric vectors as well as the entire matrix:</p>
+<pre class="r"><code># Using numeric vectors from str_locate
+str_sub(test_string, location_matrix[, 1], location_matrix[, 2])</code></pre>
+<pre><code>##   [1] NA             NA             NA             NA             &quot;special5word&quot;
+##   [6] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [11] NA             NA             NA             NA             NA            
+##  [16] NA             NA             NA             NA             NA            
+##  [21] NA             NA             NA             &quot;special5word&quot; &quot;special6word&quot;
+##  [26] NA             NA             NA             NA             NA            
+##  [31] &quot;special4word&quot; NA             NA             NA             NA            
+##  [36] NA             NA             NA             &quot;special7word&quot; NA            
+##  [41] NA             NA             NA             NA             NA            
+##  [46] NA             NA             NA             NA             NA            
+##  [51] NA             NA             NA             NA             NA            
+##  [56] NA             NA             NA             NA             NA            
+##  [61] NA             NA             &quot;special4word&quot; NA             NA            
+##  [66] NA             NA             NA             NA             NA            
+##  [71] NA             NA             NA             &quot;special7word&quot; &quot;special9word&quot;
+##  [76] NA             NA             NA             NA             NA            
+##  [81] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [86] NA             NA             NA             &quot;special9word&quot; &quot;special9word&quot;
+##  [91] NA             NA             NA             NA             NA            
+##  [96] &quot;special6word&quot; NA             NA             &quot;special3word&quot; &quot;special1word&quot;</code></pre>
+<pre class="r"><code># Using numeric vectors from str_locate_all
+str_sub(test_string, location_list[, 1], location_list[, 2])</code></pre>
+<pre><code>##   [1] NA             NA             NA             NA             &quot;special5word&quot;
+##   [6] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [11] NA             NA             NA             NA             NA            
+##  [16] NA             NA             NA             NA             NA            
+##  [21] NA             NA             NA             &quot;special5word&quot; &quot;special6word&quot;
+##  [26] NA             NA             NA             NA             NA            
+##  [31] &quot;special4word&quot; NA             NA             NA             NA            
+##  [36] NA             NA             NA             &quot;special7word&quot; NA            
+##  [41] NA             NA             NA             NA             NA            
+##  [46] NA             NA             NA             NA             NA            
+##  [51] NA             NA             NA             NA             NA            
+##  [56] NA             NA             NA             NA             NA            
+##  [61] NA             NA             &quot;special4word&quot; NA             NA            
+##  [66] NA             NA             NA             NA             NA            
+##  [71] NA             NA             NA             &quot;special7word&quot; &quot;special9word&quot;
+##  [76] NA             NA             NA             NA             NA            
+##  [81] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [86] NA             NA             NA             &quot;special9word&quot; &quot;special9word&quot;
+##  [91] NA             NA             NA             NA             NA            
+##  [96] &quot;special6word&quot; NA             NA             &quot;special3word&quot; &quot;special1word&quot;</code></pre>
+<pre class="r"><code># Using the entire matrix
+str_sub(test_string, location_matrix)</code></pre>
+<pre><code>##   [1] NA             NA             NA             NA             &quot;special5word&quot;
+##   [6] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [11] NA             NA             NA             NA             NA            
+##  [16] NA             NA             NA             NA             NA            
+##  [21] NA             NA             NA             &quot;special5word&quot; &quot;special6word&quot;
+##  [26] NA             NA             NA             NA             NA            
+##  [31] &quot;special4word&quot; NA             NA             NA             NA            
+##  [36] NA             NA             NA             &quot;special7word&quot; NA            
+##  [41] NA             NA             NA             NA             NA            
+##  [46] NA             NA             NA             NA             NA            
+##  [51] NA             NA             NA             NA             NA            
+##  [56] NA             NA             NA             NA             NA            
+##  [61] NA             NA             &quot;special4word&quot; NA             NA            
+##  [66] NA             NA             NA             NA             NA            
+##  [71] NA             NA             NA             &quot;special7word&quot; &quot;special9word&quot;
+##  [76] NA             NA             NA             NA             NA            
+##  [81] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [86] NA             NA             NA             &quot;special9word&quot; &quot;special9word&quot;
+##  [91] NA             NA             NA             NA             NA            
+##  [96] &quot;special6word&quot; NA             NA             &quot;special3word&quot; &quot;special1word&quot;</code></pre>
+<p>A much easier approach to doing the above (which is cumbersome and verbose) is to use <code>str_extract</code>:</p>
+<pre class="r"><code>str_extract(test_string, &quot;special[0-9]word&quot;)</code></pre>
+<pre><code>##   [1] NA             NA             NA             NA             &quot;special5word&quot;
+##   [6] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [11] NA             NA             NA             NA             NA            
+##  [16] NA             NA             NA             NA             NA            
+##  [21] NA             NA             NA             &quot;special5word&quot; &quot;special6word&quot;
+##  [26] NA             NA             NA             NA             NA            
+##  [31] &quot;special4word&quot; NA             NA             NA             NA            
+##  [36] NA             NA             NA             &quot;special7word&quot; NA            
+##  [41] NA             NA             NA             NA             NA            
+##  [46] NA             NA             NA             NA             NA            
+##  [51] NA             NA             NA             NA             NA            
+##  [56] NA             NA             NA             NA             NA            
+##  [61] NA             NA             &quot;special4word&quot; NA             NA            
+##  [66] NA             NA             NA             NA             NA            
+##  [71] NA             NA             NA             &quot;special7word&quot; &quot;special9word&quot;
+##  [76] NA             NA             NA             NA             NA            
+##  [81] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [86] NA             NA             NA             &quot;special9word&quot; &quot;special9word&quot;
+##  [91] NA             NA             NA             NA             NA            
+##  [96] &quot;special6word&quot; NA             NA             &quot;special3word&quot; &quot;special1word&quot;</code></pre>
+<p>However, the whole objecive behind this exercise was to clearly map out how to connect <code>str_locate</code> to <code>str_sub</code> and it’s much clearer if you can pass the entire matrix. However, converting <code>str_locate_all</code> is still a bit tricky.</p>

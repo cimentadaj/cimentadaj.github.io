@@ -5,17 +5,162 @@
     <description>Recent content in Blogs on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sat, 16 Nov 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 08 Dec 2019 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>Locating parts of a string with `stringr`</title>
+      <link>/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</link>
+      <pubDate>Sun, 08 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</guid>
+      <description>
+
+
+&lt;p&gt;I was wondering the realms of StackOver Flow answering some questions when I encoutered a question that looked to extract some parts of a string based on a regex. I thought I knew how to do this with the package &lt;code&gt;stringr&lt;/code&gt; using, for example, &lt;code&gt;str_sub&lt;/code&gt; but I found it a bit difficult to map how &lt;code&gt;str_locate&lt;/code&gt; complements &lt;code&gt;str_sub&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;str_locate&lt;/code&gt; and &lt;code&gt;str_locate_all&lt;/code&gt; give back the locations of your regex inside the desired string as a &lt;code&gt;matrix&lt;/code&gt; or a &lt;code&gt;list&lt;/code&gt; respectively. However, that didn’t look very intuitive to pass on to &lt;code&gt;str_sub&lt;/code&gt; which (I thought) only accepted numeric vectors with the indices of the parts of the strings that you want to extract. However, to my surprise, &lt;code&gt;str_sub&lt;/code&gt; accepts not only numeric vectors but also a matrix with two columns, precisely the result of &lt;code&gt;str_locate&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Let’s create a set of random strings from which we want to extract the word &lt;code&gt;special*word&lt;/code&gt;, where &lt;code&gt;*&lt;/code&gt; represents a random number.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(stringr)    
+
+test_string &amp;lt;-
+  replicate(
+    100,
+    paste0(
+      sample(c(letters, LETTERS, paste0(&amp;quot;special&amp;quot;, sample(1:10, 1),&amp;quot;word&amp;quot;)), 15),
+      collapse = &amp;quot;&amp;quot;)
+  )
+
+head(test_string)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;pZTQHcDVObnaCFS&amp;quot;             &amp;quot;qBxfbIHjauyEmgspecial10word&amp;quot;
+## [3] &amp;quot;TKgbmQAEFoJHOVh&amp;quot;             &amp;quot;VoBdUAuzfPrmCGX&amp;quot;            
+## [5] &amp;quot;dGgJOspecial5wordiFpbvXzUD&amp;quot;  &amp;quot;WOfLjNospecial4wordEeGkyTA&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Using &lt;code&gt;str_locate&lt;/code&gt; returns a matrix with the positions of all matches for &lt;strong&gt;every string&lt;/strong&gt;. This is what’s called &lt;strong&gt;vectorised&lt;/strong&gt; functions in R.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;location_matrix &amp;lt;-
+  str_locate(test_string, pattern =  &amp;quot;special[0-9]word&amp;quot;)
+
+head(location_matrix)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##      start end
+## [1,]    NA  NA
+## [2,]    NA  NA
+## [3,]    NA  NA
+## [4,]    NA  NA
+## [5,]     6  17
+## [6,]     8  19&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;For this example this wouldn’t work, but I was also interested in checking how the result of &lt;code&gt;str_locate_all&lt;/code&gt; would fit in this workflow. &lt;code&gt;str_locate_all&lt;/code&gt; is the same as &lt;code&gt;str_locate&lt;/code&gt; but since it can find &lt;strong&gt;more&lt;/strong&gt; than one match per string, it returns a list with the same slots as there are strings in &lt;code&gt;test_string&lt;/code&gt; with a matrix per slot showing the indices of the matches. Since many of the strings in &lt;code&gt;test_string&lt;/code&gt; might not have &lt;code&gt;special*word&lt;/code&gt;, we need to fill out those matches with &lt;code&gt;NA&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;location_list &amp;lt;-
+  str_locate_all(test_string, pattern =  &amp;quot;special[0-9]word&amp;quot;) %&amp;gt;% 
+  lapply(function(.x) if (all(is.na(.x))) matrix(c(NA, NA), ncol = 2) else .x) %&amp;gt;%
+  {do.call(rbind, .)}
+
+head(location_list)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##      start end
+## [1,]    NA  NA
+## [2,]    NA  NA
+## [3,]    NA  NA
+## [4,]    NA  NA
+## [5,]     6  17
+## [6,]     8  19&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now that we have everything ready, &lt;code&gt;str_sub&lt;/code&gt; can give our desires results using both numeric vectors as well as the entire matrix:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Using numeric vectors from str_locate
+str_sub(test_string, location_matrix[, 1], location_matrix[, 2])&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##   [1] NA             NA             NA             NA             &amp;quot;special5word&amp;quot;
+##   [6] &amp;quot;special4word&amp;quot; NA             NA             &amp;quot;special5word&amp;quot; NA            
+##  [11] NA             NA             NA             NA             NA            
+##  [16] NA             NA             NA             NA             NA            
+##  [21] NA             NA             NA             &amp;quot;special5word&amp;quot; &amp;quot;special6word&amp;quot;
+##  [26] NA             NA             NA             NA             NA            
+##  [31] &amp;quot;special4word&amp;quot; NA             NA             NA             NA            
+##  [36] NA             NA             NA             &amp;quot;special7word&amp;quot; NA            
+##  [41] NA             NA             NA             NA             NA            
+##  [46] NA             NA             NA             NA             NA            
+##  [51] NA             NA             NA             NA             NA            
+##  [56] NA             NA             NA             NA             NA            
+##  [61] NA             NA             &amp;quot;special4word&amp;quot; NA             NA            
+##  [66] NA             NA             NA             NA             NA            
+##  [71] NA             NA             NA             &amp;quot;special7word&amp;quot; &amp;quot;special9word&amp;quot;
+##  [76] NA             NA             NA             NA             NA            
+##  [81] &amp;quot;special4word&amp;quot; NA             NA             &amp;quot;special5word&amp;quot; NA            
+##  [86] NA             NA             NA             &amp;quot;special9word&amp;quot; &amp;quot;special9word&amp;quot;
+##  [91] NA             NA             NA             NA             NA            
+##  [96] &amp;quot;special6word&amp;quot; NA             NA             &amp;quot;special3word&amp;quot; &amp;quot;special1word&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Using numeric vectors from str_locate_all
+str_sub(test_string, location_list[, 1], location_list[, 2])&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##   [1] NA             NA             NA             NA             &amp;quot;special5word&amp;quot;
+##   [6] &amp;quot;special4word&amp;quot; NA             NA             &amp;quot;special5word&amp;quot; NA            
+##  [11] NA             NA             NA             NA             NA            
+##  [16] NA             NA             NA             NA             NA            
+##  [21] NA             NA             NA             &amp;quot;special5word&amp;quot; &amp;quot;special6word&amp;quot;
+##  [26] NA             NA             NA             NA             NA            
+##  [31] &amp;quot;special4word&amp;quot; NA             NA             NA             NA            
+##  [36] NA             NA             NA             &amp;quot;special7word&amp;quot; NA            
+##  [41] NA             NA             NA             NA             NA            
+##  [46] NA             NA             NA             NA             NA            
+##  [51] NA             NA             NA             NA             NA            
+##  [56] NA             NA             NA             NA             NA            
+##  [61] NA             NA             &amp;quot;special4word&amp;quot; NA             NA            
+##  [66] NA             NA             NA             NA             NA            
+##  [71] NA             NA             NA             &amp;quot;special7word&amp;quot; &amp;quot;special9word&amp;quot;
+##  [76] NA             NA             NA             NA             NA            
+##  [81] &amp;quot;special4word&amp;quot; NA             NA             &amp;quot;special5word&amp;quot; NA            
+##  [86] NA             NA             NA             &amp;quot;special9word&amp;quot; &amp;quot;special9word&amp;quot;
+##  [91] NA             NA             NA             NA             NA            
+##  [96] &amp;quot;special6word&amp;quot; NA             NA             &amp;quot;special3word&amp;quot; &amp;quot;special1word&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Using the entire matrix
+str_sub(test_string, location_matrix)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##   [1] NA             NA             NA             NA             &amp;quot;special5word&amp;quot;
+##   [6] &amp;quot;special4word&amp;quot; NA             NA             &amp;quot;special5word&amp;quot; NA            
+##  [11] NA             NA             NA             NA             NA            
+##  [16] NA             NA             NA             NA             NA            
+##  [21] NA             NA             NA             &amp;quot;special5word&amp;quot; &amp;quot;special6word&amp;quot;
+##  [26] NA             NA             NA             NA             NA            
+##  [31] &amp;quot;special4word&amp;quot; NA             NA             NA             NA            
+##  [36] NA             NA             NA             &amp;quot;special7word&amp;quot; NA            
+##  [41] NA             NA             NA             NA             NA            
+##  [46] NA             NA             NA             NA             NA            
+##  [51] NA             NA             NA             NA             NA            
+##  [56] NA             NA             NA             NA             NA            
+##  [61] NA             NA             &amp;quot;special4word&amp;quot; NA             NA            
+##  [66] NA             NA             NA             NA             NA            
+##  [71] NA             NA             NA             &amp;quot;special7word&amp;quot; &amp;quot;special9word&amp;quot;
+##  [76] NA             NA             NA             NA             NA            
+##  [81] &amp;quot;special4word&amp;quot; NA             NA             &amp;quot;special5word&amp;quot; NA            
+##  [86] NA             NA             NA             &amp;quot;special9word&amp;quot; &amp;quot;special9word&amp;quot;
+##  [91] NA             NA             NA             NA             NA            
+##  [96] &amp;quot;special6word&amp;quot; NA             NA             &amp;quot;special3word&amp;quot; &amp;quot;special1word&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;A much easier approach to doing the above (which is cumbersome and verbose) is to use &lt;code&gt;str_extract&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;str_extract(test_string, &amp;quot;special[0-9]word&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##   [1] NA             NA             NA             NA             &amp;quot;special5word&amp;quot;
+##   [6] &amp;quot;special4word&amp;quot; NA             NA             &amp;quot;special5word&amp;quot; NA            
+##  [11] NA             NA             NA             NA             NA            
+##  [16] NA             NA             NA             NA             NA            
+##  [21] NA             NA             NA             &amp;quot;special5word&amp;quot; &amp;quot;special6word&amp;quot;
+##  [26] NA             NA             NA             NA             NA            
+##  [31] &amp;quot;special4word&amp;quot; NA             NA             NA             NA            
+##  [36] NA             NA             NA             &amp;quot;special7word&amp;quot; NA            
+##  [41] NA             NA             NA             NA             NA            
+##  [46] NA             NA             NA             NA             NA            
+##  [51] NA             NA             NA             NA             NA            
+##  [56] NA             NA             NA             NA             NA            
+##  [61] NA             NA             &amp;quot;special4word&amp;quot; NA             NA            
+##  [66] NA             NA             NA             NA             NA            
+##  [71] NA             NA             NA             &amp;quot;special7word&amp;quot; &amp;quot;special9word&amp;quot;
+##  [76] NA             NA             NA             NA             NA            
+##  [81] &amp;quot;special4word&amp;quot; NA             NA             &amp;quot;special5word&amp;quot; NA            
+##  [86] NA             NA             NA             &amp;quot;special9word&amp;quot; &amp;quot;special9word&amp;quot;
+##  [91] NA             NA             NA             NA             NA            
+##  [96] &amp;quot;special6word&amp;quot; NA             NA             &amp;quot;special3word&amp;quot; &amp;quot;special1word&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;However, the whole objecive behind this exercise was to clearly map out how to connect &lt;code&gt;str_locate&lt;/code&gt; to &lt;code&gt;str_sub&lt;/code&gt; and it’s much clearer if you can pass the entire matrix. However, converting &lt;code&gt;str_locate_all&lt;/code&gt; is still a bit tricky.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>essurvey release</title>
-      <link>/blog/essurvey-release/</link>
+      <link>/blog/2019-11-15-release-essurvey/essurvey-release/</link>
       <pubDate>Sat, 16 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>/blog/essurvey-release/</guid>
+      <guid>/blog/2019-11-15-release-essurvey/essurvey-release/</guid>
       <description>
 
 
