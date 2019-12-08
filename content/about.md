@@ -18,8 +18,7 @@ and inequality in spatial segregation/mobility. I enjoy programming with R,
 scraping data and applying statistics, machine learning and data science to help
 people. If this matches your profile, let's work on something together!
 
-I am very passionate about statistical programming with R, machine learning,
-data visualization, statistics and drums.
+I am happy that my blog is included in the brilliant [R-bloggers](https://www.r-bloggers.com/) project. 
 
 If you wish to contact me send me an email to `cimentadaj (at) gmail (dot)
 com`. I’m also on [Github](https://github.com/cimentadaj) and
