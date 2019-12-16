@@ -10,7 +10,7 @@
 <meta name="description" content="Simple minimalist theme">
 <meta name="keywords" content="blog,goa,hugo,r,statistics,education">
 
-<base href="https://cimentadaj.github.io/">
+<base href="/">
 
 <title>Jorge Cimentada</title>
 
@@ -21,8 +21,8 @@
 
 
 
-<link rel="stylesheet" href="https://cimentadaj.github.io/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
-<script src="https://cimentadaj.github.io/js/highlight.pack.js"></script>
+<link rel="stylesheet" href="/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
+<script src="/js/highlight.pack.js"></script>
 <script>
 hljs.configure({langauges: ['R']});
 hljs.initHighlightingOnLoad();
@@ -37,17 +37,17 @@ hljs.initHighlightingOnLoad();
 
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
-<link rel="stylesheet" href="https://cimentadaj.github.io/css/main.css">
+<link rel="stylesheet" href="/css/main.css">
 
 
 
 
 
-<link rel="apple-touch-icon" sizes="180x180" href="https://cimentadaj.github.io/apple-touch-icon.png">
-<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-32x32.png" sizes="32x32">
-<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-16x16.png" sizes="16x16">
-<link rel="manifest" href="https://cimentadaj.github.io/manifest.json">
-<link rel="mask-icon" href="https://cimentadaj.github.io/safari-pinned-tab.svg" color="#5bbad5">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
 <meta name="theme-color" content="#ffffff">
 
 </head>
@@ -161,7 +161,7 @@ bicing %&gt;%
        title = &quot;Mornings have greater bicycle usage than evenings&quot;,
        subtitle = &quot;But number of bikes can vary betwen 0 and 20 in the morning&quot;) +
   scale_colour_manual(name = &quot;Types&quot;, values = c(&#39;Average&#39; = &#39;red&#39;, &#39;Median&#39; = &#39;blue&#39;))</code></pre>
-<p><img src="https://cimentadaj.github.io/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>This is a bit revealing. Some take aways:</p>
 <ol style="list-style-type: decimal">
 <li><p>Mornings have greater number of bikes but they also have high variability. For example, look at the 8 AM category. Even though the average is at around 7 bikes, it’s also very likely that there’s 0 bikes as well as 20 bikes.</p></li>
@@ -201,9 +201,9 @@ p2 &lt;-
        subtitle = &#39;Thu and Wed seem to have &gt; 10 bikes often at 8, Sun and Sat have peaks at 10&#39;)
 
 p1</code></pre>
-<p><img src="https://cimentadaj.github.io/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <pre class="r"><code>p2</code></pre>
-<p><img src="https://cimentadaj.github.io/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>Similarly, we can see whether there’s a clear morning/evening divide by looking at the percentage of bikes for every day in the evening and the morning.</p>
 <pre class="r"><code>bicing %&gt;%
   mutate(hour = lubridate::hour(time),
@@ -215,7 +215,7 @@ p1</code></pre>
        y = &quot;% of bikes&quot;,
        title = &#39;# of bikes increases linearly through out the week&#39;,
        fill = &#39;Time of day&#39;)</code></pre>
-<p><img src="https://cimentadaj.github.io/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>Alright, so we got that down. So far:</p>
 <ol style="list-style-type: decimal">
 <li><p>There’s more taking and droping happening in the first few days of the week than in the rest</p></li>
@@ -244,7 +244,7 @@ intm_df %&gt;%
        title = &#39;Weekdays have much greater bicycle usage than weekends&#39;,
        subtitle = &quot;Wed has the busiest hour of the week at 8AM; There&#39;s activity 25 minutes out of the 60 minutes.&quot;) +
   theme(legend.position = &#39;none&#39;)</code></pre>
-<p><img src="https://cimentadaj.github.io/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p>This is very interesting! This plot reverses some of the findings from before. First off, we see that there’s high variability between hours: there’s no point in looking at averages within an hour because a lot happens between minutes. For example, at 7AM and 10 AM during working days there’s very little activity regardless of the day. On the contrary, 8AM and 9AM have high bycicle usage through the working days.</p>
 <p>This makes sense, it’s the time that people usually go to work. Also as expected, bicycle usage is low on weekend mornings and increases linearly through out the day. All in all, 8/9 AM on working days seems to be the time to avoid bicycles if you can! Eventually, in another post, I plan to investigate whether there’s minute-to-minute patterns for 8/9 AM on working days. For example, is there more activity closer to certain minutes? Like half past the hour or at exactly the hour.</p>
 <p>Also, it seems that evenings are busy even on working days, specially on Thursdays but have very little bicycle usage on Fridays! Perhaps Catalans are ready to party and travel on the metro. On my follow up post, I also plan to see whether these patterns hold by season. I would expect summer and winter to have strong seasonal patterns.</p>
@@ -255,7 +255,7 @@ intm_df %&gt;%
   ggplot(aes(x = time_day)) +
   geom_histogram()</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="https://cimentadaj.github.io/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p>Bicing people probably prepare very well because it’s mostly empty in the evenings</p>
 <p>The next step in the analysis is to start making predictions in waiting time. That will be the topic of my next post, in which I start to develop a modelling approach to predict the time you’ll have to have wait until a bicycle arrives or leaves. As a very simple exercise, I wanted to predict check whether I can predict when the station will be empty? I tried a simple logistic regression just to check.</p>
 <pre class="r"><code>empty_bicycle &lt;-
@@ -325,9 +325,9 @@ confusionMatrix(test$empty, pred_empty, positive = &quot;1&quot;)</code></pre>
       TAGS:
       
       
-      <a class="meta" href="https://cimentadaj.github.io/tags/project">PROJECT</a>, 
+      <a class="meta" href="/tags/project">PROJECT</a>, 
       
-      <a class="meta" href="https://cimentadaj.github.io/tags/r">R</a>
+      <a class="meta" href="/tags/r">R</a>
       
       
       
@@ -365,16 +365,16 @@ confusionMatrix(test$empty, pred_empty, positive = &quot;1&quot;)</code></pre>
 <section id="menu-pane" class="row menu text-center">
   
   
-  <span><a class="menu-item" href="https://cimentadaj.github.io/blog/2018-02-06-rewriting-duplicated/rewriting-duplicated/">&lt; prev | </a></span>
+  <span><a class="menu-item" href="/blog/2018-02-06-rewriting-duplicated/rewriting-duplicated/">&lt; prev | </a></span>
   
   
-  <span><a class="menu-item" href="https://cimentadaj.github.io/blog">blog</a></span>
+  <span><a class="menu-item" href="/blog">blog</a></span>
   
   
-  <span><a class="menu-item" href="https://cimentadaj.github.io/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/"> | next &gt;</a></span>
+  <span><a class="menu-item" href="/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/"> | next &gt;</a></span>
   
   
-  <h4 class="text-center"><a class="menu-item" href="https://cimentadaj.github.io/">home</a></h4>
+  <h4 class="text-center"><a class="menu-item" href="/">home</a></h4>
 </section>
 
 

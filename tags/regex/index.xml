@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>regex on Jorge Cimentada</title>
-    <link>https://cimentadaj.github.io/tags/regex/</link>
+    <link>/tags/regex/</link>
     <description>Recent content in regex on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Sun, 08 Dec 2019 00:00:00 +0000</lastBuildDate>
     
-    <atom:link href="https://cimentadaj.github.io/tags/regex/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/regex/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Locating parts of a string with `stringr`</title>
-      <link>https://cimentadaj.github.io/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</link>
+      <link>/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</link>
       <pubDate>Sun, 08 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</guid>
+      <guid>/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</guid>
       <description><![CDATA[
       
 

@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>scraping on Jorge Cimentada</title>
-    <link>https://cimentadaj.github.io/tags/scraping/</link>
+    <link>/tags/scraping/</link>
     <description>Recent content in scraping on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Tue, 19 Jun 2018 00:00:00 +0000</lastBuildDate>
     
-    <atom:link href="https://cimentadaj.github.io/tags/scraping/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/scraping/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Exploring Google Scholar coauthorship</title>
-      <link>https://cimentadaj.github.io/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</link>
+      <link>/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</link>
       <pubDate>Tue, 19 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</guid>
+      <guid>/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</guid>
       <description><![CDATA[
       
 
@@ -58,10 +58,10 @@ network</code></pre>
     
     <item>
       <title>Login in, scraping and hidden fields</title>
-      <link>https://cimentadaj.github.io/blog/2018-04-05-login-in-scraping-and-hidden-fields/login-in-scraping-and-hidden-fields/</link>
+      <link>/blog/2018-04-05-login-in-scraping-and-hidden-fields/login-in-scraping-and-hidden-fields/</link>
       <pubDate>Thu, 05 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/blog/2018-04-05-login-in-scraping-and-hidden-fields/login-in-scraping-and-hidden-fields/</guid>
+      <guid>/blog/2018-04-05-login-in-scraping-and-hidden-fields/login-in-scraping-and-hidden-fields/</guid>
       <description><![CDATA[
       
 
@@ -147,10 +147,10 @@ access &lt;- POST(login,
     
     <item>
       <title>Scraping at scale: daily scraping to your database</title>
-      <link>https://cimentadaj.github.io/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/</link>
+      <link>/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/</link>
       <pubDate>Wed, 31 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/</guid>
+      <guid>/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/</guid>
       <description><![CDATA[
       
 
@@ -417,10 +417,10 @@ appended between the time the script should&#39;ve started and should&#39;ve end
     
     <item>
       <title>How long should I wait for my bike?</title>
-      <link>https://cimentadaj.github.io/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/</link>
+      <link>/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/</link>
       <pubDate>Fri, 01 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/</guid>
+      <guid>/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/</guid>
       <description><![CDATA[
       
 
@@ -495,10 +495,10 @@ hostname=your_host_name
     
     <item>
       <title>Scraping and visualizing How I Met Your Mother</title>
-      <link>https://cimentadaj.github.io/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</link>
+      <link>/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</link>
       <pubDate>Mon, 16 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</guid>
+      <guid>/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</guid>
       <description><![CDATA[
       
 

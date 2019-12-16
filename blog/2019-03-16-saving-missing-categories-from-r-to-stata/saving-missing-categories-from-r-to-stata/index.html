@@ -10,7 +10,7 @@
 <meta name="description" content="Simple minimalist theme">
 <meta name="keywords" content="blog,goa,hugo,r,statistics,education">
 
-<base href="https://cimentadaj.github.io/">
+<base href="/">
 
 <title>Jorge Cimentada</title>
 
@@ -21,8 +21,8 @@
 
 
 
-<link rel="stylesheet" href="https://cimentadaj.github.io/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
-<script src="https://cimentadaj.github.io/js/highlight.pack.js"></script>
+<link rel="stylesheet" href="/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
+<script src="/js/highlight.pack.js"></script>
 <script>
 hljs.configure({langauges: ['R']});
 hljs.initHighlightingOnLoad();
@@ -37,17 +37,17 @@ hljs.initHighlightingOnLoad();
 
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
-<link rel="stylesheet" href="https://cimentadaj.github.io/css/main.css">
+<link rel="stylesheet" href="/css/main.css">
 
 
 
 
 
-<link rel="apple-touch-icon" sizes="180x180" href="https://cimentadaj.github.io/apple-touch-icon.png">
-<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-32x32.png" sizes="32x32">
-<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-16x16.png" sizes="16x16">
-<link rel="manifest" href="https://cimentadaj.github.io/manifest.json">
-<link rel="mask-icon" href="https://cimentadaj.github.io/safari-pinned-tab.svg" color="#5bbad5">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
 <meta name="theme-color" content="#ffffff">
 
 </head>
@@ -69,7 +69,7 @@ hljs.initHighlightingOnLoad();
       —
       
       
-      <a class="meta" href="https://cimentadaj.github.io/categories/r">R</a>
+      <a class="meta" href="/categories/r">R</a>
       
       
       
@@ -118,7 +118,7 @@ tst</code></pre>
 ##  NA(d)                  No answer</code></pre>
 <pre class="r"><code>write_dta(data.frame(freehms = tst), &quot;test.dta&quot;, version = 13)</code></pre>
 <p>If I load this in Stata and type tab freehms, all labels are correct:</p>
-<p><img src="https://cimentadaj.github.io/img/stata1.png" /></p>
+<p><img src="/img/stata1.png" /></p>
 <p>Now, if I take the code above and add another tagged NA value, then <code>write_dta</code> drops the last label for some reason:</p>
 <pre class="r"><code>library(haven)
 
@@ -153,7 +153,7 @@ tst</code></pre>
 ##  NA(d)                  No answer
 ##  NA(c)                  Dont know</code></pre>
 <pre class="r"><code>write_dta(data.frame(freehms = tst), &quot;test.dta&quot;, version = 13)</code></pre>
-<p><img src="https://cimentadaj.github.io/img/stata2.png" /></p>
+<p><img src="/img/stata2.png" /></p>
 <p>Well, the bug is evident (notice the 5 without a label?). However, since the project is on a deadline I had to come up with a solution. It’s very simple: avoid tagged NA’s but recode them as traditional labels. Here’s a solution:</p>
 <pre class="r"><code>library(sjlabelled)
 library(sjmisc)
@@ -282,7 +282,7 @@ recode_stata_labels(tst)</code></pre>
       TAGS:
       
       
-      <a class="meta" href="https://cimentadaj.github.io/tags/r">R</a>
+      <a class="meta" href="/tags/r">R</a>
       
       
       
@@ -320,16 +320,16 @@ recode_stata_labels(tst)</code></pre>
 <section id="menu-pane" class="row menu text-center">
   
   
-  <span><a class="menu-item" href="https://cimentadaj.github.io/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/">&lt; prev | </a></span>
+  <span><a class="menu-item" href="/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/">&lt; prev | </a></span>
   
   
-  <span><a class="menu-item" href="https://cimentadaj.github.io/blog">blog</a></span>
+  <span><a class="menu-item" href="/blog">blog</a></span>
   
   
-  <span><a class="menu-item" href="https://cimentadaj.github.io/blog/2019-11-15-release-essurvey/essurvey-release/"> | next &gt;</a></span>
+  <span><a class="menu-item" href="/blog/2019-11-15-release-essurvey/essurvey-release/"> | next &gt;</a></span>
   
   
-  <h4 class="text-center"><a class="menu-item" href="https://cimentadaj.github.io/">home</a></h4>
+  <h4 class="text-center"><a class="menu-item" href="/">home</a></h4>
 </section>
 
 

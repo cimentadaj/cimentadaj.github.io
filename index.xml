@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Jorge Cimentada</title>
-    <link>https://cimentadaj.github.io/</link>
+    <link>/</link>
     <description>Recent content on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Sun, 08 Dec 2019 00:00:00 +0000</lastBuildDate>
     
-    <atom:link href="https://cimentadaj.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Blogs</title>
-      <link>https://cimentadaj.github.io/blog/</link>
+      <link>/blog/</link>
       <pubDate>Sun, 08 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/blog/</guid>
+      <guid>/blog/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -23,10 +23,10 @@
     
     <item>
       <title>About</title>
-      <link>https://cimentadaj.github.io/about/</link>
+      <link>/about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/about/</guid>
+      <guid>/about/</guid>
       <description><![CDATA[
       <p><center><img src="/img/headshot.jpg" alt="Drawing" style="width:
 200px;"/></center></p>
@@ -43,7 +43,7 @@ and inequality in spatial segregation/mobility. I enjoy programming with R,
 scraping data and applying statistics, machine learning and data science to help
 people. If this matches your profile, let&rsquo;s work on something together!</p>
 
-<p>I am happy that my blog is included in the brilliant <a href="https://www.r-bloggers.com/">R-bloggers</a> project.</p>
+<p>I am happy that my blog is included in the brilliant <a href="https://www.r-bloggers.com/">R-bloggers</a> project and <a href="https://rweekly.org/">R-weekly</a>.</p>
 
 <p>If you wish to contact me send me an email to <code>cimentadaj (at) gmail (dot)
 com</code>. I’m also on <a href="https://github.com/cimentadaj">Github</a> and
@@ -54,10 +54,10 @@ com</code>. I’m also on <a href="https://github.com/cimentadaj">Github</a> and
     
     <item>
       <title>Curriculum Vitae</title>
-      <link>https://cimentadaj.github.io/vitae/</link>
+      <link>/vitae/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/vitae/</guid>
+      <guid>/vitae/</guid>
       <description><![CDATA[
       <!---
 industry CV from [here](/vitae/industry_CV.pdf) or my academic CV
@@ -70,10 +70,10 @@ industry CV from [here](/vitae/industry_CV.pdf) or my academic CV
     
     <item>
       <title>Projects</title>
-      <link>https://cimentadaj.github.io/projects/</link>
+      <link>/projects/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/projects/</guid>
+      <guid>/projects/</guid>
       <description><![CDATA[
       <p><p>
 <div style="width: auto">

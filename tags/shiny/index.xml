@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>shiny on Jorge Cimentada</title>
-    <link>https://cimentadaj.github.io/tags/shiny/</link>
+    <link>/tags/shiny/</link>
     <description>Recent content in shiny on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Tue, 19 Jun 2018 00:00:00 +0000</lastBuildDate>
     
-    <atom:link href="https://cimentadaj.github.io/tags/shiny/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/shiny/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Exploring Google Scholar coauthorship</title>
-      <link>https://cimentadaj.github.io/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</link>
+      <link>/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</link>
       <pubDate>Tue, 19 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</guid>
+      <guid>/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</guid>
       <description><![CDATA[
       
 
@@ -58,10 +58,10 @@ network</code></pre>
     
     <item>
       <title>Cognitive inequality around the world – Shiny app</title>
-      <link>https://cimentadaj.github.io/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</link>
+      <link>/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</link>
       <pubDate>Mon, 12 Dec 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</guid>
+      <guid>/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</guid>
       <description><![CDATA[
       
 
