@@ -7,7 +7,7 @@
     <language>en-US</language>
     <lastBuildDate>Sun, 08 Dec 2019 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -16,7 +16,9 @@
       <pubDate>Sun, 08 Dec 2019 00:00:00 +0000</pubDate>
       
       <guid>/blog/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -25,27 +27,29 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/about/</guid>
-      <description>&lt;p&gt;&lt;center&gt;&lt;img src=&#34;/img/headshot.jpg&#34; alt=&#34;Drawing&#34; style=&#34;width:
-200px;&#34;/&gt;&lt;/center&gt;&lt;/p&gt;
+      <description><![CDATA[
+      <p><center><img src="/img/headshot.jpg" alt="Drawing" style="width:
+200px;"/></center></p>
 
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+<p><br></p>
 
-&lt;p&gt;Hi, I&amp;rsquo;m Jorge Cimentada, a Research Scientist working at the Laboratory of
-Digital and Computational Demography at the &lt;a href=&#34;https://www.demogr.mpg.de/en/&#34;&gt;Max Planck Institute for
-Demographic Resarch&lt;/a&gt;. I have a PhD in Sociology
-from Pompeu Fabra University and belong to the &lt;a href=&#34;https://www.upf.edu/web/survey&#34;&gt;Research and Expertise Centre
-for Survey Methodology (RECSM)&lt;/a&gt;. My main
+<p>Hi, I&rsquo;m Jorge Cimentada, a Research Scientist working at the Laboratory of
+Digital and Computational Demography at the <a href="https://www.demogr.mpg.de/en/">Max Planck Institute for
+Demographic Resarch</a>. I have a PhD in Sociology
+from Pompeu Fabra University and belong to the <a href="https://www.upf.edu/web/survey">Research and Expertise Centre
+for Survey Methodology (RECSM)</a>. My main
 research interests are the study of achievement inequality, population dynamics
 and inequality in spatial segregation/mobility. I enjoy programming with R,
 scraping data and applying statistics, machine learning and data science to help
-people. If this matches your profile, let&amp;rsquo;s work on something together!&lt;/p&gt;
+people. If this matches your profile, let&rsquo;s work on something together!</p>
 
-&lt;p&gt;I am happy that my blog is included in the brilliant &lt;a href=&#34;https://www.r-bloggers.com/&#34;&gt;R-bloggers&lt;/a&gt; project.&lt;/p&gt;
+<p>I am happy that my blog is included in the brilliant <a href="https://www.r-bloggers.com/">R-bloggers</a> project.</p>
 
-&lt;p&gt;If you wish to contact me send me an email to &lt;code&gt;cimentadaj (at) gmail (dot)
-com&lt;/code&gt;. I’m also on &lt;a href=&#34;https://github.com/cimentadaj&#34;&gt;Github&lt;/a&gt; and
-&lt;a href=&#34;https://www.linkedin.com/in/jorge-cimentada-1740877a/&#34;&gt;Linkedin&lt;/a&gt;.&lt;/p&gt;
-</description>
+<p>If you wish to contact me send me an email to <code>cimentadaj (at) gmail (dot)
+com</code>. I’m also on <a href="https://github.com/cimentadaj">Github</a> and
+<a href="https://www.linkedin.com/in/jorge-cimentada-1740877a/">Linkedin</a>.</p>
+]]>
+      </description>
     </item>
     
     <item>
@@ -54,12 +58,14 @@ com&lt;/code&gt;. I’m also on &lt;a href=&#34;https://github.com/cimentadaj&#3
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/vitae/</guid>
-      <description>&lt;!---
+      <description><![CDATA[
+      <!---
 industry CV from [here](/vitae/industry_CV.pdf) or my academic CV
---&gt;
+-->
 
-&lt;p&gt;You can download my CV from &lt;a href=&#34;/vitae/academia_CV.pdf&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
-</description>
+<p>You can download my CV from <a href="/vitae/academia_CV.pdf">here</a></p>
+]]>
+      </description>
     </item>
     
     <item>
@@ -68,56 +74,58 @@ industry CV from [here](/vitae/industry_CV.pdf) or my academic CV
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/projects/</guid>
-      <description>&lt;p&gt;&lt;p&gt;
-&lt;div style=&#34;width: auto&#34;&gt;
-&lt;img src=&#34;img/teaching_r.jpg&#34; alt=&#34;Me.&#34; style=&#34;float: center; width: 100%;max-height: 130%; PADDING-LEFT: 30px&#34;/&gt;
-&lt;p&gt;&lt;/p&gt;
+      <description><![CDATA[
+      <p><p>
+<div style="width: auto">
+<img src="img/teaching_r.jpg" alt="Me." style="float: center; width: 100%;max-height: 130%; PADDING-LEFT: 30px"/>
+<p></p>
 
-&lt;p&gt;&lt;center&gt;&lt;i&gt; Teaching R! &lt;/i&gt; &lt;/center&gt;
-&lt;br&gt;&lt;/p&gt;
+<p><center><i> Teaching R! </i> </center>
+<br></p>
 
-&lt;p&gt;&lt;p&gt;In this section you can find bits of material I&amp;rsquo;ve written over time and some of my personal projects, mainly concentrated on the R programming software&lt;p&gt;&lt;/p&gt;
+<p><p>In this section you can find bits of material I&rsquo;ve written over time and some of my personal projects, mainly concentrated on the R programming software<p></p>
 
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+<p><br></p>
 
-&lt;p&gt;&lt;b&gt; Data science &lt;/b&gt;&lt;/p&gt;
+<p><b> Data science </b></p>
 
-&lt;p&gt;&lt;a href=&#34;blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/index.html&#34;&gt;How long should I wait for my bike?&lt;/a&gt;: This is a series of posts in which I set up a private server and interact with the Barcelona public bicycle system API. I&amp;rsquo;ve performed analysis of waiting times and I plan to add a live predictive model of waiting time for stations.&lt;/p&gt;
+<p><a href="blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/index.html">How long should I wait for my bike?</a>: This is a series of posts in which I set up a private server and interact with the Barcelona public bicycle system API. I&rsquo;ve performed analysis of waiting times and I plan to add a live predictive model of waiting time for stations.</p>
 
-&lt;p&gt;&lt;a href=&#34;blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/index.html&#34;&gt;Analyzing &amp;ldquo;How I Met Your Mother&amp;rdquo;&lt;/a&gt;: In this blog post I scraped and analyzed the scripts of the American TV series &amp;ldquo;How I Met Your Mother&amp;rdquo;.&lt;/p&gt;
+<p><a href="blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/index.html">Analyzing &ldquo;How I Met Your Mother&rdquo;</a>: In this blog post I scraped and analyzed the scripts of the American TV series &ldquo;How I Met Your Mother&rdquo;.</p>
 
-&lt;p&gt;&lt;b&gt; R packages &lt;/b&gt;&lt;/p&gt;
+<p><b> R packages </b></p>
 
-&lt;p&gt;opendataes: (&lt;a href=&#34;https://github.com/cimentadaj/opendataes&#34;&gt;Github&lt;/a&gt;, &lt;a href=&#34;https://ropenspain.github.io/opendataes/&#34;&gt;Pkg website&lt;/a&gt;) Interact with the &lt;a href=&#34;http://datos.gob.es&#34;&gt;datos.gob.es&lt;/a&gt; API&lt;/p&gt;
+<p>opendataes: (<a href="https://github.com/cimentadaj/opendataes">Github</a>, <a href="https://ropenspain.github.io/opendataes/">Pkg website</a>) Interact with the <a href="http://datos.gob.es">datos.gob.es</a> API</p>
 
-&lt;p&gt;sqpr: (&lt;a href=&#34;https://github.com/asqm/sqpr&#34;&gt;Github&lt;/a&gt;) Access the SQP API and adjust your estimations for measurement error&lt;/p&gt;
+<p>sqpr: (<a href="https://github.com/asqm/sqpr">Github</a>) Access the SQP API and adjust your estimations for measurement error</p>
 
-&lt;p&gt;perccalc (&lt;a href=&#34;https://cran.r-project.org/web/packages/perccalc/index.html&#34;&gt;CRAN&lt;/a&gt;, &lt;a href=&#34;https://github.com/cimentadaj/perccalc&#34;&gt;Github&lt;/a&gt;): An implementation of two functions that estimate values for percentiles from an ordered categorical variable as described by Reardon (2011, isbn:978-0-87154-372-1).&lt;/p&gt;
+<p>perccalc (<a href="https://cran.r-project.org/web/packages/perccalc/index.html">CRAN</a>, <a href="https://github.com/cimentadaj/perccalc">Github</a>): An implementation of two functions that estimate values for percentiles from an ordered categorical variable as described by Reardon (2011, isbn:978-0-87154-372-1).</p>
 
-&lt;p&gt;essurvey (&lt;a href=&#34;https://cran.r-project.org/web/packages/essurvey/index.html&#34;&gt;CRAN&lt;/a&gt;, &lt;a href=&#34;https://github.com/ropensci/essurvey&#34;&gt;Github&lt;/a&gt;, &lt;a href=&#34;https://ropensci.github.io/essurvey/&#34;&gt;Pkg website&lt;/a&gt;): Download data from the European Social Survey directly into R from their website &lt;a href=&#34;http://www.europeansocialsurvey.org/&#34;&gt;http://www.europeansocialsurvey.org/&lt;/a&gt;.&lt;/p&gt;
+<p>essurvey (<a href="https://cran.r-project.org/web/packages/essurvey/index.html">CRAN</a>, <a href="https://github.com/ropensci/essurvey">Github</a>, <a href="https://ropensci.github.io/essurvey/">Pkg website</a>): Download data from the European Social Survey directly into R from their website <a href="http://www.europeansocialsurvey.org/">http://www.europeansocialsurvey.org/</a>.</p>
 
-&lt;p&gt;cimentadaj (&lt;a href=&#34;https://github.com/cimentadaj/cimentadaj&#34;&gt;Github&lt;/a&gt;): My personal package&lt;/p&gt;
+<p>cimentadaj (<a href="https://github.com/cimentadaj/cimentadaj">Github</a>): My personal package</p>
 
-&lt;p&gt;&lt;b&gt; Miscellaneous &lt;/b&gt;&lt;/p&gt;
+<p><b> Miscellaneous </b></p>
 
-&lt;p&gt;&lt;a href=&#34;blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/index.html&#34;&gt;My PISA twitter bot&lt;/a&gt;: I programmed a Twitter bot that tweets graphs from the &lt;a href=&#34;http://www.oecd.org/pisa/&#34;&gt;PISA&lt;/a&gt; database. How did I do it? See &lt;a href=&#34;blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/index.html&#34;&gt;here&lt;/a&gt; and follow &lt;a href=&#34;https://twitter.com/DailyPISA_Facts&#34;&gt;@DailyPISA_Facts&lt;/a&gt;&lt;/p&gt;
+<p><a href="blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/index.html">My PISA twitter bot</a>: I programmed a Twitter bot that tweets graphs from the <a href="http://www.oecd.org/pisa/">PISA</a> database. How did I do it? See <a href="blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/index.html">here</a> and follow <a href="https://twitter.com/DailyPISA_Facts">@DailyPISA_Facts</a></p>
 
-&lt;p&gt;&lt;a href=&#34;https://cimentadaj.shinyapps.io/shiny/&#34;&gt;Educational Inequality around the world&lt;/a&gt;: Visualize educational inequality for over 70 countries from 2000 to 2015 using this Shinyapp.&lt;/p&gt;
+<p><a href="https://cimentadaj.shinyapps.io/shiny/">Educational Inequality around the world</a>: Visualize educational inequality for over 70 countries from 2000 to 2015 using this Shinyapp.</p>
 
-&lt;p&gt;I completed all solutions to the &lt;a href=&#34;http://r4ds.had.co.nz/&#34;&gt;R for Data Science book&lt;/a&gt;. Solutions can be found &lt;a href=&#34;https://github.com/cimentadaj/R4DS-Solutions&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
+<p>I completed all solutions to the <a href="http://r4ds.had.co.nz/">R for Data Science book</a>. Solutions can be found <a href="https://github.com/cimentadaj/R4DS-Solutions">here</a></p>
 
-&lt;p&gt;I translated some Stata code to R for the &lt;a href = &#34;https://www.povertyactionlab.org/&#34; target = &#34;_blank&#34;&gt; The Abdul Latif Jameel Poverty Action Lab (J-PAL) &lt;/a&gt; and was featured on their &lt;a href = &#34;https://www.povertyactionlab.org/research-resources/software-and-tools&#34; target = &#34;_blank&#34;&gt; website&lt;/a&gt;.&lt;/p&gt;
+<p>I translated some Stata code to R for the <a href = "https://www.povertyactionlab.org/" target = "_blank"> The Abdul Latif Jameel Poverty Action Lab (J-PAL) </a> and was featured on their <a href = "https://www.povertyactionlab.org/research-resources/software-and-tools" target = "_blank"> website</a>.</p>
 
-&lt;p&gt;&lt;b&gt; Teaching R &lt;/b&gt;&lt;/p&gt;
+<p><b> Teaching R </b></p>
 
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;In April 2016, together with &lt;a href = &#34;https://sites.google.com/site/brunoarpino/&#34; target = &#34;_blank&#34;&gt;Bruno Arpino&lt;/a&gt; and some colleagues from the &lt;a href = &#34;https://www.upf.edu/survey/&#34; target = &#34;_blank&#34;&gt; RECSM&lt;/a&gt;, I organized a seminar series introducing  R at Pompeu Fabra University. As part of the lectures I programmed some interactive lessons which can help get you started. These lessons assume that you have never used R and are self-standing lessons. Go to the &lt;a href = &#34;https://github.com/cimentadaj/Rseminars&#34; target = &#34;_blank&#34;&gt; Github&lt;/a&gt; repository: follow the instructions and you&amp;rsquo;ll be able to install everything and follow the courses.  &lt;i&gt;Note: Ignore the first lesson since it was a live presentation.&lt;/i&gt;&lt;/p&gt;&lt;/li&gt;
+<ul>
+<li><p>In April 2016, together with <a href = "https://sites.google.com/site/brunoarpino/" target = "_blank">Bruno Arpino</a> and some colleagues from the <a href = "https://www.upf.edu/survey/" target = "_blank"> RECSM</a>, I organized a seminar series introducing  R at Pompeu Fabra University. As part of the lectures I programmed some interactive lessons which can help get you started. These lessons assume that you have never used R and are self-standing lessons. Go to the <a href = "https://github.com/cimentadaj/Rseminars" target = "_blank"> Github</a> repository: follow the instructions and you&rsquo;ll be able to install everything and follow the courses.  <i>Note: Ignore the first lesson since it was a live presentation.</i></p></li>
 
-&lt;li&gt;&lt;p&gt;I gave a short course at Pompeu Fabra University introducing the &lt;a href=&#34;https://www.tidyverse.org/&#34;&gt;tidyverse&lt;/a&gt;. I uploaded the syllabus online (program, slides and exercises) in my &lt;a href=&#34;https://github.com/cimentadaj/tidyverse_seminars&#34;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+<li><p>I gave a short course at Pompeu Fabra University introducing the <a href="https://www.tidyverse.org/">tidyverse</a>. I uploaded the syllabus online (program, slides and exercises) in my <a href="https://github.com/cimentadaj/tidyverse_seminars">Github</a>.</p></li>
 
-&lt;li&gt;&lt;p&gt;I gave a talk at &lt;a href=&#34;https://pydata.org/barcelona2017/&#34;&gt;PyData 2017&lt;/a&gt; to introduce the tidyverse to follow data analysts. If you&amp;rsquo;re interested, I uploaded the material in my &lt;a href=&#34;https://github.com/cimentadaj/PyData_2017&#34;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+<li><p>I gave a talk at <a href="https://pydata.org/barcelona2017/">PyData 2017</a> to introduce the tidyverse to follow data analysts. If you&rsquo;re interested, I uploaded the material in my <a href="https://github.com/cimentadaj/PyData_2017">Github</a>.</p></li>
+</ul>
+]]>
+      </description>
     </item>
     
   </channel>

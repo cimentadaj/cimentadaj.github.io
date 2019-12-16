@@ -7,7 +7,7 @@
     <language>en-US</language>
     <lastBuildDate>Sat, 16 Nov 2019 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="/tags/package/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/package/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -16,35 +16,36 @@
       <pubDate>Sat, 16 Nov 2019 00:00:00 +0000</pubDate>
       
       <guid>/blog/2019-11-15-release-essurvey/essurvey-release/</guid>
-      <description>
+      <description><![CDATA[
+      
 
 
-&lt;p&gt;The new &lt;code&gt;essurvey&lt;/code&gt; 1.0.3 is here! This release is mainly about downloading weight data from the European Social Survey (ESS), which &lt;a href=&#34;https://github.com/ropensci/essurvey/issues/9&#34;&gt;has been on the works since&lt;/a&gt; 2017! As usual, you can install from CRAN or Github with:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# From CRAN
-install.packages(&amp;quot;essurvey&amp;quot;)
+<p>The new <code>essurvey</code> 1.0.3 is here! This release is mainly about downloading weight data from the European Social Survey (ESS), which <a href="https://github.com/ropensci/essurvey/issues/9">has been on the works since</a> 2017! As usual, you can install from CRAN or Github with:</p>
+<pre class="r"><code># From CRAN
+install.packages(&quot;essurvey&quot;)
 
 # or development version from Github
-devtools::install_github(&amp;quot;ropensci/essurvey&amp;quot;)
+devtools::install_github(&quot;ropensci/essurvey&quot;)
 
 # and load
 library(essurvey)
-set_email(&amp;quot;your@email.com&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Remember to set your registered email with &lt;code&gt;set_email&lt;/code&gt; to download ESS data. This is as easy as running &lt;code&gt;set_email(&#34;your@email.com&#34;)&lt;/code&gt;, with your email. The package now has two main functions to download weight data (called SDDF by the ESS): &lt;code&gt;show_sddf_cntrounds&lt;/code&gt; and &lt;code&gt;import_sddf_country&lt;/code&gt;. The first one returns the available weight rounds for a specific country. For example, for which rounds does Italy have weight data?&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ita_rnds &amp;lt;- show_sddf_cntrounds(&amp;quot;Italy&amp;quot;)
+set_email(&quot;your@email.com&quot;)</code></pre>
+<p>Remember to set your registered email with <code>set_email</code> to download ESS data. This is as easy as running <code>set_email("your@email.com")</code>, with your email. The package now has two main functions to download weight data (called SDDF by the ESS): <code>show_sddf_cntrounds</code> and <code>import_sddf_country</code>. The first one returns the available weight rounds for a specific country. For example, for which rounds does Italy have weight data?</p>
+<pre class="r"><code>ita_rnds &lt;- show_sddf_cntrounds(&quot;Italy&quot;)
 
-ita_rnds&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 6 8&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;How about Germany?&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;show_sddf_cntrounds(&amp;quot;Germany&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 1 2 3 4 5 6 7 8&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;For some rounds, some countries used complete random sampling, so they didn’t need any weight data for correct estimation. Italy did not use a random sample for round 8 so let’s focus on that wave for the example. To actually download this round, we use &lt;code&gt;import_sddf_country&lt;/code&gt;:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Download weight data
-ita_dt &amp;lt;- import_sddf_country(&amp;quot;Italy&amp;quot;, 8)
+ita_rnds</code></pre>
+<pre><code>## [1] 6 8</code></pre>
+<p>How about Germany?</p>
+<pre class="r"><code>show_sddf_cntrounds(&quot;Germany&quot;)</code></pre>
+<pre><code>## [1] 1 2 3 4 5 6 7 8</code></pre>
+<p>For some rounds, some countries used complete random sampling, so they didn’t need any weight data for correct estimation. Italy did not use a random sample for round 8 so let’s focus on that wave for the example. To actually download this round, we use <code>import_sddf_country</code>:</p>
+<pre class="r"><code># Download weight data
+ita_dt &lt;- import_sddf_country(&quot;Italy&quot;, 8)
 
-ita_dt&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 2,626 x 10
+ita_dt</code></pre>
+<pre><code>## # A tibble: 2,626 x 10
 ##    name  essround edition proddate cntry  idno   psu domain stratum    prob
-##    &amp;lt;chr&amp;gt;    &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;  &amp;lt;dbl&amp;gt;   &amp;lt;dbl&amp;gt;   &amp;lt;dbl&amp;gt;
+##    &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
 ##  1 ESS8…        8 1.2     11.02.2… IT        1 11029      2     658 1.01e-4
 ##  2 ESS8…        8 1.2     11.02.2… IT        2 11170      2     665 1.11e-4
 ##  3 ESS8…        8 1.2     11.02.2… IT        4 11127      2     660 1.03e-4
@@ -55,26 +56,26 @@ ita_dt&lt;/code&gt;&lt;/pre&gt;
 ##  8 ESS8…        8 1.2     11.02.2… IT       15 11184      2     661 9.97e-5
 ##  9 ESS8…        8 1.2     11.02.2… IT       16 10928      2     652 1.01e-4
 ## 10 ESS8…        8 1.2     11.02.2… IT       22 11171      2     664 9.97e-5
-## # … with 2,616 more rows&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Notice that the weight data has an &lt;code&gt;idno&lt;/code&gt; column. This column can be used to match each respondent from each country to the main ESS data. This means that you can now actually do proper weighted analysis using the ESS data on the fly! How would we match the data for Italy, for example?&lt;/p&gt;
-&lt;p&gt;We download the main data:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dplyr)
+## # … with 2,616 more rows</code></pre>
+<p>Notice that the weight data has an <code>idno</code> column. This column can be used to match each respondent from each country to the main ESS data. This means that you can now actually do proper weighted analysis using the ESS data on the fly! How would we match the data for Italy, for example?</p>
+<p>We download the main data:</p>
+<pre class="r"><code>library(dplyr)
 
 # Download main data
-ita_main &amp;lt;- import_country(&amp;quot;Italy&amp;quot;, 8)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;And then merge it with the weight data:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Let&amp;#39;s keep only the important weight columns
-ita_dt &amp;lt;- ita_dt %&amp;gt;% select(idno, psu, domain, stratum, prob)
+ita_main &lt;- import_country(&quot;Italy&quot;, 8)</code></pre>
+<p>And then merge it with the weight data:</p>
+<pre class="r"><code># Let&#39;s keep only the important weight columns
+ita_dt &lt;- ita_dt %&gt;% select(idno, psu, domain, stratum, prob)
 
 # Merged main data and weight data
-complete_data &amp;lt;- inner_join(ita_main, ita_dt, by = &amp;quot;idno&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning: Column `idno` has different attributes on LHS and RHS of join&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# There we have the matched data
-complete_data %&amp;gt;%
-  select(essround, idno, cntry, psu, stratum, prob)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 2,626 x 6
+complete_data &lt;- inner_join(ita_main, ita_dt, by = &quot;idno&quot;)</code></pre>
+<pre><code>## Warning: Column `idno` has different attributes on LHS and RHS of join</code></pre>
+<pre class="r"><code># There we have the matched data
+complete_data %&gt;%
+  select(essround, idno, cntry, psu, stratum, prob)</code></pre>
+<pre><code>## # A tibble: 2,626 x 6
 ##    essround  idno cntry   psu stratum      prob
-##       &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;dbl&amp;gt;   &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;
+##       &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;
 ##  1        8     1 IT    11029     658 0.000101 
 ##  2        8     2 IT    11170     665 0.000111 
 ##  3        8     4 IT    11127     660 0.000103 
@@ -85,12 +86,13 @@ complete_data %&amp;gt;%
 ##  8        8    15 IT    11184     661 0.0000997
 ##  9        8    16 IT    10928     652 0.000101 
 ## 10        8    22 IT    11171     664 0.0000997
-## # … with 2,616 more rows&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;There we have the matched data! This can be easily piped to the &lt;code&gt;survey&lt;/code&gt; package and perform properly weighted analysis of the ESS data. In fact, an official ESS package for analyzing data is something we’re thinking of developing to making analyzing ESS data very easy.&lt;/p&gt;
-&lt;p&gt;Weight data (or SDDF data) is a bit tricky because not all country/rounds data have the same extension (some have SPSS, some have Stata, etc..) nor the same format (number of columns, name of columns, etc..). We would appreciate if you can submit any errors you find on &lt;a href=&#34;https://github.com/ropensci/essurvey/issues&#34;&gt;Github&lt;/a&gt; and we’ll try taking care of them as soon as possible.&lt;/p&gt;
-&lt;p&gt;Special thanks to &lt;a href=&#34;https://twitter.com/phnk?lang=en&#34;&gt;phnk&lt;/a&gt;, &lt;a href=&#34;https://twitter.com/djhurio/&#34;&gt;djhurio&lt;/a&gt; and Stefan Zins for helping out to push this.&lt;/p&gt;
-&lt;p&gt;Enjoy this new release!&lt;/p&gt;
-</description>
+## # … with 2,616 more rows</code></pre>
+<p>There we have the matched data! This can be easily piped to the <code>survey</code> package and perform properly weighted analysis of the ESS data. In fact, an official ESS package for analyzing data is something we’re thinking of developing to making analyzing ESS data very easy.</p>
+<p>Weight data (or SDDF data) is a bit tricky because not all country/rounds data have the same extension (some have SPSS, some have Stata, etc..) nor the same format (number of columns, name of columns, etc..). We would appreciate if you can submit any errors you find on <a href="https://github.com/ropensci/essurvey/issues">Github</a> and we’ll try taking care of them as soon as possible.</p>
+<p>Special thanks to <a href="https://twitter.com/phnk?lang=en">phnk</a>, <a href="https://twitter.com/djhurio/">djhurio</a> and Stefan Zins for helping out to push this.</p>
+<p>Enjoy this new release!</p>
+]]>
+      </description>
     </item>
     
   </channel>

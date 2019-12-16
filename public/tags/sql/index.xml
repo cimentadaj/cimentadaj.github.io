@@ -7,7 +7,7 @@
     <language>en-US</language>
     <lastBuildDate>Wed, 31 Jan 2018 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="/tags/sql/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/sql/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -16,58 +16,59 @@
       <pubDate>Wed, 31 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/</guid>
-      <description>
+      <description><![CDATA[
+      
 
 
-&lt;p&gt;I’ve been working on a personal project to gather daily data from public bicycles in Barcelona to create a historical timeline of a few stations. Since the data is only available live, I had to scrape the data and store in a database daily. This is a short tutorial showing the steps I had to take to setup a database on my remote server and connect both from my local computer as well as from my server. I also show the R script that scrapes data, connects to the server and appends the information every day for a certain amouint of time.&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;Note: This worked for my Digital Ocean droplet 512 MB and 20 GB disk with Ubuntu 16.04.3 x64.&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;Let’s get to it. It’s better to do &lt;em&gt;ALL&lt;/em&gt; of this as a user in your server but remember to append &lt;code&gt;sudo&lt;/code&gt; to everything. Nonetheless, beware of problems like the ones I encountered. For example, when installing R packages that where ran by &lt;code&gt;cron&lt;/code&gt; in a script, if installed through a non-root user the packages were said to be &lt;code&gt;&#39;not installed&#39;&lt;/code&gt; (when I fact running the script separately was fine). However, when I installed the packages logged in as root the packages were installed successfully.&lt;/p&gt;
-&lt;div id=&#34;setting-up-the-data-base&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Setting up the data base&lt;/h2&gt;
-&lt;p&gt;All steps:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.digitalocean.com/community/tutorials/how-to-install-r-on-ubuntu-16-04-2&#34;&gt;Install R&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.digitalocean.com/community/tutorials/how-to-install-mysql-on-ubuntu-16-04&#34;&gt;Install MySQL&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Type &lt;code&gt;mysql -u root -p&lt;/code&gt; to log in to MySQL&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Follow these steps to create an empty table within a database&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;sql&#34;&gt;&lt;code&gt;CREATE DATABASE bicing;
+<p>I’ve been working on a personal project to gather daily data from public bicycles in Barcelona to create a historical timeline of a few stations. Since the data is only available live, I had to scrape the data and store in a database daily. This is a short tutorial showing the steps I had to take to setup a database on my remote server and connect both from my local computer as well as from my server. I also show the R script that scrapes data, connects to the server and appends the information every day for a certain amouint of time.</p>
+<p><em>Note: This worked for my Digital Ocean droplet 512 MB and 20 GB disk with Ubuntu 16.04.3 x64.</em></p>
+<p>Let’s get to it. It’s better to do <em>ALL</em> of this as a user in your server but remember to append <code>sudo</code> to everything. Nonetheless, beware of problems like the ones I encountered. For example, when installing R packages that where ran by <code>cron</code> in a script, if installed through a non-root user the packages were said to be <code>'not installed'</code> (when I fact running the script separately was fine). However, when I installed the packages logged in as root the packages were installed successfully.</p>
+<div id="setting-up-the-data-base" class="section level2">
+<h2>Setting up the data base</h2>
+<p>All steps:</p>
+<ul>
+<li><p><a href="https://www.digitalocean.com/community/tutorials/how-to-install-r-on-ubuntu-16-04-2">Install R</a></p></li>
+<li><p><a href="https://www.digitalocean.com/community/tutorials/how-to-install-mysql-on-ubuntu-16-04">Install MySQL</a></p></li>
+<li><p>Type <code>mysql -u root -p</code> to log in to MySQL</p></li>
+<li><p>Follow these steps to create an empty table within a database</p></li>
+</ul>
+<pre class="sql"><code>CREATE DATABASE bicing;
 USE bicing;
-CREATE TABLE bicing_station (id VARCHAR(30), slots VARCHAR(30), bikes VARCHAR(30), status VARCHAR(30), time VARCHAR(30), error VARCHAR(30));&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.digitalocean.com/community/tutorials/how-to-set-up-a-remote-database-to-optimize-site-performance-with-mysql&#34;&gt;This&lt;/a&gt; is an outdated guide by Digital Ocean which might be helpful. Some of the steps below are taken from that guide.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Alter &lt;code&gt;sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf&lt;/code&gt; and change &lt;code&gt;bind-address&lt;/code&gt; to have the ‘0.0.0.0’ This is so your server can listen to IP’s from outside the localhost network.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Create two users to access the data base: a user from your local computer and a user from your server.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;mysql -u root -p # Log in to MySQL. -u stands for user and -p for password&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;sql&#34;&gt;&lt;code&gt;/* Create user for local computer. Note that when username and ip are in &amp;#39;&amp;#39; they need to be in those quotes. Also, the ip address you can find easily by writing what&amp;#39;s my ip in Google*/
+CREATE TABLE bicing_station (id VARCHAR(30), slots VARCHAR(30), bikes VARCHAR(30), status VARCHAR(30), time VARCHAR(30), error VARCHAR(30));</code></pre>
+<ul>
+<li><p><a href="https://www.digitalocean.com/community/tutorials/how-to-set-up-a-remote-database-to-optimize-site-performance-with-mysql">This</a> is an outdated guide by Digital Ocean which might be helpful. Some of the steps below are taken from that guide.</p></li>
+<li><p>Alter <code>sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf</code> and change <code>bind-address</code> to have the ‘0.0.0.0’ This is so your server can listen to IP’s from outside the localhost network.</p></li>
+<li><p>Create two users to access the data base: a user from your local computer and a user from your server.</p></li>
+</ul>
+<pre class="bash"><code>mysql -u root -p # Log in to MySQL. -u stands for user and -p for password</code></pre>
+<pre class="sql"><code>/* Create user for local computer. Note that when username and ip are in &#39;&#39; they need to be in those quotes. Also, the ip address you can find easily by writing what&#39;s my ip in Google*/
 
-CREATE USER &amp;#39;username&amp;#39;@&amp;#39;ip_address_of_your_computer&amp;#39; IDENTIFIED BY &amp;#39;password&amp;#39;;
+CREATE USER &#39;username&#39;@&#39;ip_address_of_your_computer&#39; IDENTIFIED BY &#39;password&#39;;
 GRANT ALL ON bicing.* TO username@ip_address_of_your_computer;
 
-/* Create user for server. For this user don&amp;#39;t change localhost as that already specifies that it belongs to the same computer. */
+/* Create user for server. For this user don&#39;t change localhost as that already specifies that it belongs to the same computer. */
 
-CREATE USER &amp;#39;username&amp;#39;@&amp;#39;localhost&amp;#39; IDENTIFIED BY &amp;#39;password&amp;#39;;
+CREATE USER &#39;username&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;password&#39;;
 GRANT ALL ON bicing.* TO username@localhost;
 
 /* Make sure the privileges are isntalled */
 FLUSH PRIVILEGES;
 
-quit /* To quit MySQL*/&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;Test whether the access worked for both users&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;# Login from your server. Replace username for your username 
+quit /* To quit MySQL*/</code></pre>
+<ul>
+<li>Test whether the access worked for both users</li>
+</ul>
+<pre class="bash"><code># Login from your server. Replace username for your username 
 # -u stands for user and -p will ask for your password 
 mysql -u username -h localhost -p
 
 
-# Login from your LOCAL computer. Replace username for your username and your_server_ip from the server&amp;#39;s IP
-mysql -u username -h your_server_ip -p&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;Now install &lt;code&gt;odbc&lt;/code&gt; in your Ubuntu server. I follow &lt;a href=&#34;I%20followed%20this:%20https://askubuntu.com/questions/800216/installing-ubuntu-16-04-lts-how-to-install-odbc&#34;&gt;this&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;sudo mkdir mysql &amp;amp;&amp;amp; cd mysql
+# Login from your LOCAL computer. Replace username for your username and your_server_ip from the server&#39;s IP
+mysql -u username -h your_server_ip -p</code></pre>
+<ul>
+<li>Now install <code>odbc</code> in your Ubuntu server. I follow <a href="I%20followed%20this:%20https://askubuntu.com/questions/800216/installing-ubuntu-16-04-lts-how-to-install-odbc">this</a></li>
+</ul>
+<pre class="bash"><code>sudo mkdir mysql &amp;&amp; cd mysql
 
 # Download odbc in mysql folder
 sudo wget https://dev.mysql.com/get/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.9-linux-ubuntu16.04-x86-64bit.tar.gz
@@ -75,12 +76,12 @@ sudo wget https://dev.mysql.com/get/Downloads/Connector-ODBC/5.3/mysql-connector
 # Unzip it and copy it somewhere.
 sudo tar -xvf mysql-connector-odbc-5.3.9-linux-ubuntu16.04-x86-64bit.tar.gz 
 sudo cp mysql/mysql-connector-odbc-5.3.9-linux-ubuntu16.04-x86-64bit/lib/libmyodbc5a.so /usr/lib/x86_64-linux-gnu/odbc/
-# If the odbc folder doesn&amp;#39;t exists, create it with mkdir /usr/lib/x86_64-linux-gnu/odbc/&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Note: you might need to change the url’s and directories to a &lt;strong&gt;newer&lt;/strong&gt; version of &lt;code&gt;odbc&lt;/code&gt; so don’t simply copy and paste the links from below.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Create and update the &lt;code&gt;odbc&lt;/code&gt; settings.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;sudo touch /etc/odbcinst.ini
+# If the odbc folder doesn&#39;t exists, create it with mkdir /usr/lib/x86_64-linux-gnu/odbc/</code></pre>
+<p>Note: you might need to change the url’s and directories to a <strong>newer</strong> version of <code>odbc</code> so don’t simply copy and paste the links from below.</p>
+<ul>
+<li>Create and update the <code>odbc</code> settings.</li>
+</ul>
+<pre class="bash"><code>sudo touch /etc/odbcinst.ini
 
 sudo nano /etc/odbcinst.ini
 
@@ -125,54 +126,54 @@ sudo ln -s /var/run/mysqld/mysqld.sock /tmp/mysql.sock
 
 sudo service mysql restart;
 
-# to restart mysql server&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;connecting-to-the-database-locally-and-remotely&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Connecting to the database locally and remotely&lt;/h2&gt;
-&lt;p&gt;From my local computer:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(DBI)
+# to restart mysql server</code></pre>
+</div>
+<div id="connecting-to-the-database-locally-and-remotely" class="section level2">
+<h2>Connecting to the database locally and remotely</h2>
+<p>From my local computer:</p>
+<pre class="r"><code>library(DBI)
 library(RMySQL)
 
-con &amp;lt;- dbConnect(MySQL(), # If the database changed, change this
-                 host = your_server_ip, # in &amp;quot;&amp;quot; quotes.
-                 dbname = &amp;quot;bicing&amp;quot;,
+con &lt;- dbConnect(MySQL(), # If the database changed, change this
+                 host = your_server_ip, # in &quot;&quot; quotes.
+                 dbname = &quot;bicing&quot;,
                  user = username, # remember to change to your username (in quotes)
                  password = password, # remember to change to your password (in quotes)
                  port = 3306)
 
 dbListTables(con)
 
-bike_stations &amp;lt;- dbReadTable(con, &amp;quot;bicing_station&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;From R in the server&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;con &amp;lt;- dbConnect(RMySQL::MySQL(),
-                 dbname = &amp;quot;bicing&amp;quot;,
+bike_stations &lt;- dbReadTable(con, &quot;bicing_station&quot;)</code></pre>
+<p>From R in the server</p>
+<pre class="r"><code>con &lt;- dbConnect(RMySQL::MySQL(),
+                 dbname = &quot;bicing&quot;,
                  user = username, # remember to change to your username (in quotes)
                  password = password, # remember to change to your password (in quotes)
                  port = 3306)
 
 dbListTables(con)
 
-bike_stations &amp;lt;- dbReadTable(con, &amp;quot;bicing_station&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;That did it for me. Now I could connect to the database from R from my local computer and from the server itself.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;scraping-automatically&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Scraping automatically&lt;/h2&gt;
-&lt;p&gt;So far you should have a database in your server which you can connect locally and remotely. I assume you have a working script that can actually add/retrieve information from the remote database. Here I will explain how to set up the scraping to run automatically as a &lt;code&gt;cron&lt;/code&gt; job and get a final email with the summary of the scrape.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Create a text file to save the output of the scraping with &lt;code&gt;sudo touch scrape_log.txt&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Write &lt;code&gt;cron -e&lt;/code&gt; logged in as your non-root user.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;At the bottom of the interactive &lt;code&gt;cron&lt;/code&gt; specify these options:&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;SHELL=/bin/bash # the path to the predetermined program to run cron jobs. Default bash
+bike_stations &lt;- dbReadTable(con, &quot;bicing_station&quot;)</code></pre>
+<p>That did it for me. Now I could connect to the database from R from my local computer and from the server itself.</p>
+</div>
+<div id="scraping-automatically" class="section level2">
+<h2>Scraping automatically</h2>
+<p>So far you should have a database in your server which you can connect locally and remotely. I assume you have a working script that can actually add/retrieve information from the remote database. Here I will explain how to set up the scraping to run automatically as a <code>cron</code> job and get a final email with the summary of the scrape.</p>
+<ul>
+<li><p>Create a text file to save the output of the scraping with <code>sudo touch scrape_log.txt</code></p></li>
+<li><p>Write <code>cron -e</code> logged in as your non-root user.</p></li>
+<li><p>At the bottom of the interactive <code>cron</code> specify these options:</p></li>
+</ul>
+<pre class="bash"><code>SHELL=/bin/bash # the path to the predetermined program to run cron jobs. Default bash
 
 PATH=bla/bla/bla # PATH I’m not sure what’s for but I pasted the output of echo $PATH.
 
 HOME= your/dr/ofinteres # Path to the directory where the scripts will be executed (where the script is)
 
-MAILTO=&amp;quot;your@email.com&amp;quot; # Your email to receive emails
+MAILTO=&quot;your@email.com&quot; # Your email to receive emails
 
 # The actual cron jobs. Below each job I explain them
-30-59 11 * * * /usr/bin/Rscript scrape_bicing.R &amp;gt;&amp;gt;scrape_log.txt 2&amp;gt;&amp;amp;1
+30-59 11 * * * /usr/bin/Rscript scrape_bicing.R &gt;&gt;scrape_log.txt 2&gt;&amp;1
 
 # Run this cron job from 11:30 to 11:59 every day (*), every month (*), every year(*): 30-59 11 * * *
 
@@ -180,30 +181,30 @@ MAILTO=&amp;quot;your@email.com&amp;quot; # Your email to receive emails
 # You can find this directory with which Rscript
 
 # Execute the file scrape_bicing.R (which is looked for in the HOME variable specified above)
-# &amp;gt;&amp;gt;scrape_log.txt 2&amp;gt;&amp;amp;1: Save the output to scrape_log.txt (which we created) and DON&amp;#39;T send an email
-# because we don&amp;#39;t want to received 29 emails.
+# &gt;&gt;scrape_log.txt 2&gt;&amp;1: Save the output to scrape_log.txt (which we created) and DON&#39;T send an email
+# because we don&#39;t want to received 29 emails.
 
 00 12 * * * /bin/bash sql_query.sh
 # Instead of receiving 29 emails, run a query the minute after the scraping ends
 # to filter how many rows were added between 11:30 and 11:59
-# By default it will send the result of the query to your email&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Great but what does &lt;code&gt;scrape_bicing.R&lt;/code&gt; have?&lt;/p&gt;
-&lt;p&gt;The script should do something along the lines of:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Load libraries
+# By default it will send the result of the query to your email</code></pre>
+<p>Great but what does <code>scrape_bicing.R</code> have?</p>
+<p>The script should do something along the lines of:</p>
+<pre class="r"><code># Load libraries
 library(httr)
 library(DBI)
 library(RMySQL)
 
 # The url of your api
-api_url &amp;lt;- &amp;quot;bla/bla&amp;quot;
+api_url &lt;- &quot;bla/bla&quot;
 
 # Wrap GET so that whenever the request fails it returns an R error
-my_GET &amp;lt;- function(x, config = list(), ...) {
+my_GET &lt;- function(x, config = list(), ...) {
   stop_for_status(GET(url = x, config = config, ...))
 }
 
-# If it can&amp;#39;t connect to the API will throw an R error
-test_bike &amp;lt;- my_GET(api_url)
+# If it can&#39;t connect to the API will throw an R error
+test_bike &lt;- my_GET(api_url)
 
 
 ## Do API calls here
@@ -212,19 +213,19 @@ test_bike &amp;lt;- my_GET(api_url)
 
 # Establish the connection to the database.
 # This script is run within the server, so the connection
-# should not specify the server ip, it assumes it&amp;#39;s
+# should not specify the server ip, it assumes it&#39;s
 # the localhost
 
-con &amp;lt;- dbConnect(MySQL(),
-                 dbname = database_name, # in &amp;quot;&amp;quot; quotes
-                 user = your_user, # in &amp;quot;&amp;quot; quotes
-                 password = your_password, # in &amp;quot;&amp;quot; quotes
+con &lt;- dbConnect(MySQL(),
+                 dbname = database_name, # in &quot;&quot; quotes
+                 user = your_user, # in &quot;&quot; quotes
+                 password = your_password, # in &quot;&quot; quotes
                  port = 3306)
 
 # Append the table
-write_success &amp;lt;-
+write_success &lt;-
   dbWriteTable(conn = con, # connection from above
-              &amp;quot;table name&amp;quot;, # name of the table to append (in quotes)
+              &quot;table name&quot;, # name of the table to append (in quotes)
               api output, # data frame from the API output
               append = TRUE, row.names = FALSE) # to append instead of overwrite and ignore row.names
 
@@ -237,13 +238,13 @@ write_success &amp;lt;-
 
 
 # If the append was successfull, write_success should be TRUE
-if (write_success) print(&amp;quot;Append success&amp;quot;) else print(&amp;quot;No success&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Something to keep in mind, by default you can connect from the your local computer to the remote DB by port 3306. This port can be closed if you’re in a public internet network or a network connection from a university. If you can’t connect, make you sort this out with the personnel from that network (it happened to me with my university network).&lt;/p&gt;
-&lt;p&gt;What does &lt;code&gt;sql_query.sh&lt;/code&gt; have?&lt;/p&gt;
-&lt;p&gt;A very simple SQL query:&lt;/p&gt;
-&lt;pre class=&#34;sql&#34;&gt;&lt;code&gt;read PASS &amp;lt; pw.txt /* Read the password from a pw.txt file you create with your user pasword*/
+if (write_success) print(&quot;Append success&quot;) else print(&quot;No success&quot;)</code></pre>
+<p>Something to keep in mind, by default you can connect from the your local computer to the remote DB by port 3306. This port can be closed if you’re in a public internet network or a network connection from a university. If you can’t connect, make you sort this out with the personnel from that network (it happened to me with my university network).</p>
+<p>What does <code>sql_query.sh</code> have?</p>
+<p>A very simple SQL query:</p>
+<pre class="sql"><code>read PASS &lt; pw.txt /* Read the password from a pw.txt file you create with your user pasword*/
 
-mysql -uroot -p$PASS database_name -e &amp;quot;SELECT id, error_msg, COUNT(*) AS count FROM bicing_station WHERE time &amp;gt;= CONCAT(CURDATE(),&amp;#39; &amp;#39;,&amp;#39;11:30:00&amp;#39;) AND time &amp;lt;= CONCAT(CURDATE(),&amp;#39; &amp;#39;,&amp;#39;12:00:00&amp;#39;) GROUP BY id, error_msg;&amp;quot;
+mysql -uroot -p$PASS database_name -e &quot;SELECT id, error_msg, COUNT(*) AS count FROM bicing_station WHERE time &gt;= CONCAT(CURDATE(),&#39; &#39;,&#39;11:30:00&#39;) AND time &lt;= CONCAT(CURDATE(),&#39; &#39;,&#39;12:00:00&#39;) GROUP BY id, error_msg;&quot;
 
 /*
 mysql: run mysql
@@ -263,19 +264,20 @@ What this query means is to get the counts of the id and error messages
 where the time is between the scheduele cron of the API request.
 
 This way I get a summary of the error messages and how many lines were
-appended between the time the script should&amp;#39;ve started and should&amp;#39;ve ended
+appended between the time the script should&#39;ve started and should&#39;ve ended
 */
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;As stated in the first line of the code chunk, create a text file with your password. You can do so with &lt;code&gt;echo &amp;quot;Your SQL username password&amp;quot; &amp;gt;&amp;gt; pw.txt&lt;/code&gt;. That should allow PASS to read in the password just fine.&lt;/p&gt;
-&lt;p&gt;And that should be it! Make sure you run each of these steps separately so that they work on it’s own and you don’get weird errors. This workflow will now run &lt;code&gt;cron&lt;/code&gt; jobs at whatever time you set it, return the output to a text file (in case something bad happens and you want to look at the log) and run a query after it finishes so that you only get one email with a summary of API requests.&lt;/p&gt;
-&lt;p&gt;Hope this was helpful!&lt;/p&gt;
-&lt;p&gt;PS:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://www.digitalocean.com/community/tutorials/a-basic-mysql-tutorial&#34;&gt;Basic MySQL tutorial&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;I use SQL Workbench to run queries from my local computer&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-</description>
+</code></pre>
+<p>As stated in the first line of the code chunk, create a text file with your password. You can do so with <code>echo &quot;Your SQL username password&quot; &gt;&gt; pw.txt</code>. That should allow PASS to read in the password just fine.</p>
+<p>And that should be it! Make sure you run each of these steps separately so that they work on it’s own and you don’get weird errors. This workflow will now run <code>cron</code> jobs at whatever time you set it, return the output to a text file (in case something bad happens and you want to look at the log) and run a query after it finishes so that you only get one email with a summary of API requests.</p>
+<p>Hope this was helpful!</p>
+<p>PS:</p>
+<ul>
+<li><p><a href="https://www.digitalocean.com/community/tutorials/a-basic-mysql-tutorial">Basic MySQL tutorial</a></p></li>
+<li><p>I use SQL Workbench to run queries from my local computer</p></li>
+</ul>
+</div>
+]]>
+      </description>
     </item>
     
   </channel>
