@@ -3,7 +3,7 @@
 baseurl = "https://cimentadaj.github.io/"
 builddrafts = false
 canonifyURLs = true
-# relativeurls = false
+relativeurls = false
 languageCode = "en-US"
 contentdir = "content"
 layoutdir = "layouts"

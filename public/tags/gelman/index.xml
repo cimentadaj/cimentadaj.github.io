@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>gelman on Jorge Cimentada</title>
-    <link>/tags/gelman/</link>
+    <link>https://cimentadaj.github.io/tags/gelman/</link>
     <description>Recent content in gelman on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Thu, 10 Nov 2016 00:00:00 +0000</lastBuildDate>
     
-    <atom:link href="/tags/gelman/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://cimentadaj.github.io/tags/gelman/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Fitting the wrong model</title>
-      <link>/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</link>
+      <link>https://cimentadaj.github.io/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</link>
       <pubDate>Thu, 10 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</guid>
+      <guid>https://cimentadaj.github.io/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</guid>
       <description><![CDATA[
       
 
@@ -140,10 +140,10 @@ cbind(repl_coef + (-1 * repl_se), repl_coef + (1 * repl_se))</code></pre>
     
     <item>
       <title>Multilevel modeling – Part 1</title>
-      <link>/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/</link>
+      <link>https://cimentadaj.github.io/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/</link>
       <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/</guid>
+      <guid>https://cimentadaj.github.io/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/</guid>
       <description><![CDATA[
       
 
@@ -316,10 +316,10 @@ display(mod2)</code></pre>
     
     <item>
       <title>Multilevel modeling – Part 2</title>
-      <link>/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/</link>
+      <link>https://cimentadaj.github.io/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/</link>
       <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/</guid>
+      <guid>https://cimentadaj.github.io/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/</guid>
       <description><![CDATA[
       
 
@@ -421,10 +421,10 @@ cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]</code></pre>
     
     <item>
       <title>Simulations and model predictions in R</title>
-      <link>/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</link>
+      <link>https://cimentadaj.github.io/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</link>
       <pubDate>Tue, 13 Sep 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</guid>
+      <guid>https://cimentadaj.github.io/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</guid>
       <description><![CDATA[
       
 

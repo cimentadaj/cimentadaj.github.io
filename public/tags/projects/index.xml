@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>projects on Jorge Cimentada</title>
-    <link>/tags/projects/</link>
+    <link>https://cimentadaj.github.io/tags/projects/</link>
     <description>Recent content in projects on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Sat, 26 Jan 2019 00:00:00 +0000</lastBuildDate>
     
-    <atom:link href="/tags/projects/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://cimentadaj.github.io/tags/projects/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Turning a pdf book into machine readable format</title>
-      <link>/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/turning-a-pdf-book-into-machine-readable-format/</link>
+      <link>https://cimentadaj.github.io/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/turning-a-pdf-book-into-machine-readable-format/</link>
       <pubDate>Sat, 26 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/turning-a-pdf-book-into-machine-readable-format/</guid>
+      <guid>https://cimentadaj.github.io/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/turning-a-pdf-book-into-machine-readable-format/</guid>
       <description><![CDATA[
       
 
@@ -499,10 +499,10 @@ bookdown::calibre(txt_path, paste0(dirname(txt_path), &quot;/erik_wright.mobi&qu
     
     <item>
       <title>Some guides and pre-project documents on ML</title>
-      <link>/blog/2019-01-22-some-guides-and-preproject-documents-on-ml/some-guides-and-pre-project-documents-on-ml/</link>
+      <link>https://cimentadaj.github.io/blog/2019-01-22-some-guides-and-preproject-documents-on-ml/some-guides-and-pre-project-documents-on-ml/</link>
       <pubDate>Tue, 22 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2019-01-22-some-guides-and-preproject-documents-on-ml/some-guides-and-pre-project-documents-on-ml/</guid>
+      <guid>https://cimentadaj.github.io/blog/2019-01-22-some-guides-and-preproject-documents-on-ml/some-guides-and-pre-project-documents-on-ml/</guid>
       <description><![CDATA[
       
 
@@ -515,10 +515,10 @@ bookdown::calibre(txt_path, paste0(dirname(txt_path), &quot;/erik_wright.mobi&qu
     
     <item>
       <title>A list of must pre-project questions</title>
-      <link>/blog/2018-05-23-a-list-of-must-preproject-questions/a-list-of-must-pre-project-questions/</link>
+      <link>https://cimentadaj.github.io/blog/2018-05-23-a-list-of-must-preproject-questions/a-list-of-must-pre-project-questions/</link>
       <pubDate>Wed, 23 May 2018 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2018-05-23-a-list-of-must-preproject-questions/a-list-of-must-pre-project-questions/</guid>
+      <guid>https://cimentadaj.github.io/blog/2018-05-23-a-list-of-must-preproject-questions/a-list-of-must-pre-project-questions/</guid>
       <description><![CDATA[
       
 
@@ -590,10 +590,10 @@ Would this use of the data surprise the data subjects?</li>
     
     <item>
       <title>Cleaning in-door positioning data</title>
-      <link>/blog/2018-02-03-predicting-location-via-indoor-positioning-systems/predicting-location-via-indoor-positioning-systems/</link>
+      <link>https://cimentadaj.github.io/blog/2018-02-03-predicting-location-via-indoor-positioning-systems/predicting-location-via-indoor-positioning-systems/</link>
       <pubDate>Sat, 03 Feb 2018 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2018-02-03-predicting-location-via-indoor-positioning-systems/predicting-location-via-indoor-positioning-systems/</guid>
+      <guid>https://cimentadaj.github.io/blog/2018-02-03-predicting-location-via-indoor-positioning-systems/predicting-location-via-indoor-positioning-systems/</guid>
       <description><![CDATA[
       
 
@@ -858,10 +858,10 @@ final_data</code></pre>
     
     <item>
       <title>How long should I wait for my bike?</title>
-      <link>/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/</link>
+      <link>https://cimentadaj.github.io/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/</link>
       <pubDate>Fri, 01 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/</guid>
       <description><![CDATA[
       
 
@@ -936,10 +936,10 @@ hostname=your_host_name
     
     <item>
       <title>Scraping and visualizing How I Met Your Mother</title>
-      <link>/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</link>
+      <link>https://cimentadaj.github.io/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</link>
       <pubDate>Mon, 16 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</guid>
       <description><![CDATA[
       
 
@@ -1233,10 +1233,10 @@ cowplot::plot_grid(plotlist = all_season_plots, labels = seasons)</code></pre>
     
     <item>
       <title>perccalc package</title>
-      <link>/blog/2017-08-01-perccalc-package/perccalc-package/</link>
+      <link>https://cimentadaj.github.io/blog/2017-08-01-perccalc-package/perccalc-package/</link>
       <pubDate>Tue, 01 Aug 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-08-01-perccalc-package/perccalc-package/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-08-01-perccalc-package/perccalc-package/</guid>
       <description><![CDATA[
       
 
@@ -1448,10 +1448,10 @@ postclose `memhold&#39;
     
     <item>
       <title>My PISA twitter bot</title>
-      <link>/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</link>
+      <link>https://cimentadaj.github.io/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</link>
       <pubDate>Wed, 08 Mar 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</guid>
       <description><![CDATA[
       
 
@@ -1811,10 +1811,10 @@ press Control + X (to exit nano). If all went well, then you should see “cront
     
     <item>
       <title>Cognitive inequality around the world – Shiny app</title>
-      <link>/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</link>
+      <link>https://cimentadaj.github.io/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</link>
       <pubDate>Mon, 12 Dec 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</guid>
+      <guid>https://cimentadaj.github.io/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</guid>
       <description><![CDATA[
       
 
