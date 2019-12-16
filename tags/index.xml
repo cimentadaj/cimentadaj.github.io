@@ -7,7 +7,7 @@
     <language>en-US</language>
     <lastBuildDate>Sun, 08 Dec 2019 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -16,7 +16,9 @@
       <pubDate>Sun, 08 Dec 2019 00:00:00 +0000</pubDate>
       
       <guid>/tags/r/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -25,7 +27,9 @@
       <pubDate>Sun, 08 Dec 2019 00:00:00 +0000</pubDate>
       
       <guid>/tags/regex/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -34,7 +38,9 @@
       <pubDate>Sat, 16 Nov 2019 00:00:00 +0000</pubDate>
       
       <guid>/tags/package/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -43,7 +49,9 @@
       <pubDate>Sat, 26 Jan 2019 00:00:00 +0000</pubDate>
       
       <guid>/tags/machine-learning/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -52,7 +60,9 @@
       <pubDate>Sat, 26 Jan 2019 00:00:00 +0000</pubDate>
       
       <guid>/tags/projects/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -61,7 +71,9 @@
       <pubDate>Tue, 19 Jun 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/packages/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -70,7 +82,9 @@
       <pubDate>Tue, 19 Jun 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/scraping/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -79,7 +93,9 @@
       <pubDate>Tue, 19 Jun 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/shiny/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -88,7 +104,9 @@
       <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/python/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -97,7 +115,9 @@
       <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/simulation/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -106,7 +126,9 @@
       <pubDate>Mon, 26 Mar 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/project/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -115,7 +137,9 @@
       <pubDate>Wed, 31 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/sql/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -124,7 +148,9 @@
       <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>/tags/eda/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -133,7 +159,9 @@
       <pubDate>Tue, 24 Oct 2017 00:00:00 +0000</pubDate>
       
       <guid>/tags/knitr/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -142,7 +170,9 @@
       <pubDate>Tue, 24 Oct 2017 00:00:00 +0000</pubDate>
       
       <guid>/tags/latex/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -151,7 +181,9 @@
       <pubDate>Thu, 13 Apr 2017 00:00:00 +0000</pubDate>
       
       <guid>/tags/education/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -160,7 +192,9 @@
       <pubDate>Thu, 13 Apr 2017 00:00:00 +0000</pubDate>
       
       <guid>/tags/inequality/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -169,7 +203,9 @@
       <pubDate>Wed, 08 Mar 2017 00:00:00 +0000</pubDate>
       
       <guid>/tags/pisa/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -178,7 +214,9 @@
       <pubDate>Thu, 10 Nov 2016 00:00:00 +0000</pubDate>
       
       <guid>/tags/gelman/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
     <item>
@@ -187,7 +225,9 @@
       <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
       
       <guid>/tags/multilevel/</guid>
-      <description></description>
+      <description><![CDATA[
+      ]]>
+      </description>
     </item>
     
   </channel>

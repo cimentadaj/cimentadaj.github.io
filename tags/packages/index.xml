@@ -7,7 +7,7 @@
     <language>en-US</language>
     <lastBuildDate>Tue, 19 Jun 2018 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="/tags/packages/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/packages/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -16,22 +16,23 @@
       <pubDate>Tue, 19 Jun 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</guid>
-      <description>
+      <description><![CDATA[
+      
 
 
-&lt;p&gt;I woke up today to read Maëlle Salmon’s latest blog entry in which she scraped her own &lt;a href=&#34;https://masalmon.eu/2018/06/18/mathtree/&#34;&gt;mathematical tree&lt;/a&gt;. Running through the code I had an idea about scraping the coauthorship list that a Google Scholar profile has. With this, I could visualize the network of coauthorship of important scientists and explore whether they have closed or open collaborations.&lt;/p&gt;
-&lt;p&gt;I sat down this morning and created the &lt;code&gt;coauthornetwork&lt;/code&gt; package that allows you to do just that! It’s actually very simple. First, install it with the usual:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;devtools::install_github(&amp;quot;cimentadaj/coauthornetwork&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;There’s two functions: &lt;code&gt;grab_network&lt;/code&gt; and &lt;code&gt;plot_coauthors&lt;/code&gt;. The first scrapes and returns a data frame of a Google Scholar profile, their coauthors and the coauthors of their coauthors (what?). More simply, by default, the data frame returns this:&lt;/p&gt;
-&lt;p&gt;Google Scholar Profile –&amp;gt; Coauthors –&amp;gt; Coauthors&lt;/p&gt;
-&lt;p&gt;It’s not that hard after all. The only thing you need to provide is the end of the URL of a Google Scholar profile. For example, a typical URL looks like this: &lt;code&gt;https://scholar.google.com/citations?user=F0kCgy8AAAAJ&amp;amp;hl=en&lt;/code&gt;. &lt;code&gt;grab_network&lt;/code&gt; will accept the latter part of the URL, namely: &lt;code&gt;citations?user=F0kCgy8AAAAJ&amp;amp;hl=en&lt;/code&gt;. Let’s test it:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(coauthornetwork)
+<p>I woke up today to read Maëlle Salmon’s latest blog entry in which she scraped her own <a href="https://masalmon.eu/2018/06/18/mathtree/">mathematical tree</a>. Running through the code I had an idea about scraping the coauthorship list that a Google Scholar profile has. With this, I could visualize the network of coauthorship of important scientists and explore whether they have closed or open collaborations.</p>
+<p>I sat down this morning and created the <code>coauthornetwork</code> package that allows you to do just that! It’s actually very simple. First, install it with the usual:</p>
+<pre class="r"><code>devtools::install_github(&quot;cimentadaj/coauthornetwork&quot;)</code></pre>
+<p>There’s two functions: <code>grab_network</code> and <code>plot_coauthors</code>. The first scrapes and returns a data frame of a Google Scholar profile, their coauthors and the coauthors of their coauthors (what?). More simply, by default, the data frame returns this:</p>
+<p>Google Scholar Profile –&gt; Coauthors –&gt; Coauthors</p>
+<p>It’s not that hard after all. The only thing you need to provide is the end of the URL of a Google Scholar profile. For example, a typical URL looks like this: <code>https://scholar.google.com/citations?user=F0kCgy8AAAAJ&amp;hl=en</code>. <code>grab_network</code> will accept the latter part of the URL, namely: <code>citations?user=F0kCgy8AAAAJ&amp;hl=en</code>. Let’s test it:</p>
+<pre class="r"><code>library(coauthornetwork)
 
-network &amp;lt;- grab_network(&amp;quot;citations?user=F0kCgy8AAAAJ&amp;amp;hl=en&amp;quot;)
-network&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 21 x 4
+network &lt;- grab_network(&quot;citations?user=F0kCgy8AAAAJ&amp;hl=en&quot;)
+network</code></pre>
+<pre><code>## # A tibble: 21 x 4
 ##    author       href                 coauthors     coauthors_href          
-##    &amp;lt;fct&amp;gt;        &amp;lt;fct&amp;gt;                &amp;lt;fct&amp;gt;         &amp;lt;fct&amp;gt;                   
+##    &lt;fct&gt;        &lt;fct&gt;                &lt;fct&gt;         &lt;fct&gt;                   
 ##  1 Hans-Peter ~ citations?user=F0kC~ Melinda Mills /citations?user=HX9KQ5M~
 ##  2 Hans-Peter ~ citations?user=F0kC~ Karl Ulrich ~ /citations?user=iuzu9xw~
 ##  3 Hans-Peter ~ citations?user=F0kC~ Florian Schu~ /citations?user=MWCt6hQ~
@@ -42,16 +43,17 @@ network&lt;/code&gt;&lt;/pre&gt;
 ##  8 Melinda Mil~ /citations?user=HX9~ René Veenstra /citations?user=_9OVrqM~
 ##  9 Melinda Mil~ /citations?user=HX9~ Francesco C.~ /citations?user=-JR6yo4~
 ## 10 Karl Ulrich~ /citations?user=iuz~ Paul B. Balt~ /citations?user=vcOZeDg~
-## # ... with 11 more rows&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The main author here is Hans-Peter Blossfeld, a well known Sociologist. We also see that Melinda Mills is one of his coauthors, so we also have the coauthors of Melinda Mills right after him. &lt;code&gt;grab_networks&lt;/code&gt; also has the &lt;code&gt;n_coauthors&lt;/code&gt; argument to control how many coauthors you can extract (limited to 20 by Google Scholar). You’ll notice that once you go over 10 coauthors things start to get very messy when we visualize this.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot_coauthors(network, size_labels = 3)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Cool eh? We can play around with more coauthors as well.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot_coauthors(grab_network(&amp;quot;citations?user=F0kCgy8AAAAJ&amp;amp;hl=en&amp;quot;, n_coauthors = 7), size_labels = 3)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Hope you enjoy it!&lt;/p&gt;
-&lt;!-- To make it more accesible to non-R users, I [created a Shiny app](https://cimentadaj.shinyapps.io/gs_coauthorsip/) where everyone can explore their own coauthors. Enjoy! --&gt;
-</description>
+## # ... with 11 more rows</code></pre>
+<p>The main author here is Hans-Peter Blossfeld, a well known Sociologist. We also see that Melinda Mills is one of his coauthors, so we also have the coauthors of Melinda Mills right after him. <code>grab_networks</code> also has the <code>n_coauthors</code> argument to control how many coauthors you can extract (limited to 20 by Google Scholar). You’ll notice that once you go over 10 coauthors things start to get very messy when we visualize this.</p>
+<pre class="r"><code>plot_coauthors(network, size_labels = 3)</code></pre>
+<p><img src="/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Cool eh? We can play around with more coauthors as well.</p>
+<pre class="r"><code>plot_coauthors(grab_network(&quot;citations?user=F0kCgy8AAAAJ&amp;hl=en&quot;, n_coauthors = 7), size_labels = 3)</code></pre>
+<p><img src="/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Hope you enjoy it!</p>
+<!-- To make it more accesible to non-R users, I [created a Shiny app](https://cimentadaj.shinyapps.io/gs_coauthorsip/) where everyone can explore their own coauthors. Enjoy! -->
+]]>
+      </description>
     </item>
     
     <item>
@@ -60,27 +62,29 @@ network&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Mon, 26 Mar 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</guid>
-      <description>
+      <description><![CDATA[
+      
 
 
-&lt;p&gt;My &lt;code&gt;ess&lt;/code&gt; package has be renamed to &lt;code&gt;essurvey&lt;/code&gt;. For quite some time I’ve been pondering whether I should change the name. All of this comes from a dicussion we had on the &lt;a href=&#34;http://r.789695.n4.nabble.com/R-pkgs-Release-of-ess-0-0-1-td4746540.html&#34;&gt;R-pkg mailing list&lt;/a&gt; where many R users suggested that the name was unfortunate given that Emacs Speaks Statistics (ESS) has a long precedence in the R community and the names are very similar. Later on, when submitting the package to &lt;a href=&#34;https://ropensci.org/&#34;&gt;rOpensci&lt;/a&gt;, Jim Hester &lt;a href=&#34;https://github.com/ropensci/onboarding/issues/201#issuecomment-372304003&#34;&gt;raised the fact once again&lt;/a&gt;, without being aware of the previous email thread.&lt;/p&gt;
-&lt;p&gt;Considering that I was already changing some of the functionalities of the package due to the &lt;a href=&#34;https://github.com/ropensci/onboarding/issues/201&#34;&gt;rOpensci review&lt;/a&gt;, I decided to change the package name and republish an improved version of &lt;code&gt;ess&lt;/code&gt; as &lt;code&gt;essurvey 1.0.0&lt;/code&gt;. &lt;code&gt;essurvey&lt;/code&gt; is now on CRAN and the repository has been moved to rOpensci’s &lt;a href=&#34;https://github.com/ropensci/essurvey&#34;&gt;github account&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;The new package is mostly similar although there are now some deprecated functions and new features. Below are the main changes.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;You can login &lt;strong&gt;once&lt;/strong&gt; using &lt;code&gt;set_email(&amp;quot;your_email&amp;quot;)&lt;/code&gt; and avoid rewriting your email in every call to the &lt;code&gt;ess_*&lt;/code&gt; functions.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;All &lt;code&gt;ess_*&lt;/code&gt; functions have been deprecated in favour of similar &lt;code&gt;import_*&lt;/code&gt; functions. For example:&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ess_rounds(1:7)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;becomes..&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;import_rounds(1:7)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;But that’s the same you would say. The only difference is that with &lt;code&gt;ess_rounds&lt;/code&gt; you could download data in Stata, SPSS or SAS formats directly. For that, there’s now the &lt;code&gt;download_*&lt;/code&gt; functions.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;download_rounds(
+<p>My <code>ess</code> package has be renamed to <code>essurvey</code>. For quite some time I’ve been pondering whether I should change the name. All of this comes from a dicussion we had on the <a href="http://r.789695.n4.nabble.com/R-pkgs-Release-of-ess-0-0-1-td4746540.html">R-pkg mailing list</a> where many R users suggested that the name was unfortunate given that Emacs Speaks Statistics (ESS) has a long precedence in the R community and the names are very similar. Later on, when submitting the package to <a href="https://ropensci.org/">rOpensci</a>, Jim Hester <a href="https://github.com/ropensci/onboarding/issues/201#issuecomment-372304003">raised the fact once again</a>, without being aware of the previous email thread.</p>
+<p>Considering that I was already changing some of the functionalities of the package due to the <a href="https://github.com/ropensci/onboarding/issues/201">rOpensci review</a>, I decided to change the package name and republish an improved version of <code>ess</code> as <code>essurvey 1.0.0</code>. <code>essurvey</code> is now on CRAN and the repository has been moved to rOpensci’s <a href="https://github.com/ropensci/essurvey">github account</a>.</p>
+<p>The new package is mostly similar although there are now some deprecated functions and new features. Below are the main changes.</p>
+<ul>
+<li><p>You can login <strong>once</strong> using <code>set_email(&quot;your_email&quot;)</code> and avoid rewriting your email in every call to the <code>ess_*</code> functions.</p></li>
+<li><p>All <code>ess_*</code> functions have been deprecated in favour of similar <code>import_*</code> functions. For example:</p></li>
+</ul>
+<pre class="r"><code>ess_rounds(1:7)</code></pre>
+<p>becomes..</p>
+<pre class="r"><code>import_rounds(1:7)</code></pre>
+<p>But that’s the same you would say. The only difference is that with <code>ess_rounds</code> you could download data in Stata, SPSS or SAS formats directly. For that, there’s now the <code>download_*</code> functions.</p>
+<pre class="r"><code>download_rounds(
   1:5,
   output_dir = getwd(),
-  format = &amp;quot;spss&amp;quot;
-)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;All of the above applies to &lt;code&gt;ess_country&lt;/code&gt; and the &lt;code&gt;ess_all_*&lt;/code&gt; functions. There’s also some other minor changes you can checkout in the &lt;a href=&#34;https://github.com/ropensci/essurvey/blob/master/NEWS.md&#34;&gt;NEWS&lt;/a&gt; file. If you haven’t tried &lt;code&gt;essurvey&lt;/code&gt;, you can visit the package website for more detailed examples at &lt;a href=&#34;https://ropensci.github.io/essurvey/&#34; class=&#34;uri&#34;&gt;https://ropensci.github.io/essurvey/&lt;/a&gt;.&lt;/p&gt;
-</description>
+  format = &quot;spss&quot;
+)</code></pre>
+<p>All of the above applies to <code>ess_country</code> and the <code>ess_all_*</code> functions. There’s also some other minor changes you can checkout in the <a href="https://github.com/ropensci/essurvey/blob/master/NEWS.md">NEWS</a> file. If you haven’t tried <code>essurvey</code>, you can visit the package website for more detailed examples at <a href="https://ropensci.github.io/essurvey/" class="uri">https://ropensci.github.io/essurvey/</a>.</p>
+]]>
+      </description>
     </item>
     
     <item>
@@ -89,88 +93,90 @@ network&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Sun, 04 Mar 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/</guid>
-      <description>
+      <description><![CDATA[
+      
 
 
-&lt;p&gt;The new version of the ess package is out! &lt;code&gt;ess 0.1.1&lt;/code&gt; fixes some bugs and inconsistencies across the package and has one important new feature and a change that breaks backward compatibility. You can see all changes &lt;a href=&#34;https://cimentadaj.github.io/ess/news/index.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Install the latest version &lt;code&gt;0.1.1&lt;/code&gt; from CRAN with &lt;code&gt;install.packages(&amp;quot;ess&amp;quot;)&lt;/code&gt;.&lt;/p&gt;
-&lt;div id=&#34;new-features&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;New features&lt;/h2&gt;
-&lt;p&gt;When downloading any round(s) from the European Social Survey the files are always accompanied by a script that recodes values like 6, 7, 8 and 9 or 96, 97, 98 and 99 to missings, depending on the question. This is a bit tricky because a question with a scale from 1 to 5 will have 6 to 9 as missing values and a question with a scale from 1 to 10 will have the missing values set as 96 to 99. The new &lt;code&gt;remove_missings()&lt;/code&gt; function removes all missing values from all questions.&lt;/p&gt;
-&lt;p&gt;For example…&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+<p>The new version of the ess package is out! <code>ess 0.1.1</code> fixes some bugs and inconsistencies across the package and has one important new feature and a change that breaks backward compatibility. You can see all changes <a href="https://cimentadaj.github.io/ess/news/index.html">here</a>.</p>
+<p>Install the latest version <code>0.1.1</code> from CRAN with <code>install.packages(&quot;ess&quot;)</code>.</p>
+<div id="new-features" class="section level2">
+<h2>New features</h2>
+<p>When downloading any round(s) from the European Social Survey the files are always accompanied by a script that recodes values like 6, 7, 8 and 9 or 96, 97, 98 and 99 to missings, depending on the question. This is a bit tricky because a question with a scale from 1 to 5 will have 6 to 9 as missing values and a question with a scale from 1 to 10 will have the missing values set as 96 to 99. The new <code>remove_missings()</code> function removes all missing values from all questions.</p>
+<p>For example…</p>
+<pre class="r"><code>library(tidyverse)
 library(ess)
 
-clean_df &amp;lt;-
-  ess_rounds(1, &amp;quot;your_email@gmail.com&amp;quot;) %&amp;gt;%
-  recode_missings()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;… will set all the missing categories to NA. That is, the 6 to 9 and 96 to 99 categories on the specific questions. It gives you flexibility in recoding specific categories such as ‘Don’t Know’, ‘Refusal’ or both.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;another_clean_df &amp;lt;-
-  ess_rounds(1, &amp;quot;your_email@gmail.com&amp;quot;) %&amp;gt;%
-  recode_missings(c(&amp;quot;Refusal&amp;quot;, &amp;quot;No answer&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;See &lt;code&gt;?recode_missings&lt;/code&gt; for the missing categories that are available for recode.&lt;/p&gt;
-&lt;p&gt;However, I do not advise recoding missing values right away if you’re exploring the dataset. If you want to manually recode missing values you can use the &lt;code&gt;recode_numeric_missing()&lt;/code&gt; and &lt;code&gt;recode_strings_missing&lt;/code&gt; correspondingly on numeric and string variables. They work the same as &lt;code&gt;recode_missings&lt;/code&gt; but accept a vector of class labelled, the class of each of the columns that returns the &lt;code&gt;ess_*&lt;/code&gt; functions.&lt;/p&gt;
-&lt;p&gt;For example&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;another_clean_df$tvtot &amp;lt;-
+clean_df &lt;-
+  ess_rounds(1, &quot;your_email@gmail.com&quot;) %&gt;%
+  recode_missings()</code></pre>
+<p>… will set all the missing categories to NA. That is, the 6 to 9 and 96 to 99 categories on the specific questions. It gives you flexibility in recoding specific categories such as ‘Don’t Know’, ‘Refusal’ or both.</p>
+<pre class="r"><code>another_clean_df &lt;-
+  ess_rounds(1, &quot;your_email@gmail.com&quot;) %&gt;%
+  recode_missings(c(&quot;Refusal&quot;, &quot;No answer&quot;))</code></pre>
+<p>See <code>?recode_missings</code> for the missing categories that are available for recode.</p>
+<p>However, I do not advise recoding missing values right away if you’re exploring the dataset. If you want to manually recode missing values you can use the <code>recode_numeric_missing()</code> and <code>recode_strings_missing</code> correspondingly on numeric and string variables. They work the same as <code>recode_missings</code> but accept a vector of class labelled, the class of each of the columns that returns the <code>ess_*</code> functions.</p>
+<p>For example</p>
+<pre class="r"><code>another_clean_df$tvtot &lt;-
   recode_numeric_missing(
     another_clean_df$tvtot,
-    &amp;quot;Don&amp;#39;t know&amp;quot;
-    )&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;works for recoding the “Don’t know” category. By default all missing values are chosen.&lt;/p&gt;
-&lt;p&gt;Note that both sets of functions &lt;strong&gt;only&lt;/strong&gt; work with labelled numeric vectors from the &lt;code&gt;haven&lt;/code&gt; package. If you use the &lt;code&gt;ess&lt;/code&gt; package that’s taken care of. If you download the data manually, you must read it with the &lt;code&gt;haven&lt;/code&gt; package for these functions to work.&lt;/p&gt;
-&lt;p&gt;There are also two new &lt;code&gt;show_*&lt;/code&gt; functions, namely &lt;code&gt;show_themes&lt;/code&gt; and &lt;code&gt;show_rounds_country&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;The first one returns all available themes…&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;show_themes()&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;Ageism&amp;quot;                            
-##  [2] &amp;quot;Citizen involvement&amp;quot;               
-##  [3] &amp;quot;Democracy&amp;quot;                         
-##  [4] &amp;quot;Economic morality&amp;quot;                 
-##  [5] &amp;quot;Family work and well-being&amp;quot;        
-##  [6] &amp;quot;Gender, Household&amp;quot;                 
-##  [7] &amp;quot;Health and care&amp;quot;                   
-##  [8] &amp;quot;Human values&amp;quot;                      
-##  [9] &amp;quot;Immigration&amp;quot;                       
-## [10] &amp;quot;Justice&amp;quot;                           
-## [11] &amp;quot;Media and social trust&amp;quot;            
-## [12] &amp;quot;Personal ... well-being&amp;quot;           
-## [13] &amp;quot;Politics&amp;quot;                          
-## [14] &amp;quot;Public attitudes to climate change&amp;quot;
-## [15] &amp;quot;Social inequalities in health&amp;quot;     
-## [16] &amp;quot;Socio demographics&amp;quot;                
-## [17] &amp;quot;Subjective well-being...&amp;quot;          
-## [18] &amp;quot;Timing of life&amp;quot;                    
-## [19] &amp;quot;Welfare attitudes&amp;quot;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;… but doesn’t haven a corresponding &lt;code&gt;ess_*&lt;/code&gt; function. This means that it works purely for descriptive purposes.&lt;/p&gt;
-&lt;p&gt;Additionaly, &lt;code&gt;show_rounds_country&lt;/code&gt; returns all countries that participated in a give round.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;show_rounds_country(rounds = 2)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;Austria&amp;quot;        &amp;quot;Belgium&amp;quot;        &amp;quot;Czech Republic&amp;quot; &amp;quot;Denmark&amp;quot;       
-##  [5] &amp;quot;Estonia&amp;quot;        &amp;quot;Finland&amp;quot;        &amp;quot;France&amp;quot;         &amp;quot;Germany&amp;quot;       
-##  [9] &amp;quot;Greece&amp;quot;         &amp;quot;Hungary&amp;quot;        &amp;quot;Iceland&amp;quot;        &amp;quot;Ireland&amp;quot;       
-## [13] &amp;quot;Italy&amp;quot;          &amp;quot;Luxembourg&amp;quot;     &amp;quot;Netherlands&amp;quot;    &amp;quot;Norway&amp;quot;        
-## [17] &amp;quot;Poland&amp;quot;         &amp;quot;Portugal&amp;quot;       &amp;quot;Slovakia&amp;quot;       &amp;quot;Slovenia&amp;quot;      
-## [21] &amp;quot;Spain&amp;quot;          &amp;quot;Sweden&amp;quot;         &amp;quot;Switzerland&amp;quot;    &amp;quot;Turkey&amp;quot;        
-## [25] &amp;quot;Ukraine&amp;quot;        &amp;quot;United Kingdom&amp;quot;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;You could use this to see which countries participated in all rounds. For example..&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_countries &amp;lt;-
-  map(show_rounds(), ~ show_rounds_country(.x)) %&amp;gt;%
+    &quot;Don&#39;t know&quot;
+    )</code></pre>
+<p>works for recoding the “Don’t know” category. By default all missing values are chosen.</p>
+<p>Note that both sets of functions <strong>only</strong> work with labelled numeric vectors from the <code>haven</code> package. If you use the <code>ess</code> package that’s taken care of. If you download the data manually, you must read it with the <code>haven</code> package for these functions to work.</p>
+<p>There are also two new <code>show_*</code> functions, namely <code>show_themes</code> and <code>show_rounds_country</code>.</p>
+<p>The first one returns all available themes…</p>
+<pre class="r"><code>show_themes()</code></pre>
+<pre><code>##  [1] &quot;Ageism&quot;                            
+##  [2] &quot;Citizen involvement&quot;               
+##  [3] &quot;Democracy&quot;                         
+##  [4] &quot;Economic morality&quot;                 
+##  [5] &quot;Family work and well-being&quot;        
+##  [6] &quot;Gender, Household&quot;                 
+##  [7] &quot;Health and care&quot;                   
+##  [8] &quot;Human values&quot;                      
+##  [9] &quot;Immigration&quot;                       
+## [10] &quot;Justice&quot;                           
+## [11] &quot;Media and social trust&quot;            
+## [12] &quot;Personal ... well-being&quot;           
+## [13] &quot;Politics&quot;                          
+## [14] &quot;Public attitudes to climate change&quot;
+## [15] &quot;Social inequalities in health&quot;     
+## [16] &quot;Socio demographics&quot;                
+## [17] &quot;Subjective well-being...&quot;          
+## [18] &quot;Timing of life&quot;                    
+## [19] &quot;Welfare attitudes&quot;</code></pre>
+<p>… but doesn’t haven a corresponding <code>ess_*</code> function. This means that it works purely for descriptive purposes.</p>
+<p>Additionaly, <code>show_rounds_country</code> returns all countries that participated in a give round.</p>
+<pre class="r"><code>show_rounds_country(rounds = 2)</code></pre>
+<pre><code>##  [1] &quot;Austria&quot;        &quot;Belgium&quot;        &quot;Czech Republic&quot; &quot;Denmark&quot;       
+##  [5] &quot;Estonia&quot;        &quot;Finland&quot;        &quot;France&quot;         &quot;Germany&quot;       
+##  [9] &quot;Greece&quot;         &quot;Hungary&quot;        &quot;Iceland&quot;        &quot;Ireland&quot;       
+## [13] &quot;Italy&quot;          &quot;Luxembourg&quot;     &quot;Netherlands&quot;    &quot;Norway&quot;        
+## [17] &quot;Poland&quot;         &quot;Portugal&quot;       &quot;Slovakia&quot;       &quot;Slovenia&quot;      
+## [21] &quot;Spain&quot;          &quot;Sweden&quot;         &quot;Switzerland&quot;    &quot;Turkey&quot;        
+## [25] &quot;Ukraine&quot;        &quot;United Kingdom&quot;</code></pre>
+<p>You could use this to see which countries participated in all rounds. For example..</p>
+<pre class="r"><code>all_countries &lt;-
+  map(show_rounds(), ~ show_rounds_country(.x)) %&gt;%
   reduce(intersect)
 
-all_countries&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;Belgium&amp;quot;        &amp;quot;Finland&amp;quot;        &amp;quot;France&amp;quot;         &amp;quot;Germany&amp;quot;       
-##  [5] &amp;quot;Ireland&amp;quot;        &amp;quot;Netherlands&amp;quot;    &amp;quot;Norway&amp;quot;         &amp;quot;Poland&amp;quot;        
-##  [9] &amp;quot;Slovenia&amp;quot;       &amp;quot;Sweden&amp;quot;         &amp;quot;Switzerland&amp;quot;    &amp;quot;United Kingdom&amp;quot;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;breaking-changes&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Breaking changes&lt;/h2&gt;
-&lt;p&gt;Finally, there is one change that breaks backward compatability. All the &lt;code&gt;ess_*&lt;/code&gt; functions always used to return a list, regardless of the number of rounds that were requested. Now, &lt;code&gt;ess_*&lt;/code&gt; functions return a &lt;code&gt;tibble&lt;/code&gt; whenever it is request only one round and a list when more than one round is requested.&lt;/p&gt;
-&lt;p&gt;For example&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ess_rounds(1, &amp;quot;your_email@gmail.com&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;will return a tibble but…&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ess_rounds(1:3, &amp;quot;your_email@gmail.com&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;…will return a list with each tibble in a slot.&lt;/p&gt;
-&lt;p&gt;For more concrete examples check out the new website of the ess &lt;a href=&#34;https://cimentadaj.github.io/ess/&#34;&gt;here&lt;/a&gt;. If you have any ideas for features or find a bug, please report &lt;a href=&#34;https://github.com/cimentadaj/ess/issues&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-</description>
+all_countries</code></pre>
+<pre><code>##  [1] &quot;Belgium&quot;        &quot;Finland&quot;        &quot;France&quot;         &quot;Germany&quot;       
+##  [5] &quot;Ireland&quot;        &quot;Netherlands&quot;    &quot;Norway&quot;         &quot;Poland&quot;        
+##  [9] &quot;Slovenia&quot;       &quot;Sweden&quot;         &quot;Switzerland&quot;    &quot;United Kingdom&quot;</code></pre>
+</div>
+<div id="breaking-changes" class="section level2">
+<h2>Breaking changes</h2>
+<p>Finally, there is one change that breaks backward compatability. All the <code>ess_*</code> functions always used to return a list, regardless of the number of rounds that were requested. Now, <code>ess_*</code> functions return a <code>tibble</code> whenever it is request only one round and a list when more than one round is requested.</p>
+<p>For example</p>
+<pre class="r"><code>ess_rounds(1, &quot;your_email@gmail.com&quot;)</code></pre>
+<p>will return a tibble but…</p>
+<pre class="r"><code>ess_rounds(1:3, &quot;your_email@gmail.com&quot;)</code></pre>
+<p>…will return a list with each tibble in a slot.</p>
+<p>For more concrete examples check out the new website of the ess <a href="https://cimentadaj.github.io/ess/">here</a>. If you have any ideas for features or find a bug, please report <a href="https://github.com/cimentadaj/ess/issues">here</a>.</p>
+</div>
+]]>
+      </description>
     </item>
     
     <item>
@@ -179,82 +185,84 @@ all_countries&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Thu, 23 Nov 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-11-23-an-introduction-to-the-ess-package/an-introduction-to-the-ess-package/</guid>
-      <description>
+      <description><![CDATA[
+      
 
 
-&lt;p&gt;The &lt;code&gt;ess&lt;/code&gt; package is designed to download the ESS data as easily as possible. It has a few helper functions to download rounds, rounds for a selected country and to show which rounds/countries are available. In this tutorial I will walk you through how these functions work.&lt;/p&gt;
-&lt;p&gt;Before using the package it is necessary for you to sign up at &lt;a href=&#34;http://www.europeansocialsurvey.org/&#34; class=&#34;uri&#34;&gt;http://www.europeansocialsurvey.org/&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Let’s do it together.&lt;/p&gt;
-&lt;p&gt;When you enter the website go the to topmost left corner and click on &lt;code&gt;Sign in/Register&lt;/code&gt;. Under the email box, click on &lt;code&gt;New user?&lt;/code&gt; and fill out your personal information. Click on &lt;code&gt;Register&lt;/code&gt; and check your email inbox. You should’ve received an email from the ESS with an activation link. Click on that link and voila! We’re ready to go.&lt;/p&gt;
-&lt;p&gt;We can install and load the package with this code:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;quot;ess&amp;quot;, dependencies = TRUE)
-library(ess)&lt;/code&gt;&lt;/pre&gt;
-&lt;div id=&#34;download-country-rounds&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Download country rounds&lt;/h2&gt;
-&lt;p&gt;First things first, do we know if Spain participated in the European Social Survey? &lt;code&gt;ess&lt;/code&gt; has &lt;code&gt;show_countries()&lt;/code&gt; that automatically searchers for all countries that participated. The nice thing is that these (an all other functions from the package) interactively check this information on the website, so any changes should be also visible immediately in R.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;show_countries()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Spain is there! But which rounds did Spain participate? For that, the usual way would be to visit &lt;a href=&#34;http://www.europeansocialsurvey.org/data/country_index.html&#34; class=&#34;uri&#34;&gt;http://www.europeansocialsurvey.org/data/country_index.html&lt;/a&gt; and look for it. &lt;code&gt;ess&lt;/code&gt; provides the function &lt;code&gt;show_country_rounds()&lt;/code&gt; which returns all the available rounds from that website.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;show_country_rounds(&amp;quot;Spain&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Remember to type exactly the same name provided by &lt;code&gt;show_countries()&lt;/code&gt; because these functions are case sensitive. How do we download this data?&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;your_email &amp;lt;- &amp;quot;your email here&amp;quot;
+<p>The <code>ess</code> package is designed to download the ESS data as easily as possible. It has a few helper functions to download rounds, rounds for a selected country and to show which rounds/countries are available. In this tutorial I will walk you through how these functions work.</p>
+<p>Before using the package it is necessary for you to sign up at <a href="http://www.europeansocialsurvey.org/" class="uri">http://www.europeansocialsurvey.org/</a>.</p>
+<p>Let’s do it together.</p>
+<p>When you enter the website go the to topmost left corner and click on <code>Sign in/Register</code>. Under the email box, click on <code>New user?</code> and fill out your personal information. Click on <code>Register</code> and check your email inbox. You should’ve received an email from the ESS with an activation link. Click on that link and voila! We’re ready to go.</p>
+<p>We can install and load the package with this code:</p>
+<pre class="r"><code>install.packages(&quot;ess&quot;, dependencies = TRUE)
+library(ess)</code></pre>
+<div id="download-country-rounds" class="section level2">
+<h2>Download country rounds</h2>
+<p>First things first, do we know if Spain participated in the European Social Survey? <code>ess</code> has <code>show_countries()</code> that automatically searchers for all countries that participated. The nice thing is that these (an all other functions from the package) interactively check this information on the website, so any changes should be also visible immediately in R.</p>
+<pre class="r"><code>show_countries()</code></pre>
+<p>Spain is there! But which rounds did Spain participate? For that, the usual way would be to visit <a href="http://www.europeansocialsurvey.org/data/country_index.html" class="uri">http://www.europeansocialsurvey.org/data/country_index.html</a> and look for it. <code>ess</code> provides the function <code>show_country_rounds()</code> which returns all the available rounds from that website.</p>
+<pre class="r"><code>show_country_rounds(&quot;Spain&quot;)</code></pre>
+<p>Remember to type exactly the same name provided by <code>show_countries()</code> because these functions are case sensitive. How do we download this data?</p>
+<pre class="r"><code>your_email &lt;- &quot;your email here&quot;
 
-spain_seven &amp;lt;- ess_country(
-  country = &amp;quot;Spain&amp;quot;,
+spain_seven &lt;- ess_country(
+  country = &quot;Spain&quot;,
   rounds = 7,
   your_email = your_email
-)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;That easy! Now you have &lt;code&gt;spain_seven&lt;/code&gt; with the 7th round for Spain. If you wanted to download more rounds, you can specify them in the rounds section.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;spain_three &amp;lt;- ess_country(
-  country = &amp;quot;Spain&amp;quot;,
+)</code></pre>
+<p>That easy! Now you have <code>spain_seven</code> with the 7th round for Spain. If you wanted to download more rounds, you can specify them in the rounds section.</p>
+<pre class="r"><code>spain_three &lt;- ess_country(
+  country = &quot;Spain&quot;,
   rounds = c(1, 3, 5),
   your_email = your_email
-)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;If you’re interested in downloading all available waves from the start, use &lt;code&gt;ess_all_cntrounds()&lt;/code&gt;.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ess_all_cntrounds(&amp;quot;Spain&amp;quot;, your_email)&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;download-complete-rounds&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Download complete rounds&lt;/h2&gt;
-&lt;p&gt;What about specific rounds for all countries? &lt;code&gt;ess&lt;/code&gt; provides the same set of functions: &lt;code&gt;show_rounds()&lt;/code&gt; for available rounds, &lt;code&gt;ess_rounds()&lt;/code&gt; for specific rounds and &lt;code&gt;ess_all_rounds()&lt;/code&gt;.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;show_rounds()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Let’s grab the first three rounds, although this might take a bit more time than for country rounds!&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;three_rounds &amp;lt;-
+)</code></pre>
+<p>If you’re interested in downloading all available waves from the start, use <code>ess_all_cntrounds()</code>.</p>
+<pre class="r"><code>ess_all_cntrounds(&quot;Spain&quot;, your_email)</code></pre>
+</div>
+<div id="download-complete-rounds" class="section level2">
+<h2>Download complete rounds</h2>
+<p>What about specific rounds for all countries? <code>ess</code> provides the same set of functions: <code>show_rounds()</code> for available rounds, <code>ess_rounds()</code> for specific rounds and <code>ess_all_rounds()</code>.</p>
+<pre class="r"><code>show_rounds()</code></pre>
+<p>Let’s grab the first three rounds, although this might take a bit more time than for country rounds!</p>
+<pre class="r"><code>three_rounds &lt;-
   ess_rounds(
   c(1, 3),
   your_email
 )
 
-three_rounds[[1]]&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Finally, you can download all available rounds with:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all_rounds &amp;lt;- ess_all_rounds(your_email)&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;download-for-stata&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Download for Stata&lt;/h2&gt;
-&lt;p&gt;To download Stata files you can use:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ess_country(
-  &amp;quot;Spain&amp;quot;,
+three_rounds[[1]]</code></pre>
+<p>Finally, you can download all available rounds with:</p>
+<pre class="r"><code>all_rounds &lt;- ess_all_rounds(your_email)</code></pre>
+</div>
+<div id="download-for-stata" class="section level2">
+<h2>Download for Stata</h2>
+<p>To download Stata files you can use:</p>
+<pre class="r"><code>ess_country(
+  &quot;Spain&quot;,
   1:2,
   your_email,
   only_download = TRUE,
-  output_dir = &amp;quot;./ess&amp;quot;
-)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The &lt;code&gt;only_download&lt;/code&gt; argument makes sure that it won’t return anything in R, and &lt;code&gt;output_dir&lt;/code&gt; will be where the data is saved. If you supply a non existent directory it will create it on the fly.&lt;/p&gt;
-&lt;p&gt;rounds can be downloaded in the same way with:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ess_rounds(
+  output_dir = &quot;./ess&quot;
+)</code></pre>
+<p>The <code>only_download</code> argument makes sure that it won’t return anything in R, and <code>output_dir</code> will be where the data is saved. If you supply a non existent directory it will create it on the fly.</p>
+<p>rounds can be downloaded in the same way with:</p>
+<pre class="r"><code>ess_rounds(
   1:2,
   your_email,
   only_download = TRUE,
-  output_dir = &amp;quot;./ess&amp;quot;
-)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;That easy! &lt;code&gt;ess&lt;/code&gt; will continue to evolve in the future and there are some of the features already in the to-do list.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Add a &lt;code&gt;*_themes()&lt;/code&gt; family of function for topics; see &lt;a href=&#34;http://www.europeansocialsurvey.org/data/module-index.html&#34;&gt;here&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Download data in SPSS and SAS format&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Stata files (as well as SPSS and SAS) need to be pre-processed before reading into R (ex: run a do file before reading into R)&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The repository and development version of the package can be found at &lt;a href=&#34;https://github.com/cimentadaj/ess&#34; class=&#34;uri&#34;&gt;https://github.com/cimentadaj/ess&lt;/a&gt; and please report any bugs/issues/improvements &lt;a href=&#34;https://github.com/cimentadaj/ess/issues&#34;&gt;here&lt;/a&gt;!&lt;/p&gt;
-&lt;p&gt;Thanks.&lt;/p&gt;
-&lt;/div&gt;
-</description>
+  output_dir = &quot;./ess&quot;
+)</code></pre>
+<p>That easy! <code>ess</code> will continue to evolve in the future and there are some of the features already in the to-do list.</p>
+<ul>
+<li><p>Add a <code>*_themes()</code> family of function for topics; see <a href="http://www.europeansocialsurvey.org/data/module-index.html">here</a></p></li>
+<li><p>Download data in SPSS and SAS format</p></li>
+<li><p>Stata files (as well as SPSS and SAS) need to be pre-processed before reading into R (ex: run a do file before reading into R)</p></li>
+</ul>
+<p>The repository and development version of the package can be found at <a href="https://github.com/cimentadaj/ess" class="uri">https://github.com/cimentadaj/ess</a> and please report any bugs/issues/improvements <a href="https://github.com/cimentadaj/ess/issues">here</a>!</p>
+<p>Thanks.</p>
+</div>
+]]>
+      </description>
     </item>
     
     <item>
@@ -263,92 +271,93 @@ three_rounds[[1]]&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Tue, 01 Aug 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-08-01-perccalc-package/perccalc-package/</guid>
-      <description>
+      <description><![CDATA[
+      
 
 
-&lt;p&gt;Reardon (2011) introduced a very interesting concept in which he calculates percentile differences from ordered categorical variables. He explains his procedure very much in detail in the appendix of the book chapter but no formal implementation has been yet available on the web. With this package I introduce a function that applies the procedure, following a step-by-step Stata script that Sean Reardon kindly sent me.&lt;/p&gt;
-&lt;p&gt;In this vignette I show you how to use the function and match the results to the Stata code provided by Reardon himself.&lt;/p&gt;
-&lt;p&gt;For this example, we’ll use a real world data set, one I’m very much familiar with: PISA. We’ll use the PISA 2012 wave for Germany because it asked parents about their income category. For this example we’ll need the packages below.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# install.packages(c(&amp;quot;devtools&amp;quot;, &amp;quot;matrixStats&amp;quot;, &amp;quot;tidyverse&amp;quot;))
-# devtools::install_github(&amp;quot;pbiecek/PISA2012lite&amp;quot;)
+<p>Reardon (2011) introduced a very interesting concept in which he calculates percentile differences from ordered categorical variables. He explains his procedure very much in detail in the appendix of the book chapter but no formal implementation has been yet available on the web. With this package I introduce a function that applies the procedure, following a step-by-step Stata script that Sean Reardon kindly sent me.</p>
+<p>In this vignette I show you how to use the function and match the results to the Stata code provided by Reardon himself.</p>
+<p>For this example, we’ll use a real world data set, one I’m very much familiar with: PISA. We’ll use the PISA 2012 wave for Germany because it asked parents about their income category. For this example we’ll need the packages below.</p>
+<pre class="r"><code># install.packages(c(&quot;devtools&quot;, &quot;matrixStats&quot;, &quot;tidyverse&quot;))
+# devtools::install_github(&quot;pbiecek/PISA2012lite&quot;)
 
 library(matrixStats)
 library(tidyverse)
 library(haven)
-library(PISA2012lite)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;If you haven’t installed any of the packages above, uncomment the first two lines to install them. Beware that the &lt;code&gt;PISA2012lite&lt;/code&gt; package contains the PISA 2012 data and takes a while to download.&lt;/p&gt;
-&lt;p&gt;Let’s prepare the data. Below we filter only German students, select only the math test results and calculate the median of all math plausible values to get one single math score. Finally, we match each student with their corresponding income data from their parents data and their sample weights.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ger_student &amp;lt;- student2012 %&amp;gt;%
-  filter(CNT == &amp;quot;Germany&amp;quot;) %&amp;gt;%
-  select(CNT, STIDSTD, matches(&amp;quot;^PV*.MATH$&amp;quot;)) %&amp;gt;%
+library(PISA2012lite)</code></pre>
+<p>If you haven’t installed any of the packages above, uncomment the first two lines to install them. Beware that the <code>PISA2012lite</code> package contains the PISA 2012 data and takes a while to download.</p>
+<p>Let’s prepare the data. Below we filter only German students, select only the math test results and calculate the median of all math plausible values to get one single math score. Finally, we match each student with their corresponding income data from their parents data and their sample weights.</p>
+<pre class="r"><code>ger_student &lt;- student2012 %&gt;%
+  filter(CNT == &quot;Germany&quot;) %&gt;%
+  select(CNT, STIDSTD, matches(&quot;^PV*.MATH$&quot;)) %&gt;%
   transmute(CNT, STIDSTD,
-            avg_score = rowMeans(student2012[student2012$CNT == &amp;quot;Germany&amp;quot;, paste0(&amp;quot;PV&amp;quot;, 1:5, &amp;quot;MATH&amp;quot;)]))
+            avg_score = rowMeans(student2012[student2012$CNT == &quot;Germany&quot;, paste0(&quot;PV&quot;, 1:5, &quot;MATH&quot;)]))
 
-ger_parent &amp;lt;-
-  parent2012 %&amp;gt;%
-  filter(CNT == &amp;quot;Germany&amp;quot;) %&amp;gt;%
+ger_parent &lt;-
+  parent2012 %&gt;%
+  filter(CNT == &quot;Germany&quot;) %&gt;%
   select(CNT, STIDSTD, PA07Q01)
 
-ger_weights &amp;lt;-
-  student2012weights %&amp;gt;%
-  filter(CNT == &amp;quot;Germany&amp;quot;) %&amp;gt;%
+ger_weights &lt;-
+  student2012weights %&gt;%
+  filter(CNT == &quot;Germany&quot;) %&gt;%
   select(CNT, STIDSTD, W_FSTUWT)
 
-dataset_ready &amp;lt;-
-  ger_student %&amp;gt;%
-  left_join(ger_parent, by = c(&amp;quot;CNT&amp;quot;, &amp;quot;STIDSTD&amp;quot;)) %&amp;gt;%
-  left_join(ger_weights, by = c(&amp;quot;CNT&amp;quot;, &amp;quot;STIDSTD&amp;quot;)) %&amp;gt;%
-  as_tibble() %&amp;gt;%
+dataset_ready &lt;-
+  ger_student %&gt;%
+  left_join(ger_parent, by = c(&quot;CNT&quot;, &quot;STIDSTD&quot;)) %&gt;%
+  left_join(ger_weights, by = c(&quot;CNT&quot;, &quot;STIDSTD&quot;)) %&gt;%
+  as_tibble() %&gt;%
   rename(income = PA07Q01,
          score = avg_score,
-         wt = W_FSTUWT) %&amp;gt;%
-  select(-CNT, -STIDSTD)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The final results is this dataset:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;## # A tibble: 10 x 3
+         wt = W_FSTUWT) %&gt;%
+  select(-CNT, -STIDSTD)</code></pre>
+<p>The final results is this dataset:</p>
+<pre><code>## # A tibble: 10 x 3
 ##   score income            wt
-##   &amp;lt;dbl&amp;gt; &amp;lt;fct&amp;gt;          &amp;lt;dbl&amp;gt;
-## 1  440. Less than &amp;lt;$A&amp;gt;  137.
-## 2  523. Less than &amp;lt;$A&amp;gt;  170.
-## 3  291. Less than &amp;lt;$A&amp;gt;  162.
-## 4  437. Less than &amp;lt;$A&amp;gt;  162.
-## 5  367. Less than &amp;lt;$A&amp;gt;  115.
-## # ... with 5 more rows&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;This is the minimum dataset that the function will accept. This means that it needs to have at least a categorical variable and a continuous variable (the vector of weights is optional).&lt;/p&gt;
-&lt;p&gt;The package is called &lt;code&gt;perccalc&lt;/code&gt;, short for percentile calculator and we can install and load it with this code:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;quot;perccalc&amp;quot;, repo = &amp;quot;https://cran.rediris.es/&amp;quot;)
-## package &amp;#39;perccalc&amp;#39; successfully unpacked and MD5 sums checked
+##   &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;
+## 1  440. Less than &lt;$A&gt;  137.
+## 2  523. Less than &lt;$A&gt;  170.
+## 3  291. Less than &lt;$A&gt;  162.
+## 4  437. Less than &lt;$A&gt;  162.
+## 5  367. Less than &lt;$A&gt;  115.
+## # ... with 5 more rows</code></pre>
+<p>This is the minimum dataset that the function will accept. This means that it needs to have at least a categorical variable and a continuous variable (the vector of weights is optional).</p>
+<p>The package is called <code>perccalc</code>, short for percentile calculator and we can install and load it with this code:</p>
+<pre class="r"><code>install.packages(&quot;perccalc&quot;, repo = &quot;https://cran.rediris.es/&quot;)
+## package &#39;perccalc&#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
 ##  C:\Users\cimentadaj\AppData\Local\Temp\RtmpYFnDzN\downloaded_packages
-library(perccalc)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The package has two functions, which I’ll show some examples. The first one is called &lt;code&gt;perc_diff&lt;/code&gt; and it’s very easy to use, we just specify the data, the name of the categorical and continuous variable and the percentile difference we want.&lt;/p&gt;
-&lt;p&gt;Let’s put it to use!&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_diff(dataset_ready, income, score, percentiles = c(90, 10))
-## Error: is_ordered_fct is not TRUE&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;I generated that error on purpose to raise a very important requirement of the function. The categorical variable needs to be an ordered factor (categorical). It is very important because otherwise we could be calculating percentile differences of categorical variables such as married, single and widowed, which doesn’t make a lot of sense.&lt;/p&gt;
-&lt;p&gt;We can turn it into an ordered factor with the code below.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dataset_ready &amp;lt;-
-  dataset_ready %&amp;gt;%
-  mutate(income = factor(income, ordered = TRUE))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Now it’ll work.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_diff(dataset_ready, income, score, percentiles = c(90, 10))
+library(perccalc)</code></pre>
+<p>The package has two functions, which I’ll show some examples. The first one is called <code>perc_diff</code> and it’s very easy to use, we just specify the data, the name of the categorical and continuous variable and the percentile difference we want.</p>
+<p>Let’s put it to use!</p>
+<pre class="r"><code>perc_diff(dataset_ready, income, score, percentiles = c(90, 10))
+## Error: is_ordered_fct is not TRUE</code></pre>
+<p>I generated that error on purpose to raise a very important requirement of the function. The categorical variable needs to be an ordered factor (categorical). It is very important because otherwise we could be calculating percentile differences of categorical variables such as married, single and widowed, which doesn’t make a lot of sense.</p>
+<p>We can turn it into an ordered factor with the code below.</p>
+<pre class="r"><code>dataset_ready &lt;-
+  dataset_ready %&gt;%
+  mutate(income = factor(income, ordered = TRUE))</code></pre>
+<p>Now it’ll work.</p>
+<pre class="r"><code>perc_diff(dataset_ready, income, score, percentiles = c(90, 10))
 ## difference         se 
-##   97.00706    8.74790&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We can play around with other percentiles&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_diff(dataset_ready, income, score, percentiles = c(50, 10))
+##   97.00706    8.74790</code></pre>
+<p>We can play around with other percentiles</p>
+<pre class="r"><code>perc_diff(dataset_ready, income, score, percentiles = c(50, 10))
 ## difference         se 
-##  58.776200   8.291083&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;And we can add a vector of weights&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_diff(dataset_ready, income, score, weights = wt, percentiles = c(90, 10))
+##  58.776200   8.291083</code></pre>
+<p>And we can add a vector of weights</p>
+<pre class="r"><code>perc_diff(dataset_ready, income, score, weights = wt, percentiles = c(90, 10))
 ## difference         se 
-##  95.228517   8.454902&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Now, how are we sure that these estimates are as accurate as the Reardon (2011) implementation? We can compare the Stata ouput using this data set.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Saving the dataset to a path
-dataset_ready %&amp;gt;%
-  write_dta(path = &amp;quot;/Users/cimentadaj/Downloads/pisa_income.dta&amp;quot;, version = 13)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Running the code below using the &lt;code&gt;pisa_income.dta&lt;/code&gt;..&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;*--------
-use &amp;quot;/Users/cimentadaj/Downloads/pisa_income.dta&amp;quot;, clear
+##  95.228517   8.454902</code></pre>
+<p>Now, how are we sure that these estimates are as accurate as the Reardon (2011) implementation? We can compare the Stata ouput using this data set.</p>
+<pre class="r"><code># Saving the dataset to a path
+dataset_ready %&gt;%
+  write_dta(path = &quot;/Users/cimentadaj/Downloads/pisa_income.dta&quot;, version = 13)</code></pre>
+<p>Running the code below using the <code>pisa_income.dta</code>..</p>
+<pre class="r"><code>*--------
+use &quot;/Users/cimentadaj/Downloads/pisa_income.dta&quot;, clear
 
 tab income, gen(inc)
 *--------
@@ -362,21 +371,21 @@ tab income, gen(inc)
 
 tempname memhold
 tempfile results
-postfile `memhold&amp;#39; income mean se_mean per using `results&amp;#39;
+postfile `memhold&#39; income mean se_mean per using `results&#39;
 
 forv i = 1/6 {
-    qui sum inc`i&amp;#39; [aw=wt]
-    loc per`i&amp;#39; = r(mean)    
+    qui sum inc`i&#39; [aw=wt]
+    loc per`i&#39; = r(mean)    
                                 
-    qui sum score if inc`i&amp;#39;==1 
+    qui sum score if inc`i&#39;==1 
                             
-    if `r(N)&amp;#39;&amp;gt;0 {
-        qui regress score if inc`i&amp;#39;==1 [aw=wt]
-        post `memhold&amp;#39; (`i&amp;#39;) (_b[_cons]) (_se[_cons]) (`per`i&amp;#39;&amp;#39;)
+    if `r(N)&#39;&gt;0 {
+        qui regress score if inc`i&#39;==1 [aw=wt]
+        post `memhold&#39; (`i&#39;) (_b[_cons]) (_se[_cons]) (`per`i&#39;&#39;)
                             
     }               
 }
-postclose `memhold&amp;#39; 
+postclose `memhold&#39; 
 
 /*-----------------------
     Making income categories
@@ -384,7 +393,7 @@ postclose `memhold&amp;#39;
 ------------------------*/
 
 
-    use `results&amp;#39;, clear
+    use `results&#39;, clear
 
     sort income
     gen cathi = sum(per)
@@ -414,60 +423,61 @@ postclose `memhold&amp;#39;
     loc hi_p = 90
     loc lo_p = 10
 
-    loc d1 = [`hi_p&amp;#39; - `lo_p&amp;#39;]/100
-    loc d2 = [(`hi_p&amp;#39;)^2 - (`lo_p&amp;#39;)^2]/(100^2)
-    loc d3 = [(`hi_p&amp;#39;)^3 - (`lo_p&amp;#39;)^3]/(100^3)
+    loc d1 = [`hi_p&#39; - `lo_p&#39;]/100
+    loc d2 = [(`hi_p&#39;)^2 - (`lo_p&#39;)^2]/(100^2)
+    loc d3 = [(`hi_p&#39;)^3 - (`lo_p&#39;)^3]/(100^3)
 
-    lincom `d1&amp;#39;*x1 + `d2&amp;#39;*x2 + `d3&amp;#39;*x3
-    loc diff`hi_p&amp;#39;`lo_p&amp;#39; = r(estimate)
-    loc se`hi_p&amp;#39;`lo_p&amp;#39; = r(se)
+    lincom `d1&#39;*x1 + `d2&#39;*x2 + `d3&#39;*x3
+    loc diff`hi_p&#39;`lo_p&#39; = r(estimate)
+    loc se`hi_p&#39;`lo_p&#39; = r(se)
     
-    di &amp;quot;`hi_p&amp;#39;-`lo_p&amp;#39; gap:     `diff`hi_p&amp;#39;`lo_p&amp;#39;&amp;#39;&amp;quot;
-    di &amp;quot;se(`hi_p&amp;#39;-`lo_p&amp;#39; gap): `se`hi_p&amp;#39;`lo_p&amp;#39;&amp;#39;&amp;quot;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;I get that the 90/10 difference is &lt;code&gt;95.22&lt;/code&gt; with a standard error of &lt;code&gt;8.45&lt;/code&gt;. Does it sound familiar?&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_diff(dataset_ready, income, score, weights = wt, percentiles = c(90, 10))
+    di &quot;`hi_p&#39;-`lo_p&#39; gap:     `diff`hi_p&#39;`lo_p&#39;&#39;&quot;
+    di &quot;se(`hi_p&#39;-`lo_p&#39; gap): `se`hi_p&#39;`lo_p&#39;&#39;&quot;</code></pre>
+<p>I get that the 90/10 difference is <code>95.22</code> with a standard error of <code>8.45</code>. Does it sound familiar?</p>
+<pre class="r"><code>perc_diff(dataset_ready, income, score, weights = wt, percentiles = c(90, 10))
 ## difference         se 
-##  95.228517   8.454902&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The second function of the package is called &lt;code&gt;perc_dist&lt;/code&gt; and instead of calculating the difference of two percentiles, it returns the score and standard error of every percentile. The arguments of the function are exactly the same but without the &lt;code&gt;percentiles&lt;/code&gt; argument, because this will return the whole set of percentiles.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_dist(dataset_ready, income, score)
+##  95.228517   8.454902</code></pre>
+<p>The second function of the package is called <code>perc_dist</code> and instead of calculating the difference of two percentiles, it returns the score and standard error of every percentile. The arguments of the function are exactly the same but without the <code>percentiles</code> argument, because this will return the whole set of percentiles.</p>
+<pre class="r"><code>perc_dist(dataset_ready, income, score)
 ## # A tibble: 100 x 3
 ##   percentile estimate std.error
-##        &amp;lt;int&amp;gt;    &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;
+##        &lt;int&gt;    &lt;dbl&gt;     &lt;dbl&gt;
 ## 1          1     3.69      1.33
 ## 2          2     7.28      2.59
 ## 3          3    10.8       3.79
 ## 4          4    14.1       4.93
 ## 5          5    17.4       6.01
-## # ... with 95 more rows&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We can also add the optional set of weights and graph it:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_dist(dataset_ready, income, score, wt) %&amp;gt;%
+## # ... with 95 more rows</code></pre>
+<p>We can also add the optional set of weights and graph it:</p>
+<pre class="r"><code>perc_dist(dataset_ready, income, score, wt) %&gt;%
   mutate(ci_low = estimate - 1.96 * std.error,
-         ci_hi = estimate + 1.96 * std.error) %&amp;gt;%
+         ci_hi = estimate + 1.96 * std.error) %&gt;%
   ggplot(aes(percentile, estimate)) +
   geom_point() +
-  geom_errorbar(aes(ymin = ci_low, ymax = ci_hi))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/blog/2017-08-01-perccalc-package/2017-08-01-perccalc-package_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;576&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Please note that for calculating the difference between two percentiles it is more accurate to use the &lt;code&gt;perc_diff&lt;/code&gt; function. The &lt;code&gt;perc_diff&lt;/code&gt; calculates the difference through a linear combination of coefficients resulting in a different standard error.&lt;/p&gt;
-&lt;p&gt;For example:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_dist(dataset_ready, income, score, wt) %&amp;gt;%
-  filter(percentile %in% c(90, 10)) %&amp;gt;%
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_hi))</code></pre>
+<p><img src="/blog/2017-08-01-perccalc-package/2017-08-01-perccalc-package_files/figure-html/unnamed-chunk-15-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>Please note that for calculating the difference between two percentiles it is more accurate to use the <code>perc_diff</code> function. The <code>perc_diff</code> calculates the difference through a linear combination of coefficients resulting in a different standard error.</p>
+<p>For example:</p>
+<pre class="r"><code>perc_dist(dataset_ready, income, score, wt) %&gt;%
+  filter(percentile %in% c(90, 10)) %&gt;%
   summarize(diff = diff(estimate),
             se_diff = diff(std.error))
 ## # A tibble: 1 x 2
 ##    diff se_diff
-##   &amp;lt;dbl&amp;gt;   &amp;lt;dbl&amp;gt;
-## 1  95.2    5.68&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;compared to&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;perc_diff(dataset_ready, income, score, weights = wt, percentiles = c(90, 10))
+##   &lt;dbl&gt;   &lt;dbl&gt;
+## 1  95.2    5.68</code></pre>
+<p>compared to</p>
+<pre class="r"><code>perc_diff(dataset_ready, income, score, weights = wt, percentiles = c(90, 10))
 ## difference         se 
-##  95.228517   8.454902&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;They both have the same point estimate but a different standard error.&lt;/p&gt;
-&lt;p&gt;I hope this was a convincing example, I know this will be useful for me. All the intelectual ideas come from Sean Reardon and the Stata code was written by Sean Reardon, Ximena Portilla, and Jenna Finch. The R implemention is my own work.&lt;/p&gt;
-&lt;p&gt;You can find the package repository &lt;a href=&#34;https://github.com/cimentadaj/perccalc&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Reardon, Sean F. “The widening academic achievement gap between the rich and the poor: New evidence and possible explanations.” Whither opportunity (2011): 91-116.&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+##  95.228517   8.454902</code></pre>
+<p>They both have the same point estimate but a different standard error.</p>
+<p>I hope this was a convincing example, I know this will be useful for me. All the intelectual ideas come from Sean Reardon and the Stata code was written by Sean Reardon, Ximena Portilla, and Jenna Finch. The R implemention is my own work.</p>
+<p>You can find the package repository <a href="https://github.com/cimentadaj/perccalc">here</a>.</p>
+<ul>
+<li>Reardon, Sean F. “The widening academic achievement gap between the rich and the poor: New evidence and possible explanations.” Whither opportunity (2011): 91-116.</li>
+</ul>
+]]>
+      </description>
     </item>
     
     <item>
@@ -476,18 +486,19 @@ postclose `memhold&amp;#39;
       <pubDate>Mon, 22 Aug 2016 00:00:00 +0000</pubDate>
       
       <guid>/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</guid>
-      <description>
+      <description><![CDATA[
+      
 
 
-&lt;p&gt;Whoa, what a day. I’ve been using the stargazer package for producing my (beautiful) regression tables in R for a while now. Among all the arguments of its main function (&lt;code&gt;stargazer()&lt;/code&gt; ) are &lt;code&gt;apply.coef&lt;/code&gt;, &lt;code&gt;apply.se&lt;/code&gt;, &lt;code&gt;apply.ci&lt;/code&gt;, … and so on for all the other statistics of a regression output. Each of these arguments, if specified, applies a function over the specified statistic. So, for calculating the odds ratios I would simply apply the &lt;code&gt;exp()&lt;/code&gt; function over the set of log odds. It turns out that if you apply any function over the coefficients (or any other statistic), stargazer automatically recalculates t values with the new coefficients! This means that the significance of my model will depend on the new values and we surely wouldn’t want that.&lt;/p&gt;
-&lt;p&gt;Let’s show a reproducible example:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# install.packages(&amp;quot;stargazer&amp;quot;) # in case you don&amp;#39;t have this package
+<p>Whoa, what a day. I’ve been using the stargazer package for producing my (beautiful) regression tables in R for a while now. Among all the arguments of its main function (<code>stargazer()</code> ) are <code>apply.coef</code>, <code>apply.se</code>, <code>apply.ci</code>, … and so on for all the other statistics of a regression output. Each of these arguments, if specified, applies a function over the specified statistic. So, for calculating the odds ratios I would simply apply the <code>exp()</code> function over the set of log odds. It turns out that if you apply any function over the coefficients (or any other statistic), stargazer automatically recalculates t values with the new coefficients! This means that the significance of my model will depend on the new values and we surely wouldn’t want that.</p>
+<p>Let’s show a reproducible example:</p>
+<pre class="r"><code># install.packages(&quot;stargazer&quot;) # in case you don&#39;t have this package
 suppressMessages(library(stargazer))
 
-m1 &amp;lt;- glm(mtcars$vs ~ mtcars$hp + mtcars$mpg)
+m1 &lt;- glm(mtcars$vs ~ mtcars$hp + mtcars$mpg)
 
-stargazer(m1, type = &amp;quot;text&amp;quot;) # Our standard log odds&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## 
+stargazer(m1, type = &quot;text&quot;) # Our standard log odds</code></pre>
+<pre><code>## 
 ## =============================================
 ##                       Dependent variable:    
 ##                   ---------------------------
@@ -507,9 +518,9 @@ stargazer(m1, type = &amp;quot;text&amp;quot;) # Our standard log odds&lt;/code&
 ## Log Likelihood              -11.217          
 ## Akaike Inf. Crit.           28.434           
 ## =============================================
-## Note:             *p&amp;lt;0.1; **p&amp;lt;0.05; ***p&amp;lt;0.01&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;stargazer(m1, apply.coef = exp, type = &amp;quot;text&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## 
+## Note:             *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre class="r"><code>stargazer(m1, apply.coef = exp, type = &quot;text&quot;)</code></pre>
+<pre><code>## 
 ## =============================================
 ##                       Dependent variable:    
 ##                   ---------------------------
@@ -529,16 +540,16 @@ stargazer(m1, type = &amp;quot;text&amp;quot;) # Our standard log odds&lt;/code&
 ## Log Likelihood              -11.217          
 ## Akaike Inf. Crit.           28.434           
 ## =============================================
-## Note:             *p&amp;lt;0.1; **p&amp;lt;0.05; ***p&amp;lt;0.01&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The coefficients are correct, but look at the significance levels! Those are some really undesirable results. I was actually using this for quite some time without noticing. In light of this problem I decided to create a small function that extracted the statistics separately and applied the appropriate conversion when needed. It’s far from being a flexible function, but it can surely help you run some quick-and-dirty logistic regressions with odds ratios instead of log odds.&lt;/p&gt;
-&lt;p&gt;Here’s the function and an example:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;stargazer2 &amp;lt;- function(model, odd.ratio = F, ...) {
-  if(!(&amp;quot;list&amp;quot; %in% class(model))) model &amp;lt;- list(model)
+## Note:             *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<p>The coefficients are correct, but look at the significance levels! Those are some really undesirable results. I was actually using this for quite some time without noticing. In light of this problem I decided to create a small function that extracted the statistics separately and applied the appropriate conversion when needed. It’s far from being a flexible function, but it can surely help you run some quick-and-dirty logistic regressions with odds ratios instead of log odds.</p>
+<p>Here’s the function and an example:</p>
+<pre class="r"><code>stargazer2 &lt;- function(model, odd.ratio = F, ...) {
+  if(!(&quot;list&quot; %in% class(model))) model &lt;- list(model)
     
   if (odd.ratio) {
-    coefOR2 &amp;lt;- lapply(model, function(x) exp(coef(x)))
-    seOR2 &amp;lt;- lapply(model, function(x) exp(coef(x)) * summary(x)$coef[, 2])
-    p2 &amp;lt;- lapply(model, function(x) summary(x)$coefficients[, 4])
+    coefOR2 &lt;- lapply(model, function(x) exp(coef(x)))
+    seOR2 &lt;- lapply(model, function(x) exp(coef(x)) * summary(x)$coef[, 2])
+    p2 &lt;- lapply(model, function(x) summary(x)$coefficients[, 4])
     stargazer(model, coef = coefOR2, se = seOR2, p = p2, ...)
     
   } else {
@@ -546,8 +557,8 @@ stargazer(m1, type = &amp;quot;text&amp;quot;) # Our standard log odds&lt;/code&
   }
 }
 
-stargazer(m1, type = &amp;quot;text&amp;quot;) # Our standard log odds&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## 
+stargazer(m1, type = &quot;text&quot;) # Our standard log odds</code></pre>
+<pre><code>## 
 ## =============================================
 ##                       Dependent variable:    
 ##                   ---------------------------
@@ -567,9 +578,9 @@ stargazer(m1, type = &amp;quot;text&amp;quot;) # Our standard log odds&lt;/code&
 ## Log Likelihood              -11.217          
 ## Akaike Inf. Crit.           28.434           
 ## =============================================
-## Note:             *p&amp;lt;0.1; **p&amp;lt;0.05; ***p&amp;lt;0.01&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;stargazer2(m1, odd.ratio = T, type = &amp;quot;text&amp;quot;) &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## 
+## Note:             *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre class="r"><code>stargazer2(m1, odd.ratio = T, type = &quot;text&quot;) </code></pre>
+<pre><code>## 
 ## =============================================
 ##                       Dependent variable:    
 ##                   ---------------------------
@@ -589,17 +600,17 @@ stargazer(m1, type = &amp;quot;text&amp;quot;) # Our standard log odds&lt;/code&
 ## Log Likelihood              -11.217          
 ## Akaike Inf. Crit.           28.434           
 ## =============================================
-## Note:             *p&amp;lt;0.1; **p&amp;lt;0.05; ***p&amp;lt;0.01&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Now the coefficients and significance is correct!&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# You can also use lists
-m1 &amp;lt;- glm(mtcars$vs ~ mtcars$mpg)
-m2 &amp;lt;- glm(mtcars$vs ~ mtcars$mpg + mtcars$hp)
-m3 &amp;lt;- glm(mtcars$vs ~ mtcars$mpg + mtcars$hp + mtcars$am)
+## Note:             *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre class="r"><code># Now the coefficients and significance is correct!</code></pre>
+<pre class="r"><code># You can also use lists
+m1 &lt;- glm(mtcars$vs ~ mtcars$mpg)
+m2 &lt;- glm(mtcars$vs ~ mtcars$mpg + mtcars$hp)
+m3 &lt;- glm(mtcars$vs ~ mtcars$mpg + mtcars$hp + mtcars$am)
 
-models &amp;lt;- list(m1, m2, m3)
+models &lt;- list(m1, m2, m3)
 
-stargazer(models, type = &amp;quot;text&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## 
+stargazer(models, type = &quot;text&quot;)</code></pre>
+<pre><code>## 
 ## ===============================================
 ##                        Dependent variable:     
 ##                   -----------------------------
@@ -623,9 +634,9 @@ stargazer(models, type = &amp;quot;text&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 ## Log Likelihood     -14.669    -11.217  -10.299 
 ## Akaike Inf. Crit.   33.338    28.434    28.599 
 ## ===============================================
-## Note:               *p&amp;lt;0.1; **p&amp;lt;0.05; ***p&amp;lt;0.01&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;stargazer2(models, odd.ratio = T, type = &amp;quot;text&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## 
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre class="r"><code>stargazer2(models, odd.ratio = T, type = &quot;text&quot;)</code></pre>
+<pre><code>## 
 ## ===============================================
 ##                        Dependent variable:     
 ##                   -----------------------------
@@ -649,18 +660,19 @@ stargazer(models, type = &amp;quot;text&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 ## Log Likelihood     -14.669    -11.217  -10.299 
 ## Akaike Inf. Crit.   33.338    28.434    28.599 
 ## ===============================================
-## Note:               *p&amp;lt;0.1; **p&amp;lt;0.05; ***p&amp;lt;0.01&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Same significance but different coefficients and SE&amp;#39;s&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Caveats:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;It only accepts one model or one list containing several models. I did this because I didn’t want to get into distinguishing between several separate models. If you want to improve it, &lt;a href=&#34;https://github.com/cimentadaj/cimentadaj/blob/master/R/stargazer2.R&#34;&gt;here’s&lt;/a&gt; the Github website, submit a pull request!&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;It doesn’t calculate confidence intervals as the formula is more complicated and I didn’t need them for now.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr /&gt;
-&lt;p&gt;Update: I included this function in my personal package which you can install like this:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# install.packages(&amp;quot;devtools&amp;quot;)
-devtools::install_github(&amp;quot;cimentadaj/cimentadaj&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-</description>
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre class="r"><code># Same significance but different coefficients and SE&#39;s</code></pre>
+<p>Caveats:</p>
+<ul>
+<li><p>It only accepts one model or one list containing several models. I did this because I didn’t want to get into distinguishing between several separate models. If you want to improve it, <a href="https://github.com/cimentadaj/cimentadaj/blob/master/R/stargazer2.R">here’s</a> the Github website, submit a pull request!</p></li>
+<li><p>It doesn’t calculate confidence intervals as the formula is more complicated and I didn’t need them for now.</p></li>
+</ul>
+<hr />
+<p>Update: I included this function in my personal package which you can install like this:</p>
+<pre class="r"><code># install.packages(&quot;devtools&quot;)
+devtools::install_github(&quot;cimentadaj/cimentadaj&quot;)</code></pre>
+]]>
+      </description>
     </item>
     
   </channel>

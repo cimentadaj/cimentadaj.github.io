@@ -7,7 +7,7 @@
     <language>en-US</language>
     <lastBuildDate>Fri, 20 Apr 2018 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="/tags/simulation/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/simulation/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -16,38 +16,39 @@
       <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
       
       <guid>/blog/2018-04-20-the-monty-hall-problem/the-monty-hall-problem/</guid>
-      <description>
+      <description><![CDATA[
+      
 
 
-&lt;p&gt;Just recently, I’ve been completing the online version of &lt;code&gt;CS109&lt;/code&gt; from Harvard which is a class for understanding machine learning algorithms in Python. In the very first section the homework of the class asked us to develope a working simulation of the Monty Hall problem.&lt;/p&gt;
-&lt;p&gt;The Monty Hall problem is very simple. In a gameshow, contestants try to guess which of 3 closed doors contain a cash prize (goats are behind the other two doors). Of course, the odds of choosing the correct door are 1 in 3. As a twist, the host of the show occasionally opens a door after a contestant makes his or her choice. This door is always one of the two the contestant did not pick, and is also always one of the goat doors (note that it is always possible to do this, since there are two goat doors). At this point, the contestant has the option of keeping his or her original choice, or swtiching to the other unopened door. The question is: is there any benefit to switching doors?&lt;/p&gt;
-&lt;p&gt;I implemented this in Python below. Let’s go step by step. Let’s load the packages we’ll use.&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;Load packages&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;import numpy as np&lt;/code&gt;&lt;/pre&gt;
-&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;Define a function that simulates an array of prize doors. Optionally, supply any number of doors available.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def simulate_prizedoor(nsim, doors = 3):
+<p>Just recently, I’ve been completing the online version of <code>CS109</code> from Harvard which is a class for understanding machine learning algorithms in Python. In the very first section the homework of the class asked us to develope a working simulation of the Monty Hall problem.</p>
+<p>The Monty Hall problem is very simple. In a gameshow, contestants try to guess which of 3 closed doors contain a cash prize (goats are behind the other two doors). Of course, the odds of choosing the correct door are 1 in 3. As a twist, the host of the show occasionally opens a door after a contestant makes his or her choice. This door is always one of the two the contestant did not pick, and is also always one of the goat doors (note that it is always possible to do this, since there are two goat doors). At this point, the contestant has the option of keeping his or her original choice, or swtiching to the other unopened door. The question is: is there any benefit to switching doors?</p>
+<p>I implemented this in Python below. Let’s go step by step. Let’s load the packages we’ll use.</p>
+<ol style="list-style-type: decimal">
+<li>Load packages</li>
+</ol>
+<pre class="python"><code>import numpy as np</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Define a function that simulates an array of prize doors. Optionally, supply any number of doors available.</li>
+</ol>
+<pre class="python"><code>def simulate_prizedoor(nsim, doors = 3):
     answer = np.array([np.random.randint(0, doors) for x in range(nsim)])
     return answer
     
-print(simulate_prizedoor(10, 3))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [2 1 2 0 2 1 0 2 2 1]&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;This array shows a random prize door from 10 hypothetical (independent) tries in which a persons will choose a guess.&lt;/p&gt;
-&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;Define a function that simulates an array of guesses.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def simulate_guess(nsim, doors = 3):
+print(simulate_prizedoor(10, 3))</code></pre>
+<pre><code>## [2 1 2 0 2 1 0 2 2 1]</code></pre>
+<p>This array shows a random prize door from 10 hypothetical (independent) tries in which a persons will choose a guess.</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Define a function that simulates an array of guesses.</li>
+</ol>
+<pre class="python"><code>def simulate_guess(nsim, doors = 3):
     return(simulate_prizedoor(nsim, doors = doors))
-print(simulate_guess(10))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1 0 0 1 0 1 0 1 1 1]&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;This array shows a random choosen door from 10 hypothetical (independent) tries in which a persons will choose a guess.&lt;/p&gt;
-&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;Define a &lt;code&gt;goat_door&lt;/code&gt; function that returns the first ‘goat’ door that the host of the show will open.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;# Find elements in `first_set` not present in `second_set`
+print(simulate_guess(10))</code></pre>
+<pre><code>## [1 0 0 1 0 1 0 1 1 1]</code></pre>
+<p>This array shows a random choosen door from 10 hypothetical (independent) tries in which a persons will choose a guess.</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Define a <code>goat_door</code> function that returns the first ‘goat’ door that the host of the show will open.</li>
+</ol>
+<pre class="python"><code># Find elements in `first_set` not present in `second_set`
 def diff(first_set, second_set):
     res = [x for x in first_set if x not in second_set]
     return res
@@ -59,27 +60,27 @@ def goat_door(prizedoors, guesses, doors = 3):
     res = [diff(full_ops, new_stack[index, ])[0] for index in range(new_stack.shape[0])]
     return np.array(res)
     
-print(goat_door(simulate_prizedoor(10), simulate_guess(10)))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [2 1 1 0 1 2 0 0 2 1]&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;For example, if the prizedoor is 2 and the person guessed door 2, the &lt;code&gt;goat_door&lt;/code&gt; function will return either &lt;code&gt;0&lt;/code&gt; or &lt;code&gt;1&lt;/code&gt; (in this case it will return always &lt;code&gt;0&lt;/code&gt; because I was a bit lazy).&lt;/p&gt;
-&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;Define a function that switches the guess of the respondent in case he/she wants to change doors after the first door has been opened.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;#your code here
+print(goat_door(simulate_prizedoor(10), simulate_guess(10)))</code></pre>
+<pre><code>## [2 1 1 0 1 2 0 0 2 1]</code></pre>
+<p>For example, if the prizedoor is 2 and the person guessed door 2, the <code>goat_door</code> function will return either <code>0</code> or <code>1</code> (in this case it will return always <code>0</code> because I was a bit lazy).</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Define a function that switches the guess of the respondent in case he/she wants to change doors after the first door has been opened.</li>
+</ol>
+<pre class="python"><code>#your code here
 def switch_guess(guesses, goatdoors):
     return goat_door(guesses, goatdoors)
     
-print(switch_guess(np.array([0, 1, 2]), np.array([1, 2, 1])))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [2 0 0]&lt;/code&gt;&lt;/pre&gt;
-&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;Finally, define a function that calculates the percentage of correct doors the person guessed.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def win_percentage(guesses, prizedoors):
-    return (guesses == prizedoors).mean()&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The exercise adds this:&lt;/p&gt;
-&lt;p&gt;Simulate 10000 games where contestant keeps his original guess, and 10000 games where the contestant switches his door after a goat door is revealed. Compute the percentage of time the contestant wins under either strategy. Is one strategy better than the other?&lt;/p&gt;
-&lt;p&gt;I implement it below.&lt;/p&gt;
-&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;# Number of simulations
+print(switch_guess(np.array([0, 1, 2]), np.array([1, 2, 1])))</code></pre>
+<pre><code>## [2 0 0]</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>Finally, define a function that calculates the percentage of correct doors the person guessed.</li>
+</ol>
+<pre class="python"><code>def win_percentage(guesses, prizedoors):
+    return (guesses == prizedoors).mean()</code></pre>
+<p>The exercise adds this:</p>
+<p>Simulate 10000 games where contestant keeps his original guess, and 10000 games where the contestant switches his door after a goat door is revealed. Compute the percentage of time the contestant wins under either strategy. Is one strategy better than the other?</p>
+<p>I implement it below.</p>
+<pre class="python"><code># Number of simulations
 nsim = 10000
 # Numer of doors
 doors = 3
@@ -92,18 +93,19 @@ chosen_goat = goat_door(first_guess, prize_door)
 ## For the scenario where the users keeps the first guess,
 ## how many wins does he/she has?
 first_perc = win_percentage(first_guess, prize_door)
-print(first_perc)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## 0.3405&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;What happens if the user switches the door after the host has opened one door&lt;/p&gt;
-&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;# After you had your first guess, switch to a door that is not the door opened by the
+print(first_perc)</code></pre>
+<pre><code>## 0.3405</code></pre>
+<p>What happens if the user switches the door after the host has opened one door</p>
+<pre class="python"><code># After you had your first guess, switch to a door that is not the door opened by the
 # host
 second_guess = switch_guess(first_guess, chosen_goat)
 # Calculate the % win with this new guess
 second_perc = win_percentage(second_guess, prize_door)
-print(second_perc)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## 0.6595&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;What? It’s not 50/50? This is a bit counterintuitive as most of the internet suggests but I found this explanation very intuitive. With 3 doors, the odds of winning are as simple as &lt;code&gt;1/3&lt;/code&gt; and the odds of losing is &lt;code&gt;2/3&lt;/code&gt;. When Monty opens a second door, the odds don’t go to &lt;code&gt;50/50&lt;/code&gt; because you already knew from before that you had a &lt;code&gt;2/3&lt;/code&gt; chance of losing that &lt;strong&gt;just&lt;/strong&gt; became &lt;code&gt;1/3&lt;/code&gt;. If the odds of losing were &lt;code&gt;2/3&lt;/code&gt; and a new door was opened, then the odds of losing become &lt;code&gt;1/3&lt;/code&gt;, which means that odds of winning became &lt;code&gt;2/3&lt;/code&gt;! And that fraction becomes &lt;code&gt;66%&lt;/code&gt;, the percentage we got above. The key thing to understanding the riddle is &lt;strong&gt;not&lt;/strong&gt; reestimating your odds but merely &lt;strong&gt;updating&lt;/strong&gt; your odds like a true bayesian :).&lt;/p&gt;
-</description>
+print(second_perc)</code></pre>
+<pre><code>## 0.6595</code></pre>
+<p>What? It’s not 50/50? This is a bit counterintuitive as most of the internet suggests but I found this explanation very intuitive. With 3 doors, the odds of winning are as simple as <code>1/3</code> and the odds of losing is <code>2/3</code>. When Monty opens a second door, the odds don’t go to <code>50/50</code> because you already knew from before that you had a <code>2/3</code> chance of losing that <strong>just</strong> became <code>1/3</code>. If the odds of losing were <code>2/3</code> and a new door was opened, then the odds of losing become <code>1/3</code>, which means that odds of winning became <code>2/3</code>! And that fraction becomes <code>66%</code>, the percentage we got above. The key thing to understanding the riddle is <strong>not</strong> reestimating your odds but merely <strong>updating</strong> your odds like a true bayesian :).</p>
+]]>
+      </description>
     </item>
     
     <item>
@@ -112,100 +114,102 @@ print(second_perc)&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Thu, 07 Sep 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</guid>
-      <description>
+      <description><![CDATA[
+      
 
 
-&lt;p&gt;This is the second entry, and probably the last, on model validation methods. These posts are inspired by the work of Kohavi (1995), which I totally recommend reading. This post will talk talk about the Leave-One-Out Cross Validation (LOOCV), which is the extreme version of the K-Fold Cross Validation and the Bootstrap for model assessment.&lt;/p&gt;
-&lt;p&gt;Let’s dive in!&lt;/p&gt;
-&lt;div id=&#34;the-leave-one-out-cv-method&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;The Leave-One-Out CV method&lt;/h2&gt;
-&lt;p&gt;The LOOCV is actually a very intuitive idea if you know how the K-Fold CV works.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;LOOCV: Let’s imagine a data set with 30 rows. We separate the 1st row to be the test data and the remaining 29 rows to be the training data. We fit the model on the training data and then predict the one observation we left out. We record the model accuracy and then repeat but predicting the 2nd row from training the model on row 1 and 3:30. We repeat until every row has been predicted.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;This is surprisingly easy to implement in R.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+<p>This is the second entry, and probably the last, on model validation methods. These posts are inspired by the work of Kohavi (1995), which I totally recommend reading. This post will talk talk about the Leave-One-Out Cross Validation (LOOCV), which is the extreme version of the K-Fold Cross Validation and the Bootstrap for model assessment.</p>
+<p>Let’s dive in!</p>
+<div id="the-leave-one-out-cv-method" class="section level2">
+<h2>The Leave-One-Out CV method</h2>
+<p>The LOOCV is actually a very intuitive idea if you know how the K-Fold CV works.</p>
+<ul>
+<li>LOOCV: Let’s imagine a data set with 30 rows. We separate the 1st row to be the test data and the remaining 29 rows to be the training data. We fit the model on the training data and then predict the one observation we left out. We record the model accuracy and then repeat but predicting the 2nd row from training the model on row 1 and 3:30. We repeat until every row has been predicted.</li>
+</ul>
+<p>This is surprisingly easy to implement in R.</p>
+<pre class="r"><code>library(tidyverse)
 
 set.seed(21341)
-loo_result &amp;lt;-
+loo_result &lt;-
   map_lgl(1:nrow(mtcars), ~ {
-  test &amp;lt;- mtcars[.x, ] # Pick the .x row of the iteration to be the test
-  train &amp;lt;- mtcars[-.x, ] # Let the training be all the data EXCEPT that row
+  test &lt;- mtcars[.x, ] # Pick the .x row of the iteration to be the test
+  train &lt;- mtcars[-.x, ] # Let the training be all the data EXCEPT that row
   
-  train_model &amp;lt;- glm(am ~ mpg + cyl + disp, family = binomial(), data = train) # Fit any model
+  train_model &lt;- glm(am ~ mpg + cyl + disp, family = binomial(), data = train) # Fit any model
   
   # Since the prediction is in probabilities, pass the probability
   # to generate either a 1 or 0 based on the probability
-  prediction &amp;lt;- predict(train_model, newdata = test, type = &amp;quot;response&amp;quot;) %&amp;gt;% rbinom(1, 1, .)
+  prediction &lt;- predict(train_model, newdata = test, type = &quot;response&quot;) %&gt;% rbinom(1, 1, .)
   
   test$am == prediction # compare whether the prediction matches the actual value
 })
 
-summary(loo_result %&amp;gt;% as.numeric) # percentage of accurate results
+summary(loo_result %&gt;% as.numeric) # percentage of accurate results
 #    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#  0.0000  0.0000  1.0000  0.5938  1.0000  1.0000&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;It looks like our model had nearly 60% accuracy, not very good. But not entirely bad given our very low sample size.&lt;/p&gt;
-&lt;p&gt;Advantages:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Just as with the K-Fold CV, this approach is useful because it uses all the data. At some point, every rows gets to be the test set and training set, maximizing information.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;In fact, it uses almost ALL the data as the original data set as the training set is just N - 1 (this method uses even more than the K-Fold CV).&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Disadvantage:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;This approach is very heavy on your computer. We need to refit de model N times (although there is a shortcut for linear regreesion, see &lt;a href=&#34;https://gerardnico.com/wiki/lang/r/cross_validation&#34;&gt;here&lt;/a&gt;).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Given that the test set is of only 1 observation, there might be a lot of variance in the prediction, making the accuracy test more unreliable (that is, relative to K-Fold CV)&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;div id=&#34;the-bootstrap-method&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;The Bootstrap method&lt;/h2&gt;
-&lt;p&gt;The bootstrap method is a bit different. Maybe you’ve heard about the bootstrap for estimating standard errors, and in fact for model assessment it’s very similar.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Boostrap method: Take the data from before with 30 rows. Suppose we resample this dataset with replacement. That is, the dataset will have the same 30 rows, but row 1 might be repeated 3 times, row 2 might be repeated 4 times, row 3 might not be in the dataset anymore, and so on. Now, take this resampled data and use it to train the model. Now test your predictions on the actual data (the one with 30 unique rows) and calculate the model accuracy. Repeat N times.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Again, the R implementation is very straightforward.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+#  0.0000  0.0000  1.0000  0.5938  1.0000  1.0000</code></pre>
+<p>It looks like our model had nearly 60% accuracy, not very good. But not entirely bad given our very low sample size.</p>
+<p>Advantages:</p>
+<ul>
+<li><p>Just as with the K-Fold CV, this approach is useful because it uses all the data. At some point, every rows gets to be the test set and training set, maximizing information.</p></li>
+<li><p>In fact, it uses almost ALL the data as the original data set as the training set is just N - 1 (this method uses even more than the K-Fold CV).</p></li>
+</ul>
+<p>Disadvantage:</p>
+<ul>
+<li><p>This approach is very heavy on your computer. We need to refit de model N times (although there is a shortcut for linear regreesion, see <a href="https://gerardnico.com/wiki/lang/r/cross_validation">here</a>).</p></li>
+<li><p>Given that the test set is of only 1 observation, there might be a lot of variance in the prediction, making the accuracy test more unreliable (that is, relative to K-Fold CV)</p></li>
+</ul>
+</div>
+<div id="the-bootstrap-method" class="section level2">
+<h2>The Bootstrap method</h2>
+<p>The bootstrap method is a bit different. Maybe you’ve heard about the bootstrap for estimating standard errors, and in fact for model assessment it’s very similar.</p>
+<ul>
+<li>Boostrap method: Take the data from before with 30 rows. Suppose we resample this dataset with replacement. That is, the dataset will have the same 30 rows, but row 1 might be repeated 3 times, row 2 might be repeated 4 times, row 3 might not be in the dataset anymore, and so on. Now, take this resampled data and use it to train the model. Now test your predictions on the actual data (the one with 30 unique rows) and calculate the model accuracy. Repeat N times.</li>
+</ul>
+<p>Again, the R implementation is very straightforward.</p>
+<pre class="r"><code>
 set.seed(21314)
-bootstrap &amp;lt;-
+bootstrap &lt;-
   map_dbl(1:500, ~ {
-  train &amp;lt;- mtcars[sample(nrow(mtcars), replace = T), ] # randomly sample rows with replacement
-  test &amp;lt;- mtcars
+  train &lt;- mtcars[sample(nrow(mtcars), replace = T), ] # randomly sample rows with replacement
+  test &lt;- mtcars
   
-  train_model &amp;lt;- glm(am ~ mpg + cyl + disp, family = binomial(), data = train) # fit any model
+  train_model &lt;- glm(am ~ mpg + cyl + disp, family = binomial(), data = train) # fit any model
   
   # Get predicted probabilities and assign a 1 or 0 based on the probability
-  prediction &amp;lt;- predict(train_model, newdata = test, type = &amp;quot;response&amp;quot;) %&amp;gt;% rbinom(nrow(mtcars), 1, .)
-  accuracy &amp;lt;- test$am == prediction # compare whether the prediction matches the actual value
+  prediction &lt;- predict(train_model, newdata = test, type = &quot;response&quot;) %&gt;% rbinom(nrow(mtcars), 1, .)
+  accuracy &lt;- test$am == prediction # compare whether the prediction matches the actual value
   
   mean(accuracy) # get the proportion of correct predictions
 })
 
 summary(bootstrap)
 #    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#  0.4375  0.6875  0.7500  0.7468  0.8125  0.9375&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We got a better accuracy with the bootstrap (probably biased, see below) and a range of possible values going from 0.43 to 0.93. Note that if you run these models you’ll get a bunch of warnings like &lt;code&gt;glm.fit: fitted probabilities numerically 0 or 1 occurred&lt;/code&gt; because we just have too few observations to be including covariates, resulting in a lot of overfitting.&lt;/p&gt;
-&lt;p&gt;Advantages:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Variance is small considering both train and test have the same number of rows.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Disadvantages&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;It gives more biased results than the CV methods because it repeats data, rather than keep unique observations for training and testing.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;In the end, it’s a trade-off against what you’re looking for. In some instances, it’s alright to have a slightly biased estimate (either pessimistic or optimistic) as long as its reliable (bootstrap). On other instances, it’s better to have a very exact prediction but that is less unreliable (CV methods).&lt;/p&gt;
-&lt;p&gt;Some rule of thumbs:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;For large sample sizes, the variance issues become less important and the computational part is more of an issues. I still would stick by repeated CV for small and large sample sizes. See &lt;a href=&#34;https://stats.stackexchange.com/questions/18348/differences-between-cross-validation-and-bootstrapping-to-estimate-the-predictio&#34;&gt;here&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Cross validation is a good tool when deciding on the model – it helps you avoid fooling yourself into thinking that you have a good model when in fact you are overfitting. When your model is fixed, then using the bootstrap makes more sense to assess accuracy (to me at least). See again &lt;a href=&#34;https://stats.stackexchange.com/questions/18348/differences-between-cross-validation-and-bootstrapping-to-estimate-the-predictio&#34;&gt;here&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Conclusion&lt;/h2&gt;
-&lt;p&gt;Again, this is a very crude approach, and the whole idea is to understand the inner workings of these algorithms in practice. For more thorough approaches I suggest using the &lt;code&gt;cv&lt;/code&gt; functions from the &lt;code&gt;boot&lt;/code&gt; package or &lt;code&gt;caret&lt;/code&gt; or &lt;code&gt;modelr&lt;/code&gt;. I hope this was useful. I will try to keep doing these things as they help me understand these techniques better.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Kohavi, Ron. “A study of cross-validation and bootstrap for accuracy estimation and model selection.” Ijcai. Vol. 14. No. 2. 1995.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-</description>
+#  0.4375  0.6875  0.7500  0.7468  0.8125  0.9375</code></pre>
+<p>We got a better accuracy with the bootstrap (probably biased, see below) and a range of possible values going from 0.43 to 0.93. Note that if you run these models you’ll get a bunch of warnings like <code>glm.fit: fitted probabilities numerically 0 or 1 occurred</code> because we just have too few observations to be including covariates, resulting in a lot of overfitting.</p>
+<p>Advantages:</p>
+<ul>
+<li>Variance is small considering both train and test have the same number of rows.</li>
+</ul>
+<p>Disadvantages</p>
+<ul>
+<li>It gives more biased results than the CV methods because it repeats data, rather than keep unique observations for training and testing.</li>
+</ul>
+<p>In the end, it’s a trade-off against what you’re looking for. In some instances, it’s alright to have a slightly biased estimate (either pessimistic or optimistic) as long as its reliable (bootstrap). On other instances, it’s better to have a very exact prediction but that is less unreliable (CV methods).</p>
+<p>Some rule of thumbs:</p>
+<ul>
+<li><p>For large sample sizes, the variance issues become less important and the computational part is more of an issues. I still would stick by repeated CV for small and large sample sizes. See <a href="https://stats.stackexchange.com/questions/18348/differences-between-cross-validation-and-bootstrapping-to-estimate-the-predictio">here</a></p></li>
+<li><p>Cross validation is a good tool when deciding on the model – it helps you avoid fooling yourself into thinking that you have a good model when in fact you are overfitting. When your model is fixed, then using the bootstrap makes more sense to assess accuracy (to me at least). See again <a href="https://stats.stackexchange.com/questions/18348/differences-between-cross-validation-and-bootstrapping-to-estimate-the-predictio">here</a></p></li>
+</ul>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>Again, this is a very crude approach, and the whole idea is to understand the inner workings of these algorithms in practice. For more thorough approaches I suggest using the <code>cv</code> functions from the <code>boot</code> package or <code>caret</code> or <code>modelr</code>. I hope this was useful. I will try to keep doing these things as they help me understand these techniques better.</p>
+<ul>
+<li>Kohavi, Ron. “A study of cross-validation and bootstrap for accuracy estimation and model selection.” Ijcai. Vol. 14. No. 2. 1995.</li>
+</ul>
+</div>
+]]>
+      </description>
     </item>
     
     <item>
@@ -214,124 +218,126 @@ summary(bootstrap)
       <pubDate>Wed, 06 Sep 2017 00:00:00 +0000</pubDate>
       
       <guid>/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</guid>
-      <description>
+      <description><![CDATA[
+      
 
 
-&lt;p&gt;In a recent attempt to bring a bit of discipline into my life, I’ve been forcing myself to read papers after lunch, specifically concentrated on data science topics. The whole idea is to educated myself every day, but if I find something cool that I can implement in R, I’ll do it right away.&lt;/p&gt;
-&lt;p&gt;This blogpost is the first of a series of entries I plan to post explaining the main concepts of Kohavi (1995), which compares cross-validation methods and bootstrap methods for model selection. This first post will implement a K-Fold cross validation from scratch in order to understand more deeply what’s going on behind the scenes.&lt;/p&gt;
-&lt;p&gt;Before we explain the concept of K-Fold cross validation, we need to define what the ‘Holdout’ method is.&lt;/p&gt;
-&lt;div id=&#34;holdout-method&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Holdout method&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;Holdout method: Imagine we have a dataset with house prices as the dependent variable and two independent variables showing the square footage of the house and the number of rooms. Now, imagine this dataset has &lt;code&gt;30&lt;/code&gt; rows. The whole idea is that you build a model that can predict house prices accurately. To ‘train’ your model, or see how well it performs, we randomly subset 20 of those rows and fit the model. The second step is to predict the values of those 10 rows that we excluded and measure how well our predictions were. As a rule of thumb, experts suggest to randomly sample 80% of the data into the training set and 20% into the test set.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;A very quick example:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+<p>In a recent attempt to bring a bit of discipline into my life, I’ve been forcing myself to read papers after lunch, specifically concentrated on data science topics. The whole idea is to educated myself every day, but if I find something cool that I can implement in R, I’ll do it right away.</p>
+<p>This blogpost is the first of a series of entries I plan to post explaining the main concepts of Kohavi (1995), which compares cross-validation methods and bootstrap methods for model selection. This first post will implement a K-Fold cross validation from scratch in order to understand more deeply what’s going on behind the scenes.</p>
+<p>Before we explain the concept of K-Fold cross validation, we need to define what the ‘Holdout’ method is.</p>
+<div id="holdout-method" class="section level2">
+<h2>Holdout method</h2>
+<ul>
+<li>Holdout method: Imagine we have a dataset with house prices as the dependent variable and two independent variables showing the square footage of the house and the number of rooms. Now, imagine this dataset has <code>30</code> rows. The whole idea is that you build a model that can predict house prices accurately. To ‘train’ your model, or see how well it performs, we randomly subset 20 of those rows and fit the model. The second step is to predict the values of those 10 rows that we excluded and measure how well our predictions were. As a rule of thumb, experts suggest to randomly sample 80% of the data into the training set and 20% into the test set.</li>
+</ul>
+<p>A very quick example:</p>
+<pre class="r"><code>library(tidyverse)
 library(modelr)
 
-holdout &amp;lt;- function(repeat_times) { # empty argument for later
-  n &amp;lt;- nrow(mtcars)
-  eighty_percent &amp;lt;- (n * 0.8) %&amp;gt;% floor
-  train_sample &amp;lt;- sample(1:n, eighty_percent) # randomly pick 80% of the rows
-  test_sample &amp;lt;- setdiff(1:n, train_sample) # get the remaining 20% of the rows
+holdout &lt;- function(repeat_times) { # empty argument for later
+  n &lt;- nrow(mtcars)
+  eighty_percent &lt;- (n * 0.8) %&gt;% floor
+  train_sample &lt;- sample(1:n, eighty_percent) # randomly pick 80% of the rows
+  test_sample &lt;- setdiff(1:n, train_sample) # get the remaining 20% of the rows
   
-  train &amp;lt;- mtcars[train_sample, ] # subset the 80% of the rows
-  test &amp;lt;- mtcars[test_sample, ] # subset 20% of the rows
+  train &lt;- mtcars[train_sample, ] # subset the 80% of the rows
+  test &lt;- mtcars[test_sample, ] # subset 20% of the rows
   
-  train_model &amp;lt;- lm(mpg ~ ., data = train)
+  train_model &lt;- lm(mpg ~ ., data = train)
   
-  test %&amp;gt;%
-    add_predictions(train_model) %&amp;gt;% # add the predicted mpg values to the test data
-    summarize(average_error = (pred - mpg) %&amp;gt;% mean %&amp;gt;% round(2)) %&amp;gt;%
+  test %&gt;%
+    add_predictions(train_model) %&gt;% # add the predicted mpg values to the test data
+    summarize(average_error = (pred - mpg) %&gt;% mean %&gt;% round(2)) %&gt;%
     pull(average_error)
   # calculate the average difference of the predicition from the actual value
 }
 
 set.seed(2131)
 holdout()
-# [1] 3.59&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We can see that on average the training set over predicts the actual values by about 3.6 points. An even more complex approach is what Kohavi (1995) calls “random subsampling”.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;random-subsampling&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Random subsampling&lt;/h2&gt;
-&lt;p&gt;In a nutshell, repeat the previous &lt;code&gt;N&lt;/code&gt; times and calculate the average and standard deviation of your metric of interest.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(2134)
+# [1] 3.59</code></pre>
+<p>We can see that on average the training set over predicts the actual values by about 3.6 points. An even more complex approach is what Kohavi (1995) calls “random subsampling”.</p>
+</div>
+<div id="random-subsampling" class="section level2">
+<h2>Random subsampling</h2>
+<p>In a nutshell, repeat the previous <code>N</code> times and calculate the average and standard deviation of your metric of interest.</p>
+<pre class="r"><code>set.seed(2134)
 
-random_subsampling &amp;lt;- map_dbl(1:500, holdout)
+random_subsampling &lt;- map_dbl(1:500, holdout)
 summary(random_subsampling)
 #    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-# -7.3100 -0.7525  0.4000  0.4255  1.5550  9.1500&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We get a mean error of 0.42, a maximum of 9.15 and a minimum of -7.31. Quite some variation, eh? It is precisely for this reason that Kohavi (1995) highlights that random subsampling has an important problem.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Each time we resample, some observations might’ve been in the previous resample, leading to non-independence and making the training dataset unrepresentative of the original dataset.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;What happens when you try to predict Y from an unrepresented X, 500 times? What we just saw before.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;div id=&#34;k-fold-cross-validation&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;K-Fold cross validation&lt;/h2&gt;
-&lt;p&gt;Let’s move on to cross validation. K-Fold cross validation is a bit trickier, but here is a simple explanation.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;K-Fold cross validation: Take the house prices dataset from the previous example, divide the dataset into 10 parts of equal size, so if the data is 30 rows long, you’ll have 10 datasets of 3 rows each. Each split contains unique rows not present in other splits. In the first iteration, take the first dataset as the test dataset and merge the remaining 9 datasets as the train dataset. Fit the model on the training data, predict on the test data and record model accuracy. Repeat a new iteration where dataset 2 is the test set and data set 1 and 3:10 merged is the training set. Repeat for all K slices.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;We can implement this in R.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;k_slicer &amp;lt;- function(data, slices) {
-  stopifnot(nrow(data) &amp;gt; slices) # the number of rows must be bigger than the K slices
-  slice_size &amp;lt;- (nrow(data) / slices) %&amp;gt;% floor
+# -7.3100 -0.7525  0.4000  0.4255  1.5550  9.1500</code></pre>
+<p>We get a mean error of 0.42, a maximum of 9.15 and a minimum of -7.31. Quite some variation, eh? It is precisely for this reason that Kohavi (1995) highlights that random subsampling has an important problem.</p>
+<ul>
+<li><p>Each time we resample, some observations might’ve been in the previous resample, leading to non-independence and making the training dataset unrepresentative of the original dataset.</p></li>
+<li><p>What happens when you try to predict Y from an unrepresented X, 500 times? What we just saw before.</p></li>
+</ul>
+</div>
+<div id="k-fold-cross-validation" class="section level2">
+<h2>K-Fold cross validation</h2>
+<p>Let’s move on to cross validation. K-Fold cross validation is a bit trickier, but here is a simple explanation.</p>
+<ul>
+<li>K-Fold cross validation: Take the house prices dataset from the previous example, divide the dataset into 10 parts of equal size, so if the data is 30 rows long, you’ll have 10 datasets of 3 rows each. Each split contains unique rows not present in other splits. In the first iteration, take the first dataset as the test dataset and merge the remaining 9 datasets as the train dataset. Fit the model on the training data, predict on the test data and record model accuracy. Repeat a new iteration where dataset 2 is the test set and data set 1 and 3:10 merged is the training set. Repeat for all K slices.</li>
+</ul>
+<p>We can implement this in R.</p>
+<pre class="r"><code>k_slicer &lt;- function(data, slices) {
+  stopifnot(nrow(data) &gt; slices) # the number of rows must be bigger than the K slices
+  slice_size &lt;- (nrow(data) / slices) %&gt;% floor
   
-  rows &amp;lt;- 1:nrow(data)
-  data_list &amp;lt;- rep(list(list()), slices) # create empty list of N slices
+  rows &lt;- 1:nrow(data)
+  data_list &lt;- rep(list(list()), slices) # create empty list of N slices
 
   # Randomly sample slice_size from the rows available, but exclude these rows
   # from the next sample of rows. This makes sure each slice has unique rows.
   for (k in 1:slices) {
-    specific_rows &amp;lt;- sample(rows, slice_size) # sample unique rows for K slice
-    rows &amp;lt;- setdiff(rows, specific_rows) # exclue those rows
-    data_list[[k]] &amp;lt;- data[specific_rows, ] # sample the K slice and save in empty list
+    specific_rows &lt;- sample(rows, slice_size) # sample unique rows for K slice
+    rows &lt;- setdiff(rows, specific_rows) # exclue those rows
+    data_list[[k]] &lt;- data[specific_rows, ] # sample the K slice and save in empty list
   }
   
   data_list
 }
 
-mtcars_sliced &amp;lt;- k_slicer(mtcars, slices = 5) # data sliced in K slices&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;All good so far? We took a dataset and split it into K mutually exclusive datasets. The next step is to run the modeling on &lt;code&gt;K = 2:10&lt;/code&gt; and test on &lt;code&gt;K = 1&lt;/code&gt;, and then repeat on &lt;code&gt;K = c(1, 3:10)&lt;/code&gt; as training and test on &lt;code&gt;K = 2&lt;/code&gt;, and repeat for al &lt;code&gt;K’s&lt;/code&gt;. Below we implement it in R.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
-k_fold_cv &amp;lt;-
+mtcars_sliced &lt;- k_slicer(mtcars, slices = 5) # data sliced in K slices</code></pre>
+<p>All good so far? We took a dataset and split it into K mutually exclusive datasets. The next step is to run the modeling on <code>K = 2:10</code> and test on <code>K = 1</code>, and then repeat on <code>K = c(1, 3:10)</code> as training and test on <code>K = 2</code>, and repeat for al <code>K’s</code>. Below we implement it in R.</p>
+<pre class="r"><code>
+k_fold_cv &lt;-
   map_dbl(seq_along(mtcars_sliced), ~ {
-  test &amp;lt;- mtcars_sliced[[.x]] # Take the K fold
+  test &lt;- mtcars_sliced[[.x]] # Take the K fold
   
   # Note the -.x, for excluding that K
-  train &amp;lt;- mtcars_sliced[-.x] %&amp;gt;% reduce(bind_rows) # bind row all remaining K&amp;#39;s
+  train &lt;- mtcars_sliced[-.x] %&gt;% reduce(bind_rows) # bind row all remaining K&#39;s
   
-  lm(mpg ~ ., data = train) %&amp;gt;%
+  lm(mpg ~ ., data = train) %&gt;%
     rmse(test) # calculate the root mean square error of predicting the test set
 })
 
-k_fold_cv %&amp;gt;%
+k_fold_cv %&gt;%
   summary
 #    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#   3.192   3.746   3.993   3.957   4.279   4.574&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;And we get a summary of the root mean square error, a metric we decided to use now, instead of predictions. We can asses how accurate our model is this way and compare several specification of models and choose the one which better fits the data.&lt;/p&gt;
-&lt;p&gt;The main advantage of this approach:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;We maximize the use of data because all data is used, at some point, as test and training.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;This is very interesting in contrast to the holdout method in which we can’t maximize our data! Take data out of the test set and the predictions will have wider uncertainty intervals, take data out of the train set and get biased predictions.&lt;/p&gt;
-&lt;p&gt;This approach, as any other, has disadvantages.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;It is computationally intensive, given that we have to run the model K-1 times. In this setting it’s trivial, but in more complex modeling this can be quite costly.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;If in any of the K iterations the predictions are bad, the overall accuracy will be bad, considering that other K iterations will also likely be bad. In other words, predictions need to be stable across all K iterations.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Building on the previous point, once the model is stable, increasing the number of folds (5, 10, 20, 25…) generates little change considering that the accuracy will be similar (and the variance of different K-folds will be similar as well).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Finally, if Y consists of categories, and one of these categories is very minimal, the best K-Fold CV can do is predict the class with more observations. If an observation of this minimal class gets to be in the test set in one of the iterations, then the training model will have very little accuracy for that category. See Kohavi (1995) page 3, example 1 for a detailed example.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Conclusion&lt;/h2&gt;
-&lt;p&gt;This was my first attempt at manually implementing the Holdout method and the K-Fold CV. These examples are certainly flawed, like rounding the decimal number of rows correct for the unique number of rows in each K-Fold slice. If anyone is interested in correcting thes, please do send a pull request. For those interested in using more reliable approaches, take a look at the &lt;code&gt;caret&lt;/code&gt; and the &lt;code&gt;modelr&lt;/code&gt; package. In the next entry I will implement the LOO method and the bootstrap (and maybe the stratified K-Fold CV)&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Kohavi, Ron. “A study of cross-validation and bootstrap for accuracy estimation and model selection.” Ijcai. Vol. 14. No. 2. 1995.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-</description>
+#   3.192   3.746   3.993   3.957   4.279   4.574</code></pre>
+<p>And we get a summary of the root mean square error, a metric we decided to use now, instead of predictions. We can asses how accurate our model is this way and compare several specification of models and choose the one which better fits the data.</p>
+<p>The main advantage of this approach:</p>
+<ul>
+<li>We maximize the use of data because all data is used, at some point, as test and training.</li>
+</ul>
+<p>This is very interesting in contrast to the holdout method in which we can’t maximize our data! Take data out of the test set and the predictions will have wider uncertainty intervals, take data out of the train set and get biased predictions.</p>
+<p>This approach, as any other, has disadvantages.</p>
+<ul>
+<li><p>It is computationally intensive, given that we have to run the model K-1 times. In this setting it’s trivial, but in more complex modeling this can be quite costly.</p></li>
+<li><p>If in any of the K iterations the predictions are bad, the overall accuracy will be bad, considering that other K iterations will also likely be bad. In other words, predictions need to be stable across all K iterations.</p></li>
+<li><p>Building on the previous point, once the model is stable, increasing the number of folds (5, 10, 20, 25…) generates little change considering that the accuracy will be similar (and the variance of different K-folds will be similar as well).</p></li>
+<li><p>Finally, if Y consists of categories, and one of these categories is very minimal, the best K-Fold CV can do is predict the class with more observations. If an observation of this minimal class gets to be in the test set in one of the iterations, then the training model will have very little accuracy for that category. See Kohavi (1995) page 3, example 1 for a detailed example.</p></li>
+</ul>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>This was my first attempt at manually implementing the Holdout method and the K-Fold CV. These examples are certainly flawed, like rounding the decimal number of rows correct for the unique number of rows in each K-Fold slice. If anyone is interested in correcting thes, please do send a pull request. For those interested in using more reliable approaches, take a look at the <code>caret</code> and the <code>modelr</code> package. In the next entry I will implement the LOO method and the bootstrap (and maybe the stratified K-Fold CV)</p>
+<ul>
+<li>Kohavi, Ron. “A study of cross-validation and bootstrap for accuracy estimation and model selection.” Ijcai. Vol. 14. No. 2. 1995.</li>
+</ul>
+</div>
+]]>
+      </description>
     </item>
     
     <item>
@@ -340,60 +346,62 @@ k_fold_cv %&amp;gt;%
       <pubDate>Tue, 13 Sep 2016 00:00:00 +0000</pubDate>
       
       <guid>/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</guid>
-      <description>
+      <description><![CDATA[
+      
 
 
-&lt;p&gt;I was on a flight from Asturias to Barcelona yesterday and I finally had some free time to open Gelman and Hill’s book and submerge in some studying. After finishing the chapter on simulations, I tried doing the first exercise and enjoyed it very much.&lt;/p&gt;
-&lt;p&gt;The exercise goes as follows:&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;Discrete probability simulation: suppose that a basketball player has a 60% chance of making a shot, and he keeps taking shots until he misses two in a row. Also assume his shots are independent (so that each shot has 60% probability of success, no matter what happened before).&lt;/em&gt;&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
-&lt;li&gt;&lt;p&gt;Write an R function to simulate this process.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Put the R function in a loop to simulate the process 1000 times. Use the simulation to estimate the mean, standard deviation, and distribution of the total number of shots that the player will take.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Using your simulations, make a scatterplot of the number of shots the player will take and the proportion of shots that are successes.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Below you can find my answer with some comments on how I did it:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# a)
-# The probs argument sets the probability of making a shot. In this case it&amp;#39;ll be 0.60
-thrower &amp;lt;- function(probs) {
-  vec &amp;lt;- replicate(2, rbinom(1, 1, probs)) 
+<p>I was on a flight from Asturias to Barcelona yesterday and I finally had some free time to open Gelman and Hill’s book and submerge in some studying. After finishing the chapter on simulations, I tried doing the first exercise and enjoyed it very much.</p>
+<p>The exercise goes as follows:</p>
+<p><em>Discrete probability simulation: suppose that a basketball player has a 60% chance of making a shot, and he keeps taking shots until he misses two in a row. Also assume his shots are independent (so that each shot has 60% probability of success, no matter what happened before).</em></p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Write an R function to simulate this process.</p></li>
+<li><p>Put the R function in a loop to simulate the process 1000 times. Use the simulation to estimate the mean, standard deviation, and distribution of the total number of shots that the player will take.</p></li>
+<li><p>Using your simulations, make a scatterplot of the number of shots the player will take and the proportion of shots that are successes.</p></li>
+</ol>
+<p>Below you can find my answer with some comments on how I did it:</p>
+<pre class="r"><code># a)
+# The probs argument sets the probability of making a shot. In this case it&#39;ll be 0.60
+thrower &lt;- function(probs) {
+  vec &lt;- replicate(2, rbinom(1, 1, probs)) 
   # create a vector with two random numbers of either 1 or 0,
   # with a probability of probs for 1
   
   # While the sum of the last and the second-last element is not 0
   while ((vec[length(vec)] + vec[length(vec) - 1]) != 0) { 
     
-      vec &amp;lt;- c(vec, rbinom(1, 1, probs))
+      vec &lt;- c(vec, rbinom(1, 1, probs))
       # keep adding random shots with a probability of probs
   }
 return(vec)
 }
 # The loop works because whenever the sum of the last two elements is 0,
 # then the last two elements must be 0 meaning that the player missed two
-# shots in a row.&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# test
-thrower(0.6)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  [1] 1 0 1 0 1 1 1 1 1 1 1 1 0 1 1 1 0 1 1 1 0 1 1 0 1 1 1 0 0&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# 0 1 0 1 0 0
-# Last two elements are always zero&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# b)
-attempts &amp;lt;- replicate(1000, thrower(0.60))
-mean(sapply(attempts, length)) &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 8.501&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# mean number of shots until two shots are missed in a row&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sd(sapply(attempts, length)) &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 7.158019&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# standard deviation of shots made
-# until two shots are missed in a row&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;hist(sapply(attempts, length)) # distribution of shots made&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/blog/2016-09-13-simulations-and-model-predictions-in-r/2016-09-13-simulations-and-model-predictions-in-r_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# c)
-df &amp;lt;- cbind(sapply(attempts, mean), sapply(attempts, length)) 
+# shots in a row.</code></pre>
+<pre class="r"><code># test
+thrower(0.6)</code></pre>
+<pre><code>##  [1] 1 0 1 0 1 1 1 1 1 1 1 1 0 1 1 1 0 1 1 1 0 1 1 0 1 1 1 0 0</code></pre>
+<pre class="r"><code># 0 1 0 1 0 0
+# Last two elements are always zero</code></pre>
+<pre class="r"><code># b)
+attempts &lt;- replicate(1000, thrower(0.60))
+mean(sapply(attempts, length)) </code></pre>
+<pre><code>## [1] 8.501</code></pre>
+<pre class="r"><code># mean number of shots until two shots are missed in a row</code></pre>
+<pre class="r"><code>sd(sapply(attempts, length)) </code></pre>
+<pre><code>## [1] 7.158019</code></pre>
+<pre class="r"><code># standard deviation of shots made
+# until two shots are missed in a row</code></pre>
+<pre class="r"><code>hist(sapply(attempts, length)) # distribution of shots made</code></pre>
+<p><img src="/blog/2016-09-13-simulations-and-model-predictions-in-r/2016-09-13-simulations-and-model-predictions-in-r_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code># c)
+df &lt;- cbind(sapply(attempts, mean), sapply(attempts, length)) 
 # data frame with % of shots made and number of shots thrown
-plot(df[, 2], df[, 1])&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/blog/2016-09-13-simulations-and-model-predictions-in-r/2016-09-13-simulations-and-model-predictions-in-r_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;That was fun. I think the key take away here is that you can use these type of simulations to asses the accuracy of model predictions, for example. If you have the probability of being in either 1 or 0 in any dependent variable, then simulation can help determine its reliability by looking at the distribution of the replications.&lt;/p&gt;
-&lt;p&gt;Whenever I have some free time I’ll go back to the next exercises.&lt;/p&gt;
-</description>
+plot(df[, 2], df[, 1])</code></pre>
+<p><img src="/blog/2016-09-13-simulations-and-model-predictions-in-r/2016-09-13-simulations-and-model-predictions-in-r_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>That was fun. I think the key take away here is that you can use these type of simulations to asses the accuracy of model predictions, for example. If you have the probability of being in either 1 or 0 in any dependent variable, then simulation can help determine its reliability by looking at the distribution of the replications.</p>
+<p>Whenever I have some free time I’ll go back to the next exercises.</p>
+]]>
+      </description>
     </item>
     
   </channel>

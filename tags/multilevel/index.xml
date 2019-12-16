@@ -7,7 +7,7 @@
     <language>en-US</language>
     <lastBuildDate>Sun, 06 Nov 2016 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="/tags/multilevel/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/multilevel/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -16,44 +16,45 @@
       <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
       
       <guid>/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/</guid>
-      <description>
+      <description><![CDATA[
+      
 
 
-&lt;p&gt;I’ve been reading Andrew Gelman’s and Jennifer Hill’s book again but this time concentrating on the multilevel section of the book. I finished the first chapter (chapter 12) and got fixed on the exercises 12.2, 12.3 and 12.4. I finally completed them and I thought I’d share the three exercises in two posts, mostly for me to come back to these in the future. The first exercise goes as follows:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
-&lt;li&gt;&lt;p&gt;Write a model predicting CD4 percentage as a function of time with varying intercepts across children. Fit using lmer() and interpret the coefficient for time.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Extend the model in (a) to include child-level predictors (that is, group-level predictors) for treatment and age at baseline. Fit using lmer() and interpret the coefficients on time, treatment, and age at baseline.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Investigate the change in partial pooling from (a) to (b) both graphically and numerically.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Compare results in (b) to those obtained in part (c).&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;The data set they’re referring is called ‘CD4’ and as they authors explain in the book it measures ‘… CD4 percentages for a set of young children with HIV who were measured several times over a period of two years. The dataset also includes the ages of the children at each measurement..’. I’m not sure what CD4 means, but that shouldn’t stop us from at least interpreting the results and answering the questions. Let’s start with the exercises:&lt;/p&gt;
-&lt;hr /&gt;
-&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
-&lt;li&gt;Write a model predicting CD4 percentage as a function of time with
-varying intercepts across children. Fit using lmer() and interpret the coefficient for time. The data argument is excluding some NA’s because the next model is to be compared with this model and we need to have the same number of observations&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;suppressWarnings(suppressMessages(library(arm)))
-cd4 &amp;lt;- read.csv(&amp;quot;http://www.stat.columbia.edu/~gelman/arm/examples/cd4/allvar.csv&amp;quot;)
+<p>I’ve been reading Andrew Gelman’s and Jennifer Hill’s book again but this time concentrating on the multilevel section of the book. I finished the first chapter (chapter 12) and got fixed on the exercises 12.2, 12.3 and 12.4. I finally completed them and I thought I’d share the three exercises in two posts, mostly for me to come back to these in the future. The first exercise goes as follows:</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Write a model predicting CD4 percentage as a function of time with varying intercepts across children. Fit using lmer() and interpret the coefficient for time.</p></li>
+<li><p>Extend the model in (a) to include child-level predictors (that is, group-level predictors) for treatment and age at baseline. Fit using lmer() and interpret the coefficients on time, treatment, and age at baseline.</p></li>
+<li><p>Investigate the change in partial pooling from (a) to (b) both graphically and numerically.</p></li>
+<li><p>Compare results in (b) to those obtained in part (c).</p></li>
+</ol>
+<p>The data set they’re referring is called ‘CD4’ and as they authors explain in the book it measures ‘… CD4 percentages for a set of young children with HIV who were measured several times over a period of two years. The dataset also includes the ages of the children at each measurement..’. I’m not sure what CD4 means, but that shouldn’t stop us from at least interpreting the results and answering the questions. Let’s start with the exercises:</p>
+<hr />
+<ol style="list-style-type: lower-alpha">
+<li>Write a model predicting CD4 percentage as a function of time with
+varying intercepts across children. Fit using lmer() and interpret the coefficient for time. The data argument is excluding some NA’s because the next model is to be compared with this model and we need to have the same number of observations</li>
+</ol>
+<pre class="r"><code>suppressWarnings(suppressMessages(library(arm)))
+cd4 &lt;- read.csv(&quot;http://www.stat.columbia.edu/~gelman/arm/examples/cd4/allvar.csv&quot;)
 
-head(cd4)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##   VISIT newpid       VDATE CD4PCT arv   visage treatmnt CD4CNT baseage
+head(cd4)</code></pre>
+<pre><code>##   VISIT newpid       VDATE CD4PCT arv   visage treatmnt CD4CNT baseage
 ## 1     1      1  6/29/1988      18   0 3.910000        1    323    3.91
 ## 2     4      1  1/19/1989      37   0 4.468333        1    610    3.91
 ## 3     7      1  4/13/1989      13   0 4.698333        1    324    3.91
 ## 4    10      1                 NA   0 5.005000        1     NA    3.91
 ## 5    13      1 11/30/1989      13   0 5.330833        1    626    3.91
-## 6    16      1                 NA  NA       NA        1    220    3.91&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Let&amp;#39;s transform the VDATE variable into date format
-cd4$VDATE &amp;lt;- as.Date(cd4$VDATE, format = &amp;quot;%m/%d/%Y&amp;quot;)
+## 6    16      1                 NA  NA       NA        1    220    3.91</code></pre>
+<pre class="r"><code># Let&#39;s transform the VDATE variable into date format
+cd4$VDATE &lt;- as.Date(cd4$VDATE, format = &quot;%m/%d/%Y&quot;)
 
-mod1 &amp;lt;- lmer(CD4PCT ~
+mod1 &lt;- lmer(CD4PCT ~
                VDATE +
                (1 | newpid),
-             data = subset(cd4, !is.na(treatmnt) &amp;amp; !is.na(baseage)))
+             data = subset(cd4, !is.na(treatmnt) &amp; !is.na(baseage)))
 
-display(mod1)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## lmer(formula = CD4PCT ~ VDATE + (1 | newpid), data = subset(cd4, 
-##     !is.na(treatmnt) &amp;amp; !is.na(baseage)))
+display(mod1)</code></pre>
+<pre><code>## lmer(formula = CD4PCT ~ VDATE + (1 | newpid), data = subset(cd4, 
+##     !is.na(treatmnt) &amp; !is.na(baseage)))
 ##             coef.est coef.se
 ## (Intercept) 66.04     9.48  
 ## VDATE       -0.01     0.00  
@@ -65,21 +66,21 @@ display(mod1)&lt;/code&gt;&lt;/pre&gt;
 ## ---
 ## number of obs: 1072, groups: newpid, 250
 ## AIC = 7914, DIC = 7885.8
-## deviance = 7895.9&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The time coefficient simply means that as time increases the percentage of CD4 decreases by 0.01 percent for each child. The effect size is really small, although significant. We can also see that most of the variation in CD4 is between children rather than within children (that is between time because that’s the variation within each child)&lt;/p&gt;
-&lt;hr /&gt;
-&lt;ol start=&#34;2&#34; style=&#34;list-style-type: lower-alpha&#34;&gt;
-&lt;li&gt;Extend the model in (a) to include child-level predictors (that is, group-level predictors) for treatment and age at baseline. Fit using lmer() and interpret the coefficients on time, treatment, and age at baseline.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mod2 &amp;lt;- lmer(CD4PCT ~
+## deviance = 7895.9</code></pre>
+<p>The time coefficient simply means that as time increases the percentage of CD4 decreases by 0.01 percent for each child. The effect size is really small, although significant. We can also see that most of the variation in CD4 is between children rather than within children (that is between time because that’s the variation within each child)</p>
+<hr />
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Extend the model in (a) to include child-level predictors (that is, group-level predictors) for treatment and age at baseline. Fit using lmer() and interpret the coefficients on time, treatment, and age at baseline.</li>
+</ol>
+<pre class="r"><code>mod2 &lt;- lmer(CD4PCT ~
                VDATE +
                treatmnt +
                baseage +
                (1 | newpid),
              data = cd4)
 
-display(mod2)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## lmer(formula = CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), 
+display(mod2)</code></pre>
+<pre><code>## lmer(formula = CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), 
 ##     data = cd4)
 ##             coef.est coef.se
 ## (Intercept) 67.28     9.82  
@@ -94,53 +95,53 @@ display(mod2)&lt;/code&gt;&lt;/pre&gt;
 ## ---
 ## number of obs: 1072, groups: newpid, 250
 ## AIC = 7906.3, DIC = 7878.8
-## deviance = 7886.5&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The time coefficients is exactly the same so neither the treatment or the base age is correlated with the date in which the students were measured. Those who were treated have on average about 1.26% more CD4 than the non-treated. And finally, children which were older at the base measure have about 1% less CD4 than younger children at base. The between-child variance went down from 11.65 to 11.45, so either treatment, baseage or both explained some of the differences between children. The within child variation is practically the same.&lt;/p&gt;
-&lt;p&gt;The next exercises uses a term called ‘partial pooling’. This term took me some time to understand but it basically means that we’re neither running a regression ignoring any multilevel structure (complete pooling of the groups) or running a regression for each group separately (complete no-pooling). Running a partially pooled model means being able to have single parameters (like in a completely-pooled model), but estimated from separate regression models for each group(like in a complete-no-pooled model).&lt;/p&gt;
-&lt;p&gt;How we can investigate the changes in partial pooling? A completely pooled model runs perfectly when you have little to no variation between groups. Whenever a set of predictors shrinks the between group variation, we’re getting closer to a model with less and less between group variation ( so completely pooled). How can we measure this? In our case, because we’re modeling a varying intercept, we can compare the confidence intervals of the intercept of each group intercept and see if the estimation has become more certain. Numerically, we can check whether the between group variation has decreased, becoming closer to a completely-pooled model.&lt;/p&gt;
-&lt;hr /&gt;
-&lt;ol start=&#34;3&#34; style=&#34;list-style-type: lower-alpha&#34;&gt;
-&lt;li&gt;Investigate the change in partial pooling from (a) to (b) both graphically and numerically.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;suppressMessages(suppressWarnings(library(ggplot2)))
+## deviance = 7886.5</code></pre>
+<p>The time coefficients is exactly the same so neither the treatment or the base age is correlated with the date in which the students were measured. Those who were treated have on average about 1.26% more CD4 than the non-treated. And finally, children which were older at the base measure have about 1% less CD4 than younger children at base. The between-child variance went down from 11.65 to 11.45, so either treatment, baseage or both explained some of the differences between children. The within child variation is practically the same.</p>
+<p>The next exercises uses a term called ‘partial pooling’. This term took me some time to understand but it basically means that we’re neither running a regression ignoring any multilevel structure (complete pooling of the groups) or running a regression for each group separately (complete no-pooling). Running a partially pooled model means being able to have single parameters (like in a completely-pooled model), but estimated from separate regression models for each group(like in a complete-no-pooled model).</p>
+<p>How we can investigate the changes in partial pooling? A completely pooled model runs perfectly when you have little to no variation between groups. Whenever a set of predictors shrinks the between group variation, we’re getting closer to a model with less and less between group variation ( so completely pooled). How can we measure this? In our case, because we’re modeling a varying intercept, we can compare the confidence intervals of the intercept of each group intercept and see if the estimation has become more certain. Numerically, we can check whether the between group variation has decreased, becoming closer to a completely-pooled model.</p>
+<hr />
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Investigate the change in partial pooling from (a) to (b) both graphically and numerically.</li>
+</ol>
+<pre class="r"><code>suppressMessages(suppressWarnings(library(ggplot2)))
 # Change in standard errors
 
 # First and second model intercepts
-df1 &amp;lt;- coef(mod1)$newpid[,1 , drop = F]
-df2 &amp;lt;- coef(mod2)$newpid[,1 , drop = F]
-names(df1) &amp;lt;- c(&amp;quot;int&amp;quot;)
-names(df2) &amp;lt;- c(&amp;quot;int&amp;quot;)
+df1 &lt;- coef(mod1)$newpid[,1 , drop = F]
+df2 &lt;- coef(mod2)$newpid[,1 , drop = F]
+names(df1) &lt;- c(&quot;int&quot;)
+names(df2) &lt;- c(&quot;int&quot;)
 
 # Confidence intervals for each intercept for both moels
-df1$ci_bottom &amp;lt;- df1$int + (-2 * se.ranef(mod1)$newpid[,1])
-df1$ci_upper &amp;lt;- df1$int + (2 * se.ranef(mod1)$newpid[,1])
+df1$ci_bottom &lt;- df1$int + (-2 * se.ranef(mod1)$newpid[,1])
+df1$ci_upper &lt;- df1$int + (2 * se.ranef(mod1)$newpid[,1])
 
-df2$ci_bottom &amp;lt;- df2$int + (-2 * se.ranef(mod2)$newpid[,1])
-df2$ci_upper &amp;lt;- df2$int + (2 * se.ranef(mod2)$newpid[,1])
+df2$ci_bottom &lt;- df2$int + (-2 * se.ranef(mod2)$newpid[,1])
+df2$ci_upper &lt;- df2$int + (2 * se.ranef(mod2)$newpid[,1])
 
-# Now we need to compare whether the CI&amp;#39;s shrunk from
+# Now we need to compare whether the CI&#39;s shrunk from
 # the first to the second model
 
 # Calculate difference
-df1$diff &amp;lt;- df1$ci_upper - df1$ci_bottom
-df2$dff &amp;lt;- df2$ci_upper - df2$ci_bottom
+df1$diff &lt;- df1$ci_upper - df1$ci_bottom
+df2$dff &lt;- df2$ci_upper - df2$ci_bottom
 
 # Create a df with both differences
-df3 &amp;lt;- data.frame(cbind(df1$diff, df2$dff))
+df3 &lt;- data.frame(cbind(df1$diff, df2$dff))
 
 # Create a difference out of that
-df3$diff &amp;lt;- df3$X1 - df3$X2
+df3$diff &lt;- df3$X1 - df3$X2
 
 # Graph it
 ggplot(df3, aes(diff)) + geom_histogram(bins = 100) +
-  xlim(0, 0.2)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/blog/2016-11-06-multilevel-modeling--part-1/2016-11-06-multilevel-modeling--part-1_files/figure-html/fig.-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;It looks like the difference is always higher than zero which means that in the second model the difference between the upper and lower CI is smaller than in the first model. This suggests we have greater certainty of our estimation by including the two predictors in the model.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Numerically, the between-child variance in the first
+  xlim(0, 0.2)</code></pre>
+<p><img src="/blog/2016-11-06-multilevel-modeling--part-1/2016-11-06-multilevel-modeling--part-1_files/figure-html/fig.-1.png" width="672" /></p>
+<p>It looks like the difference is always higher than zero which means that in the second model the difference between the upper and lower CI is smaller than in the first model. This suggests we have greater certainty of our estimation by including the two predictors in the model.</p>
+<pre class="r"><code># Numerically, the between-child variance in the first
 # model was:
-display(mod1)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## lmer(formula = CD4PCT ~ VDATE + (1 | newpid), data = subset(cd4, 
-##     !is.na(treatmnt) &amp;amp; !is.na(baseage)))
+display(mod1)</code></pre>
+<pre><code>## lmer(formula = CD4PCT ~ VDATE + (1 | newpid), data = subset(cd4, 
+##     !is.na(treatmnt) &amp; !is.na(baseage)))
 ##             coef.est coef.se
 ## (Intercept) 66.04     9.48  
 ## VDATE       -0.01     0.00  
@@ -152,12 +153,12 @@ display(mod1)&lt;/code&gt;&lt;/pre&gt;
 ## ---
 ## number of obs: 1072, groups: newpid, 250
 ## AIC = 7914, DIC = 7885.8
-## deviance = 7895.9&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;11.65 / (11.65 + 7.31)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 0.6144515&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# For the second model
-display(mod2)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## lmer(formula = CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), 
+## deviance = 7895.9</code></pre>
+<pre class="r"><code>11.65 / (11.65 + 7.31)</code></pre>
+<pre><code>## [1] 0.6144515</code></pre>
+<pre class="r"><code># For the second model
+display(mod2)</code></pre>
+<pre><code>## lmer(formula = CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), 
 ##     data = cd4)
 ##             coef.est coef.se
 ## (Intercept) 67.28     9.82  
@@ -172,16 +173,17 @@ display(mod2)&lt;/code&gt;&lt;/pre&gt;
 ## ---
 ## number of obs: 1072, groups: newpid, 250
 ## AIC = 7906.3, DIC = 7878.8
-## deviance = 7886.5&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;11.45 / (11.45 + 7.32)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 0.610016&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The between variance went down JUST a little, in line with the tiny reduction in the standard errors of the intercept.&lt;/p&gt;
-&lt;hr /&gt;
-&lt;p&gt;The last question asks:&lt;/p&gt;
-&lt;p&gt;Compare results in (b) to those obtained in part (c).&lt;/p&gt;
-&lt;p&gt;It looks like from the results in (c) the second model a bit more certain in making estimations because it shrinks the partial pooling closer to complete-pooling. As Gelman and Hill explain in page 270, multilevel modeling is most effective when closest to complete-pooling because the estimation of individual group parameters can be done much more precisely, specially for groups with a small amount of observations.&lt;/p&gt;
-&lt;p&gt;In the next post we’ll cover exercises 12.3 and 12.4 which build on the models outlined here.&lt;/p&gt;
-</description>
+## deviance = 7886.5</code></pre>
+<pre class="r"><code>11.45 / (11.45 + 7.32)</code></pre>
+<pre><code>## [1] 0.610016</code></pre>
+<p>The between variance went down JUST a little, in line with the tiny reduction in the standard errors of the intercept.</p>
+<hr />
+<p>The last question asks:</p>
+<p>Compare results in (b) to those obtained in part (c).</p>
+<p>It looks like from the results in (c) the second model a bit more certain in making estimations because it shrinks the partial pooling closer to complete-pooling. As Gelman and Hill explain in page 270, multilevel modeling is most effective when closest to complete-pooling because the estimation of individual group parameters can be done much more precisely, specially for groups with a small amount of observations.</p>
+<p>In the next post we’ll cover exercises 12.3 and 12.4 which build on the models outlined here.</p>
+]]>
+      </description>
     </item>
     
     <item>
@@ -190,101 +192,103 @@ display(mod2)&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
       
       <guid>/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/</guid>
-      <description>
+      <description><![CDATA[
+      
 
 
-&lt;p&gt;This is a continuation of the multilevel exercise 12.2 from chapter 12 of Data Analysis Using Regression and Multilevel/Hierarchical Models. In the last post (link to previous post) we explored the basic interpretation of multilevel modeling with a varying intercept and delved into comparing models and understanding partial pooling.&lt;/p&gt;
-&lt;p&gt;This was all done by completing the exercise 12.2 from chapter 12 of the book Data Analysis Using Regression and Multilevel/Hierarchical Models. Exercises 12.3 and 12.4 continue using the same dataset and the same models, so I figured I’d post them here. Let’s start.&lt;/p&gt;
-&lt;p&gt;Exercise 12.3 asks:&lt;/p&gt;
-&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;Predictions for new observations and new groups:&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
-&lt;li&gt;&lt;p&gt;Use the model fit from Exercise 12.2 (b) to generate simulation of predicted CD4 percentages for each child in the dataset at a hypothetical next time point.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Use the same model fit to generate simulations of CD4 percentages at each of the time periods for a new child who was 4 years old at baseline.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Let’s start:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;suppressWarnings(suppressMessages(library(arm)))
-cd4 &amp;lt;- read.csv(&amp;quot;http://www.stat.columbia.edu/~gelman/arm/examples/cd4/allvar.csv&amp;quot;)
+<p>This is a continuation of the multilevel exercise 12.2 from chapter 12 of Data Analysis Using Regression and Multilevel/Hierarchical Models. In the last post (link to previous post) we explored the basic interpretation of multilevel modeling with a varying intercept and delved into comparing models and understanding partial pooling.</p>
+<p>This was all done by completing the exercise 12.2 from chapter 12 of the book Data Analysis Using Regression and Multilevel/Hierarchical Models. Exercises 12.3 and 12.4 continue using the same dataset and the same models, so I figured I’d post them here. Let’s start.</p>
+<p>Exercise 12.3 asks:</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Predictions for new observations and new groups:</li>
+</ol>
+<ol style="list-style-type: lower-alpha">
+<li><p>Use the model fit from Exercise 12.2 (b) to generate simulation of predicted CD4 percentages for each child in the dataset at a hypothetical next time point.</p></li>
+<li><p>Use the same model fit to generate simulations of CD4 percentages at each of the time periods for a new child who was 4 years old at baseline.</p></li>
+</ol>
+<p>Let’s start:</p>
+<pre class="r"><code>suppressWarnings(suppressMessages(library(arm)))
+cd4 &lt;- read.csv(&quot;http://www.stat.columbia.edu/~gelman/arm/examples/cd4/allvar.csv&quot;)
 
-# Let&amp;#39;s recreate the model from 12.2 (b)
-cd4$VDATE &amp;lt;- as.Date(cd4$VDATE, format = &amp;quot;%m/%d/%Y&amp;quot;)
-mod2 &amp;lt;- lmer(CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), data = cd4)&lt;/code&gt;&lt;/pre&gt;
-&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
-&lt;li&gt;Use the model fit from Exercise 12.2 (b) to generate simulation of predicted CD4 percentages for each child in the dataset at a hypothetical next time point.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;For this we have to create a hypothetical next time point. Let’s choose:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;pred_data &amp;lt;- subset(cd4, !is.na(treatmnt) &amp;amp; !is.na(baseage))
-pred_data$VDATE &amp;lt;- as.Date(&amp;quot;1989-01-01&amp;quot;)
+# Let&#39;s recreate the model from 12.2 (b)
+cd4$VDATE &lt;- as.Date(cd4$VDATE, format = &quot;%m/%d/%Y&quot;)
+mod2 &lt;- lmer(CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), data = cd4)</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li>Use the model fit from Exercise 12.2 (b) to generate simulation of predicted CD4 percentages for each child in the dataset at a hypothetical next time point.</li>
+</ol>
+<p>For this we have to create a hypothetical next time point. Let’s choose:</p>
+<pre class="r"><code>pred_data &lt;- subset(cd4, !is.na(treatmnt) &amp; !is.na(baseage))
+pred_data$VDATE &lt;- as.Date(&quot;1989-01-01&quot;)
 
 
-# Let&amp;#39;s select only the independent variables from the model
-pred_data &amp;lt;- pred_data[, -c(1, 4, 5, 6, 8)]
+# Let&#39;s select only the independent variables from the model
+pred_data &lt;- pred_data[, -c(1, 4, 5, 6, 8)]
 
 # Now we have a dataset with a fixed new date for each child
 # but with the original values for all other variables.
 
-# Let&amp;#39;s estimate the predicted CD4 percentage for each child:
-newpred &amp;lt;- predict(mod2, newdata = pred_data)
+# Let&#39;s estimate the predicted CD4 percentage for each child:
+newpred &lt;- predict(mod2, newdata = pred_data)
 
 # That it! We have the predicted percentage of CD4 for a fixed date for every child.
-# Let&amp;#39;s look at the distribution
-hist(newpred)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;There’s quite some variation going from 0% to even 60%. It’d be nice to know what CD4 is.&lt;/p&gt;
-&lt;hr /&gt;
-&lt;p&gt;Question (b) is pretty similar but instead of asking for a new time point for each child, it asks to predict the CD4 percentage for a new child who was 4 years old at the baseline with a set of hypothetical time periods.&lt;/p&gt;
-&lt;ol start=&#34;2&#34; style=&#34;list-style-type: lower-alpha&#34;&gt;
-&lt;li&gt;Use the same model fit to generate simulations of CD4 percentages at each of the time periods for a new child who was 4 years old at baseline.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;For that we have to first create the dataset with the hypothetical child:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# I&amp;#39;ll assume 7 hypothetical dates
-hyp_child &amp;lt;- data.frame(newpid = 120,
+# Let&#39;s look at the distribution
+hist(newpred)</code></pre>
+<p><img src="/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>There’s quite some variation going from 0% to even 60%. It’d be nice to know what CD4 is.</p>
+<hr />
+<p>Question (b) is pretty similar but instead of asking for a new time point for each child, it asks to predict the CD4 percentage for a new child who was 4 years old at the baseline with a set of hypothetical time periods.</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Use the same model fit to generate simulations of CD4 percentages at each of the time periods for a new child who was 4 years old at baseline.</li>
+</ol>
+<p>For that we have to first create the dataset with the hypothetical child:</p>
+<pre class="r"><code># I&#39;ll assume 7 hypothetical dates
+hyp_child &lt;- data.frame(newpid = 120,
                         VDATE = sample(cd4$VDATE[!is.na(cd4$VDATE)], 7),
                         baseage = 4,
-                        treatmnt = 1)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The exercise doesn’t say anything about the treatment variable but I have to assign a value to it because it’s present in the previous model. I’ll assume this new child was in the treatment.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;year_pred &amp;lt;- predict(mod2, newdata = hyp_child)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;That’s it! Now we have the predicted CD4 percentage for different time points
-for a hypothetical child.&lt;/p&gt;
-&lt;p&gt;Finally, exercise 12.4 posits this question:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Posterior predictive checking: continuing the previous exercise, use the fitted model from Exercise 12.2 (b) to simulate a new dataset of CD4 percentages (with the same sample size and ages of the original dataset) for the final time point of the study, and record the average CD4 percentage in this sample. Repeat this process 1000 times and compare the simulated distribution to the observed CD4 percentage at the final time point for the actual data.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;This problem was a bit confusing because I don’t understand what they mean by the ‘final time point of the study’. Is it the last date in the VDATE variable? But that couldn’t be it because the sample size would be 1. I think what they mean is to take the original data and replace the VDATE variable with the final date available. Predict CD4 percentages for each child with this date (using the original ages of the data set) and calculate the mean of these predictions. After that, do the 1000 replications and compare the distribution with the actual CD4 percentage of the specific date. Let’s start.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Make the data similar to the model in mod2
-finaltime_data &amp;lt;- subset(cd4, !is.na(treatmnt) &amp;amp; !is.na(baseage))
+                        treatmnt = 1)</code></pre>
+<p>The exercise doesn’t say anything about the treatment variable but I have to assign a value to it because it’s present in the previous model. I’ll assume this new child was in the treatment.</p>
+<pre class="r"><code>year_pred &lt;- predict(mod2, newdata = hyp_child)</code></pre>
+<p>That’s it! Now we have the predicted CD4 percentage for different time points
+for a hypothetical child.</p>
+<p>Finally, exercise 12.4 posits this question:</p>
+<blockquote>
+<p>Posterior predictive checking: continuing the previous exercise, use the fitted model from Exercise 12.2 (b) to simulate a new dataset of CD4 percentages (with the same sample size and ages of the original dataset) for the final time point of the study, and record the average CD4 percentage in this sample. Repeat this process 1000 times and compare the simulated distribution to the observed CD4 percentage at the final time point for the actual data.</p>
+</blockquote>
+<p>This problem was a bit confusing because I don’t understand what they mean by the ‘final time point of the study’. Is it the last date in the VDATE variable? But that couldn’t be it because the sample size would be 1. I think what they mean is to take the original data and replace the VDATE variable with the final date available. Predict CD4 percentages for each child with this date (using the original ages of the data set) and calculate the mean of these predictions. After that, do the 1000 replications and compare the distribution with the actual CD4 percentage of the specific date. Let’s start.</p>
+<pre class="r"><code># Make the data similar to the model in mod2
+finaltime_data &lt;- subset(cd4, !is.na(treatmnt) &amp; !is.na(baseage))
 
 # Assign the final date to the date variable
-finaltime_data$VDATE &amp;lt;- as.Date(max(finaltime_data$VDATE, na.rm = T))
+finaltime_data$VDATE &lt;- as.Date(max(finaltime_data$VDATE, na.rm = T))
 
 # Only select the variables present in the model
-finaltime_data &amp;lt;- finaltime_data[, -c(1, 4, 5, 6, 8)]
+finaltime_data &lt;- finaltime_data[, -c(1, 4, 5, 6, 8)]
 
-# Calculate the mean predicted CD4 percentage and it&amp;#39;s standard deviation
-mean_cd4 &amp;lt;- mean(predict(mod2, newdata = finaltime_data), na.rm = T)
-sd_cd4 &amp;lt;- sd(predict(mod2, newdata = finaltime_data), na.rm = T)
+# Calculate the mean predicted CD4 percentage and it&#39;s standard deviation
+mean_cd4 &lt;- mean(predict(mod2, newdata = finaltime_data), na.rm = T)
+sd_cd4 &lt;- sd(predict(mod2, newdata = finaltime_data), na.rm = T)
 
 # Simulate 1000 observations considering the uncertainty
 # and look at the distribution.
 set.seed(421)
 
-hist(rnorm(1000, mean_cd4, sd = sd_cd4))&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;It’s incredibly wide and it even includes negative numbers, something impossible with percentages. But whats the actual CD4 percentage of that date?&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cd4 &amp;lt;- subset(cd4, !is.na(VDATE))
-cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##      VISIT newpid      VDATE CD4PCT arv   visage treatmnt CD4CNT  baseage
+hist(rnorm(1000, mean_cd4, sd = sd_cd4))</code></pre>
+<p><img src="/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>It’s incredibly wide and it even includes negative numbers, something impossible with percentages. But whats the actual CD4 percentage of that date?</p>
+<pre class="r"><code>cd4 &lt;- subset(cd4, !is.na(VDATE))
+cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]</code></pre>
+<pre><code>##      VISIT newpid      VDATE CD4PCT arv   visage treatmnt CD4CNT  baseage
 ## 483     16     99 1991-01-14   39.0   1 1.497500        2    526 0.347500
-## 1208    19    237 1991-01-14   21.2   0 2.510833        2   1036 1.073333&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;And the mean is:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mean(c(39.0, 21.2))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 30.1&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;So our predictions are extremely uncertain. Over half our simulations are underestimating the date and a handful are overestimating the results. It looks like our model is terrible at predicting that final time point.&lt;/p&gt;
-&lt;hr /&gt;
-&lt;p&gt;Well that’s it. Hope you enjoyed it. I’ll be completing more exercises in the future so remember to check back.
-```&lt;/p&gt;
-</description>
+## 1208    19    237 1991-01-14   21.2   0 2.510833        2   1036 1.073333</code></pre>
+<p>And the mean is:</p>
+<pre class="r"><code>mean(c(39.0, 21.2))</code></pre>
+<pre><code>## [1] 30.1</code></pre>
+<p>So our predictions are extremely uncertain. Over half our simulations are underestimating the date and a handful are overestimating the results. It looks like our model is terrible at predicting that final time point.</p>
+<hr />
+<p>Well that’s it. Hope you enjoyed it. I’ll be completing more exercises in the future so remember to check back.
+```</p>
+]]>
+      </description>
     </item>
     
   </channel>
