@@ -3,340 +3,340 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/</loc>
+    <loc>/blog/</loc>
     <lastmod>2019-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/categories/</loc>
+    <loc>/categories/</loc>
     <lastmod>2019-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/</loc>
+    <loc>/</loc>
     <lastmod>2019-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</loc>
+    <loc>/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</loc>
     <lastmod>2019-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/r/</loc>
+    <loc>/tags/r/</loc>
     <lastmod>2019-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/categories/r/</loc>
+    <loc>/categories/r/</loc>
     <lastmod>2019-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/regex/</loc>
+    <loc>/tags/regex/</loc>
     <lastmod>2019-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/</loc>
+    <loc>/tags/</loc>
     <lastmod>2019-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2019-11-15-release-essurvey/essurvey-release/</loc>
+    <loc>/blog/2019-11-15-release-essurvey/essurvey-release/</loc>
     <lastmod>2019-11-16T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/package/</loc>
+    <loc>/tags/package/</loc>
     <lastmod>2019-11-16T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/categories/packages/</loc>
+    <loc>/categories/packages/</loc>
     <lastmod>2019-11-16T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2019-03-16-saving-missing-categories-from-r-to-stata/saving-missing-categories-from-r-to-stata/</loc>
+    <loc>/blog/2019-03-16-saving-missing-categories-from-r-to-stata/saving-missing-categories-from-r-to-stata/</loc>
     <lastmod>2019-03-16T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/</loc>
+    <loc>/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/</loc>
     <lastmod>2019-03-16T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/machine-learning/</loc>
+    <loc>/tags/machine-learning/</loc>
     <lastmod>2019-01-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/projects/</loc>
+    <loc>/tags/projects/</loc>
     <lastmod>2019-01-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/turning-a-pdf-book-into-machine-readable-format/</loc>
+    <loc>/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/turning-a-pdf-book-into-machine-readable-format/</loc>
     <lastmod>2019-01-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2019-01-22-some-guides-and-preproject-documents-on-ml/some-guides-and-pre-project-documents-on-ml/</loc>
+    <loc>/blog/2019-01-22-some-guides-and-preproject-documents-on-ml/some-guides-and-pre-project-documents-on-ml/</loc>
     <lastmod>2019-01-22T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</loc>
+    <loc>/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</loc>
     <lastmod>2018-06-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/packages/</loc>
+    <loc>/tags/packages/</loc>
     <lastmod>2018-06-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/scraping/</loc>
+    <loc>/tags/scraping/</loc>
     <lastmod>2018-06-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/shiny/</loc>
+    <loc>/tags/shiny/</loc>
     <lastmod>2018-06-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/</loc>
+    <loc>/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/</loc>
     <lastmod>2018-05-25T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2018-05-23-a-list-of-must-preproject-questions/a-list-of-must-pre-project-questions/</loc>
+    <loc>/blog/2018-05-23-a-list-of-must-preproject-questions/a-list-of-must-pre-project-questions/</loc>
     <lastmod>2018-05-23T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/python/</loc>
+    <loc>/tags/python/</loc>
     <lastmod>2018-04-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/simulation/</loc>
+    <loc>/tags/simulation/</loc>
     <lastmod>2018-04-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2018-04-20-the-monty-hall-problem/the-monty-hall-problem/</loc>
+    <loc>/blog/2018-04-20-the-monty-hall-problem/the-monty-hall-problem/</loc>
     <lastmod>2018-04-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2018-04-05-login-in-scraping-and-hidden-fields/login-in-scraping-and-hidden-fields/</loc>
+    <loc>/blog/2018-04-05-login-in-scraping-and-hidden-fields/login-in-scraping-and-hidden-fields/</loc>
     <lastmod>2018-04-05T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</loc>
+    <loc>/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</loc>
     <lastmod>2018-03-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/project/</loc>
+    <loc>/tags/project/</loc>
     <lastmod>2018-03-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2018-03-22-rselenium-and-scraping-catalan-educational-data/rselenium-and-scraping-catalan-educational-data/</loc>
+    <loc>/blog/2018-03-22-rselenium-and-scraping-catalan-educational-data/rselenium-and-scraping-catalan-educational-data/</loc>
     <lastmod>2018-03-22T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/</loc>
+    <loc>/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/</loc>
     <lastmod>2018-03-04T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/</loc>
+    <loc>/blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/</loc>
     <lastmod>2018-02-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2018-02-06-rewriting-duplicated/rewriting-duplicated/</loc>
+    <loc>/blog/2018-02-06-rewriting-duplicated/rewriting-duplicated/</loc>
     <lastmod>2018-02-06T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2018-02-03-predicting-location-via-indoor-positioning-systems/predicting-location-via-indoor-positioning-systems/</loc>
+    <loc>/blog/2018-02-03-predicting-location-via-indoor-positioning-systems/predicting-location-via-indoor-positioning-systems/</loc>
     <lastmod>2018-02-03T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/</loc>
+    <loc>/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/</loc>
     <lastmod>2018-01-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/sql/</loc>
+    <loc>/tags/sql/</loc>
     <lastmod>2018-01-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/brief-analysis-of-independent-unionist-vote-in-catalonia/</loc>
+    <loc>/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/brief-analysis-of-independent-unionist-vote-in-catalonia/</loc>
     <lastmod>2017-12-14T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/eda/</loc>
+    <loc>/tags/eda/</loc>
     <lastmod>2017-12-14T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/</loc>
+    <loc>/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/</loc>
     <lastmod>2017-12-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2017-11-23-an-introduction-to-the-ess-package/an-introduction-to-the-ess-package/</loc>
+    <loc>/blog/2017-11-23-an-introduction-to-the-ess-package/an-introduction-to-the-ess-package/</loc>
     <lastmod>2017-11-23T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2017-11-18-123check/1-2-3-check/</loc>
+    <loc>/blog/2017-11-18-123check/1-2-3-check/</loc>
     <lastmod>2017-11-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/knitr/</loc>
+    <loc>/tags/knitr/</loc>
     <lastmod>2017-10-24T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/latex/</loc>
+    <loc>/tags/latex/</loc>
     <lastmod>2017-10-24T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2017-10-24-phd-thesis-template-with-sweave-and-knitr/phd-thesis-template-with-sweave-and-knitr/</loc>
+    <loc>/blog/2017-10-24-phd-thesis-template-with-sweave-and-knitr/phd-thesis-template-with-sweave-and-knitr/</loc>
     <lastmod>2017-10-24T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</loc>
+    <loc>/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</loc>
     <lastmod>2017-10-16T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</loc>
+    <loc>/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</loc>
     <lastmod>2017-09-07T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</loc>
+    <loc>/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</loc>
     <lastmod>2017-09-06T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2017-08-01-perccalc-package/perccalc-package/</loc>
+    <loc>/blog/2017-08-01-perccalc-package/perccalc-package/</loc>
     <lastmod>2017-08-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/education/</loc>
+    <loc>/tags/education/</loc>
     <lastmod>2017-04-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/inequality/</loc>
+    <loc>/tags/inequality/</loc>
     <lastmod>2017-04-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2017-04-13-replicating-dupriez-and-dumay-2006/replicating-dupriez-and-dumay-2006/</loc>
+    <loc>/blog/2017-04-13-replicating-dupriez-and-dumay-2006/replicating-dupriez-and-dumay-2006/</loc>
     <lastmod>2017-04-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</loc>
+    <loc>/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</loc>
     <lastmod>2017-03-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/pisa/</loc>
+    <loc>/tags/pisa/</loc>
     <lastmod>2017-03-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</loc>
+    <loc>/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</loc>
     <lastmod>2016-12-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</loc>
+    <loc>/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</loc>
     <lastmod>2016-11-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/gelman/</loc>
+    <loc>/tags/gelman/</loc>
     <lastmod>2016-11-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/tags/multilevel/</loc>
+    <loc>/tags/multilevel/</loc>
     <lastmod>2016-11-06T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/</loc>
+    <loc>/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/</loc>
     <lastmod>2016-11-06T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/</loc>
+    <loc>/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/</loc>
     <lastmod>2016-11-06T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</loc>
+    <loc>/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</loc>
     <lastmod>2016-09-24T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</loc>
+    <loc>/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</loc>
     <lastmod>2016-09-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</loc>
+    <loc>/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</loc>
     <lastmod>2016-09-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</loc>
+    <loc>/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</loc>
     <lastmod>2016-08-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</loc>
+    <loc>/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</loc>
     <lastmod>2016-08-22T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/blog/2016-08-20-ttests-regression-and-anova-theyre-all-the-same/ttests-regression-and-anova-theyre-all-the-same/</loc>
+    <loc>/blog/2016-08-20-ttests-regression-and-anova-theyre-all-the-same/ttests-regression-and-anova-theyre-all-the-same/</loc>
     <lastmod>2016-08-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/about/</loc>
+    <loc>/about/</loc>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/vitae/</loc>
+    <loc>/vitae/</loc>
   </url>
   
   <url>
-    <loc>https://cimentadaj.github.io/projects/</loc>
+    <loc>/projects/</loc>
   </url>
   
 </urlset>

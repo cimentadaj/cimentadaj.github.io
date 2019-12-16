@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Jorge Cimentada</title>
-    <link>https://cimentadaj.github.io/tags/</link>
+    <link>/tags/</link>
     <description>Recent content in Tags on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Sun, 08 Dec 2019 00:00:00 +0000</lastBuildDate>
     
-    <atom:link href="https://cimentadaj.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>R</title>
-      <link>https://cimentadaj.github.io/tags/r/</link>
+      <link>/tags/r/</link>
       <pubDate>Sun, 08 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/r/</guid>
+      <guid>/tags/r/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -23,10 +23,10 @@
     
     <item>
       <title>regex</title>
-      <link>https://cimentadaj.github.io/tags/regex/</link>
+      <link>/tags/regex/</link>
       <pubDate>Sun, 08 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/regex/</guid>
+      <guid>/tags/regex/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -34,10 +34,10 @@
     
     <item>
       <title>package</title>
-      <link>https://cimentadaj.github.io/tags/package/</link>
+      <link>/tags/package/</link>
       <pubDate>Sat, 16 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/package/</guid>
+      <guid>/tags/package/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -45,10 +45,10 @@
     
     <item>
       <title>machine-learning</title>
-      <link>https://cimentadaj.github.io/tags/machine-learning/</link>
+      <link>/tags/machine-learning/</link>
       <pubDate>Sat, 26 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/machine-learning/</guid>
+      <guid>/tags/machine-learning/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -56,10 +56,10 @@
     
     <item>
       <title>projects</title>
-      <link>https://cimentadaj.github.io/tags/projects/</link>
+      <link>/tags/projects/</link>
       <pubDate>Sat, 26 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/projects/</guid>
+      <guid>/tags/projects/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -67,10 +67,10 @@
     
     <item>
       <title>packages</title>
-      <link>https://cimentadaj.github.io/tags/packages/</link>
+      <link>/tags/packages/</link>
       <pubDate>Tue, 19 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/packages/</guid>
+      <guid>/tags/packages/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -78,10 +78,10 @@
     
     <item>
       <title>scraping</title>
-      <link>https://cimentadaj.github.io/tags/scraping/</link>
+      <link>/tags/scraping/</link>
       <pubDate>Tue, 19 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/scraping/</guid>
+      <guid>/tags/scraping/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -89,10 +89,10 @@
     
     <item>
       <title>shiny</title>
-      <link>https://cimentadaj.github.io/tags/shiny/</link>
+      <link>/tags/shiny/</link>
       <pubDate>Tue, 19 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/shiny/</guid>
+      <guid>/tags/shiny/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -100,10 +100,10 @@
     
     <item>
       <title>python</title>
-      <link>https://cimentadaj.github.io/tags/python/</link>
+      <link>/tags/python/</link>
       <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/python/</guid>
+      <guid>/tags/python/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -111,10 +111,10 @@
     
     <item>
       <title>simulation</title>
-      <link>https://cimentadaj.github.io/tags/simulation/</link>
+      <link>/tags/simulation/</link>
       <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/simulation/</guid>
+      <guid>/tags/simulation/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -122,10 +122,10 @@
     
     <item>
       <title>project</title>
-      <link>https://cimentadaj.github.io/tags/project/</link>
+      <link>/tags/project/</link>
       <pubDate>Mon, 26 Mar 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/project/</guid>
+      <guid>/tags/project/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -133,10 +133,10 @@
     
     <item>
       <title>SQL</title>
-      <link>https://cimentadaj.github.io/tags/sql/</link>
+      <link>/tags/sql/</link>
       <pubDate>Wed, 31 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/sql/</guid>
+      <guid>/tags/sql/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -144,10 +144,10 @@
     
     <item>
       <title>EDA</title>
-      <link>https://cimentadaj.github.io/tags/eda/</link>
+      <link>/tags/eda/</link>
       <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/eda/</guid>
+      <guid>/tags/eda/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -155,10 +155,10 @@
     
     <item>
       <title>knitr</title>
-      <link>https://cimentadaj.github.io/tags/knitr/</link>
+      <link>/tags/knitr/</link>
       <pubDate>Tue, 24 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/knitr/</guid>
+      <guid>/tags/knitr/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -166,10 +166,10 @@
     
     <item>
       <title>latex</title>
-      <link>https://cimentadaj.github.io/tags/latex/</link>
+      <link>/tags/latex/</link>
       <pubDate>Tue, 24 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/latex/</guid>
+      <guid>/tags/latex/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -177,10 +177,10 @@
     
     <item>
       <title>education</title>
-      <link>https://cimentadaj.github.io/tags/education/</link>
+      <link>/tags/education/</link>
       <pubDate>Thu, 13 Apr 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/education/</guid>
+      <guid>/tags/education/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -188,10 +188,10 @@
     
     <item>
       <title>inequality</title>
-      <link>https://cimentadaj.github.io/tags/inequality/</link>
+      <link>/tags/inequality/</link>
       <pubDate>Thu, 13 Apr 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/inequality/</guid>
+      <guid>/tags/inequality/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -199,10 +199,10 @@
     
     <item>
       <title>PISA</title>
-      <link>https://cimentadaj.github.io/tags/pisa/</link>
+      <link>/tags/pisa/</link>
       <pubDate>Wed, 08 Mar 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/pisa/</guid>
+      <guid>/tags/pisa/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -210,10 +210,10 @@
     
     <item>
       <title>gelman</title>
-      <link>https://cimentadaj.github.io/tags/gelman/</link>
+      <link>/tags/gelman/</link>
       <pubDate>Thu, 10 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/gelman/</guid>
+      <guid>/tags/gelman/</guid>
       <description><![CDATA[
       ]]>
       </description>
@@ -221,10 +221,10 @@
     
     <item>
       <title>multilevel</title>
-      <link>https://cimentadaj.github.io/tags/multilevel/</link>
+      <link>/tags/multilevel/</link>
       <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/tags/multilevel/</guid>
+      <guid>/tags/multilevel/</guid>
       <description><![CDATA[
       ]]>
       </description>

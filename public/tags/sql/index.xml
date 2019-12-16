@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>SQL on Jorge Cimentada</title>
-    <link>https://cimentadaj.github.io/tags/sql/</link>
+    <link>/tags/sql/</link>
     <description>Recent content in SQL on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Wed, 31 Jan 2018 00:00:00 +0000</lastBuildDate>
     
-    <atom:link href="https://cimentadaj.github.io/tags/sql/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/sql/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Scraping at scale: daily scraping to your database</title>
-      <link>https://cimentadaj.github.io/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/</link>
+      <link>/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/</link>
       <pubDate>Wed, 31 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://cimentadaj.github.io/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/</guid>
+      <guid>/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/</guid>
       <description><![CDATA[
       
 
