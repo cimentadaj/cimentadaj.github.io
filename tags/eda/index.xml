@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>EDA on Jorge Cimentada</title>
-    <link>/tags/eda/</link>
+    <link>https://cimentadaj.github.io/tags/eda/</link>
     <description>Recent content in EDA on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Thu, 14 Dec 2017 00:00:00 +0000</lastBuildDate>
     
-    <atom:link href="/tags/eda/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://cimentadaj.github.io/tags/eda/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Brief Analysis of Independent/Unionist Vote in Catalonia</title>
-      <link>/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/brief-analysis-of-independent-unionist-vote-in-catalonia/</link>
+      <link>https://cimentadaj.github.io/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/brief-analysis-of-independent-unionist-vote-in-catalonia/</link>
       <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/brief-analysis-of-independent-unionist-vote-in-catalonia/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/brief-analysis-of-independent-unionist-vote-in-catalonia/</guid>
       <description><![CDATA[
       
 
@@ -183,10 +183,10 @@ Catalan_elections %&gt;%
     
     <item>
       <title>1..2..3..check!</title>
-      <link>/blog/2017-11-18-123check/1-2-3-check/</link>
+      <link>https://cimentadaj.github.io/blog/2017-11-18-123check/1-2-3-check/</link>
       <pubDate>Sat, 18 Nov 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-11-18-123check/1-2-3-check/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-11-18-123check/1-2-3-check/</guid>
       <description><![CDATA[
       
 
@@ -274,10 +274,10 @@ perc_table %&gt;%
     
     <item>
       <title>Scraping and visualizing How I Met Your Mother</title>
-      <link>/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</link>
+      <link>https://cimentadaj.github.io/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</link>
       <pubDate>Mon, 16 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</guid>
       <description><![CDATA[
       
 
@@ -571,10 +571,10 @@ cowplot::plot_grid(plotlist = all_season_plots, labels = seasons)</code></pre>
     
     <item>
       <title>Children: public or private goods?</title>
-      <link>/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</link>
+      <link>https://cimentadaj.github.io/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</link>
       <pubDate>Mon, 29 Aug 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</guid>
+      <guid>https://cimentadaj.github.io/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</guid>
       <description><![CDATA[
       
 

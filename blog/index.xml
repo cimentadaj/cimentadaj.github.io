@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Blogs on Jorge Cimentada</title>
-    <link>/blog/</link>
+    <link>https://cimentadaj.github.io/blog/</link>
     <description>Recent content in Blogs on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Sun, 08 Dec 2019 00:00:00 +0000</lastBuildDate>
     
-    <atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://cimentadaj.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Locating parts of a string with `stringr`</title>
-      <link>/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</link>
+      <link>https://cimentadaj.github.io/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</link>
       <pubDate>Sun, 08 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</guid>
+      <guid>https://cimentadaj.github.io/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</guid>
       <description><![CDATA[
       
 
@@ -159,10 +159,10 @@ str_sub(test_string, location_matrix)</code></pre>
     
     <item>
       <title>essurvey release</title>
-      <link>/blog/2019-11-15-release-essurvey/essurvey-release/</link>
+      <link>https://cimentadaj.github.io/blog/2019-11-15-release-essurvey/essurvey-release/</link>
       <pubDate>Sat, 16 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2019-11-15-release-essurvey/essurvey-release/</guid>
+      <guid>https://cimentadaj.github.io/blog/2019-11-15-release-essurvey/essurvey-release/</guid>
       <description><![CDATA[
       
 
@@ -244,10 +244,10 @@ complete_data %&gt;%
     
     <item>
       <title>Saving missing categories from R to Stata</title>
-      <link>/blog/2019-03-16-saving-missing-categories-from-r-to-stata/saving-missing-categories-from-r-to-stata/</link>
+      <link>https://cimentadaj.github.io/blog/2019-03-16-saving-missing-categories-from-r-to-stata/saving-missing-categories-from-r-to-stata/</link>
       <pubDate>Sat, 16 Mar 2019 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2019-03-16-saving-missing-categories-from-r-to-stata/saving-missing-categories-from-r-to-stata/</guid>
+      <guid>https://cimentadaj.github.io/blog/2019-03-16-saving-missing-categories-from-r-to-stata/saving-missing-categories-from-r-to-stata/</guid>
       <description><![CDATA[
       
 
@@ -445,10 +445,10 @@ recode_stata_labels(tst)</code></pre>
     
     <item>
       <title>Why does R drop attributes when subsetting?</title>
-      <link>/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/</link>
+      <link>https://cimentadaj.github.io/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/</link>
       <pubDate>Sat, 16 Mar 2019 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/</guid>
+      <guid>https://cimentadaj.github.io/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/</guid>
       <description><![CDATA[
       
 
@@ -488,10 +488,10 @@ df %&gt;%
     
     <item>
       <title>Turning a pdf book into machine readable format</title>
-      <link>/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/turning-a-pdf-book-into-machine-readable-format/</link>
+      <link>https://cimentadaj.github.io/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/turning-a-pdf-book-into-machine-readable-format/</link>
       <pubDate>Sat, 26 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/turning-a-pdf-book-into-machine-readable-format/</guid>
+      <guid>https://cimentadaj.github.io/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/turning-a-pdf-book-into-machine-readable-format/</guid>
       <description><![CDATA[
       
 
@@ -975,10 +975,10 @@ bookdown::calibre(txt_path, paste0(dirname(txt_path), &quot;/erik_wright.mobi&qu
     
     <item>
       <title>Some guides and pre-project documents on ML</title>
-      <link>/blog/2019-01-22-some-guides-and-preproject-documents-on-ml/some-guides-and-pre-project-documents-on-ml/</link>
+      <link>https://cimentadaj.github.io/blog/2019-01-22-some-guides-and-preproject-documents-on-ml/some-guides-and-pre-project-documents-on-ml/</link>
       <pubDate>Tue, 22 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2019-01-22-some-guides-and-preproject-documents-on-ml/some-guides-and-pre-project-documents-on-ml/</guid>
+      <guid>https://cimentadaj.github.io/blog/2019-01-22-some-guides-and-preproject-documents-on-ml/some-guides-and-pre-project-documents-on-ml/</guid>
       <description><![CDATA[
       
 
@@ -991,10 +991,10 @@ bookdown::calibre(txt_path, paste0(dirname(txt_path), &quot;/erik_wright.mobi&qu
     
     <item>
       <title>Exploring Google Scholar coauthorship</title>
-      <link>/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</link>
+      <link>https://cimentadaj.github.io/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</link>
       <pubDate>Tue, 19 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</guid>
+      <guid>https://cimentadaj.github.io/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</guid>
       <description><![CDATA[
       
 
@@ -1037,10 +1037,10 @@ network</code></pre>
     
     <item>
       <title>Installing rJava on Windows 10</title>
-      <link>/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/</link>
+      <link>https://cimentadaj.github.io/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/</link>
       <pubDate>Fri, 25 May 2018 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/</guid>
+      <guid>https://cimentadaj.github.io/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/</guid>
       <description><![CDATA[
       
 
@@ -1062,10 +1062,10 @@ network</code></pre>
     
     <item>
       <title>A list of must pre-project questions</title>
-      <link>/blog/2018-05-23-a-list-of-must-preproject-questions/a-list-of-must-pre-project-questions/</link>
+      <link>https://cimentadaj.github.io/blog/2018-05-23-a-list-of-must-preproject-questions/a-list-of-must-pre-project-questions/</link>
       <pubDate>Wed, 23 May 2018 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2018-05-23-a-list-of-must-preproject-questions/a-list-of-must-pre-project-questions/</guid>
+      <guid>https://cimentadaj.github.io/blog/2018-05-23-a-list-of-must-preproject-questions/a-list-of-must-pre-project-questions/</guid>
       <description><![CDATA[
       
 
@@ -1137,10 +1137,10 @@ Would this use of the data surprise the data subjects?</li>
     
     <item>
       <title>The Monty Hall problem</title>
-      <link>/blog/2018-04-20-the-monty-hall-problem/the-monty-hall-problem/</link>
+      <link>https://cimentadaj.github.io/blog/2018-04-20-the-monty-hall-problem/the-monty-hall-problem/</link>
       <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2018-04-20-the-monty-hall-problem/the-monty-hall-problem/</guid>
+      <guid>https://cimentadaj.github.io/blog/2018-04-20-the-monty-hall-problem/the-monty-hall-problem/</guid>
       <description><![CDATA[
       
 
@@ -1235,10 +1235,10 @@ print(second_perc)</code></pre>
     
     <item>
       <title>Login in, scraping and hidden fields</title>
-      <link>/blog/2018-04-05-login-in-scraping-and-hidden-fields/login-in-scraping-and-hidden-fields/</link>
+      <link>https://cimentadaj.github.io/blog/2018-04-05-login-in-scraping-and-hidden-fields/login-in-scraping-and-hidden-fields/</link>
       <pubDate>Thu, 05 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2018-04-05-login-in-scraping-and-hidden-fields/login-in-scraping-and-hidden-fields/</guid>
+      <guid>https://cimentadaj.github.io/blog/2018-04-05-login-in-scraping-and-hidden-fields/login-in-scraping-and-hidden-fields/</guid>
       <description><![CDATA[
       
 
@@ -1324,10 +1324,10 @@ access &lt;- POST(login,
     
     <item>
       <title>ess is now essurvey</title>
-      <link>/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</link>
+      <link>https://cimentadaj.github.io/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</link>
       <pubDate>Mon, 26 Mar 2018 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</guid>
+      <guid>https://cimentadaj.github.io/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</guid>
       <description><![CDATA[
       
 
@@ -1355,10 +1355,10 @@ access &lt;- POST(login,
     
     <item>
       <title>RSelenium and scraping Catalan educational data</title>
-      <link>/blog/2018-03-22-rselenium-and-scraping-catalan-educational-data/rselenium-and-scraping-catalan-educational-data/</link>
+      <link>https://cimentadaj.github.io/blog/2018-03-22-rselenium-and-scraping-catalan-educational-data/rselenium-and-scraping-catalan-educational-data/</link>
       <pubDate>Thu, 22 Mar 2018 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2018-03-22-rselenium-and-scraping-catalan-educational-data/rselenium-and-scraping-catalan-educational-data/</guid>
+      <guid>https://cimentadaj.github.io/blog/2018-03-22-rselenium-and-scraping-catalan-educational-data/rselenium-and-scraping-catalan-educational-data/</guid>
       <description><![CDATA[
       
 
@@ -1449,10 +1449,10 @@ remDr$navigate(&quot;https://view-awesome-table.com/-L4lo3r-JA2iaWk1puUT/view&qu
     
     <item>
       <title>ess 0.1.1 is out!</title>
-      <link>/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/</link>
+      <link>https://cimentadaj.github.io/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/</link>
       <pubDate>Sun, 04 Mar 2018 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/</guid>
+      <guid>https://cimentadaj.github.io/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/</guid>
       <description><![CDATA[
       
 
@@ -1541,10 +1541,10 @@ all_countries</code></pre>
     
     <item>
       <title>What time should I ride my bike?</title>
-      <link>/blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/</link>
+      <link>https://cimentadaj.github.io/blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/</link>
       <pubDate>Mon, 12 Feb 2018 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/</guid>
+      <guid>https://cimentadaj.github.io/blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/</guid>
       <description><![CDATA[
       
 
@@ -1794,10 +1794,10 @@ confusionMatrix(test$empty, pred_empty, positive = &quot;1&quot;)</code></pre>
     
     <item>
       <title>Rewriting duplicated</title>
-      <link>/blog/2018-02-06-rewriting-duplicated/rewriting-duplicated/</link>
+      <link>https://cimentadaj.github.io/blog/2018-02-06-rewriting-duplicated/rewriting-duplicated/</link>
       <pubDate>Tue, 06 Feb 2018 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2018-02-06-rewriting-duplicated/rewriting-duplicated/</guid>
+      <guid>https://cimentadaj.github.io/blog/2018-02-06-rewriting-duplicated/rewriting-duplicated/</guid>
       <description><![CDATA[
       
 
@@ -1838,10 +1838,10 @@ identical(my_duplicated(x),
     
     <item>
       <title>Cleaning in-door positioning data</title>
-      <link>/blog/2018-02-03-predicting-location-via-indoor-positioning-systems/predicting-location-via-indoor-positioning-systems/</link>
+      <link>https://cimentadaj.github.io/blog/2018-02-03-predicting-location-via-indoor-positioning-systems/predicting-location-via-indoor-positioning-systems/</link>
       <pubDate>Sat, 03 Feb 2018 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2018-02-03-predicting-location-via-indoor-positioning-systems/predicting-location-via-indoor-positioning-systems/</guid>
+      <guid>https://cimentadaj.github.io/blog/2018-02-03-predicting-location-via-indoor-positioning-systems/predicting-location-via-indoor-positioning-systems/</guid>
       <description><![CDATA[
       
 
@@ -2106,10 +2106,10 @@ final_data</code></pre>
     
     <item>
       <title>Scraping at scale: daily scraping to your database</title>
-      <link>/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/</link>
+      <link>https://cimentadaj.github.io/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/</link>
       <pubDate>Wed, 31 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/</guid>
+      <guid>https://cimentadaj.github.io/blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/</guid>
       <description><![CDATA[
       
 
@@ -2376,10 +2376,10 @@ appended between the time the script should&#39;ve started and should&#39;ve end
     
     <item>
       <title>Brief Analysis of Independent/Unionist Vote in Catalonia</title>
-      <link>/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/brief-analysis-of-independent-unionist-vote-in-catalonia/</link>
+      <link>https://cimentadaj.github.io/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/brief-analysis-of-independent-unionist-vote-in-catalonia/</link>
       <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/brief-analysis-of-independent-unionist-vote-in-catalonia/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-12-14-brief-analysis-of-independentunionist-vote-in-catalonia/brief-analysis-of-independent-unionist-vote-in-catalonia/</guid>
       <description><![CDATA[
       
 
@@ -2547,10 +2547,10 @@ Catalan_elections %&gt;%
     
     <item>
       <title>How long should I wait for my bike?</title>
-      <link>/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/</link>
+      <link>https://cimentadaj.github.io/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/</link>
       <pubDate>Fri, 01 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/</guid>
       <description><![CDATA[
       
 
@@ -2625,10 +2625,10 @@ hostname=your_host_name
     
     <item>
       <title>An introduction to the ess package</title>
-      <link>/blog/2017-11-23-an-introduction-to-the-ess-package/an-introduction-to-the-ess-package/</link>
+      <link>https://cimentadaj.github.io/blog/2017-11-23-an-introduction-to-the-ess-package/an-introduction-to-the-ess-package/</link>
       <pubDate>Thu, 23 Nov 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-11-23-an-introduction-to-the-ess-package/an-introduction-to-the-ess-package/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-11-23-an-introduction-to-the-ess-package/an-introduction-to-the-ess-package/</guid>
       <description><![CDATA[
       
 
@@ -2711,10 +2711,10 @@ three_rounds[[1]]</code></pre>
     
     <item>
       <title>1..2..3..check!</title>
-      <link>/blog/2017-11-18-123check/1-2-3-check/</link>
+      <link>https://cimentadaj.github.io/blog/2017-11-18-123check/1-2-3-check/</link>
       <pubDate>Sat, 18 Nov 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-11-18-123check/1-2-3-check/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-11-18-123check/1-2-3-check/</guid>
       <description><![CDATA[
       
 
@@ -2802,10 +2802,10 @@ perc_table %&gt;%
     
     <item>
       <title>PhD thesis template with Sweave and knitr</title>
-      <link>/blog/2017-10-24-phd-thesis-template-with-sweave-and-knitr/phd-thesis-template-with-sweave-and-knitr/</link>
+      <link>https://cimentadaj.github.io/blog/2017-10-24-phd-thesis-template-with-sweave-and-knitr/phd-thesis-template-with-sweave-and-knitr/</link>
       <pubDate>Tue, 24 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-10-24-phd-thesis-template-with-sweave-and-knitr/phd-thesis-template-with-sweave-and-knitr/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-10-24-phd-thesis-template-with-sweave-and-knitr/phd-thesis-template-with-sweave-and-knitr/</guid>
       <description><![CDATA[
       
 
@@ -2818,10 +2818,10 @@ perc_table %&gt;%
     
     <item>
       <title>Scraping and visualizing How I Met Your Mother</title>
-      <link>/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</link>
+      <link>https://cimentadaj.github.io/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</link>
       <pubDate>Mon, 16 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-10-16-scraping-and-visualizing-how-i-met-your-mother/scraping-and-visualizing-how-i-met-your-mother/</guid>
       <description><![CDATA[
       
 
@@ -3115,10 +3115,10 @@ cowplot::plot_grid(plotlist = all_season_plots, labels = seasons)</code></pre>
     
     <item>
       <title>The LOO and the Bootstrap</title>
-      <link>/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</link>
+      <link>https://cimentadaj.github.io/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</link>
       <pubDate>Thu, 07 Sep 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</guid>
       <description><![CDATA[
       
 
@@ -3219,10 +3219,10 @@ summary(bootstrap)
     
     <item>
       <title>Holdout and cross-validation</title>
-      <link>/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</link>
+      <link>https://cimentadaj.github.io/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</link>
       <pubDate>Wed, 06 Sep 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</guid>
       <description><![CDATA[
       
 
@@ -3347,10 +3347,10 @@ k_fold_cv %&gt;%
     
     <item>
       <title>perccalc package</title>
-      <link>/blog/2017-08-01-perccalc-package/perccalc-package/</link>
+      <link>https://cimentadaj.github.io/blog/2017-08-01-perccalc-package/perccalc-package/</link>
       <pubDate>Tue, 01 Aug 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-08-01-perccalc-package/perccalc-package/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-08-01-perccalc-package/perccalc-package/</guid>
       <description><![CDATA[
       
 
@@ -3562,10 +3562,10 @@ postclose `memhold&#39;
     
     <item>
       <title>Replicating Dupriez and Dumay (2006)</title>
-      <link>/blog/2017-04-13-replicating-dupriez-and-dumay-2006/replicating-dupriez-and-dumay-2006/</link>
+      <link>https://cimentadaj.github.io/blog/2017-04-13-replicating-dupriez-and-dumay-2006/replicating-dupriez-and-dumay-2006/</link>
       <pubDate>Thu, 13 Apr 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-04-13-replicating-dupriez-and-dumay-2006/replicating-dupriez-and-dumay-2006/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-04-13-replicating-dupriez-and-dumay-2006/replicating-dupriez-and-dumay-2006/</guid>
       <description><![CDATA[
       
 
@@ -3578,10 +3578,10 @@ postclose `memhold&#39;
     
     <item>
       <title>My PISA twitter bot</title>
-      <link>/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</link>
+      <link>https://cimentadaj.github.io/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</link>
       <pubDate>Wed, 08 Mar 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</guid>
       <description><![CDATA[
       
 
@@ -3941,10 +3941,10 @@ press Control + X (to exit nano). If all went well, then you should see “cront
     
     <item>
       <title>Cognitive inequality around the world – Shiny app</title>
-      <link>/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</link>
+      <link>https://cimentadaj.github.io/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</link>
       <pubDate>Mon, 12 Dec 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</guid>
+      <guid>https://cimentadaj.github.io/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</guid>
       <description><![CDATA[
       
 
@@ -3957,10 +3957,10 @@ press Control + X (to exit nano). If all went well, then you should see “cront
     
     <item>
       <title>Fitting the wrong model</title>
-      <link>/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</link>
+      <link>https://cimentadaj.github.io/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</link>
       <pubDate>Thu, 10 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</guid>
+      <guid>https://cimentadaj.github.io/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</guid>
       <description><![CDATA[
       
 
@@ -4085,10 +4085,10 @@ cbind(repl_coef + (-1 * repl_se), repl_coef + (1 * repl_se))</code></pre>
     
     <item>
       <title>Multilevel modeling – Part 1</title>
-      <link>/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/</link>
+      <link>https://cimentadaj.github.io/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/</link>
       <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/</guid>
+      <guid>https://cimentadaj.github.io/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/</guid>
       <description><![CDATA[
       
 
@@ -4261,10 +4261,10 @@ display(mod2)</code></pre>
     
     <item>
       <title>Multilevel modeling – Part 2</title>
-      <link>/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/</link>
+      <link>https://cimentadaj.github.io/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/</link>
       <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/</guid>
+      <guid>https://cimentadaj.github.io/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/</guid>
       <description><![CDATA[
       
 
@@ -4366,10 +4366,10 @@ cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]</code></pre>
     
     <item>
       <title>Los pobres no son los peores pero los ricos sí son los mejores: desigualdad educativa</title>
-      <link>/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</link>
+      <link>https://cimentadaj.github.io/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</link>
       <pubDate>Sat, 24 Sep 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</guid>
+      <guid>https://cimentadaj.github.io/blog/2016-09-24-los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores/los-pobres-no-son-los-peores-pero-los-ricos-s%C3%AD-son-los-mejores-desigualdad-educativa/</guid>
       <description><![CDATA[
       
 
@@ -4416,10 +4416,10 @@ cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]</code></pre>
     
     <item>
       <title>Obtaining robust standard errors and odds ratios for logistic regression in R</title>
-      <link>/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</link>
+      <link>https://cimentadaj.github.io/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</link>
       <pubDate>Mon, 19 Sep 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</guid>
+      <guid>https://cimentadaj.github.io/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/</guid>
       <description><![CDATA[
       
 
@@ -4525,10 +4525,10 @@ logit z x1 x2 x3, robust or
     
     <item>
       <title>Simulations and model predictions in R</title>
-      <link>/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</link>
+      <link>https://cimentadaj.github.io/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</link>
       <pubDate>Tue, 13 Sep 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</guid>
+      <guid>https://cimentadaj.github.io/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</guid>
       <description><![CDATA[
       
 
@@ -4589,10 +4589,10 @@ plot(df[, 2], df[, 1])</code></pre>
     
     <item>
       <title>Children: public or private goods?</title>
-      <link>/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</link>
+      <link>https://cimentadaj.github.io/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</link>
       <pubDate>Mon, 29 Aug 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</guid>
+      <guid>https://cimentadaj.github.io/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/</guid>
       <description><![CDATA[
       
 
@@ -4623,10 +4623,10 @@ plot(df[, 2], df[, 1])</code></pre>
     
     <item>
       <title>Producing stargazer tables with odds ratios and standard errors in R</title>
-      <link>/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</link>
+      <link>https://cimentadaj.github.io/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</link>
       <pubDate>Mon, 22 Aug 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</guid>
+      <guid>https://cimentadaj.github.io/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</guid>
       <description><![CDATA[
       
 
@@ -4818,10 +4818,10 @@ devtools::install_github(&quot;cimentadaj/cimentadaj&quot;)</code></pre>
     
     <item>
       <title>T-tests, regression (and ANOVA): They&#39;re all the same!</title>
-      <link>/blog/2016-08-20-ttests-regression-and-anova-theyre-all-the-same/ttests-regression-and-anova-theyre-all-the-same/</link>
+      <link>https://cimentadaj.github.io/blog/2016-08-20-ttests-regression-and-anova-theyre-all-the-same/ttests-regression-and-anova-theyre-all-the-same/</link>
       <pubDate>Sat, 20 Aug 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-08-20-ttests-regression-and-anova-theyre-all-the-same/ttests-regression-and-anova-theyre-all-the-same/</guid>
+      <guid>https://cimentadaj.github.io/blog/2016-08-20-ttests-regression-and-anova-theyre-all-the-same/ttests-regression-and-anova-theyre-all-the-same/</guid>
       <description><![CDATA[
       
 
