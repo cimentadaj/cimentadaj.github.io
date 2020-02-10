@@ -1,0 +1,426 @@
+
+---
+title: The simplest tidy machine learning workflow
+author: Jorge Cimentada
+date: '2020-02-06'
+slug: the-simplest-tidy-machine-learning-workflow
+categories: ["R", "machine-learning"]
+tags: ["R", "machine-learning"]
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+`caret` is a magical package for doing machine learning in R. Look at this code for running a regularized regression:
+
+```{r, eval = FALSE}
+library(caret)
+
+inTrain <- createDataPartition(y = mtcars$mpg,
+                               p = 0.75,
+                               list = FALSE)  
+
+reg_mod <- train(
+  mpg ~ .,
+  data = mtcars[inTrain, ],
+  method = "glmnet",
+  tuneLength = 10,
+  preProc = c("center", "scale"),
+  trControl = trainControl(method = "cv", number = 10)
+)
+
+```
+
+The two function calls in the expression above perform these operations:
+
+1. Create a training set containing a random sample of 75% of the initial sample
+2. Center and scale all predictors in the model
+3. Identifies 10 alpha values (0 to 1) and then 10 additional lambda values
+4. For each parameter set (one alpha value and another lambda value), [run a cross-validation 10 times](http://topepo.github.io/caret/model-training-and-tuning.html)
+5. Effectively run 1000 models (10 alpha * 10 alpha) each one cross-validated (10)
+6. Save the best model in the result together with the optimized tuning parameteres
+
+That is a lot of modelling, optimization and computation done with almost no mental load. However, in case you didn't know, `caret` is doomed to be left behind. The creator of the package has stated that he will give maintenance to the package but [most active development](https://twitter.com/topepos/status/1026939727910461440) will be given to `tidymodels`, its predecessor.
+
+`tidymodels` is more or less a restructuring of the `caret` package (as it aims to do the same thing and more) but with an interface and design philosophy that resembles the `tidyverse`. This means that instead of having one package and one function (`caret` and `train`) that does much of the work, all operations described above are performed by different packages.
+
+`tidymodels` has been in development for the past two years and the main pieces for effective modelling have been implemented (packages such as `parsnip`, `tune`, `yardstick`, etc...). However, there still isn't a completely unified workflow that allows them to be as succint and elegant as `train`. I've been keeping an eye on the development of the different packages from `tidymodels` and I really want to understand the key workflow that will allow users to make modelling with `tidymodels` easy.
+
+The objective of this post is to present what I think is currently the most succint and barebones workflow that a user should need using `tidymodels`. I reached this workflow by looking at the machine learning tutorials from the RStudio conference and stripped most of the details to see the link between the high-level steps in the modelling workflow and where `tidymodels` fits . In particular, I was curious on how `tidymodels` makes the workflow fit a logical set of steps without much mental load.
+
+* What this post isn't about:
+  + This post won't introduce you to the `tidymodels` package. It assumes you are familiar with some of the main packages
+  + This post won't show you everything that `tidymodels` can do (no fancy modelling or deep learning)
+  + This post won't delve into specific details on every single function
+
+In fact, I've always had some issues using `tidymodels` because there are so many functions that are difficult to think as isolated entities that remembering every step is quite difficult (unlike the `tidyverse` where each package can be thought of as a different entity independent of the others but that you use them because they work well together). 
+
+* What this post is about:
+  + This post will divide the key operations in **modelling** and how they fit `tidymodels`
+  + It will describe the specific functions that perform each step
+  + It will describe what I think the current workflow is missing
+
+This post is slightly longer than my usual posts, so here's the *too long don't read* version of the workflow:
+
+```{r, eval = FALSE}
+library(AmesHousing)
+# devtools::install_github("tidymodels/tidymodels")
+library(tidymodels)
+
+ames <- make_ames()
+
+############################# Data Partitioning ###############################
+###############################################################################
+
+ames_split <- rsample::initial_split(ames, prop = .7)
+ames_train <- rsample::training(ames_split)
+ames_cv <- rsample::vfold_cv(ames_train)
+
+############################# Preprocessing ###################################
+###############################################################################
+
+mod_rec <-
+  recipes::recipe(Sale_Price ~ Longitude + Latitude + Neighborhood,
+                  data = ames_train) %>%
+  recipes::step_log(Sale_Price, base = 10) %>%
+  recipes::step_other(Neighborhood, threshold = 0.05) %>%
+  recipes::step_dummy(recipes::all_nominal())
+
+
+############################# Model Training/Tuning ###########################
+###############################################################################
+
+## Define a regularized regression and explicitly leave the tuning parameters
+## empty for later tuning.
+lm_mod <-
+  parsnip::linear_reg(penalty = tune::tune(), mixture = tune::tune()) %>%
+  parsnip::set_engine("glmnet")
+
+## Construct a workflow that combines your recipe and your model
+ml_wflow <-
+  workflows::workflow() %>%
+  workflows::add_recipe(mod_rec) %>%
+  workflows::add_model(lm_mod)
+
+# Find best tuned model
+res <-
+  ml_wflow %>%
+  tune::tune_grid(resamples = ames_cv,
+                  grid = 10,
+                  metrics = yardstick::metric_set(yardstick::rmse))
+
+############################# Validation ######################################
+###############################################################################
+# Select best parameters
+best_params <-
+  res %>%
+  tune::select_best(metric = "rmse", maximize = FALSE)
+
+# Refit using the entire training data
+reg_res <-
+  ml_wflow %>%
+  tune::finalize_workflow(best_params) %>%
+  parsnip::fit(data = ames_train)
+
+# Predict on test data
+ames_test <- rsample::testing(ames_split)
+reg_res %>%
+  parsnip::predict(new_data = recipes::bake(mod_rec, ames_test)) %>%
+  bind_cols(ames_test, .) %>%
+  mutate(Sale_Price = log10(Sale_Price)) %>% 
+  select(Sale_Price, .pred) %>% 
+  rmse(Sale_Price, .pred)
+
+```
+
+and here's what I think it should look like in pseudocode:
+
+```{r, eval = FALSE}
+
+############################# Pseudocode ######################################
+###############################################################################
+
+library(AmesHousing)
+# devtools::install_github("tidymodels/tidymodels")
+library(tidymodels)
+
+ames <- make_ames()
+
+ml_wflow <-
+  # Original data (unsplit)
+  ames %>%
+  workflow() %>%
+  # Split test/train
+  initial_split(prop = .75) %>%
+  # Specify cross-validation
+  vfold_cv() %>%
+  # Start preprocessing
+  recipe(Sale_Price ~ Longitude + Latitude + Neighborhood) %>%
+  step_log(Sale_Price, base = 10) %>%
+  step_other(Neighborhood, threshold = 0.05) %>%
+  step_dummy(recipes::all_nominal()) %>%
+  # Define model
+  linear_reg(penalty = tune(), mixture = tune()) %>%
+  set_engine("glmnet") %>%
+  # Define grid of tuning parameters
+  tune_grid(grid = 10)
+
+# ml_wflow shouldn't run anything -- it's just a specification
+# of all the different steps. `fit` should run everything
+ml_wflow <- fit(ml_wflow)
+
+# Plot results of tuning parameters
+ml_wflow %>%
+  autoplot()
+
+# Automatically extract best parameters and fit to the training data
+final_model <-
+  ml_wflow %>%
+  fit_best_model(metrics = metric_set(rmse))
+
+# Predict on the test data using the last model
+# Everything is bundled into a workflow object
+# and everything can be extracted with separate
+# functions with the same verb
+final_model %>%
+  holdout_error()
+
+```
+
+If you want more details on each step, continue reading :).
+
+## A Data Science Workflow
+
+Let's recycle the operations I described above from `caret::train` and redefine them as general principles:
+
+* **Data Preparation**
+  + Create a separate training set which represent 75% of the initial sample
+
+* **Preprocessing (or Feature Engineering, for those liking fancy CS names)**
+  + Center and scale all predictors in the model
+
+* **Model Training/Tuning**
+  + Identifies 10 alpha values (0.1 to 1) and then 10 additional lambda values
+  + For each parameter set (1 alpha value and another lambda value), [run a cross-validation 10 times](http://topepo.github.io/caret/model-training-and-tuning.html)
+  + Effectively run 1000 models (10 alpha * 10 alpha) each one cross-validated (10)
+  + Record the validation metrics for each model on the assessment dataset
+
+* **Validation**
+  + Save the best model in the result together with the optimized tuning parameters
+
+Before we start, let's load the two packages and data we'll use:
+
+```{r }
+library(AmesHousing)
+# devtools::install_github("tidymodels/tidymodels")
+library(tidymodels)
+ames <- make_ames()
+```
+
+## Data Preparation
+
+This step is performed by the `rsample` package. It allows you to do two basic things in machine learning: separate your training/test set and create resamples sets for tuning. Since nearly all machine learning modelling requires model tuning, I will create a cross-validation set in this example.
+
+```{r}
+
+ames_split <- rsample::initial_split(ames, prop = .75)
+ames_train <- rsample::training(ames_split)
+ames_cv <- rsample::vfold_cv(ames_train)
+
+```
+
+I believe the code above is quite easy to understand and (even if slightly more verbose than the `caret` equivalent) is quite elegant. For now, there are two things to keep in mind: we have a training set (`ames_train`) and we have a cross-validation set (`ames_cv`). We can forget about the testing set all together since it'll be used in the end.
+
+## Preprocessing
+
+`caret` takes care of doing the preprocessing behind the scenes while the user only needs to specify which steps are needed. In `tidymodels`, the `recipes` package takes care of preprocessing and you have to perform each step explicitly:
+
+```{r}
+mod_rec <-
+  recipes::recipe(Sale_Price ~ Longitude + Latitude + Neighborhood,
+                  data = ames_train) %>%
+  recipes::step_log(Sale_Price, base = 10) %>%
+  recipes::step_other(Neighborhood, threshold = 0.05) %>%
+  recipes::step_dummy(recipes::all_nominal())
+```
+
+I find this preprocessing statement very intuitive as well. You define the formula for your analysis, provide the training dataset and then apply whatever transformation to the prediction variables. So far the workflow is simple but growing:
+
+`Divide training set` -> `Define model formula` -> `Specify the data is the training set` -> `Apply preprocessing`
+
+Previously, `recipes` was a bit confusing because there were steps which are not easy to remember: `prep` the dataset and `juice` or `bake` it depending on what you want to do (even more verbose and complex when applying this to a cross-validation set). With the `workflows` package, these steps have been completely eliminated from the users mental load.
+
+## Model Training/Tuning
+
+Model training and tuning is the step on which I think `tidymodels` brings in too many moving parts. This has been partially ameliorated with `workflows`. For this step there are three to four packages: `parsnip` for modelling, `workflows` for creating modelling workflows, `tune` for tuning models and `yardstick` for validating the results. Let's see how they fit together:
+
+```{r}
+## Define a regularized regression and explicitly leave the tuning parameters
+## empty for later tuning.
+lm_mod <-
+  parsnip::linear_reg(penalty = tune::tune(), mixture = tune::tune()) %>%
+  parsnip::set_engine("glmnet")
+
+## Construct a workflow that combines your recipe and your model
+ml_wflow <-
+  workflows::workflow() %>%
+  workflows::add_recipe(mod_rec) %>%
+  workflows::add_model(lm_mod)
+```
+
+The expression above adds much more flexibility as you can swap models by just changing the `linear_reg` to another model. However, it also adds more complexity. `tune()` requires you to know about `parameters()` to extract the parameters to create the grid. For that you have to be aware of the `grid_*` functions to create a grid of values. However, this comes from the `dials` package and not the `tune` package. On top of that, we know that the main functions from the `tidyverse` always accept and return a data frame, making it very familiar to learn new functions. However, all of these moving parts return different things.
+
+Having said that, the actual tuning is done with `tune_grid` where we specify the cross-validated set from the first step. Here `tune_grid` is quite elegant since it allows you specify a grid of values or an integer which it will use to create a grid of parameters:
+
+```{r}
+res <-
+  ml_wflow %>%
+  tune::tune_grid(resamples = ames_cv,
+                  grid = 10,
+                  metrics = yardstick::metric_set(yardstick::rmse))
+```
+
+And finally, you can get the summary of the metrics with `collect_metrics`:
+
+```{r }
+res %>%
+  tune::collect_metrics()
+```
+
+Or choose the best parameters with `select_best`:
+
+```{r }
+best_params <-
+  res %>%
+  tune::select_best(metric = "rmse", maximize = FALSE)
+
+best_params
+```
+
+## Validation
+
+The final step is to extract the best model and contrast the training and test error. Here `workflows` offers some convenience to replace the model with the best parameters and fit the complete training data with the best parameters. This step is currently completely automatized with `train` where you can extract the best model even after exploring the results of different tuning parameters.
+
+```{r }
+reg_res <-
+  ml_wflow %>%
+  # Attach the best tuning parameters to the model
+  tune::finalize_workflow(best_params) %>%
+  # Fit the final model to the training data
+  parsnip::fit(data = ames_train)
+
+ames_test <- rsample::testing(ames_split)
+
+reg_res %>%
+  predict(new_data = ames_test) %>%
+  bind_cols(ames_test, .) %>%
+  mutate(Sale_Price = log10(Sale_Price)) %>% 
+  select(Sale_Price, .pred) %>% 
+  yardstick::rmse(Sale_Price, .pred)
+```
+
+One of the things I don't like about `fit` for this current scenario is that I have to think about specifying the training data again. I understand that the data specified in `recipe` could be even an empty data frame, as it is used only to detect the column names. However, in nearly all the applications I can think of, I will specify the training data at the beginning (in my recipe). So I find that having to specify the data again is a step that can be eliminated altogether if the data is in the workflow.
+
+## What to remember
+
+There are many things to remember from the workflow above. Below is a kind of cheatsheet:
+
+* **Data Preparation**
+  + `rsample::initial_split`: splits your data into training/testing
+  + `rsample::training`: extract the training data
+  + `rsample::vfold_cv`: create a cross-validated set from the training data
+
+* **Preprocessing (or Feature Engineering, for those liking fancy CS names)**
+  + `recipes::recipe`: define your formula with the training data
+  + `recipes::step_*`: add any preprocessing steps your data
+
+* **Model Training/Tuning**
+  + `parsnip::linear_reg`: define your model. This example shows a linear regression but it could be anything else (random forest)
+  + `tune::tune`: leave the tuning parameters empty for later
+  + `parsnip::set_engine`: set the engine to run the models (which package to use)
+  + `workflows::workflow`: create a workflow object to hold your model/recipe
+  + `workflows::add_recipe`: add the recipe to your workflow
+  + `workflows::add_model`: add the model to your workflow
+  + `yardstick::metric_set`: create a set of metrics
+  + `yardstick::rmse`: specify the root-mean-square-error as the loss function
+  + `tune::tune_grid` run the workflow across all resamples with the desired tuning parameters
+  + `tune::collect_metrics`: collect which are the best tuning parameters
+  + `tune::select_best`: select the best tuning parameter
+  
+* **Validation**
+  + `tune::finalize_workflow`: replace the empty parameters of the model with the best tuned parameters
+  + `parsnip::fit`: fit the final model to the training data
+  + `rsample::testing`: extract the testing data from the initial split
+  + `parsnip::predict`: predict the trained model on the testing data
+
+This is currently what I think is the simplest workflow to train models in `tidymodels`. This is of course a very simplified example which doesn't create tuning grids or tune parameters in the recipes. This is supposed to be the barebones workflow that is currently available in `tidymodels`. Having said that, I still think there are too many steps which makes the workflow convoluted.
+
+## Thoughts on the workflow
+
+`tidymodels` is currently being designed to be decoupled into several packages and the key steps for modelling are currently implemented. This offers greater flexibility for defining models, making some of the steps in modelling less obscure and explicit.
+
+Having said that, there is too much to remember. `dplyr::select` is a function which is easy to remember because it can be thought of as an independent entity which I can use with a `data.table` or base `R`. On top of that, I know it follows the general principle of the `tidyverse` where it only accepts a data frame and only returns a data frame. This makes it much more memorable. Due to its simplicity, it's easy to think of it like a hammer: I can apply it to so many different problems that I don't have to memorize it, it becomes a general tool that represents an abstract idea.
+
+Some of the functions/packages from `tidymodels` are difficult to think like that. I believe this is because they are supposed to be almost always used together, otherwise they have no practical applications. `tune`, `workflows` and `parsnip` introduce several ideas which I think are difficult to remember (mainly because you have to **remember** them and they don't come off naturally, as an abstract concept).
+
+`workflows` seems to be a package that combines some of the steps performed by `parsnip` and `recipes`, suggesting that you can build a logical workflow with it. However, `workflows` is introduced **after** you define your preprocessing and model. My intuition would tell me that the workflow should begin at first rather than in the middle. For example, in pseucode a logical workflow could look like this:
+
+```{r, eval = FALSE}
+ml_wflow <-
+  # Original data (unsplit)
+  ames %>%
+  # Begin workflow
+  workflow() %>%
+  # No need to extract training/testing, they're already in the workflow
+  # This eliminates the mental load of mixing up training/testing and
+  # mistakenly predict one over the other.
+  initial_split(prop = .75) %>%
+  # Apply directly the cross-validation to the training set. No resaving
+  # the data into different names, adding more and more objects to remember
+  vfold_cv() %>%
+  # Introduce preprocessing
+  # No need to specify the data, the training data is already inside
+  # the workflow. This simplifies having to specify your training
+  # data in many different places (recipes, fit, vfold_cv). The data
+  # was specified at the beginning and that's it.
+  recipe(Sale_Price ~ Longitude + Latitude + Neighborhood) %>%
+  step_log(Sale_Price, base = 10) %>%
+  step_other(Neighborhood, threshold = 0.05) %>%
+  step_dummy(recipes::all_nominal()) %>%
+  # Add your model definition and include placeholders for your tuning
+  # parameters
+  linear_reg(penalty = tune(), mixture = tune()) %>%
+  set_engine("glmnet")
+```
+
+I believe the code above is much more logical than the current setup for three reasons which are very much related to each other.
+
+First, it follows the 'traditional' workflow of machine learning more clearly without intermediate steps. You begin with your data and add the key modelling steps one by one. Second, it avoids creating too many intermediate steps which add mental load. Whenever I'm using `tidymodels` I have to remember so many things: the training data, the cross-validated set, the recipe, the tuning grid, the model, etc. I often forget what I need to add to `tune_grid`: is it the recipe and the resample set? Is it the workflow? Did I mistakenly add the test set to the recipe and fit the data with the training set? It's very easy to get lost along the way. And third, I think the workflow from above fits with the `tidyverse` philosophy much better, where you can read the steps from left to right, in a linear fashion. 
+
+The power of the pseudocode above is that the workflow is thought of as the holder of your workflow since the beginning, meaning you can add or remove stuff from it. For example, it would very easy to add **another model** to be compared:
+
+```{r, eval = FALSE}
+ml_wflow <-
+  # Original data (unsplit)
+  ames %>%
+  workflow() %>%
+  initial_split(prop = .75) %>%
+  vfold_cv() %>%
+  recipe(Sale_Price ~ Longitude + Latitude + Neighborhood) %>%
+  step_log(Sale_Price, base = 10) %>%
+  step_other(Neighborhood, threshold = 0.05) %>%
+  step_dummy(recipes::all_nominal()) %>%
+  linear_reg(penalty = tune(), mixture = tune()) %>%
+  set_engine("glmnet") %>%
+  # Adds another model
+  rand_forest(mtry = tune(), tress = tune(), min_n = tune()) %>%
+  set_engine("rf")
+```
+
+The code above could also include additional steps for adding tuning grids for each model and then a final call to `fit` would fit all models/tuning parameters directly into the cross-validated set. Additionally, since the original data is in the workflow, methods for fitting the best model to the complete training data could be implemented as well as methods for running the best tuned model on the test data. No objects laying around to remember and everything is unified into a bundle of logical steps which begin with your data.
+
+This workflow idea doesn't introduce anything new programatically in `tidymodels`: all ingredients are currently implemented. The idea is to rearrange specific methods to handle a workflow in this fashion. *This workflow idea is just a prototype idea and I'm sure that many things can be improved*. I do think, however, that this is the direction which would make `tidymodels` a truly friendly interface. At least to me, it would make it as easy to use as the `tidyverse`.
+
+## Wrap-up
+
+This post is intended to be thought-provoking take on the current development of `tidymodels`. I'm a big fan of RStudio and their work and I'm looking forward to the "official release" of `tidymodels`. I wrote this piece with the intention of understanding the currently workflow but noticed that I'm not comfortable with it, nor did it come off naturally. I hope these ideas can help exemplify some of the bottlenecks that future `tidymodels` users can face with the aim of improving the user experience of the modelling framework from `tidymodels`.
