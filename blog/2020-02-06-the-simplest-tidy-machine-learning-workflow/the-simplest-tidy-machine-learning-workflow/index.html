@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Simple minimalist theme">
+<meta name="keywords" content="blog,goa,hugo,r,statistics,education">
+
+<base href="/">
+
+<title>Jorge Cimentada</title>
+
+<meta name="generator" content="Hugo 0.57.0" />
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
+<script src="/js/highlight.pack.js"></script>
+<script>
+hljs.configure({langauges: ['R']});
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="row text-left title">
+  <h1 class="title">The simplest tidy machine learning workflow</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON FEB 6, 2020 
+      
+      
+      
+      —
+      
+      
+      <a class="meta" href="/categories/machine-learning">MACHINE-LEARNING</a>, 
+      
+      <a class="meta" href="/categories/r">R</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    
+
+
+<p><code>caret</code> is a magical package for doing machine learning in R. Look at this code for running a regularized regression:</p>
+<pre class="r"><code>library(caret)
+
+inTrain &lt;- createDataPartition(y = mtcars$mpg,
+                               p = 0.75,
+                               list = FALSE)  
+
+reg_mod &lt;- train(
+  mpg ~ .,
+  data = mtcars[inTrain, ],
+  method = &quot;glmnet&quot;,
+  tuneLength = 10,
+  preProc = c(&quot;center&quot;, &quot;scale&quot;),
+  trControl = trainControl(method = &quot;cv&quot;, number = 10)
+)</code></pre>
+<p>The two function calls in the expression above perform these operations:</p>
+<ol style="list-style-type: decimal">
+<li>Create a training set containing a random sample of 75% of the initial sample</li>
+<li>Center and scale all predictors in the model</li>
+<li>Identifies 10 alpha values (0 to 1) and then 10 additional lambda values</li>
+<li>For each parameter set (one alpha value and another lambda value), <a href="http://topepo.github.io/caret/model-training-and-tuning.html">run a cross-validation 10 times</a></li>
+<li>Effectively run 1000 models (10 alpha * 10 alpha) each one cross-validated (10)</li>
+<li>Save the best model in the result together with the optimized tuning parameteres</li>
+</ol>
+<p>That is a lot of modelling, optimization and computation done with almost no mental load. However, in case you didn’t know, <code>caret</code> is doomed to be left behind. The creator of the package has stated that he will give maintenance to the package but <a href="https://twitter.com/topepos/status/1026939727910461440">most active development</a> will be given to <code>tidymodels</code>, its predecessor.</p>
+<p><code>tidymodels</code> is more or less a restructuring of the <code>caret</code> package (as it aims to do the same thing and more) but with an interface and design philosophy that resembles the <code>tidyverse</code>. This means that instead of having one package and one function (<code>caret</code> and <code>train</code>) that does much of the work, all operations described above are performed by different packages.</p>
+<p><code>tidymodels</code> has been in development for the past two years and the main pieces for effective modelling have been implemented (packages such as <code>parsnip</code>, <code>tune</code>, <code>yardstick</code>, etc…). However, there still isn’t a completely unified workflow that allows them to be as succint and elegant as <code>train</code>. I’ve been keeping an eye on the development of the different packages from <code>tidymodels</code> and I really want to understand the key workflow that will allow users to make modelling with <code>tidymodels</code> easy.</p>
+<p>The objective of this post is to present what I think is currently the most succint and barebones workflow that a user should need using <code>tidymodels</code>. I reached this workflow by looking at the machine learning tutorials from the RStudio conference and stripped most of the details to see the link between the high-level steps in the modelling workflow and where <code>tidymodels</code> fits . In particular, I was curious on how <code>tidymodels</code> makes the workflow fit a logical set of steps without much mental load.</p>
+<ul>
+<li>What this post isn’t about:
+<ul>
+<li>This post won’t introduce you to the <code>tidymodels</code> package. It assumes you are familiar with some of the main packages</li>
+<li>This post won’t show you everything that <code>tidymodels</code> can do (no fancy modelling or deep learning)</li>
+<li>This post won’t delve into specific details on every single function</li>
+</ul></li>
+</ul>
+<p>In fact, I’ve always had some issues using <code>tidymodels</code> because there are so many functions that are difficult to think as isolated entities that remembering every step is quite difficult (unlike the <code>tidyverse</code> where each package can be thought of as a different entity independent of the others but that you use them because they work well together).</p>
+<ul>
+<li>What this post is about:
+<ul>
+<li>This post will divide the key operations in <strong>modelling</strong> and how they fit <code>tidymodels</code></li>
+<li>It will describe the specific functions that perform each step</li>
+<li>It will describe what I think the current workflow is missing</li>
+</ul></li>
+</ul>
+<p>This post is slightly longer than my usual posts, so here’s the <em>too long don’t read</em> version of the workflow:</p>
+<pre class="r"><code>library(AmesHousing)
+# devtools::install_github(&quot;tidymodels/tidymodels&quot;)
+library(tidymodels)
+
+ames &lt;- make_ames()
+
+############################# Data Partitioning ###############################
+###############################################################################
+
+ames_split &lt;- rsample::initial_split(ames, prop = .7)
+ames_train &lt;- rsample::training(ames_split)
+ames_cv &lt;- rsample::vfold_cv(ames_train)
+
+############################# Preprocessing ###################################
+###############################################################################
+
+mod_rec &lt;-
+  recipes::recipe(Sale_Price ~ Longitude + Latitude + Neighborhood,
+                  data = ames_train) %&gt;%
+  recipes::step_log(Sale_Price, base = 10) %&gt;%
+  recipes::step_other(Neighborhood, threshold = 0.05) %&gt;%
+  recipes::step_dummy(recipes::all_nominal())
+
+
+############################# Model Training/Tuning ###########################
+###############################################################################
+
+## Define a regularized regression and explicitly leave the tuning parameters
+## empty for later tuning.
+lm_mod &lt;-
+  parsnip::linear_reg(penalty = tune::tune(), mixture = tune::tune()) %&gt;%
+  parsnip::set_engine(&quot;glmnet&quot;)
+
+## Construct a workflow that combines your recipe and your model
+ml_wflow &lt;-
+  workflows::workflow() %&gt;%
+  workflows::add_recipe(mod_rec) %&gt;%
+  workflows::add_model(lm_mod)
+
+# Find best tuned model
+res &lt;-
+  ml_wflow %&gt;%
+  tune::tune_grid(resamples = ames_cv,
+                  grid = 10,
+                  metrics = yardstick::metric_set(yardstick::rmse))
+
+############################# Validation ######################################
+###############################################################################
+# Select best parameters
+best_params &lt;-
+  res %&gt;%
+  tune::select_best(metric = &quot;rmse&quot;, maximize = FALSE)
+
+# Refit using the entire training data
+reg_res &lt;-
+  ml_wflow %&gt;%
+  tune::finalize_workflow(best_params) %&gt;%
+  parsnip::fit(data = ames_train)
+
+# Predict on test data
+ames_test &lt;- rsample::testing(ames_split)
+reg_res %&gt;%
+  parsnip::predict(new_data = recipes::bake(mod_rec, ames_test)) %&gt;%
+  bind_cols(ames_test, .) %&gt;%
+  mutate(Sale_Price = log10(Sale_Price)) %&gt;% 
+  select(Sale_Price, .pred) %&gt;% 
+  rmse(Sale_Price, .pred)</code></pre>
+<p>and here’s what I think it should look like in pseudocode:</p>
+<pre class="r"><code>############################# Pseudocode ######################################
+###############################################################################
+
+library(AmesHousing)
+# devtools::install_github(&quot;tidymodels/tidymodels&quot;)
+library(tidymodels)
+
+ames &lt;- make_ames()
+
+ml_wflow &lt;-
+  # Original data (unsplit)
+  ames %&gt;%
+  workflow() %&gt;%
+  # Split test/train
+  initial_split(prop = .75) %&gt;%
+  # Specify cross-validation
+  vfold_cv() %&gt;%
+  # Start preprocessing
+  recipe(Sale_Price ~ Longitude + Latitude + Neighborhood) %&gt;%
+  step_log(Sale_Price, base = 10) %&gt;%
+  step_other(Neighborhood, threshold = 0.05) %&gt;%
+  step_dummy(recipes::all_nominal()) %&gt;%
+  # Define model
+  linear_reg(penalty = tune(), mixture = tune()) %&gt;%
+  set_engine(&quot;glmnet&quot;) %&gt;%
+  # Define grid of tuning parameters
+  tune_grid(grid = 10)
+
+# ml_wflow shouldn&#39;t run anything -- it&#39;s just a specification
+# of all the different steps. `fit` should run everything
+ml_wflow &lt;- fit(ml_wflow)
+
+# Plot results of tuning parameters
+ml_wflow %&gt;%
+  autoplot()
+
+# Automatically extract best parameters and fit to the training data
+final_model &lt;-
+  ml_wflow %&gt;%
+  fit_best_model(metrics = metric_set(rmse))
+
+# Predict on the test data using the last model
+# Everything is bundled into a workflow object
+# and everything can be extracted with separate
+# functions with the same verb
+final_model %&gt;%
+  holdout_error()</code></pre>
+<p>If you want more details on each step, continue reading :).</p>
+<div id="a-data-science-workflow" class="section level2">
+<h2>A Data Science Workflow</h2>
+<p>Let’s recycle the operations I described above from <code>caret::train</code> and redefine them as general principles:</p>
+<ul>
+<li><strong>Data Preparation</strong>
+<ul>
+<li>Create a separate training set which represent 75% of the initial sample</li>
+</ul></li>
+<li><strong>Preprocessing (or Feature Engineering, for those liking fancy CS names)</strong>
+<ul>
+<li>Center and scale all predictors in the model</li>
+</ul></li>
+<li><strong>Model Training/Tuning</strong>
+<ul>
+<li>Identifies 10 alpha values (0.1 to 1) and then 10 additional lambda values</li>
+<li>For each parameter set (1 alpha value and another lambda value), <a href="http://topepo.github.io/caret/model-training-and-tuning.html">run a cross-validation 10 times</a></li>
+<li>Effectively run 1000 models (10 alpha * 10 alpha) each one cross-validated (10)</li>
+<li>Record the validation metrics for each model on the assessment dataset</li>
+</ul></li>
+<li><strong>Validation</strong>
+<ul>
+<li>Save the best model in the result together with the optimized tuning parameters</li>
+</ul></li>
+</ul>
+<p>Before we start, let’s load the two packages and data we’ll use:</p>
+<pre class="r"><code>library(AmesHousing)
+# devtools::install_github(&quot;tidymodels/tidymodels&quot;)
+library(tidymodels)</code></pre>
+<pre><code>## ── Attaching packages ────────────────────────────────────── tidymodels 0.0.4 ──</code></pre>
+<pre><code>## ✔ broom     0.5.4          ✔ recipes   0.1.9     
+## ✔ dials     0.0.4          ✔ rsample   0.0.5.9000
+## ✔ dplyr     0.8.4          ✔ tibble    2.1.3     
+## ✔ ggplot2   3.2.1          ✔ tune      0.0.1     
+## ✔ infer     0.5.1          ✔ workflows 0.1.0.9000
+## ✔ parsnip   0.0.5.9000     ✔ yardstick 0.0.5     
+## ✔ purrr     0.3.3</code></pre>
+<pre><code>## ── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+## ✖ purrr::discard()    masks scales::discard()
+## ✖ dplyr::filter()     masks stats::filter()
+## ✖ dplyr::lag()        masks stats::lag()
+## ✖ ggplot2::margin()   masks dials::margin()
+## ✖ recipes::step()     masks stats::step()
+## ✖ recipes::yj_trans() masks scales::yj_trans()</code></pre>
+<pre class="r"><code>ames &lt;- make_ames()</code></pre>
+</div>
+<div id="data-preparation" class="section level2">
+<h2>Data Preparation</h2>
+<p>This step is performed by the <code>rsample</code> package. It allows you to do two basic things in machine learning: separate your training/test set and create resamples sets for tuning. Since nearly all machine learning modelling requires model tuning, I will create a cross-validation set in this example.</p>
+<pre class="r"><code>ames_split &lt;- rsample::initial_split(ames, prop = .75)
+ames_train &lt;- rsample::training(ames_split)
+ames_cv &lt;- rsample::vfold_cv(ames_train)</code></pre>
+<p>I believe the code above is quite easy to understand and (even if slightly more verbose than the <code>caret</code> equivalent) is quite elegant. For now, there are two things to keep in mind: we have a training set (<code>ames_train</code>) and we have a cross-validation set (<code>ames_cv</code>). We can forget about the testing set all together since it’ll be used in the end.</p>
+</div>
+<div id="preprocessing" class="section level2">
+<h2>Preprocessing</h2>
+<p><code>caret</code> takes care of doing the preprocessing behind the scenes while the user only needs to specify which steps are needed. In <code>tidymodels</code>, the <code>recipes</code> package takes care of preprocessing and you have to perform each step explicitly:</p>
+<pre class="r"><code>mod_rec &lt;-
+  recipes::recipe(Sale_Price ~ Longitude + Latitude + Neighborhood,
+                  data = ames_train) %&gt;%
+  recipes::step_log(Sale_Price, base = 10) %&gt;%
+  recipes::step_other(Neighborhood, threshold = 0.05) %&gt;%
+  recipes::step_dummy(recipes::all_nominal())</code></pre>
+<p>I find this preprocessing statement very intuitive as well. You define the formula for your analysis, provide the training dataset and then apply whatever transformation to the prediction variables. So far the workflow is simple but growing:</p>
+<p><code>Divide training set</code> -&gt; <code>Define model formula</code> -&gt; <code>Specify the data is the training set</code> -&gt; <code>Apply preprocessing</code></p>
+<p>Previously, <code>recipes</code> was a bit confusing because there were steps which are not easy to remember: <code>prep</code> the dataset and <code>juice</code> or <code>bake</code> it depending on what you want to do (even more verbose and complex when applying this to a cross-validation set). With the <code>workflows</code> package, these steps have been completely eliminated from the users mental load.</p>
+</div>
+<div id="model-trainingtuning" class="section level2">
+<h2>Model Training/Tuning</h2>
+<p>Model training and tuning is the step on which I think <code>tidymodels</code> brings in too many moving parts. This has been partially ameliorated with <code>workflows</code>. For this step there are three to four packages: <code>parsnip</code> for modelling, <code>workflows</code> for creating modelling workflows, <code>tune</code> for tuning models and <code>yardstick</code> for validating the results. Let’s see how they fit together:</p>
+<pre class="r"><code>## Define a regularized regression and explicitly leave the tuning parameters
+## empty for later tuning.
+lm_mod &lt;-
+  parsnip::linear_reg(penalty = tune::tune(), mixture = tune::tune()) %&gt;%
+  parsnip::set_engine(&quot;glmnet&quot;)
+
+## Construct a workflow that combines your recipe and your model
+ml_wflow &lt;-
+  workflows::workflow() %&gt;%
+  workflows::add_recipe(mod_rec) %&gt;%
+  workflows::add_model(lm_mod)</code></pre>
+<p>The expression above adds much more flexibility as you can swap models by just changing the <code>linear_reg</code> to another model. However, it also adds more complexity. <code>tune()</code> requires you to know about <code>parameters()</code> to extract the parameters to create the grid. For that you have to be aware of the <code>grid_*</code> functions to create a grid of values. However, this comes from the <code>dials</code> package and not the <code>tune</code> package. On top of that, we know that the main functions from the <code>tidyverse</code> always accept and return a data frame, making it very familiar to learn new functions. However, all of these moving parts return different things.</p>
+<p>Having said that, the actual tuning is done with <code>tune_grid</code> where we specify the cross-validated set from the first step. Here <code>tune_grid</code> is quite elegant since it allows you specify a grid of values or an integer which it will use to create a grid of parameters:</p>
+<pre class="r"><code>res &lt;-
+  ml_wflow %&gt;%
+  tune::tune_grid(resamples = ames_cv,
+                  grid = 10,
+                  metrics = yardstick::metric_set(yardstick::rmse))</code></pre>
+<p>And finally, you can get the summary of the metrics with <code>collect_metrics</code>:</p>
+<pre class="r"><code>res %&gt;%
+  tune::collect_metrics()</code></pre>
+<pre><code>## # A tibble: 10 x 7
+##     penalty mixture .metric .estimator  mean     n std_err
+##       &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
+##  1 4.89e-10  0.269  rmse    standard   0.143    10 0.00233
+##  2 2.73e- 9  0.616  rmse    standard   0.143    10 0.00234
+##  3 5.19e- 8  0.967  rmse    standard   0.143    10 0.00234
+##  4 7.11e- 7  0.0559 rmse    standard   0.143    10 0.00233
+##  5 2.31e- 6  0.755  rmse    standard   0.143    10 0.00234
+##  6 7.22e- 5  0.866  rmse    standard   0.143    10 0.00234
+##  7 5.87e- 4  0.710  rmse    standard   0.143    10 0.00233
+##  8 1.83e- 3  0.399  rmse    standard   0.143    10 0.00232
+##  9 1.84e- 2  0.233  rmse    standard   0.144    10 0.00216
+## 10 4.92e- 1  0.499  rmse    standard   0.180    10 0.00190</code></pre>
+<p>Or choose the best parameters with <code>select_best</code>:</p>
+<pre class="r"><code>best_params &lt;-
+  res %&gt;%
+  tune::select_best(metric = &quot;rmse&quot;, maximize = FALSE)
+
+best_params</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##    penalty mixture
+##      &lt;dbl&gt;   &lt;dbl&gt;
+## 1 0.000587   0.710</code></pre>
+</div>
+<div id="validation" class="section level2">
+<h2>Validation</h2>
+<p>The final step is to extract the best model and contrast the training and test error. Here <code>workflows</code> offers some convenience to replace the model with the best parameters and fit the complete training data with the best parameters. This step is currently completely automatized with <code>train</code> where you can extract the best model even after exploring the results of different tuning parameters.</p>
+<pre class="r"><code>reg_res &lt;-
+  ml_wflow %&gt;%
+  # Attach the best tuning parameters to the model
+  tune::finalize_workflow(best_params) %&gt;%
+  # Fit the final model to the training data
+  parsnip::fit(data = ames_train)
+
+ames_test &lt;- rsample::testing(ames_split)
+
+reg_res %&gt;%
+  predict(new_data = ames_test) %&gt;%
+  bind_cols(ames_test, .) %&gt;%
+  mutate(Sale_Price = log10(Sale_Price)) %&gt;% 
+  select(Sale_Price, .pred) %&gt;% 
+  yardstick::rmse(Sale_Price, .pred)</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 rmse    standard       0.136</code></pre>
+<p>One of the things I don’t like about <code>fit</code> for this current scenario is that I have to think about specifying the training data again. I understand that the data specified in <code>recipe</code> could be even an empty data frame, as it is used only to detect the column names. However, in nearly all the applications I can think of, I will specify the training data at the beginning (in my recipe). So I find that having to specify the data again is a step that can be eliminated altogether if the data is in the workflow.</p>
+</div>
+<div id="what-to-remember" class="section level2">
+<h2>What to remember</h2>
+<p>There are many things to remember from the workflow above. Below is a kind of cheatsheet:</p>
+<ul>
+<li><strong>Data Preparation</strong>
+<ul>
+<li><code>rsample::initial_split</code>: splits your data into training/testing</li>
+<li><code>rsample::training</code>: extract the training data</li>
+<li><code>rsample::vfold_cv</code>: create a cross-validated set from the training data</li>
+</ul></li>
+<li><strong>Preprocessing (or Feature Engineering, for those liking fancy CS names)</strong>
+<ul>
+<li><code>recipes::recipe</code>: define your formula with the training data</li>
+<li><code>recipes::step_*</code>: add any preprocessing steps your data</li>
+</ul></li>
+<li><strong>Model Training/Tuning</strong>
+<ul>
+<li><code>parsnip::linear_reg</code>: define your model. This example shows a linear regression but it could be anything else (random forest)</li>
+<li><code>tune::tune</code>: leave the tuning parameters empty for later</li>
+<li><code>parsnip::set_engine</code>: set the engine to run the models (which package to use)</li>
+<li><code>workflows::workflow</code>: create a workflow object to hold your model/recipe</li>
+<li><code>workflows::add_recipe</code>: add the recipe to your workflow</li>
+<li><code>workflows::add_model</code>: add the model to your workflow</li>
+<li><code>yardstick::metric_set</code>: create a set of metrics</li>
+<li><code>yardstick::rmse</code>: specify the root-mean-square-error as the loss function</li>
+<li><code>tune::tune_grid</code> run the workflow across all resamples with the desired tuning parameters</li>
+<li><code>tune::collect_metrics</code>: collect which are the best tuning parameters</li>
+<li><code>tune::select_best</code>: select the best tuning parameter</li>
+</ul></li>
+<li><strong>Validation</strong>
+<ul>
+<li><code>tune::finalize_workflow</code>: replace the empty parameters of the model with the best tuned parameters</li>
+<li><code>parsnip::fit</code>: fit the final model to the training data</li>
+<li><code>rsample::testing</code>: extract the testing data from the initial split</li>
+<li><code>parsnip::predict</code>: predict the trained model on the testing data</li>
+</ul></li>
+</ul>
+<p>This is currently what I think is the simplest workflow to train models in <code>tidymodels</code>. This is of course a very simplified example which doesn’t create tuning grids or tune parameters in the recipes. This is supposed to be the barebones workflow that is currently available in <code>tidymodels</code>. Having said that, I still think there are too many steps which makes the workflow convoluted.</p>
+</div>
+<div id="thoughts-on-the-workflow" class="section level2">
+<h2>Thoughts on the workflow</h2>
+<p><code>tidymodels</code> is currently being designed to be decoupled into several packages and the key steps for modelling are currently implemented. This offers greater flexibility for defining models, making some of the steps in modelling less obscure and explicit.</p>
+<p>Having said that, there is too much to remember. <code>dplyr::select</code> is a function which is easy to remember because it can be thought of as an independent entity which I can use with a <code>data.table</code> or base <code>R</code>. On top of that, I know it follows the general principle of the <code>tidyverse</code> where it only accepts a data frame and only returns a data frame. This makes it much more memorable. Due to its simplicity, it’s easy to think of it like a hammer: I can apply it to so many different problems that I don’t have to memorize it, it becomes a general tool that represents an abstract idea.</p>
+<p>Some of the functions/packages from <code>tidymodels</code> are difficult to think like that. I believe this is because they are supposed to be almost always used together, otherwise they have no practical applications. <code>tune</code>, <code>workflows</code> and <code>parsnip</code> introduce several ideas which I think are difficult to remember (mainly because you have to <strong>remember</strong> them and they don’t come off naturally, as an abstract concept).</p>
+<p><code>workflows</code> seems to be a package that combines some of the steps performed by <code>parsnip</code> and <code>recipes</code>, suggesting that you can build a logical workflow with it. However, <code>workflows</code> is introduced <strong>after</strong> you define your preprocessing and model. My intuition would tell me that the workflow should begin at first rather than in the middle. For example, in pseucode a logical workflow could look like this:</p>
+<pre class="r"><code>ml_wflow &lt;-
+  # Original data (unsplit)
+  ames %&gt;%
+  # Begin workflow
+  workflow() %&gt;%
+  # No need to extract training/testing, they&#39;re already in the workflow
+  # This eliminates the mental load of mixing up training/testing and
+  # mistakenly predict one over the other.
+  initial_split(prop = .75) %&gt;%
+  # Apply directly the cross-validation to the training set. No resaving
+  # the data into different names, adding more and more objects to remember
+  vfold_cv() %&gt;%
+  # Introduce preprocessing
+  # No need to specify the data, the training data is already inside
+  # the workflow. This simplifies having to specify your training
+  # data in many different places (recipes, fit, vfold_cv). The data
+  # was specified at the beginning and that&#39;s it.
+  recipe(Sale_Price ~ Longitude + Latitude + Neighborhood) %&gt;%
+  step_log(Sale_Price, base = 10) %&gt;%
+  step_other(Neighborhood, threshold = 0.05) %&gt;%
+  step_dummy(recipes::all_nominal()) %&gt;%
+  # Add your model definition and include placeholders for your tuning
+  # parameters
+  linear_reg(penalty = tune(), mixture = tune()) %&gt;%
+  set_engine(&quot;glmnet&quot;)</code></pre>
+<p>I believe the code above is much more logical than the current setup for three reasons which are very much related to each other.</p>
+<p>First, it follows the ‘traditional’ workflow of machine learning more clearly without intermediate steps. You begin with your data and add the key modelling steps one by one. Second, it avoids creating too many intermediate steps which add mental load. Whenever I’m using <code>tidymodels</code> I have to remember so many things: the training data, the cross-validated set, the recipe, the tuning grid, the model, etc. I often forget what I need to add to <code>tune_grid</code>: is it the recipe and the resample set? Is it the workflow? Did I mistakenly add the test set to the recipe and fit the data with the training set? It’s very easy to get lost along the way. And third, I think the workflow from above fits with the <code>tidyverse</code> philosophy much better, where you can read the steps from left to right, in a linear fashion.</p>
+<p>The power of the pseudocode above is that the workflow is thought of as the holder of your workflow since the beginning, meaning you can add or remove stuff from it. For example, it would very easy to add <strong>another model</strong> to be compared:</p>
+<pre class="r"><code>ml_wflow &lt;-
+  # Original data (unsplit)
+  ames %&gt;%
+  workflow() %&gt;%
+  initial_split(prop = .75) %&gt;%
+  vfold_cv() %&gt;%
+  recipe(Sale_Price ~ Longitude + Latitude + Neighborhood) %&gt;%
+  step_log(Sale_Price, base = 10) %&gt;%
+  step_other(Neighborhood, threshold = 0.05) %&gt;%
+  step_dummy(recipes::all_nominal()) %&gt;%
+  linear_reg(penalty = tune(), mixture = tune()) %&gt;%
+  set_engine(&quot;glmnet&quot;) %&gt;%
+  # Adds another model
+  rand_forest(mtry = tune(), tress = tune(), min_n = tune()) %&gt;%
+  set_engine(&quot;rf&quot;)</code></pre>
+<p>The code above could also include additional steps for adding tuning grids for each model and then a final call to <code>fit</code> would fit all models/tuning parameters directly into the cross-validated set. Additionally, since the original data is in the workflow, methods for fitting the best model to the complete training data could be implemented as well as methods for running the best tuned model on the test data. No objects laying around to remember and everything is unified into a bundle of logical steps which begin with your data.</p>
+<p>This workflow idea doesn’t introduce anything new programatically in <code>tidymodels</code>: all ingredients are currently implemented. The idea is to rearrange specific methods to handle a workflow in this fashion. <em>This workflow idea is just a prototype idea and I’m sure that many things can be improved</em>. I do think, however, that this is the direction which would make <code>tidymodels</code> a truly friendly interface. At least to me, it would make it as easy to use as the <code>tidyverse</code>.</p>
+</div>
+<div id="wrap-up" class="section level2">
+<h2>Wrap-up</h2>
+<p>This post is intended to be thought-provoking take on the current development of <code>tidymodels</code>. I’m a big fan of RStudio and their work and I’m looking forward to the “official release” of <code>tidymodels</code>. I wrote this piece with the intention of understanding the currently workflow but noticed that I’m not comfortable with it, nor did it come off naturally. I hope these ideas can help exemplify some of the bottlenecks that future <code>tidymodels</code> users can face with the aim of improving the user experience of the modelling framework from <code>tidymodels</code>.</p>
+</div>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+      
+      
+      TAGS:
+      
+      
+      <a class="meta" href="/tags/machine-learning">MACHINE-LEARNING</a>, 
+      
+      <a class="meta" href="/tags/r">R</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "cimentadaj-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  <span><a class="menu-item" href="/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/">&lt; prev | </a></span>
+  
+  
+  <span><a class="menu-item" href="/blog">blog</a></span>
+  
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="/">home</a></h4>
+</section>
+
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2017. Jorge Cimentada. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+
