@@ -40,9 +40,9 @@ The two function calls in the expression above perform these operations:
 5. Effectively run 1000 models (10 alpha * 10 alpha) each one cross-validated (10)
 6. Save the best model in the result together with the optimized tuning parameteres
 
-That is a lot of modelling, optimization and computation done with almost no mental load. However, in case you didn't know, `caret` is doomed to be left behind. The creator of the package has stated that he will give maintenance to the package but [most active development](https://twitter.com/topepos/status/1026939727910461440) will be given to `tidymodels`, its predecessor.
+That is a lot of modelling, optimization and computation done with almost no mental load. However, in case you didn't know, `caret` is doomed to be left behind. The creator of the package has stated that he will give maintenance to the package but [most active development](https://twitter.com/topepos/status/1026939727910461440) will be given to `tidymodels`, its successor.
 
-`tidymodels` is more or less a restructuring of the `caret` package (as it aims to do the same thing and more) but with an interface and design philosophy that resembles the `tidyverse`. This means that instead of having one package and one function (`caret` and `train`) that does much of the work, all operations described above are performed by different packages.
+`tidymodels` is more or less a restructuring of the `caret` package (as it aims to do the same thing and more) but with an interface and design philosophy that resembles the `Unix` philosophy. This means that instead of having one package and one function (`caret` and `train`) that does much of the work, all operations described above are performed by different packages.
 
 `tidymodels` has been in development for the past two years and the main pieces for effective modelling have been implemented (packages such as `parsnip`, `tune`, `yardstick`, etc...). However, there still isn't a completely unified workflow that allows them to be as succint and elegant as `train`. I've been keeping an eye on the development of the different packages from `tidymodels` and I really want to understand the key workflow that will allow users to make modelling with `tidymodels` easy.
 
@@ -200,7 +200,7 @@ Let's recycle the operations I described above from `caret::train` and redefine 
   + Center and scale all predictors in the model
 
 * **Model Training/Tuning**
-  + Identifies 10 alpha values (0.1 to 1) and then 10 additional lambda values
+  + Identifies 10 alpha values (0 to 1) and then 10 additional lambda values
   + For each parameter set (1 alpha value and another lambda value), [run a cross-validation 10 times](http://topepo.github.io/caret/model-training-and-tuning.html)
   + Effectively run 1000 models (10 alpha * 10 alpha) each one cross-validated (10)
   + Record the validation metrics for each model on the assessment dataset
@@ -268,7 +268,7 @@ ml_wflow <-
   workflows::add_model(lm_mod)
 ```
 
-The expression above adds much more flexibility as you can swap models by just changing the `linear_reg` to another model. However, it also adds more complexity. `tune()` requires you to know about `parameters()` to extract the parameters to create the grid. For that you have to be aware of the `grid_*` functions to create a grid of values. However, this comes from the `dials` package and not the `tune` package. On top of that, we know that the main functions from the `tidyverse` always accept and return a data frame, making it very familiar to learn new functions. However, all of these moving parts return different things.
+The expression above adds much more flexibility as you can swap models by just changing the `linear_reg` to another model. However, it also adds more complexity. `tune()` requires you to know about `parameters()` to extract the parameters to create the grid. For that you have to be aware of the `grid_*` functions to create a grid of values. However, this comes from the `dials` package and not the `tune` package. However, all of these moving parts return different things, so they're not very easy to remember at first glance.
 
 Having said that, the actual tuning is done with `tune_grid` where we specify the cross-validated set from the first step. Here `tune_grid` is quite elegant since it allows you specify a grid of values or an integer which it will use to create a grid of parameters:
 

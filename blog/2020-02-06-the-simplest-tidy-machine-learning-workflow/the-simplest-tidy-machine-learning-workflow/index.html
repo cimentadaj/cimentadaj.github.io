@@ -108,8 +108,8 @@ reg_mod &lt;- train(
 <li>Effectively run 1000 models (10 alpha * 10 alpha) each one cross-validated (10)</li>
 <li>Save the best model in the result together with the optimized tuning parameteres</li>
 </ol>
-<p>That is a lot of modelling, optimization and computation done with almost no mental load. However, in case you didn’t know, <code>caret</code> is doomed to be left behind. The creator of the package has stated that he will give maintenance to the package but <a href="https://twitter.com/topepos/status/1026939727910461440">most active development</a> will be given to <code>tidymodels</code>, its predecessor.</p>
-<p><code>tidymodels</code> is more or less a restructuring of the <code>caret</code> package (as it aims to do the same thing and more) but with an interface and design philosophy that resembles the <code>tidyverse</code>. This means that instead of having one package and one function (<code>caret</code> and <code>train</code>) that does much of the work, all operations described above are performed by different packages.</p>
+<p>That is a lot of modelling, optimization and computation done with almost no mental load. However, in case you didn’t know, <code>caret</code> is doomed to be left behind. The creator of the package has stated that he will give maintenance to the package but <a href="https://twitter.com/topepos/status/1026939727910461440">most active development</a> will be given to <code>tidymodels</code>, its successor.</p>
+<p><code>tidymodels</code> is more or less a restructuring of the <code>caret</code> package (as it aims to do the same thing and more) but with an interface and design philosophy that resembles the <code>Unix</code> philosophy. This means that instead of having one package and one function (<code>caret</code> and <code>train</code>) that does much of the work, all operations described above are performed by different packages.</p>
 <p><code>tidymodels</code> has been in development for the past two years and the main pieces for effective modelling have been implemented (packages such as <code>parsnip</code>, <code>tune</code>, <code>yardstick</code>, etc…). However, there still isn’t a completely unified workflow that allows them to be as succint and elegant as <code>train</code>. I’ve been keeping an eye on the development of the different packages from <code>tidymodels</code> and I really want to understand the key workflow that will allow users to make modelling with <code>tidymodels</code> easy.</p>
 <p>The objective of this post is to present what I think is currently the most succint and barebones workflow that a user should need using <code>tidymodels</code>. I reached this workflow by looking at the machine learning tutorials from the RStudio conference and stripped most of the details to see the link between the high-level steps in the modelling workflow and where <code>tidymodels</code> fits . In particular, I was curious on how <code>tidymodels</code> makes the workflow fit a logical set of steps without much mental load.</p>
 <ul>
@@ -260,7 +260,7 @@ final_model %&gt;%
 </ul></li>
 <li><strong>Model Training/Tuning</strong>
 <ul>
-<li>Identifies 10 alpha values (0.1 to 1) and then 10 additional lambda values</li>
+<li>Identifies 10 alpha values (0 to 1) and then 10 additional lambda values</li>
 <li>For each parameter set (1 alpha value and another lambda value), <a href="http://topepo.github.io/caret/model-training-and-tuning.html">run a cross-validation 10 times</a></li>
 <li>Effectively run 1000 models (10 alpha * 10 alpha) each one cross-validated (10)</li>
 <li>Record the validation metrics for each model on the assessment dataset</li>
@@ -326,7 +326,7 @@ ml_wflow &lt;-
   workflows::workflow() %&gt;%
   workflows::add_recipe(mod_rec) %&gt;%
   workflows::add_model(lm_mod)</code></pre>
-<p>The expression above adds much more flexibility as you can swap models by just changing the <code>linear_reg</code> to another model. However, it also adds more complexity. <code>tune()</code> requires you to know about <code>parameters()</code> to extract the parameters to create the grid. For that you have to be aware of the <code>grid_*</code> functions to create a grid of values. However, this comes from the <code>dials</code> package and not the <code>tune</code> package. On top of that, we know that the main functions from the <code>tidyverse</code> always accept and return a data frame, making it very familiar to learn new functions. However, all of these moving parts return different things.</p>
+<p>The expression above adds much more flexibility as you can swap models by just changing the <code>linear_reg</code> to another model. However, it also adds more complexity. <code>tune()</code> requires you to know about <code>parameters()</code> to extract the parameters to create the grid. For that you have to be aware of the <code>grid_*</code> functions to create a grid of values. However, this comes from the <code>dials</code> package and not the <code>tune</code> package. However, all of these moving parts return different things, so they’re not very easy to remember at first glance.</p>
 <p>Having said that, the actual tuning is done with <code>tune_grid</code> where we specify the cross-validated set from the first step. Here <code>tune_grid</code> is quite elegant since it allows you specify a grid of values or an integer which it will use to create a grid of parameters:</p>
 <pre class="r"><code>res &lt;-
   ml_wflow %&gt;%
@@ -339,16 +339,16 @@ ml_wflow &lt;-
 <pre><code>## # A tibble: 10 x 7
 ##     penalty mixture .metric .estimator  mean     n std_err
 ##       &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
-##  1 4.89e-10  0.269  rmse    standard   0.143    10 0.00233
-##  2 2.73e- 9  0.616  rmse    standard   0.143    10 0.00234
-##  3 5.19e- 8  0.967  rmse    standard   0.143    10 0.00234
-##  4 7.11e- 7  0.0559 rmse    standard   0.143    10 0.00233
-##  5 2.31e- 6  0.755  rmse    standard   0.143    10 0.00234
-##  6 7.22e- 5  0.866  rmse    standard   0.143    10 0.00234
-##  7 5.87e- 4  0.710  rmse    standard   0.143    10 0.00233
-##  8 1.83e- 3  0.399  rmse    standard   0.143    10 0.00232
-##  9 1.84e- 2  0.233  rmse    standard   0.144    10 0.00216
-## 10 4.92e- 1  0.499  rmse    standard   0.180    10 0.00190</code></pre>
+##  1 4.99e-10   0.577 rmse    standard   0.141    10 0.00327
+##  2 3.11e- 9   0.655 rmse    standard   0.141    10 0.00327
+##  3 2.74e- 8   0.476 rmse    standard   0.141    10 0.00327
+##  4 1.86e- 7   0.795 rmse    standard   0.141    10 0.00327
+##  5 8.39e- 6   0.976 rmse    standard   0.141    10 0.00327
+##  6 8.47e- 5   0.177 rmse    standard   0.141    10 0.00327
+##  7 6.00e- 4   0.394 rmse    standard   0.141    10 0.00327
+##  8 4.45e- 3   0.268 rmse    standard   0.141    10 0.00329
+##  9 1.28e- 2   0.143 rmse    standard   0.142    10 0.00331
+## 10 1.66e- 1   0.863 rmse    standard   0.175    10 0.00387</code></pre>
 <p>Or choose the best parameters with <code>select_best</code>:</p>
 <pre class="r"><code>best_params &lt;-
   res %&gt;%
@@ -356,9 +356,9 @@ ml_wflow &lt;-
 
 best_params</code></pre>
 <pre><code>## # A tibble: 1 x 2
-##    penalty mixture
-##      &lt;dbl&gt;   &lt;dbl&gt;
-## 1 0.000587   0.710</code></pre>
+##     penalty mixture
+##       &lt;dbl&gt;   &lt;dbl&gt;
+## 1 0.0000847   0.177</code></pre>
 </div>
 <div id="validation" class="section level2">
 <h2>Validation</h2>
@@ -381,7 +381,7 @@ reg_res %&gt;%
 <pre><code>## # A tibble: 1 x 3
 ##   .metric .estimator .estimate
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-## 1 rmse    standard       0.136</code></pre>
+## 1 rmse    standard       0.139</code></pre>
 <p>One of the things I don’t like about <code>fit</code> for this current scenario is that I have to think about specifying the training data again. I understand that the data specified in <code>recipe</code> could be even an empty data frame, as it is used only to detect the column names. However, in nearly all the applications I can think of, I will specify the training data at the beginning (in my recipe). So I find that having to specify the data again is a step that can be eliminated altogether if the data is in the workflow.</p>
 </div>
 <div id="what-to-remember" class="section level2">
