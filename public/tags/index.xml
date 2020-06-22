@@ -55,6 +55,17 @@
     </item>
     
     <item>
+      <title>project</title>
+      <link>/tags/project/</link>
+      <pubDate>Sat, 26 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/project/</guid>
+      <description><![CDATA[
+      ]]>
+      </description>
+    </item>
+    
+    <item>
       <title>projects</title>
       <link>/tags/projects/</link>
       <pubDate>Sat, 26 Jan 2019 00:00:00 +0000</pubDate>
@@ -115,17 +126,6 @@
       <pubDate>Fri, 20 Apr 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/simulation/</guid>
-      <description><![CDATA[
-      ]]>
-      </description>
-    </item>
-    
-    <item>
-      <title>project</title>
-      <link>/tags/project/</link>
-      <pubDate>Mon, 26 Mar 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/project/</guid>
       <description><![CDATA[
       ]]>
       </description>
