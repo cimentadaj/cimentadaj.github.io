@@ -1,0 +1,319 @@
+---
+title: Deploying MySQL database using Docker
+author: Jorge Cimentada
+date: '2020-11-25'
+slug: deploying-mysql-database-using-docker
+categories: ['docker', 'scraping', 'etl']
+tags: []
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+I have a few projects on which I use databases to collect data. Each time I begin some of these projects I have to install the databases and what not. This is usually burden with a lot of back and forth, following tutorials on how to install the dependencies and so on. It's NEVER an easy task, taking more than one day to go from wanting to install a database engine and actually having the database ready to connect from local/remote machines with the correct permissions. 
+
+Docker is suppose to make this much easier and here I provide a set of easy steps for going from (1) want to install MySQL to (2) having the database deployed and working in no time.
+
+The only two requirements you'll need for this is `docker` and `docker-compose`. `docker` is the tool for lifting the containers with MySQL and `docker-compose` is just a convenient way for us to specify some options related to that container in a readable file (instead of a long `docker` statement with long arguments). Note that `docker-compose` is used for orchestrating many containers into a single network but we'll use it just for the convenience of readability. If you don't have any of these two tools, follow this tutorial for [docker](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04) and [this one](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04) for `docker-compose`.
+
+
+## Summarized version
+
+If you're here for the code, here's the summarized versions. Skip down for detailed explanations:
+
+```{bash}
+# Create folder that will host the data and other files
+mkdir ~/Downloads/sql_test/
+cd ~/Downloads/sql_test
+touch .gitignore
+echo "data/" >> ./.gitignore
+
+# Create sql folder to host database/table creation scripts
+mkdir -p ./sql/
+
+# Append this SQL code to the file sql/init_db.sql to create database/table
+echo "
+CREATE DATABASE test;
+CREATE USER 'test_user'@'%' IDENTIFIED WITH mysql_native_password BY '123';
+GRANT ALL ON test.* TO 'test_user'@'%';
+
+/* Make sure the privileges are installed */
+FLUSH PRIVILEGES;
+
+USE test;
+
+CREATE TABLE test_table (
+  name VARCHAR(30)
+);
+" >> sql/init_db.sql
+
+# Create a MySQL config file to allow to append data
+mkdir sql_conf
+echo "
+[mysqld]
+# This just makes sure we can append data from outside the container
+local-infile=1
+" >> sql_conf/mysql.cnf
+
+echo '
+version: "3.1"
+services:
+  db:
+    container_name: sql-test
+    image: mysql:8.0
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    volumes:
+      - /home/jorge/Downloads/sql_test/sql:/docker-entrypoint-initdb.d
+      - /home/jorge/Downloads/sql_test/data:/var/lib/mysql
+      - /home/jorge/Downloads/sql_test/sql_conf:/etc/mysql/conf.d
+' >> docker-compose.yml
+
+# Lift the container with MySQL
+docker-compose up -d
+```
+
+and with R you can append/read data:
+
+```{r}
+library(DBI)
+library(RMySQL)
+
+con <- dbConnect(MySQL(),
+                 host = '127.0.0.1',
+                 dbname = 'test',
+                 port = 3306,
+                 user = 'test_user',
+                 password = '123')
+
+# Append data
+dt <- data.frame(name = "Jorge is my name")
+field_types <- c(name = "TEXT")
+dbWriteTable(conn = con,
+             name = "test_table",
+             value = dt,
+             append = TRUE,
+             row.names = FALSE,
+             overwrite = FALSE,
+             field.types = field_types)
+```
+```
+# [1] TRUE
+```
+
+and then extract the data you just appended:
+
+```{r}
+dbGetQuery(con, "SELECT * FROM test.test_table")
+```
+```
+#               name
+# 1 Jorge is my name
+```
+
+## Detailed version
+
+Here are the detailed steps:
+
+* Create folder that will contain the data
+
+```{bash}
+mkdir ~/Downloads/sql_test/
+```
+
+* Navigate to the folder and add stuff we wouldn't like to commit to Github. Note that *we haven't* created a data folder. You'll see why this is important later.
+
+```{bash}
+cd ~/Downloads/sql_test
+touch .gitignore
+echo "data/" >> ./.gitignore
+```
+
+* Create a `sql` folder and create a file inside (the name doesn't matter as long as it ends in `.sql`) that creates the database, the users and the tables that you're interested in:
+
+```{bash}
+# Create sql foldr
+mkdir -p ./sql/
+
+# Append this SQL code to the file sql/init_db.sql
+echo "
+CREATE DATABASE test;
+CREATE USER 'test_user'@'%' IDENTIFIED WITH mysql_native_password BY '123';
+GRANT ALL ON test.* TO 'test_user'@'%';
+
+/* Make sure the privileges are installed */
+FLUSH PRIVILEGES;
+
+USE test;
+
+CREATE TABLE test_table (
+  name VARCHAR(30)
+);
+" >> sql/init_db.sql
+```
+
+Just to make sure we're on the right track, the previous statement just added some SQL code to a file called `init_db.sql` which will create all the databases/tables/users you're interested in the database to have. If you DON'T want to create any database/table, you don't even have to create a `sql` folder.
+
+* Create MySQL config to allow to append data to the database
+
+```{bash}
+mkdir sql_conf
+echo "
+[mysqld]
+# This just makes sure we can append data from outside the container
+local-infile=1
+" >> sql_conf/mysql.cnf
+```
+
+* Create a `docker-compose` file which has the `MySQL` image with some options.
+
+```{bash}
+echo '
+version: "3.1"
+services:
+  db:
+    container_name: sql-test
+    image: mysql:8.0
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    volumes:
+      - /home/jorge/Downloads/sql_test/sql:/docker-entrypoint-initdb.d
+      - /home/jorge/Downloads/sql_test/data:/var/lib/mysql
+      - /home/jorge/Downloads/sql_test/sql_conf:/etc/mysql/conf.d
+' >> docker-compose.yml
+```
+
+I'll stop here to explain the important fields.
+
+`container_name` is the name that the container will be assigned. You can refer to this name and even log in to that container to execute code inside.
+
+`image` contains the `MySQL` image tagged at version 8.0. This makes sure that we always download the same version of `MySQL` and is reproducible within the same OSx.
+
+`MYSQL_ROOT_PASSWORD` is an environmental variable that is integrated in the image `mysql:8.0`. It assigns a password to the root user in `MySQL`. This is useful to have a default root password if you want to log in as root to execute higher level privileges.
+
+`volumes` is perhaps the most important thing to explain here. It has three entries with some paths. In docker parlance, volumes are links between your *local* computer and the virtual docker container. This means that if I link my *local* folder `~/Downloads/my_sql/data/` to the container's folder `/var/lib/mysql/` everything that is inside `~/Downloads/my_sql/data/` will be inside `/var/lib/mysql/` and vice versa. It essentially creates a mirror between the folders on your *local* computer and your container.
+
+We have three fields here. This first one is `/home/jorge/Downloads/sql_test/sql:/docker-entrypoint-initdb.d`. The first part, `/home/jorge/Downloads/sql_test/sql` points to our `sql` folder containing the SQL code that creates the database/users/tables. **This** particular MySQL image has a folder `/docker-entrypoint-initdb.d` inside the container which the container will **execute** once it is created. In other words, anything inside `/docker-entrypoint-initdb.d` with a `sql` file extension will be executed once the container is deployed. That's why we're making a mirror between our script to create the database/table and the folder that will execute everything inside the container. 
+
+To specify volums, we separate the two paths with a `:` where the left path is the local directory and the right path is the container's directory: `/home/jorge/Downloads/sql_test/sql`**:**`/docker-entrypoint-initdb.d`
+
+The second field is `/home/jorge/Downloads/sql_test/data:/var/lib/mysql`. This field links our data folder `/home/jorge/Downloads/sql_test/data` to the folder *inside* the container `/var/lib/mysql` *where* `MySQL` saves all the data. Yep, this means that even if we have MySQL inside the docker container, the data will be saved in our *local* computer. Best of both worlds! No burden of installing MySQL/dependencies, yet we can transfer all the MySQL data to our local machine. This means that we can stop the container any time, rerun it with the same `docker-compose.yml` and it will populate all databases with the data in the local computer. We'll do an example in just a second.
+
+Note that we *haven't* created a data folder yet. This is because our `MySQL` image works this way: if it finds that the link between the data folders has been created, it assumes that there is some data in there and it *won't* execute the SQL files for creating the database/tables. So for the first deployment of the docker container, we don't create the folder, allowing the container to create the database/tables. Once we stop the container and rerun it again, it won't execute the SQL scripts and just read the data in the linked volumes.
+
+The third volume `/home/jorge/Downloads/sql_test/sql_conf:/etc/mysql/conf.d/` links our MySQL config to the place where MySQL searches for config files inside the container (`/etc/mysql/conf.d`). This small config just allows users outside the container to append data.
+
+* Deploy the docker container
+
+The previous step might be the most daunting but let me break it to you: that is it. There's nothing else to do but deploy everything.
+
+```{bash}
+docker-compose up -d
+```
+```
+# Creating network "sql_test_default" with the default driver
+# Creating sql-test ... 
+```
+
+This command can take some time, as it's downloading the image at first.
+
+If you get some errors due to some port already in use this could be due to two reasons. Either you have another container redirecting to the port 3306 (use `docker ps` and `docker stop` to stop it) or you have a MySQL instance running locally already serving the port. You can stop it with `sudo service mysql stop`.
+
+* Log in to the container and check the test database is there.
+
+Note that the container needs a few seconds to create the database/users/tables so wait a minute or two before running the queries below.
+
+```{bash}
+# Remember that the password we specified was 123
+mysql -h 127.0.0.1 -P 3306 -u test_user  -p -e "SHOW DATABASES;"
+```
+```
+# +--------------------+
+# | Database           |
+# +--------------------+
+# | information_schema |
+# | test               |
+# +--------------------+
+```
+
+You should see a database called test (the one we created). You can also connect from R and append data:
+
+```{r}
+library(DBI)
+library(RMySQL)
+
+con <- dbConnect(MySQL(),
+                 host = '127.0.0.1',
+                 dbname = 'test',
+                 port = 3306,
+                 user = 'test_user',
+                 password = '123')
+
+# Append data
+dt <- data.frame(name = "Jorge is my name")
+field_types <- c(name = "TEXT")
+dbWriteTable(conn = con,
+             name = "test_table",
+             value = dt,
+             append = TRUE,
+             row.names = FALSE,
+             overwrite = FALSE,
+             field.types = field_types)
+```
+```
+# [1] TRUE
+```
+
+and then extract the data you just appended:
+
+```{r}
+dbGetQuery(con, "SELECT * FROM test.test_table")
+```
+```
+#               name
+# 1 Jorge is my name
+```
+
+
+The cool thing about this is that we can take down the database with `docker-compose down`, put it up again with `docker-compose up -d` and the data we saved is still there:
+
+```{bash}
+docker-compose down
+```
+```
+# Stopping sql-test ... 
+# Removing sql-test ... 
+# Removing network sql_test_default
+```
+```{bash}
+docker-compose up -d
+```
+```
+# Creating network "sql_test_default" with the default driver
+# Creating sql-test ... 
+```
+
+```{bash}
+# Remember the password is 123
+mysql -h 127.0.0.1 -P 3306 -u test_user  -p -e "SELECT * FROM test.test_table;"
+```
+
+```
+# +------------------+
+# | name             |
+# +------------------+
+# | Jorge is my name |
+# +------------------+
+```
+
+If you were deploying this on a remote server, everything applies and you would only have to change the IP to your server's IP.
