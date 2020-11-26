@@ -1,15 +1,23 @@
----
-title: Maximum Likelihood Distilled
-author: Jorge Cimentada
-date: '2020-11-26'
-slug: maximum-likelihood-distilled
-categories: ['R', 'simulation', 'statistics']
-tags: []
-comments: no
-showcomments: yes
-showpagemeta: yes
----
-
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>statistics on Jorge Cimentada</title>
+    <link>/categories/statistics/</link>
+    <description>Recent content in statistics on Jorge Cimentada</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 26 Nov 2020 00:00:00 +0000</lastBuildDate>
+    
+    <atom:link href="/categories/statistics/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Maximum Likelihood Distilled</title>
+      <link>/blog/2020-11-26-maximum-likelihood-distilled/maximum-likelihood-distilled/</link>
+      <pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2020-11-26-maximum-likelihood-distilled/maximum-likelihood-distilled/</guid>
+      <description><![CDATA[
+      
 <script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
@@ -60,3 +68,9 @@ mle$par[1:2]</code></pre>
 <pre><code>## (Intercept)        disp 
 ## 29.59985476 -0.04121512</code></pre>
 <p>In layman terms, MLE really just checks how compatible a given data point is with the outcome with the respect to a coefficient. It repeats that step many times until it finds the combination of coefficients that maximizes the outcome.</p>
+]]>
+      </description>
+    </item>
+    
+  </channel>
+</rss>
