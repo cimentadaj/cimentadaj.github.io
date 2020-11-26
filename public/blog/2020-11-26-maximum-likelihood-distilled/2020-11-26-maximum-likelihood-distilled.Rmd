@@ -1,0 +1,17 @@
+---
+title: Maximum Likelihood Distilled
+author: Jorge Cimentada
+date: '2020-11-26'
+slug: maximum-likelihood-distilled
+categories: []
+tags: []
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+This is a test
+
+```{r}
+library(Hmisc)
+```

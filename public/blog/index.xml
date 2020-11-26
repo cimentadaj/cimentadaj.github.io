@@ -5,10 +5,36 @@
     <description>Recent content in Blogs on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Wed, 25 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 26 Nov 2020 00:00:00 +0000</lastBuildDate>
     
     <atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Maximum Likelihood Distilled</title>
+      <link>/blog/2020-11-26-maximum-likelihood-distilled/maximum-likelihood-distilled/</link>
+      <pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2020-11-26-maximum-likelihood-distilled/maximum-likelihood-distilled/</guid>
+      <description><![CDATA[
+      
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p>This is a test</p>
+<pre class="r"><code>library(Hmisc)</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre><code>## Loading required package: survival</code></pre>
+<pre><code>## Loading required package: Formula</code></pre>
+<pre><code>## Loading required package: ggplot2</code></pre>
+<pre><code>## 
+## Attaching package: &#39;Hmisc&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     format.pval, units</code></pre>
+]]>
+      </description>
+    </item>
     
     <item>
       <title>Deploying MySQL database using Docker</title>
