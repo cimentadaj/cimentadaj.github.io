@@ -1,0 +1,76 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>statistics on Jorge Cimentada</title>
+    <link>/categories/statistics/</link>
+    <description>Recent content in statistics on Jorge Cimentada</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 26 Nov 2020 00:00:00 +0000</lastBuildDate>
+    
+    <atom:link href="/categories/statistics/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Maximum Likelihood Distilled</title>
+      <link>/blog/2020-11-26-maximum-likelihood-distilled/maximum-likelihood-distilled/</link>
+      <pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/2020-11-26-maximum-likelihood-distilled/maximum-likelihood-distilled/</guid>
+      <description><![CDATA[
+      
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p>We all hear about Maximum Likelihood Estimation (MLE) and we often see hints of it in our model output. As usual, doing things manually can give a better grasp on how to better understand how our models work. Here’s a very short example implementing MLE based on the explanation from Gelman and Hill (2007), page 404-405.</p>
+<p>The likelihood is literally how much our outcome variable <strong>Y</strong> is compatible with our predictor <strong>X</strong>. We compute this measure of compatibility with the probability density function for the normal distribution. In R, <code>dnorm</code> returns this likelihood. The plot on this <a href="https://sakai.unc.edu/access/content/group/3d1eb92e-7848-4f55-90c3-7c72a54e7e43/public/docs/lectures/lecture13.htm#probfunc">website</a> gives a very clear intuition on what <code>dnorm</code> returns: it is literally the <em>height</em> of the distribution, or in other words, the likelihood. We of course, want the highest likelihood, as it indicates greater compatibility.</p>
+<p>For example, assuming <code>parameters</code> is a vector with the intercept <code>a</code>, the coefficient <code>b</code> and an error term <code>sigma</code>, we can compute the likelihood for any random value of these coefficients:</p>
+<pre class="r"><code>loglikelihood &lt;- function(parameters, predictor, outcome) {
+  # intercept
+  a &lt;- parameters[1]
+  # beta coef
+  b &lt;- parameters[2]
+  # error term
+  sigma &lt;- parameters[3]
+
+  # Calculate the likelihood of `y` given `a + b * x`
+  ll.vec &lt;- dnorm(outcome, a + b * predictor, sigma, log = TRUE)
+
+  # sum that likelihood over all the values in the data
+  sum(ll.vec)
+}
+
+# Generate three random values for intercept, beta and error term
+inits &lt;- runif(3)
+
+# Calculate the likelihood given these three values
+loglikelihood(
+  inits,
+  predictor = mtcars$disp,
+  outcome = mtcars$mpg
+)</code></pre>
+<pre><code>## [1] -11687.41</code></pre>
+<p>That’s the likelihood given the random values for the intercept, the coefficient and sigma. How does a typical linear model estimate the <strong>maximum</strong> of these likelihoods? It performs an optimization search trying out a sliding set of values for these unknowns and searches for the combination that returns the maximum:</p>
+<pre class="r"><code>mle &lt;-
+  optim(
+    inits, # The three random values for intercept, beta and sigma
+    loglikelihood, # The loglik function
+    lower = c(-Inf, -Inf, 1.e-5), # The lower bound for the three values (all can be negative except sigma, which is 1.e-5)
+    method = &quot;L-BFGS-B&quot;,
+    control = list(fnscale = -1), # This signals to search for the maximum rather than the minimum
+    predictor = mtcars$disp,
+    outcome = mtcars$mpg
+  )
+
+mle$par[1:2]</code></pre>
+<pre><code>## [1] 29.59985346 -0.04121511</code></pre>
+<p>Let’s compare that to the result of <code>lm</code>:</p>
+<pre class="r"><code>coef(lm(mpg ~ disp, data = mtcars))</code></pre>
+<pre><code>## (Intercept)        disp 
+## 29.59985476 -0.04121512</code></pre>
+<p>In layman terms, MLE really just checks how compatible a given data point is with the outcome with the respect to a coefficient. It repeats that step many times until it finds the combination of coefficients that maximizes the outcome.</p>
+]]>
+      </description>
+    </item>
+    
+  </channel>
+</rss>
