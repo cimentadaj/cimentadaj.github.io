@@ -5,10 +5,54 @@
     <description>Recent content in Categories on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Thu, 26 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 07 Dec 2020 00:00:00 +0000</lastBuildDate>
     
     <atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>data-engineering</title>
+      <link>/categories/data-engineering/</link>
+      <pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/data-engineering/</guid>
+      <description><![CDATA[
+      ]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>docker</title>
+      <link>/categories/docker/</link>
+      <pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/docker/</guid>
+      <description><![CDATA[
+      ]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>etl</title>
+      <link>/categories/etl/</link>
+      <pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/etl/</guid>
+      <description><![CDATA[
+      ]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>python</title>
+      <link>/categories/python/</link>
+      <pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/categories/python/</guid>
+      <description><![CDATA[
+      ]]>
+      </description>
+    </item>
     
     <item>
       <title>R</title>
@@ -38,28 +82,6 @@
       <pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>/categories/statistics/</guid>
-      <description><![CDATA[
-      ]]>
-      </description>
-    </item>
-    
-    <item>
-      <title>docker</title>
-      <link>/categories/docker/</link>
-      <pubDate>Wed, 25 Nov 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/docker/</guid>
-      <description><![CDATA[
-      ]]>
-      </description>
-    </item>
-    
-    <item>
-      <title>etl</title>
-      <link>/categories/etl/</link>
-      <pubDate>Wed, 25 Nov 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/categories/etl/</guid>
       <description><![CDATA[
       ]]>
       </description>
