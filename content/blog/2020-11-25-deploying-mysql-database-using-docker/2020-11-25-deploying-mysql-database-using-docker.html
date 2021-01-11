@@ -71,7 +71,8 @@ services:
 
 # Lift the container with MySQL
 docker-compose up -d</code></pre>
-<p>and with R you can append/read data:</p>
+<p>If you get some errors due to some port already in use this could be due to two reasons. Either you have another container redirecting to the port 3306 (use <code>docker ps</code> and <code>docker stop</code> to stop it) or you have a MySQL instance running locally already serving the port. You can stop it with <code>sudo service mysql stop</code>.</p>
+<p>With R you can append/read data:</p>
 <pre class="r"><code>library(DBI)
 library(RMySQL)
 
