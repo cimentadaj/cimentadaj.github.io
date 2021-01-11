@@ -1,0 +1,47 @@
+---
+title: Talking between containers in docker-compose
+author: Jorge Cimentada
+date: '2021-01-11'
+slug: talking-between-containers-in-docker-compose
+categories: [docker, etl, data-engineering, databases]
+tags: []
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p>When using <code>docker-compose</code>, we can define several containers which are connected <a href="blog/2020-12-07-lightweight-airflow-deployment-with-docker/lightweight-airflow-deployment-with-docker/index.html">through a network</a>. How can we speak between containers? More specifically, suppose one container has a MySQL database and the other container has some R/Python/Julia container in which you want to query/append data. Usually we would only refer to the IP of the database when defining the connection but all of these containers sort of share the same IP, right?</p>
+<p>I tried this and it could not connect to the localhost because it couldn’t find the database. After browsing a bit, it was easier that I thought. Here’s a <code>docker-compose.yml</code> with a MySQL image:</p>
+<pre><code>version: &#39;2.1&#39;
+services:
+  # Database to append data to
+  db:
+    hostname: sql_db
+    image: mysql:8.0
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+      - ./data:/var/lib/mysql
+      - ./sql_conf:/etc/mysql/conf.d</code></pre>
+<p>Notice that there’s a <code>hostname</code> argument? That is the IP we’ll use. Assume that the entrypoint for Docker defines a database called <code>test</code> with a table named <code>test_table</code>. We make up some username/password just for this example. In Python parlance, for example, we could define the connection like this and query the contents:</p>
+<pre class="python"><code># Make sure you have the package mysql and mysql-connector from pip as well
+import pandas as pd
+import sqlalchemy
+
+db_username=&#39;test_user&#39;
+db_password=&#39;123&#39;
+
+# Here is the name of the container
+db_ip=&#39;sql_db&#39;
+db_name=&#39;test&#39;
+db_port=3306
+db_connection=sqlalchemy.create_engine(&#39;mysql+mysqlconnector://{0}:{1}@{2}:{3}/{4}?auth_plugin=mysql_native_password&#39;.format(db_username, db_password, db_ip, db_port, db_name))
+df=pd.read_sql_query(&quot;SELECT * FROM test.test_table&quot;, db_connection)</code></pre>
+<p>Note that this works when the code above is executed from <strong>another</strong> container inside the network (and not locally). <a href="blog/2020-12-07-lightweight-airflow-deployment-with-docker/lightweight-airflow-deployment-with-docker/index.html">Although this looks like a simple trick it opens a whole new world for talking between containers in a stable manner</a>.</p>
