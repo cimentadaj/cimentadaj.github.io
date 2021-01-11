@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Simple minimalist theme">
+<meta name="keywords" content="blog,goa,hugo,r,statistics,education">
+
+<base href="/">
+
+<title>Jorge Cimentada</title>
+
+<meta name="generator" content="Hugo 0.71.0" />
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
+<script src="/js/highlight.pack.js"></script>
+<script>
+hljs.configure({langauges: ['R']});
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="row text-left title">
+  <h1 class="title">Talking between containers in docker-compose</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON JAN 11, 2021 
+      
+      
+      
+      —
+      
+      
+      <a class="meta" href="/categories/data-engineering">DATA-ENGINEERING</a>, 
+      
+      <a class="meta" href="/categories/databases">DATABASES</a>, 
+      
+      <a class="meta" href="/categories/docker">DOCKER</a>, 
+      
+      <a class="meta" href="/categories/etl">ETL</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p>When using <code>docker-compose</code>, we can define several containers which are connected <a href="blog/2020-12-07-lightweight-airflow-deployment-with-docker/lightweight-airflow-deployment-with-docker/index.html">through a network</a>. How can we speak between containers? More specifically, suppose one container has a MySQL database and the other container has some R/Python/Julia container in which you want to query/append data. Usually we would only refer to the IP of the database when defining the connection but all of these containers sort of share the same IP, right?</p>
+<p>I tried this and it could not connect to the localhost because it couldn’t find the database. After browsing a bit, it was easier that I thought. Here’s a <code>docker-compose.yml</code> with a MySQL image:</p>
+<pre><code>version: &#39;2.1&#39;
+services:
+  # Database to append data to
+  db:
+    hostname: sql_db
+    image: mysql:8.0
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+      - ./data:/var/lib/mysql
+      - ./sql_conf:/etc/mysql/conf.d</code></pre>
+<p>Notice that there’s a <code>hostname</code> argument? That is the IP we’ll use. Assume that the entrypoint for Docker defines a database called <code>test</code> with a table named <code>test_table</code>. We make up some username/password just for this example. In Python parlance, for example, we could define the connection like this and query the contents:</p>
+<pre class="python"><code># Make sure you have the package mysql and mysql-connector from pip as well
+import pandas as pd
+import sqlalchemy
+
+db_username=&#39;test_user&#39;
+db_password=&#39;123&#39;
+
+# Here is the name of the container
+db_ip=&#39;sql_db&#39;
+db_name=&#39;test&#39;
+db_port=3306
+db_connection=sqlalchemy.create_engine(&#39;mysql+mysqlconnector://{0}:{1}@{2}:{3}/{4}?auth_plugin=mysql_native_password&#39;.format(db_username, db_password, db_ip, db_port, db_name))
+df=pd.read_sql_query(&quot;SELECT * FROM test.test_table&quot;, db_connection)</code></pre>
+<p>Note that this works when the code above is executed from <strong>another</strong> container inside the network (and not locally). <a href="blog/2020-12-07-lightweight-airflow-deployment-with-docker/lightweight-airflow-deployment-with-docker/index.html">Although this looks like a simple trick it opens a whole new world for talking between containers in a stable manner</a>.</p>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "cimentadaj-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  <span><a class="menu-item" href="/blog/2020-12-07-lightweight-airflow-deployment-with-docker/lightweight-airflow-deployment-with-docker/">&lt; prev | </a></span>
+  
+  
+  <span><a class="menu-item" href="/blog">blog</a></span>
+  
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="/">home</a></h4>
+</section>
+
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2017. Jorge Cimentada. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+
