@@ -10,19 +10,19 @@
 <meta name="description" content="Simple minimalist theme">
 <meta name="keywords" content="blog,goa,hugo,r,statistics,education">
 
-<base href="/">
+<base href="https://cimentadaj.github.io/">
 
 <title>Jorge Cimentada</title>
 
-<meta name="generator" content="Hugo 0.71.0" />
+<meta name="generator" content="Hugo 0.91.2" />
 
 
 
 
 
 
-<link rel="stylesheet" href="/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
-<script src="/js/highlight.pack.js"></script>
+<link rel="stylesheet" href="https://cimentadaj.github.io/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
+<script src="https://cimentadaj.github.io/js/highlight.pack.js"></script>
 <script>
 hljs.configure({langauges: ['R']});
 hljs.initHighlightingOnLoad();
@@ -37,17 +37,17 @@ hljs.initHighlightingOnLoad();
 
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
-<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="https://cimentadaj.github.io/css/main.css">
 
 
 
 
 
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
-<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
-<link rel="manifest" href="/manifest.json">
-<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<link rel="apple-touch-icon" sizes="180x180" href="https://cimentadaj.github.io/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="https://cimentadaj.github.io/manifest.json">
+<link rel="mask-icon" href="https://cimentadaj.github.io/safari-pinned-tab.svg" color="#5bbad5">
 <meta name="theme-color" content="#ffffff">
 
 </head>
@@ -69,13 +69,13 @@ hljs.initHighlightingOnLoad();
       —
       
       
-      <a class="meta" href="/categories/data-engineering">DATA-ENGINEERING</a>, 
+      <a class="meta" href="https://cimentadaj.github.io/categories/data-engineering">DATA-ENGINEERING</a>, 
       
-      <a class="meta" href="/categories/docker">DOCKER</a>, 
+      <a class="meta" href="https://cimentadaj.github.io/categories/docker">DOCKER</a>, 
       
-      <a class="meta" href="/categories/etl">ETL</a>, 
+      <a class="meta" href="https://cimentadaj.github.io/categories/etl">ETL</a>, 
       
-      <a class="meta" href="/categories/python">PYTHON</a>
+      <a class="meta" href="https://cimentadaj.github.io/categories/python">PYTHON</a>
       
       
       
@@ -86,7 +86,7 @@ hljs.initHighlightingOnLoad();
 <section id="content-pane" class="row">
   <div class="col-md-12 text-justify content">
     
-<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+<script src="https://cimentadaj.github.io/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <p>There’s a bunch of tutorials out there on how to deploy Airflow for scaling tasks across clusters. This is another one of those tutorials. However, I’m interested in doing the above without much hassle, meaning that I don’t want to spend 2 hours installing Airflow, dependencies, PostgreSQL, and so on. This tutorial extends most internet tutorials on Airflow to deploy a full-fledged example using Docker in the least amount of code possible.</p>
@@ -254,9 +254,9 @@ docker-compose up -d</code></pre>
 # Starting airflow_test2_webserver_1 ... 
 # Starting airflow_test2_scheduler_1 ... </code></pre>
 <p>Visit <a href="http://localhost:8080/admin/" class="uri">http://localhost:8080/admin/</a> and you should see something like this:</p>
-<p><img src="/img/airflow.png" alt="drawing" width="120%"/></p>
+<p><img src="https://cimentadaj.github.io/img/airflow.png" alt="drawing" width="120%"/></p>
 <p>We can toggle our tasks to begin, inspect the dependency of the different tasks and also begin the task process manually. Below is a GIF showing you how to do it. <strong>Make sure you click on the image for it to start</strong>:</p>
-<p><img src="/img/airflow_workflow.gif" alt="drawing" width="120%"/></p>
+<p><img src="https://cimentadaj.github.io/img/airflow_workflow.gif" alt="drawing" width="120%"/></p>
 <p>Next to the dag ‘Tutorial’ (on the left) there is an Off/On slider. Swipe the slider to be ‘On’ and this task will run according to the cron expression in ‘Schedule’ (on the right of ‘Tutorial’) on the starting date that we defined in the Python script <code>dags/airflow-test.py</code> (just search for <code>start_date</code> and you’ll find it).</p>
 </div>
 <div id="detailed-version" class="section level1">
@@ -487,9 +487,9 @@ task0 &gt;&gt; task1 &gt;&gt; task2
 # Starting airflow_test2_scheduler_1 ... </code></pre>
 <p>How would all of this look like? Visit the website <a href="http://localhost:8080/admin/" class="uri">http://localhost:8080/admin/</a>.</p>
 <p>You should see something like this:</p>
-<p><img src="/img/airflow.png" alt="drawing" width="120%"/></p>
+<p><img src="https://cimentadaj.github.io/img/airflow.png" alt="drawing" width="120%"/></p>
 <p>We can toggle our task to start, inspect the dependency of the different tasks and also begin the process manually. Below is a GIF showing you how to do it. <strong>Make sure you click on the image for the GIF to start</strong>:</p>
-<p><img src="/img/airflow_workflow.gif" alt="drawing" width="120%"/></p>
+<p><img src="https://cimentadaj.github.io/img/airflow_workflow.gif" alt="drawing" width="120%"/></p>
 </div>
 </div>
 <div id="conclusion" class="section level1">
@@ -541,16 +541,16 @@ task0 &gt;&gt; task1 &gt;&gt; task2
 <section id="menu-pane" class="row menu text-center">
   
   
-  <span><a class="menu-item" href="/blog/2020-11-26-maximum-likelihood-distilled/maximum-likelihood-distilled/">&lt; prev | </a></span>
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog/2020-11-26-maximum-likelihood-distilled/maximum-likelihood-distilled/">&lt; prev | </a></span>
   
   
-  <span><a class="menu-item" href="/blog">blog</a></span>
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog">blog</a></span>
   
   
-  <span><a class="menu-item" href="/blog/2021-01-11-talking-between-containers-in-dockercompose/talking-between-containers-in-docker-compose/"> | next &gt;</a></span>
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog/2021-01-11-talking-between-containers-in-dockercompose/talking-between-containers-in-docker-compose/"> | next &gt;</a></span>
   
   
-  <h4 class="text-center"><a class="menu-item" href="/">home</a></h4>
+  <h4 class="text-center"><a class="menu-item" href="https://cimentadaj.github.io/">home</a></h4>
 </section>
 
 

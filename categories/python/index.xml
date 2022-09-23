@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>python on Jorge Cimentada</title>
-    <link>/categories/python/</link>
+    <link>https://cimentadaj.github.io/categories/python/</link>
     <description>Recent content in python on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Mon, 07 Dec 2020 00:00:00 +0000</lastBuildDate>
     
-    <atom:link href="/categories/python/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://cimentadaj.github.io/categories/python/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Lightweight Airflow Deployment with Docker in 5 steps</title>
-      <link>/blog/2020-12-07-lightweight-airflow-deployment-with-docker/lightweight-airflow-deployment-with-docker/</link>
+      <link>https://cimentadaj.github.io/blog/2020-12-07-lightweight-airflow-deployment-with-docker/lightweight-airflow-deployment-with-docker/</link>
       <pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2020-12-07-lightweight-airflow-deployment-with-docker/lightweight-airflow-deployment-with-docker/</guid>
+      <guid>https://cimentadaj.github.io/blog/2020-12-07-lightweight-airflow-deployment-with-docker/lightweight-airflow-deployment-with-docker/</guid>
       <description><![CDATA[
       
 <script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>

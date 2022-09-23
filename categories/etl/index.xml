@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>etl on Jorge Cimentada</title>
-    <link>/categories/etl/</link>
+    <link>https://cimentadaj.github.io/categories/etl/</link>
     <description>Recent content in etl on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Mon, 11 Jan 2021 00:00:00 +0000</lastBuildDate>
     
-    <atom:link href="/categories/etl/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://cimentadaj.github.io/categories/etl/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Talking between containers in docker-compose</title>
-      <link>/blog/2021-01-11-talking-between-containers-in-dockercompose/talking-between-containers-in-docker-compose/</link>
+      <link>https://cimentadaj.github.io/blog/2021-01-11-talking-between-containers-in-dockercompose/talking-between-containers-in-docker-compose/</link>
       <pubDate>Mon, 11 Jan 2021 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2021-01-11-talking-between-containers-in-dockercompose/talking-between-containers-in-docker-compose/</guid>
+      <guid>https://cimentadaj.github.io/blog/2021-01-11-talking-between-containers-in-dockercompose/talking-between-containers-in-docker-compose/</guid>
       <description><![CDATA[
       
 <script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
@@ -59,10 +59,10 @@ df=pd.read_sql_query(&quot;SELECT * FROM test.test_table&quot;, db_connection)</
     
     <item>
       <title>Lightweight Airflow Deployment with Docker in 5 steps</title>
-      <link>/blog/2020-12-07-lightweight-airflow-deployment-with-docker/lightweight-airflow-deployment-with-docker/</link>
+      <link>https://cimentadaj.github.io/blog/2020-12-07-lightweight-airflow-deployment-with-docker/lightweight-airflow-deployment-with-docker/</link>
       <pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2020-12-07-lightweight-airflow-deployment-with-docker/lightweight-airflow-deployment-with-docker/</guid>
+      <guid>https://cimentadaj.github.io/blog/2020-12-07-lightweight-airflow-deployment-with-docker/lightweight-airflow-deployment-with-docker/</guid>
       <description><![CDATA[
       
 <script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
@@ -481,10 +481,10 @@ task0 &gt;&gt; task1 &gt;&gt; task2
     
     <item>
       <title>Deploying MySQL database using Docker</title>
-      <link>/blog/2020-11-25-deploying-mysql-database-using-docker/deploying-mysql-database-using-docker/</link>
+      <link>https://cimentadaj.github.io/blog/2020-11-25-deploying-mysql-database-using-docker/deploying-mysql-database-using-docker/</link>
       <pubDate>Wed, 25 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2020-11-25-deploying-mysql-database-using-docker/deploying-mysql-database-using-docker/</guid>
+      <guid>https://cimentadaj.github.io/blog/2020-11-25-deploying-mysql-database-using-docker/deploying-mysql-database-using-docker/</guid>
       <description><![CDATA[
       
 <script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>

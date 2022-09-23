@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>packages on Jorge Cimentada</title>
-    <link>/tags/packages/</link>
+    <link>https://cimentadaj.github.io/tags/packages/</link>
     <description>Recent content in packages on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Tue, 19 Jun 2018 00:00:00 +0000</lastBuildDate>
     
-    <atom:link href="/tags/packages/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://cimentadaj.github.io/tags/packages/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Exploring Google Scholar coauthorship</title>
-      <link>/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</link>
+      <link>https://cimentadaj.github.io/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</link>
       <pubDate>Tue, 19 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</guid>
+      <guid>https://cimentadaj.github.io/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</guid>
       <description><![CDATA[
       
 
@@ -58,10 +58,10 @@ network</code></pre>
     
     <item>
       <title>ess is now essurvey</title>
-      <link>/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</link>
+      <link>https://cimentadaj.github.io/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</link>
       <pubDate>Mon, 26 Mar 2018 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</guid>
+      <guid>https://cimentadaj.github.io/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</guid>
       <description><![CDATA[
       
 
@@ -89,10 +89,10 @@ network</code></pre>
     
     <item>
       <title>ess 0.1.1 is out!</title>
-      <link>/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/</link>
+      <link>https://cimentadaj.github.io/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/</link>
       <pubDate>Sun, 04 Mar 2018 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/</guid>
+      <guid>https://cimentadaj.github.io/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/</guid>
       <description><![CDATA[
       
 
@@ -181,10 +181,10 @@ all_countries</code></pre>
     
     <item>
       <title>An introduction to the ess package</title>
-      <link>/blog/2017-11-23-an-introduction-to-the-ess-package/an-introduction-to-the-ess-package/</link>
+      <link>https://cimentadaj.github.io/blog/2017-11-23-an-introduction-to-the-ess-package/an-introduction-to-the-ess-package/</link>
       <pubDate>Thu, 23 Nov 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-11-23-an-introduction-to-the-ess-package/an-introduction-to-the-ess-package/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-11-23-an-introduction-to-the-ess-package/an-introduction-to-the-ess-package/</guid>
       <description><![CDATA[
       
 
@@ -267,10 +267,10 @@ three_rounds[[1]]</code></pre>
     
     <item>
       <title>perccalc package</title>
-      <link>/blog/2017-08-01-perccalc-package/perccalc-package/</link>
+      <link>https://cimentadaj.github.io/blog/2017-08-01-perccalc-package/perccalc-package/</link>
       <pubDate>Tue, 01 Aug 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-08-01-perccalc-package/perccalc-package/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-08-01-perccalc-package/perccalc-package/</guid>
       <description><![CDATA[
       
 
@@ -482,10 +482,10 @@ postclose `memhold&#39;
     
     <item>
       <title>Producing stargazer tables with odds ratios and standard errors in R</title>
-      <link>/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</link>
+      <link>https://cimentadaj.github.io/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</link>
       <pubDate>Mon, 22 Aug 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</guid>
+      <guid>https://cimentadaj.github.io/blog/2016-08-22-producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/producing-stargazer-tables-with-odds-ratios-and-standard-errors-in-r/</guid>
       <description><![CDATA[
       
 

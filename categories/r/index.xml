@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>R on Jorge Cimentada</title>
-    <link>/categories/r/</link>
+    <link>https://cimentadaj.github.io/categories/r/</link>
     <description>Recent content in R on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Thu, 26 Nov 2020 00:00:00 +0000</lastBuildDate>
     
-    <atom:link href="/categories/r/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://cimentadaj.github.io/categories/r/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Maximum Likelihood Distilled</title>
-      <link>/blog/2020-11-26-maximum-likelihood-distilled/maximum-likelihood-distilled/</link>
+      <link>https://cimentadaj.github.io/blog/2020-11-26-maximum-likelihood-distilled/maximum-likelihood-distilled/</link>
       <pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2020-11-26-maximum-likelihood-distilled/maximum-likelihood-distilled/</guid>
+      <guid>https://cimentadaj.github.io/blog/2020-11-26-maximum-likelihood-distilled/maximum-likelihood-distilled/</guid>
       <description><![CDATA[
       
 <script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
@@ -74,10 +74,10 @@ mle$par[1:2]</code></pre>
     
     <item>
       <title>The simplest tidy machine learning workflow</title>
-      <link>/blog/2020-02-06-the-simplest-tidy-machine-learning-workflow/the-simplest-tidy-machine-learning-workflow/</link>
+      <link>https://cimentadaj.github.io/blog/2020-02-06-the-simplest-tidy-machine-learning-workflow/the-simplest-tidy-machine-learning-workflow/</link>
       <pubDate>Thu, 06 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2020-02-06-the-simplest-tidy-machine-learning-workflow/the-simplest-tidy-machine-learning-workflow/</guid>
+      <guid>https://cimentadaj.github.io/blog/2020-02-06-the-simplest-tidy-machine-learning-workflow/the-simplest-tidy-machine-learning-workflow/</guid>
       <description><![CDATA[
       
 
@@ -483,10 +483,10 @@ reg_res %&gt;%
     
     <item>
       <title>Locating parts of a string with `stringr`</title>
-      <link>/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</link>
+      <link>https://cimentadaj.github.io/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</link>
       <pubDate>Sun, 08 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</guid>
+      <guid>https://cimentadaj.github.io/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</guid>
       <description><![CDATA[
       
 
@@ -630,10 +630,10 @@ str_sub(test_string, location_matrix)</code></pre>
     
     <item>
       <title>essurvey release</title>
-      <link>/blog/2019-11-15-release-essurvey/essurvey-release/</link>
+      <link>https://cimentadaj.github.io/blog/2019-11-15-release-essurvey/essurvey-release/</link>
       <pubDate>Sat, 16 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2019-11-15-release-essurvey/essurvey-release/</guid>
+      <guid>https://cimentadaj.github.io/blog/2019-11-15-release-essurvey/essurvey-release/</guid>
       <description><![CDATA[
       
 
@@ -715,10 +715,10 @@ complete_data %&gt;%
     
     <item>
       <title>Saving missing categories from R to Stata</title>
-      <link>/blog/2019-03-16-saving-missing-categories-from-r-to-stata/saving-missing-categories-from-r-to-stata/</link>
+      <link>https://cimentadaj.github.io/blog/2019-03-16-saving-missing-categories-from-r-to-stata/saving-missing-categories-from-r-to-stata/</link>
       <pubDate>Sat, 16 Mar 2019 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2019-03-16-saving-missing-categories-from-r-to-stata/saving-missing-categories-from-r-to-stata/</guid>
+      <guid>https://cimentadaj.github.io/blog/2019-03-16-saving-missing-categories-from-r-to-stata/saving-missing-categories-from-r-to-stata/</guid>
       <description><![CDATA[
       
 
@@ -916,10 +916,10 @@ recode_stata_labels(tst)</code></pre>
     
     <item>
       <title>Why does R drop attributes when subsetting?</title>
-      <link>/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/</link>
+      <link>https://cimentadaj.github.io/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/</link>
       <pubDate>Sat, 16 Mar 2019 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/</guid>
+      <guid>https://cimentadaj.github.io/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/</guid>
       <description><![CDATA[
       
 
