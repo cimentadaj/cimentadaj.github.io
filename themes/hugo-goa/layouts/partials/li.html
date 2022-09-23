@@ -1,5 +1,6 @@
-<section id="list-pane" class="row list">
-  <ul >
+<section id="list-pane" class="row list container_blog">
+ <div class="container_blog">
+  <ul>
     {{ range .Data.Pages.ByPublishDate.Reverse }}
     <li class="list-entry">
       <a class="list-entry-link" href="{{ .Permalink }}">{{ .Title }}</a>
@@ -24,4 +25,5 @@
     </li>
     {{ end }}
   </ul>
+ </div>
 </section>

@@ -25,7 +25,7 @@ enableRobotsTXT = true
 ## Site Settings
 [params]
 author = "Jorge Cimentada"
-intro = "Sociology/R/Statistics"
+intro = ""
 
 # Ignored description but this goes under the intro in the
 # root website
@@ -54,7 +54,7 @@ github = "cimentadaj"
 # xing = "<username>"
 linkedin = "jorge-cimentada-1740877a/"
 twitter = "cimentadaj"
-stackoverflow = "3617958/cimentadaj"
+# stackoverflow = "3617958/cimentadaj"
 email = "cimentadaj@gmail.com"
 
 # Trying to add ORCID following this example:
@@ -86,7 +86,7 @@ email = "cimentadaj@gmail.com"
 
 ## Extras
 [params.extra]
-copyright = "© 2017. Jorge Cimentada. [Some Rights Reserved](http://creativecommons.org/licenses/by/3.0/)."
+copyright = "© 2022. Jorge Cimentada. [Some Rights Reserved](http://creativecommons.org/licenses/by/3.0/)."
 poweredby = true
 highlightjs = true
 
@@ -99,18 +99,3 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
     weight = 1
     identifier = "blog"
     url = "/blog/"
-[[menu.main]]
-    name = "about"
-    identifier = "about"
-    weight = 2
-    url = "/about/"
-[[menu.main]]
-    name = "projects"
-    identifier = "projects"
-    weight = 3
-    url = "/projects/"
-[[menu.main]]
-    name = "vitae"
-    identifier = "vitae"
-    weight = 4
-    url = "/vitae/"
