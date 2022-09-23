@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Simple minimalist theme">
+<meta name="keywords" content="blog,goa,hugo,r,statistics,education">
+
+<base href="https://cimentadaj.github.io/">
+
+<title>Jorge Cimentada</title>
+
+<meta name="generator" content="Hugo 0.91.2" />
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cimentadaj.github.io/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
+<script src="https://cimentadaj.github.io/js/highlight.pack.js"></script>
+<script>
+hljs.configure({langauges: ['R']});
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cimentadaj.github.io/css/main.css">
+
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="https://cimentadaj.github.io/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="https://cimentadaj.github.io/manifest.json">
+<link rel="mask-icon" href="https://cimentadaj.github.io/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="row text-left title">
+  <h1 class="title">An introduction to the ess package</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON NOV 23, 2017 
+      
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    
+
+
+<p>The <code>ess</code> package is designed to download the ESS data as easily as possible. It has a few helper functions to download rounds, rounds for a selected country and to show which rounds/countries are available. In this tutorial I will walk you through how these functions work.</p>
+<p>Before using the package it is necessary for you to sign up at <a href="http://www.europeansocialsurvey.org/" class="uri">http://www.europeansocialsurvey.org/</a>.</p>
+<p>Let’s do it together.</p>
+<p>When you enter the website go the to topmost left corner and click on <code>Sign in/Register</code>. Under the email box, click on <code>New user?</code> and fill out your personal information. Click on <code>Register</code> and check your email inbox. You should’ve received an email from the ESS with an activation link. Click on that link and voila! We’re ready to go.</p>
+<p>We can install and load the package with this code:</p>
+<pre class="r"><code>install.packages(&quot;ess&quot;, dependencies = TRUE)
+library(ess)</code></pre>
+<div id="download-country-rounds" class="section level2">
+<h2>Download country rounds</h2>
+<p>First things first, do we know if Spain participated in the European Social Survey? <code>ess</code> has <code>show_countries()</code> that automatically searchers for all countries that participated. The nice thing is that these (an all other functions from the package) interactively check this information on the website, so any changes should be also visible immediately in R.</p>
+<pre class="r"><code>show_countries()</code></pre>
+<p>Spain is there! But which rounds did Spain participate? For that, the usual way would be to visit <a href="http://www.europeansocialsurvey.org/data/country_index.html" class="uri">http://www.europeansocialsurvey.org/data/country_index.html</a> and look for it. <code>ess</code> provides the function <code>show_country_rounds()</code> which returns all the available rounds from that website.</p>
+<pre class="r"><code>show_country_rounds(&quot;Spain&quot;)</code></pre>
+<p>Remember to type exactly the same name provided by <code>show_countries()</code> because these functions are case sensitive. How do we download this data?</p>
+<pre class="r"><code>your_email &lt;- &quot;your email here&quot;
+
+spain_seven &lt;- ess_country(
+  country = &quot;Spain&quot;,
+  rounds = 7,
+  your_email = your_email
+)</code></pre>
+<p>That easy! Now you have <code>spain_seven</code> with the 7th round for Spain. If you wanted to download more rounds, you can specify them in the rounds section.</p>
+<pre class="r"><code>spain_three &lt;- ess_country(
+  country = &quot;Spain&quot;,
+  rounds = c(1, 3, 5),
+  your_email = your_email
+)</code></pre>
+<p>If you’re interested in downloading all available waves from the start, use <code>ess_all_cntrounds()</code>.</p>
+<pre class="r"><code>ess_all_cntrounds(&quot;Spain&quot;, your_email)</code></pre>
+</div>
+<div id="download-complete-rounds" class="section level2">
+<h2>Download complete rounds</h2>
+<p>What about specific rounds for all countries? <code>ess</code> provides the same set of functions: <code>show_rounds()</code> for available rounds, <code>ess_rounds()</code> for specific rounds and <code>ess_all_rounds()</code>.</p>
+<pre class="r"><code>show_rounds()</code></pre>
+<p>Let’s grab the first three rounds, although this might take a bit more time than for country rounds!</p>
+<pre class="r"><code>three_rounds &lt;-
+  ess_rounds(
+  c(1, 3),
+  your_email
+)
+
+three_rounds[[1]]</code></pre>
+<p>Finally, you can download all available rounds with:</p>
+<pre class="r"><code>all_rounds &lt;- ess_all_rounds(your_email)</code></pre>
+</div>
+<div id="download-for-stata" class="section level2">
+<h2>Download for Stata</h2>
+<p>To download Stata files you can use:</p>
+<pre class="r"><code>ess_country(
+  &quot;Spain&quot;,
+  1:2,
+  your_email,
+  only_download = TRUE,
+  output_dir = &quot;./ess&quot;
+)</code></pre>
+<p>The <code>only_download</code> argument makes sure that it won’t return anything in R, and <code>output_dir</code> will be where the data is saved. If you supply a non existent directory it will create it on the fly.</p>
+<p>rounds can be downloaded in the same way with:</p>
+<pre class="r"><code>ess_rounds(
+  1:2,
+  your_email,
+  only_download = TRUE,
+  output_dir = &quot;./ess&quot;
+)</code></pre>
+<p>That easy! <code>ess</code> will continue to evolve in the future and there are some of the features already in the to-do list.</p>
+<ul>
+<li><p>Add a <code>*_themes()</code> family of function for topics; see <a href="http://www.europeansocialsurvey.org/data/module-index.html">here</a></p></li>
+<li><p>Download data in SPSS and SAS format</p></li>
+<li><p>Stata files (as well as SPSS and SAS) need to be pre-processed before reading into R (ex: run a do file before reading into R)</p></li>
+</ul>
+<p>The repository and development version of the package can be found at <a href="https://github.com/cimentadaj/ess" class="uri">https://github.com/cimentadaj/ess</a> and please report any bugs/issues/improvements <a href="https://github.com/cimentadaj/ess/issues">here</a>!</p>
+<p>Thanks.</p>
+</div>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+      
+      
+      TAGS:
+      
+      
+      <a class="meta" href="https://cimentadaj.github.io/tags/packages">PACKAGES</a>, 
+      
+      <a class="meta" href="https://cimentadaj.github.io/tags/r">R</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "cimentadaj-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog/2017-11-18-123check/1-2-3-check/">&lt; prev | </a></span>
+  
+  
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog">blog</a></span>
+  
+  
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/"> | next &gt;</a></span>
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="https://cimentadaj.github.io/">home</a></h4>
+</section>
+
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2022. Jorge Cimentada. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+

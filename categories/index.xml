@@ -1,0 +1,135 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Categories on Jorge Cimentada</title>
+    <link>https://cimentadaj.github.io/categories/</link>
+    <description>Recent content in Categories on Jorge Cimentada</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Mon, 11 Jan 2021 00:00:00 +0000</lastBuildDate>
+    
+    <atom:link href="https://cimentadaj.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>data-engineering</title>
+      <link>https://cimentadaj.github.io/categories/data-engineering/</link>
+      <pubDate>Mon, 11 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/categories/data-engineering/</guid>
+      <description><![CDATA[
+      ]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>databases</title>
+      <link>https://cimentadaj.github.io/categories/databases/</link>
+      <pubDate>Mon, 11 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/categories/databases/</guid>
+      <description><![CDATA[
+      ]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>docker</title>
+      <link>https://cimentadaj.github.io/categories/docker/</link>
+      <pubDate>Mon, 11 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/categories/docker/</guid>
+      <description><![CDATA[
+      ]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>etl</title>
+      <link>https://cimentadaj.github.io/categories/etl/</link>
+      <pubDate>Mon, 11 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/categories/etl/</guid>
+      <description><![CDATA[
+      ]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>python</title>
+      <link>https://cimentadaj.github.io/categories/python/</link>
+      <pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/categories/python/</guid>
+      <description><![CDATA[
+      ]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>R</title>
+      <link>https://cimentadaj.github.io/categories/r/</link>
+      <pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/categories/r/</guid>
+      <description><![CDATA[
+      ]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>simulation</title>
+      <link>https://cimentadaj.github.io/categories/simulation/</link>
+      <pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/categories/simulation/</guid>
+      <description><![CDATA[
+      ]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>statistics</title>
+      <link>https://cimentadaj.github.io/categories/statistics/</link>
+      <pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/categories/statistics/</guid>
+      <description><![CDATA[
+      ]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>scraping</title>
+      <link>https://cimentadaj.github.io/categories/scraping/</link>
+      <pubDate>Wed, 25 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/categories/scraping/</guid>
+      <description><![CDATA[
+      ]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>machine-learning</title>
+      <link>https://cimentadaj.github.io/categories/machine-learning/</link>
+      <pubDate>Thu, 06 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/categories/machine-learning/</guid>
+      <description><![CDATA[
+      ]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>packages</title>
+      <link>https://cimentadaj.github.io/categories/packages/</link>
+      <pubDate>Sat, 16 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/categories/packages/</guid>
+      <description><![CDATA[
+      ]]>
+      </description>
+    </item>
+    
+  </channel>
+</rss>

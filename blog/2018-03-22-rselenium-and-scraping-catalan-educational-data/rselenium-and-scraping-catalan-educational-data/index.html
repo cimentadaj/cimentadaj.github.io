@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Simple minimalist theme">
+<meta name="keywords" content="blog,goa,hugo,r,statistics,education">
+
+<base href="https://cimentadaj.github.io/">
+
+<title>Jorge Cimentada</title>
+
+<meta name="generator" content="Hugo 0.91.2" />
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cimentadaj.github.io/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
+<script src="https://cimentadaj.github.io/js/highlight.pack.js"></script>
+<script>
+hljs.configure({langauges: ['R']});
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cimentadaj.github.io/css/main.css">
+
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="https://cimentadaj.github.io/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="https://cimentadaj.github.io/manifest.json">
+<link rel="mask-icon" href="https://cimentadaj.github.io/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="row text-left title">
+  <h1 class="title">RSelenium and scraping Catalan educational data</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON MAR 22, 2018 
+      
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    
+
+
+<p>Yesterday I found this public dataset on schools from Barcelona and their performance on tests on 6th grade. I wanted to scrape them to investigate the relationship between performance and schools that receive special government funds for social integration. I found this dataset <a href="https://view-awesome-table.com/-L4lo3r-JA2iaWk1puUT/view">here</a> but it was different from the types of websites I usually scape (<code>html</code> or <code>xml</code>). Although the website has some <code>html</code> the engine swiping the schools is actually based on <code>Javascript</code>. Well, that’s a job for <code>RSelenium</code>, an R package that allows you to browse a website with R.</p>
+<p>The process was actually much easier than I thought using Docker. I follow the answer of setting docker from <a href="https://stackoverflow.com/questions/45395849/cant-execute-rsdriver-connection-refused">this</a> post. Note that this is for Windows 10.</p>
+<ul>
+<li><a href="https://download.docker.com/win/stable/DockerToolbox.exe">install docker</a></li>
+<li>run it, restart computer as requested</li>
+<li>pull image by running in command line: <code>docker pull selenium/standalone-firefox</code> (or chrome instead of firefox) or in R <code>shell('docker pull selenium/standalone-firefox')</code></li>
+<li>start server by running in command line: <code>docker run -d -p 4445:4444 selenium/standalone-firefox</code> or in R <code>shell('docker run -d -p 4445:4444 selenium/standalone-firefox')</code></li>
+<li>Then run <code>remDr &lt;- remoteDriver(remoteServerAddr = &quot;localhost&quot;, port = 4445L, browserName = &quot;firefox'&quot;)</code>. The doc suggests something different with a virtual machine but i couldn’t get it to work. Replacing <code>&quot;localhost&quot;</code> with the <code>ip</code> the your docker server provides.</li>
+</ul>
+<p>I used <code>chrome</code> for all of the above and got this working just fine in no time!</p>
+<p>Now that we got that down, I scraped the data with not much hassle.</p>
+<ul>
+<li><ol style="list-style-type: decimal">
+<li>Load packages and create empty data frame to fill out (I looked at the website to get the columns)</li>
+</ol></li>
+</ul>
+<pre class="r"><code>library(RSelenium)
+library(xml2)
+library(tidyverse)
+
+the_df &lt;-
+  as_tibble(set_names(rerun(4, character()),
+                      c(&quot;school_name&quot;, &quot;complexity&quot;, &quot;social_fund&quot;, &quot;score_6th&quot;)))</code></pre>
+<ul>
+<li><ol start="2" style="list-style-type: decimal">
+<li>Open the website with <code>RSelenium</code></li>
+</ol></li>
+</ul>
+<pre class="r"><code>remDr &lt;- remoteDriver(remoteServerAddr = &quot;192.168.99.100&quot;,
+                      port = 4445L,
+                      browserName = &quot;chrome&quot;)
+
+remDr$open()
+remDr$navigate(&quot;https://view-awesome-table.com/-L4lo3r-JA2iaWk1puUT/view&quot;)</code></pre>
+<p>At this point you can use <code>remDr$screenshot(display = TRUE)</code> to print a screenshot of the website that you’re at.</p>
+<ul>
+<li><ol start="3" style="list-style-type: decimal">
+<li>Define a function that clicks one time on the swiping key on the right, scrapes the table and turns it into a <code>tibble</code></li>
+</ol></li>
+</ul>
+<pre class="r"><code>navigate_click &lt;- function() {
+  webElem &lt;- remDr$findElement(using = &quot;class name&quot;,
+                               &quot;google-visualization-table-div-page&quot;)
+  
+  Sys.sleep(0.5)
+  webElem$clickElement()
+  
+  remDr$getPageSource()[[1]] %&gt;% 
+    read_xml() %&gt;%
+    xml_ns_strip() %&gt;%
+    xml_find_all(xpath = &#39;//td&#39;) %&gt;%
+    xml_text() %&gt;%
+    set_names(c(&quot;school_name&quot;, &quot;complexity&quot;, &quot;social_fund&quot;, &quot;score_6th&quot;)) %&gt;%
+    as.list() %&gt;% as_tibble()
+}</code></pre>
+<ul>
+<li><ol start="4" style="list-style-type: decimal">
+<li>Run that function <code>160</code> times (# of schools in that data) and bind all of these datasets together</li>
+</ol></li>
+</ul>
+<pre class="r"><code>complete_df &lt;-
+  map(1:160, ~ navigate_click()) %&gt;%
+  bind_rows()</code></pre>
+<p>Aaaaandddd, we got our nicely formatted dataset ready for some analysis.</p>
+<pre class="r"><code>complete_df</code></pre>
+<pre><code>## # A tibble: 160 x 4
+##    school_name                   complexity   social_fund score_6th   
+##    &lt;chr&gt;                         &lt;chr&gt;        &lt;chr&gt;       &lt;chr&gt;       
+##  1 Escuela Collaso i Gil         Muy alta     52%         Bajo        
+##  2 Escuela Ruben Darío           Muy alta     66%         Bajo        
+##  3 Escuela Castella              Muy alta     25%         Mediano-bajo
+##  4 Escuela Drassanes             Muy alta     41%         Bajo        
+##  5 Escuela Milà i Fontanals      Muy alta     49%         Bajo        
+##  6 Escuela Baixeras              Mediana-alta 24%         Bajo        
+##  7 Escuela Cervantes             Mediana-alta 38%         Mediano-alto
+##  8 Escuela Parc de la Ciutadella Mediana-baja 15%         Mediano-bajo
+##  9 Escuela Pere Vila             Alta         30%         Mediano-alto
+## 10 Escuela Alexandre Galí        Alta         27%         Bajo        
+## # ... with 150 more rows</code></pre>
+<p>PS: If they ever remove that dataset from the website this post might not work in the future, but at least there’s a traceback on how to user docker with <code>RSelenium</code>.</p>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "cimentadaj-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/">&lt; prev | </a></span>
+  
+  
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog">blog</a></span>
+  
+  
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/"> | next &gt;</a></span>
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="https://cimentadaj.github.io/">home</a></h4>
+</section>
+
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2022. Jorge Cimentada. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+

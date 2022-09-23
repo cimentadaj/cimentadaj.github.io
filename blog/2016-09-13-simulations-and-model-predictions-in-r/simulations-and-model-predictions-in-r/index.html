@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Simple minimalist theme">
+<meta name="keywords" content="blog,goa,hugo,r,statistics,education">
+
+<base href="https://cimentadaj.github.io/">
+
+<title>Jorge Cimentada</title>
+
+<meta name="generator" content="Hugo 0.91.2" />
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cimentadaj.github.io/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
+<script src="https://cimentadaj.github.io/js/highlight.pack.js"></script>
+<script>
+hljs.configure({langauges: ['R']});
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cimentadaj.github.io/css/main.css">
+
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="https://cimentadaj.github.io/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="https://cimentadaj.github.io/manifest.json">
+<link rel="mask-icon" href="https://cimentadaj.github.io/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="row text-left title">
+  <h1 class="title">Simulations and model predictions in R</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON SEP 13, 2016 
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    
+
+
+<p>I was on a flight from Asturias to Barcelona yesterday and I finally had some free time to open Gelman and Hill’s book and submerge in some studying. After finishing the chapter on simulations, I tried doing the first exercise and enjoyed it very much.</p>
+<p>The exercise goes as follows:</p>
+<p><em>Discrete probability simulation: suppose that a basketball player has a 60% chance of making a shot, and he keeps taking shots until he misses two in a row. Also assume his shots are independent (so that each shot has 60% probability of success, no matter what happened before).</em></p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Write an R function to simulate this process.</p></li>
+<li><p>Put the R function in a loop to simulate the process 1000 times. Use the simulation to estimate the mean, standard deviation, and distribution of the total number of shots that the player will take.</p></li>
+<li><p>Using your simulations, make a scatterplot of the number of shots the player will take and the proportion of shots that are successes.</p></li>
+</ol>
+<p>Below you can find my answer with some comments on how I did it:</p>
+<pre class="r"><code># a)
+# The probs argument sets the probability of making a shot. In this case it&#39;ll be 0.60
+thrower &lt;- function(probs) {
+  vec &lt;- replicate(2, rbinom(1, 1, probs)) 
+  # create a vector with two random numbers of either 1 or 0,
+  # with a probability of probs for 1
+  
+  # While the sum of the last and the second-last element is not 0
+  while ((vec[length(vec)] + vec[length(vec) - 1]) != 0) { 
+    
+      vec &lt;- c(vec, rbinom(1, 1, probs))
+      # keep adding random shots with a probability of probs
+  }
+return(vec)
+}
+# The loop works because whenever the sum of the last two elements is 0,
+# then the last two elements must be 0 meaning that the player missed two
+# shots in a row.</code></pre>
+<pre class="r"><code># test
+thrower(0.6)</code></pre>
+<pre><code>##  [1] 1 0 1 0 1 1 1 1 1 1 1 1 0 1 1 1 0 1 1 1 0 1 1 0 1 1 1 0 0</code></pre>
+<pre class="r"><code># 0 1 0 1 0 0
+# Last two elements are always zero</code></pre>
+<pre class="r"><code># b)
+attempts &lt;- replicate(1000, thrower(0.60))
+mean(sapply(attempts, length)) </code></pre>
+<pre><code>## [1] 8.501</code></pre>
+<pre class="r"><code># mean number of shots until two shots are missed in a row</code></pre>
+<pre class="r"><code>sd(sapply(attempts, length)) </code></pre>
+<pre><code>## [1] 7.158019</code></pre>
+<pre class="r"><code># standard deviation of shots made
+# until two shots are missed in a row</code></pre>
+<pre class="r"><code>hist(sapply(attempts, length)) # distribution of shots made</code></pre>
+<p><img src="https://cimentadaj.github.io/blog/2016-09-13-simulations-and-model-predictions-in-r/2016-09-13-simulations-and-model-predictions-in-r_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code># c)
+df &lt;- cbind(sapply(attempts, mean), sapply(attempts, length)) 
+# data frame with % of shots made and number of shots thrown
+plot(df[, 2], df[, 1])</code></pre>
+<p><img src="https://cimentadaj.github.io/blog/2016-09-13-simulations-and-model-predictions-in-r/2016-09-13-simulations-and-model-predictions-in-r_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>That was fun. I think the key take away here is that you can use these type of simulations to asses the accuracy of model predictions, for example. If you have the probability of being in either 1 or 0 in any dependent variable, then simulation can help determine its reliability by looking at the distribution of the replications.</p>
+<p>Whenever I have some free time I’ll go back to the next exercises.</p>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+      
+      
+      TAGS:
+      
+      
+      <a class="meta" href="https://cimentadaj.github.io/tags/gelman">GELMAN</a>, 
+      
+      <a class="meta" href="https://cimentadaj.github.io/tags/r">R</a>, 
+      
+      <a class="meta" href="https://cimentadaj.github.io/tags/simulation">SIMULATION</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "cimentadaj-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog/2016-08-29-children-public-or-private-goods/children-public-or-private-goods/">&lt; prev | </a></span>
+  
+  
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog">blog</a></span>
+  
+  
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog/2016-09-19-obtaining-robust-standard-errors-and-odds-ratios/obtaining-robust-standard-errors-and-odds-ratios-for-logistic-regression-in-r/"> | next &gt;</a></span>
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="https://cimentadaj.github.io/">home</a></h4>
+</section>
+
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2022. Jorge Cimentada. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+

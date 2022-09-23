@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Simple minimalist theme">
+<meta name="keywords" content="blog,goa,hugo,r,statistics,education">
+
+<base href="https://cimentadaj.github.io/">
+
+<title>Jorge Cimentada</title>
+
+<meta name="generator" content="Hugo 0.91.2" />
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cimentadaj.github.io/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
+<script src="https://cimentadaj.github.io/js/highlight.pack.js"></script>
+<script>
+hljs.configure({langauges: ['R']});
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cimentadaj.github.io/css/main.css">
+
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="https://cimentadaj.github.io/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="https://cimentadaj.github.io/manifest.json">
+<link rel="mask-icon" href="https://cimentadaj.github.io/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="row text-left title">
+  <h1 class="title">Exploring Google Scholar coauthorship</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON JUN 19, 2018 
+      
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    
+
+
+<p>I woke up today to read Maëlle Salmon’s latest blog entry in which she scraped her own <a href="https://masalmon.eu/2018/06/18/mathtree/">mathematical tree</a>. Running through the code I had an idea about scraping the coauthorship list that a Google Scholar profile has. With this, I could visualize the network of coauthorship of important scientists and explore whether they have closed or open collaborations.</p>
+<p>I sat down this morning and created the <code>coauthornetwork</code> package that allows you to do just that! It’s actually very simple. First, install it with the usual:</p>
+<pre class="r"><code>devtools::install_github(&quot;cimentadaj/coauthornetwork&quot;)</code></pre>
+<p>There’s two functions: <code>grab_network</code> and <code>plot_coauthors</code>. The first scrapes and returns a data frame of a Google Scholar profile, their coauthors and the coauthors of their coauthors (what?). More simply, by default, the data frame returns this:</p>
+<p>Google Scholar Profile –&gt; Coauthors –&gt; Coauthors</p>
+<p>It’s not that hard after all. The only thing you need to provide is the end of the URL of a Google Scholar profile. For example, a typical URL looks like this: <code>https://scholar.google.com/citations?user=F0kCgy8AAAAJ&amp;hl=en</code>. <code>grab_network</code> will accept the latter part of the URL, namely: <code>citations?user=F0kCgy8AAAAJ&amp;hl=en</code>. Let’s test it:</p>
+<pre class="r"><code>library(coauthornetwork)
+
+network &lt;- grab_network(&quot;citations?user=F0kCgy8AAAAJ&amp;hl=en&quot;)
+network</code></pre>
+<pre><code>## # A tibble: 21 x 4
+##    author       href                 coauthors     coauthors_href          
+##    &lt;fct&gt;        &lt;fct&gt;                &lt;fct&gt;         &lt;fct&gt;                   
+##  1 Hans-Peter ~ citations?user=F0kC~ Melinda Mills /citations?user=HX9KQ5M~
+##  2 Hans-Peter ~ citations?user=F0kC~ Karl Ulrich ~ /citations?user=iuzu9xw~
+##  3 Hans-Peter ~ citations?user=F0kC~ Florian Schu~ /citations?user=MWCt6hQ~
+##  4 Hans-Peter ~ citations?user=F0kC~ Yossi Shavit  /citations?user=brfWXKM~
+##  5 Hans-Peter ~ citations?user=F0kC~ Jan Skopek    /citations?user=Mmo1hFk~
+##  6 Melinda Mil~ /citations?user=HX9~ Hans-Peter B~ /citations?user=F0kCgy8~
+##  7 Melinda Mil~ /citations?user=HX9~ Tanturri Mar~ /citations?user=xN3XevQ~
+##  8 Melinda Mil~ /citations?user=HX9~ René Veenstra /citations?user=_9OVrqM~
+##  9 Melinda Mil~ /citations?user=HX9~ Francesco C.~ /citations?user=-JR6yo4~
+## 10 Karl Ulrich~ /citations?user=iuz~ Paul B. Balt~ /citations?user=vcOZeDg~
+## # ... with 11 more rows</code></pre>
+<p>The main author here is Hans-Peter Blossfeld, a well known Sociologist. We also see that Melinda Mills is one of his coauthors, so we also have the coauthors of Melinda Mills right after him. <code>grab_networks</code> also has the <code>n_coauthors</code> argument to control how many coauthors you can extract (limited to 20 by Google Scholar). You’ll notice that once you go over 10 coauthors things start to get very messy when we visualize this.</p>
+<pre class="r"><code>plot_coauthors(network, size_labels = 3)</code></pre>
+<p><img src="https://cimentadaj.github.io/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Cool eh? We can play around with more coauthors as well.</p>
+<pre class="r"><code>plot_coauthors(grab_network(&quot;citations?user=F0kCgy8AAAAJ&amp;hl=en&quot;, n_coauthors = 7), size_labels = 3)</code></pre>
+<p><img src="https://cimentadaj.github.io/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Hope you enjoy it!</p>
+<!-- To make it more accesible to non-R users, I [created a Shiny app](https://cimentadaj.shinyapps.io/gs_coauthorsip/) where everyone can explore their own coauthors. Enjoy! -->
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+      
+      
+      TAGS:
+      
+      
+      <a class="meta" href="https://cimentadaj.github.io/tags/packages">PACKAGES</a>, 
+      
+      <a class="meta" href="https://cimentadaj.github.io/tags/r">R</a>, 
+      
+      <a class="meta" href="https://cimentadaj.github.io/tags/scraping">SCRAPING</a>, 
+      
+      <a class="meta" href="https://cimentadaj.github.io/tags/shiny">SHINY</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "cimentadaj-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/">&lt; prev | </a></span>
+  
+  
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog">blog</a></span>
+  
+  
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog/2019-01-22-some-guides-and-preproject-documents-on-ml/some-guides-and-pre-project-documents-on-ml/"> | next &gt;</a></span>
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="https://cimentadaj.github.io/">home</a></h4>
+</section>
+
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2022. Jorge Cimentada. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+

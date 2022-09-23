@@ -1,0 +1,1233 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>machine-learning on Jorge Cimentada</title>
+    <link>https://cimentadaj.github.io/tags/machine-learning/</link>
+    <description>Recent content in machine-learning on Jorge Cimentada</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 06 Feb 2020 00:00:00 +0000</lastBuildDate>
+    
+    <atom:link href="https://cimentadaj.github.io/tags/machine-learning/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>The simplest tidy machine learning workflow</title>
+      <link>https://cimentadaj.github.io/blog/2020-02-06-the-simplest-tidy-machine-learning-workflow/the-simplest-tidy-machine-learning-workflow/</link>
+      <pubDate>Thu, 06 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2020-02-06-the-simplest-tidy-machine-learning-workflow/the-simplest-tidy-machine-learning-workflow/</guid>
+      <description><![CDATA[
+      
+
+
+<p><code>caret</code> is a magical package for doing machine learning in R. Look at this code for running a regularized regression:</p>
+<pre class="r"><code>library(caret)
+
+inTrain &lt;- createDataPartition(y = mtcars$mpg,
+                               p = 0.75,
+                               list = FALSE)  
+
+reg_mod &lt;- train(
+  mpg ~ .,
+  data = mtcars[inTrain, ],
+  method = &quot;glmnet&quot;,
+  tuneLength = 10,
+  preProc = c(&quot;center&quot;, &quot;scale&quot;),
+  trControl = trainControl(method = &quot;cv&quot;, number = 10)
+)</code></pre>
+<p>The two function calls in the expression above perform these operations:</p>
+<ol style="list-style-type: decimal">
+<li>Create a training set containing a random sample of 75% of the initial sample</li>
+<li>Center and scale all predictors in the model</li>
+<li>Identifies 10 alpha values (0 to 1) and then 10 additional lambda values</li>
+<li>For each parameter set (one alpha value and another lambda value), <a href="http://topepo.github.io/caret/model-training-and-tuning.html">run a cross-validation 10 times</a></li>
+<li>Effectively run 1000 models (10 alpha * 10 alpha) each one cross-validated (10)</li>
+<li>Save the best model in the result together with the optimized tuning parameteres</li>
+</ol>
+<p>That is a lot of modelling, optimization and computation done with almost no mental load. However, in case you didn’t know, <code>caret</code> is doomed to be left behind. The creator of the package has stated that he will give maintenance to the package but <a href="https://twitter.com/topepos/status/1026939727910461440">most active development</a> will be given to <code>tidymodels</code>, its successor.</p>
+<p><code>tidymodels</code> is more or less a restructuring of the <code>caret</code> package (as it aims to do the same thing and more) but with an interface and design philosophy that resembles the <code>Unix</code> philosophy. This means that instead of having one package and one function (<code>caret</code> and <code>train</code>) that does much of the work, all operations described above are performed by different packages.</p>
+<p><code>tidymodels</code> has been in development for the past two years and the main pieces for effective modelling have been implemented (packages such as <code>parsnip</code>, <code>tune</code>, <code>yardstick</code>, etc…). However, there still isn’t a completely unified workflow that allows them to be as succint and elegant as <code>train</code>. I’ve been keeping an eye on the development of the different packages from <code>tidymodels</code> and I really want to understand the key workflow that will allow users to make modelling with <code>tidymodels</code> easy.</p>
+<p>The objective of this post is to present what I think is currently the most succint and barebones workflow that a user should need using <code>tidymodels</code>. I reached this workflow by looking at the machine learning tutorials from the RStudio conference and stripped most of the details to see the link between the high-level steps in the modelling workflow and where <code>tidymodels</code> fits . In particular, I was curious on how <code>tidymodels</code> makes the workflow fit a logical set of steps without much mental load.</p>
+<ul>
+<li>What this post isn’t about:
+<ul>
+<li>This post won’t introduce you to the <code>tidymodels</code> package. It assumes you are familiar with some of the main packages</li>
+<li>This post won’t show you everything that <code>tidymodels</code> can do (no fancy modelling or deep learning)</li>
+<li>This post won’t delve into specific details on every single function</li>
+</ul></li>
+</ul>
+<p>In fact, I’ve always had some issues using <code>tidymodels</code> because there are so many functions that are difficult to think as isolated entities that remembering every step is quite difficult (unlike the <code>tidyverse</code> where each package can be thought of as a different entity independent of the others but that you use them because they work well together).</p>
+<ul>
+<li>What this post is about:
+<ul>
+<li>This post will divide the key operations in <strong>modelling</strong> and how they fit <code>tidymodels</code></li>
+<li>It will describe the specific functions that perform each step</li>
+<li>It will describe what I think the current workflow is missing</li>
+</ul></li>
+</ul>
+<p>This post is slightly longer than my usual posts, so here’s the <em>too long don’t read</em> version of the workflow:</p>
+<pre class="r"><code>library(AmesHousing)
+# devtools::install_github(&quot;tidymodels/tidymodels&quot;)
+library(tidymodels)
+
+ames &lt;- make_ames()
+
+############################# Data Partitioning ###############################
+###############################################################################
+
+ames_split &lt;- rsample::initial_split(ames, prop = .7)
+ames_train &lt;- rsample::training(ames_split)
+ames_cv &lt;- rsample::vfold_cv(ames_train)
+
+############################# Preprocessing ###################################
+###############################################################################
+
+mod_rec &lt;-
+  recipes::recipe(Sale_Price ~ Longitude + Latitude + Neighborhood,
+                  data = ames_train) %&gt;%
+  recipes::step_log(Sale_Price, base = 10) %&gt;%
+  recipes::step_other(Neighborhood, threshold = 0.05) %&gt;%
+  recipes::step_dummy(recipes::all_nominal())
+
+
+############################# Model Training/Tuning ###########################
+###############################################################################
+
+## Define a regularized regression and explicitly leave the tuning parameters
+## empty for later tuning.
+lm_mod &lt;-
+  parsnip::linear_reg(penalty = tune::tune(), mixture = tune::tune()) %&gt;%
+  parsnip::set_engine(&quot;glmnet&quot;)
+
+## Construct a workflow that combines your recipe and your model
+ml_wflow &lt;-
+  workflows::workflow() %&gt;%
+  workflows::add_recipe(mod_rec) %&gt;%
+  workflows::add_model(lm_mod)
+
+# Find best tuned model
+res &lt;-
+  ml_wflow %&gt;%
+  tune::tune_grid(resamples = ames_cv,
+                  grid = 10,
+                  metrics = yardstick::metric_set(yardstick::rmse))
+
+############################# Validation ######################################
+###############################################################################
+# Select best parameters
+best_params &lt;-
+  res %&gt;%
+  tune::select_best(metric = &quot;rmse&quot;, maximize = FALSE)
+
+# Refit using the entire training data
+reg_res &lt;-
+  ml_wflow %&gt;%
+  tune::finalize_workflow(best_params) %&gt;%
+  parsnip::fit(data = ames_train)
+
+# Predict on test data
+ames_test &lt;- rsample::testing(ames_split)
+reg_res %&gt;%
+  parsnip::predict(new_data = recipes::bake(mod_rec, ames_test)) %&gt;%
+  bind_cols(ames_test, .) %&gt;%
+  mutate(Sale_Price = log10(Sale_Price)) %&gt;% 
+  select(Sale_Price, .pred) %&gt;% 
+  rmse(Sale_Price, .pred)</code></pre>
+<p>and here’s what I think it should look like in pseudocode:</p>
+<pre class="r"><code>############################# Pseudocode ######################################
+###############################################################################
+
+library(AmesHousing)
+# devtools::install_github(&quot;tidymodels/tidymodels&quot;)
+library(tidymodels)
+
+ames &lt;- make_ames()
+
+ml_wflow &lt;-
+  # Original data (unsplit)
+  ames %&gt;%
+  workflow() %&gt;%
+  # Split test/train
+  initial_split(prop = .75) %&gt;%
+  # Specify cross-validation
+  vfold_cv() %&gt;%
+  # Start preprocessing
+  recipe(Sale_Price ~ Longitude + Latitude + Neighborhood) %&gt;%
+  step_log(Sale_Price, base = 10) %&gt;%
+  step_other(Neighborhood, threshold = 0.05) %&gt;%
+  step_dummy(recipes::all_nominal()) %&gt;%
+  # Define model
+  linear_reg(penalty = tune(), mixture = tune()) %&gt;%
+  set_engine(&quot;glmnet&quot;) %&gt;%
+  # Define grid of tuning parameters
+  tune_grid(grid = 10)
+
+# ml_wflow shouldn&#39;t run anything -- it&#39;s just a specification
+# of all the different steps. `fit` should run everything
+ml_wflow &lt;- fit(ml_wflow)
+
+# Plot results of tuning parameters
+ml_wflow %&gt;%
+  autoplot()
+
+# Automatically extract best parameters and fit to the training data
+final_model &lt;-
+  ml_wflow %&gt;%
+  fit_best_model(metrics = metric_set(rmse))
+
+# Predict on the test data using the last model
+# Everything is bundled into a workflow object
+# and everything can be extracted with separate
+# functions with the same verb
+final_model %&gt;%
+  holdout_error()</code></pre>
+<p>If you want more details on each step, continue reading :).</p>
+<div id="a-data-science-workflow" class="section level2">
+<h2>A Data Science Workflow</h2>
+<p>Let’s recycle the operations I described above from <code>caret::train</code> and redefine them as general principles:</p>
+<ul>
+<li><strong>Data Preparation</strong>
+<ul>
+<li>Create a separate training set which represent 75% of the initial sample</li>
+</ul></li>
+<li><strong>Preprocessing (or Feature Engineering, for those liking fancy CS names)</strong>
+<ul>
+<li>Center and scale all predictors in the model</li>
+</ul></li>
+<li><strong>Model Training/Tuning</strong>
+<ul>
+<li>Identifies 10 alpha values (0 to 1) and then 10 additional lambda values</li>
+<li>For each parameter set (1 alpha value and another lambda value), <a href="http://topepo.github.io/caret/model-training-and-tuning.html">run a cross-validation 10 times</a></li>
+<li>Effectively run 1000 models (10 alpha * 10 alpha) each one cross-validated (10)</li>
+<li>Record the validation metrics for each model on the assessment dataset</li>
+</ul></li>
+<li><strong>Validation</strong>
+<ul>
+<li>Save the best model in the result together with the optimized tuning parameters</li>
+</ul></li>
+</ul>
+<p>Before we start, let’s load the two packages and data we’ll use:</p>
+<pre class="r"><code>library(AmesHousing)
+# devtools::install_github(&quot;tidymodels/tidymodels&quot;)
+library(tidymodels)</code></pre>
+<pre><code>## ── Attaching packages ────────────────────────────────────── tidymodels 0.0.4 ──</code></pre>
+<pre><code>## ✔ broom     0.5.4          ✔ recipes   0.1.9     
+## ✔ dials     0.0.4          ✔ rsample   0.0.5.9000
+## ✔ dplyr     0.8.4          ✔ tibble    2.1.3     
+## ✔ ggplot2   3.2.1          ✔ tune      0.0.1     
+## ✔ infer     0.5.1          ✔ workflows 0.1.0.9000
+## ✔ parsnip   0.0.5.9000     ✔ yardstick 0.0.5     
+## ✔ purrr     0.3.3</code></pre>
+<pre><code>## ── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+## ✖ purrr::discard()    masks scales::discard()
+## ✖ dplyr::filter()     masks stats::filter()
+## ✖ dplyr::lag()        masks stats::lag()
+## ✖ ggplot2::margin()   masks dials::margin()
+## ✖ recipes::step()     masks stats::step()
+## ✖ recipes::yj_trans() masks scales::yj_trans()</code></pre>
+<pre class="r"><code>ames &lt;- make_ames()</code></pre>
+</div>
+<div id="data-preparation" class="section level2">
+<h2>Data Preparation</h2>
+<p>This step is performed by the <code>rsample</code> package. It allows you to do two basic things in machine learning: separate your training/test set and create resamples sets for tuning. Since nearly all machine learning modelling requires model tuning, I will create a cross-validation set in this example.</p>
+<pre class="r"><code>ames_split &lt;- rsample::initial_split(ames, prop = .75)
+ames_train &lt;- rsample::training(ames_split)
+ames_cv &lt;- rsample::vfold_cv(ames_train)</code></pre>
+<p>I believe the code above is quite easy to understand and (even if slightly more verbose than the <code>caret</code> equivalent) is quite elegant. For now, there are two things to keep in mind: we have a training set (<code>ames_train</code>) and we have a cross-validation set (<code>ames_cv</code>). We can forget about the testing set all together since it’ll be used in the end.</p>
+</div>
+<div id="preprocessing" class="section level2">
+<h2>Preprocessing</h2>
+<p><code>caret</code> takes care of doing the preprocessing behind the scenes while the user only needs to specify which steps are needed. In <code>tidymodels</code>, the <code>recipes</code> package takes care of preprocessing and you have to perform each step explicitly:</p>
+<pre class="r"><code>mod_rec &lt;-
+  recipes::recipe(Sale_Price ~ Longitude + Latitude + Neighborhood,
+                  data = ames_train) %&gt;%
+  recipes::step_log(Sale_Price, base = 10) %&gt;%
+  recipes::step_other(Neighborhood, threshold = 0.05) %&gt;%
+  recipes::step_dummy(recipes::all_nominal())</code></pre>
+<p>I find this preprocessing statement very intuitive as well. You define the formula for your analysis, provide the training dataset and then apply whatever transformation to the prediction variables. So far the workflow is simple but growing:</p>
+<p><code>Divide training set</code> -&gt; <code>Define model formula</code> -&gt; <code>Specify the data is the training set</code> -&gt; <code>Apply preprocessing</code></p>
+<p>Previously, <code>recipes</code> was a bit confusing because there were steps which are not easy to remember: <code>prep</code> the dataset and <code>juice</code> or <code>bake</code> it depending on what you want to do (even more verbose and complex when applying this to a cross-validation set). With the <code>workflows</code> package, these steps have been completely eliminated from the users mental load.</p>
+</div>
+<div id="model-trainingtuning" class="section level2">
+<h2>Model Training/Tuning</h2>
+<p>Model training and tuning is the step on which I think <code>tidymodels</code> brings in too many moving parts. This has been partially ameliorated with <code>workflows</code>. For this step there are three to four packages: <code>parsnip</code> for modelling, <code>workflows</code> for creating modelling workflows, <code>tune</code> for tuning models and <code>yardstick</code> for validating the results. Let’s see how they fit together:</p>
+<pre class="r"><code>## Define a regularized regression and explicitly leave the tuning parameters
+## empty for later tuning.
+lm_mod &lt;-
+  parsnip::linear_reg(penalty = tune::tune(), mixture = tune::tune()) %&gt;%
+  parsnip::set_engine(&quot;glmnet&quot;)
+
+## Construct a workflow that combines your recipe and your model
+ml_wflow &lt;-
+  workflows::workflow() %&gt;%
+  workflows::add_recipe(mod_rec) %&gt;%
+  workflows::add_model(lm_mod)</code></pre>
+<p>The expression above adds much more flexibility as you can swap models by just changing the <code>linear_reg</code> to another model. However, it also adds more complexity. <code>tune()</code> requires you to know about <code>parameters()</code> to extract the parameters to create the grid. For that you have to be aware of the <code>grid_*</code> functions to create a grid of values. However, this comes from the <code>dials</code> package and not the <code>tune</code> package. However, all of these moving parts return different things, so they’re not very easy to remember at first glance.</p>
+<p>Having said that, the actual tuning is done with <code>tune_grid</code> where we specify the cross-validated set from the first step. Here <code>tune_grid</code> is quite elegant since it allows you specify a grid of values or an integer which it will use to create a grid of parameters:</p>
+<pre class="r"><code>res &lt;-
+  ml_wflow %&gt;%
+  tune::tune_grid(resamples = ames_cv,
+                  grid = 10,
+                  metrics = yardstick::metric_set(yardstick::rmse))</code></pre>
+<p>And finally, you can get the summary of the metrics with <code>collect_metrics</code>:</p>
+<pre class="r"><code>res %&gt;%
+  tune::collect_metrics()</code></pre>
+<pre><code>## # A tibble: 10 x 7
+##     penalty mixture .metric .estimator  mean     n std_err
+##       &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
+##  1 4.99e-10   0.577 rmse    standard   0.141    10 0.00327
+##  2 3.11e- 9   0.655 rmse    standard   0.141    10 0.00327
+##  3 2.74e- 8   0.476 rmse    standard   0.141    10 0.00327
+##  4 1.86e- 7   0.795 rmse    standard   0.141    10 0.00327
+##  5 8.39e- 6   0.976 rmse    standard   0.141    10 0.00327
+##  6 8.47e- 5   0.177 rmse    standard   0.141    10 0.00327
+##  7 6.00e- 4   0.394 rmse    standard   0.141    10 0.00327
+##  8 4.45e- 3   0.268 rmse    standard   0.141    10 0.00329
+##  9 1.28e- 2   0.143 rmse    standard   0.142    10 0.00331
+## 10 1.66e- 1   0.863 rmse    standard   0.175    10 0.00387</code></pre>
+<p>Or choose the best parameters with <code>select_best</code>:</p>
+<pre class="r"><code>best_params &lt;-
+  res %&gt;%
+  tune::select_best(metric = &quot;rmse&quot;, maximize = FALSE)
+
+best_params</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##     penalty mixture
+##       &lt;dbl&gt;   &lt;dbl&gt;
+## 1 0.0000847   0.177</code></pre>
+</div>
+<div id="validation" class="section level2">
+<h2>Validation</h2>
+<p>The final step is to extract the best model and contrast the training and test error. Here <code>workflows</code> offers some convenience to replace the model with the best parameters and fit the complete training data with the best parameters. This step is currently completely automatized with <code>train</code> where you can extract the best model even after exploring the results of different tuning parameters.</p>
+<pre class="r"><code>reg_res &lt;-
+  ml_wflow %&gt;%
+  # Attach the best tuning parameters to the model
+  tune::finalize_workflow(best_params) %&gt;%
+  # Fit the final model to the training data
+  parsnip::fit(data = ames_train)
+
+ames_test &lt;- rsample::testing(ames_split)
+
+reg_res %&gt;%
+  predict(new_data = ames_test) %&gt;%
+  bind_cols(ames_test, .) %&gt;%
+  mutate(Sale_Price = log10(Sale_Price)) %&gt;% 
+  select(Sale_Price, .pred) %&gt;% 
+  yardstick::rmse(Sale_Price, .pred)</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 rmse    standard       0.139</code></pre>
+<p>One of the things I don’t like about <code>fit</code> for this current scenario is that I have to think about specifying the training data again. I understand that the data specified in <code>recipe</code> could be even an empty data frame, as it is used only to detect the column names. However, in nearly all the applications I can think of, I will specify the training data at the beginning (in my recipe). So I find that having to specify the data again is a step that can be eliminated altogether if the data is in the workflow.</p>
+</div>
+<div id="what-to-remember" class="section level2">
+<h2>What to remember</h2>
+<p>There are many things to remember from the workflow above. Below is a kind of cheatsheet:</p>
+<ul>
+<li><strong>Data Preparation</strong>
+<ul>
+<li><code>rsample::initial_split</code>: splits your data into training/testing</li>
+<li><code>rsample::training</code>: extract the training data</li>
+<li><code>rsample::vfold_cv</code>: create a cross-validated set from the training data</li>
+</ul></li>
+<li><strong>Preprocessing (or Feature Engineering, for those liking fancy CS names)</strong>
+<ul>
+<li><code>recipes::recipe</code>: define your formula with the training data</li>
+<li><code>recipes::step_*</code>: add any preprocessing steps your data</li>
+</ul></li>
+<li><strong>Model Training/Tuning</strong>
+<ul>
+<li><code>parsnip::linear_reg</code>: define your model. This example shows a linear regression but it could be anything else (random forest)</li>
+<li><code>tune::tune</code>: leave the tuning parameters empty for later</li>
+<li><code>parsnip::set_engine</code>: set the engine to run the models (which package to use)</li>
+<li><code>workflows::workflow</code>: create a workflow object to hold your model/recipe</li>
+<li><code>workflows::add_recipe</code>: add the recipe to your workflow</li>
+<li><code>workflows::add_model</code>: add the model to your workflow</li>
+<li><code>yardstick::metric_set</code>: create a set of metrics</li>
+<li><code>yardstick::rmse</code>: specify the root-mean-square-error as the loss function</li>
+<li><code>tune::tune_grid</code> run the workflow across all resamples with the desired tuning parameters</li>
+<li><code>tune::collect_metrics</code>: collect which are the best tuning parameters</li>
+<li><code>tune::select_best</code>: select the best tuning parameter</li>
+</ul></li>
+<li><strong>Validation</strong>
+<ul>
+<li><code>tune::finalize_workflow</code>: replace the empty parameters of the model with the best tuned parameters</li>
+<li><code>parsnip::fit</code>: fit the final model to the training data</li>
+<li><code>rsample::testing</code>: extract the testing data from the initial split</li>
+<li><code>parsnip::predict</code>: predict the trained model on the testing data</li>
+</ul></li>
+</ul>
+<p>This is currently what I think is the simplest workflow to train models in <code>tidymodels</code>. This is of course a very simplified example which doesn’t create tuning grids or tune parameters in the recipes. This is supposed to be the barebones workflow that is currently available in <code>tidymodels</code>. Having said that, I still think there are too many steps which makes the workflow convoluted.</p>
+</div>
+<div id="thoughts-on-the-workflow" class="section level2">
+<h2>Thoughts on the workflow</h2>
+<p><code>tidymodels</code> is currently being designed to be decoupled into several packages and the key steps for modelling are currently implemented. This offers greater flexibility for defining models, making some of the steps in modelling less obscure and explicit.</p>
+<p>Having said that, there is too much to remember. <code>dplyr::select</code> is a function which is easy to remember because it can be thought of as an independent entity which I can use with a <code>data.table</code> or base <code>R</code>. On top of that, I know it follows the general principle of the <code>tidyverse</code> where it only accepts a data frame and only returns a data frame. This makes it much more memorable. Due to its simplicity, it’s easy to think of it like a hammer: I can apply it to so many different problems that I don’t have to memorize it, it becomes a general tool that represents an abstract idea.</p>
+<p>Some of the functions/packages from <code>tidymodels</code> are difficult to think like that. I believe this is because they are supposed to be almost always used together, otherwise they have no practical applications. <code>tune</code>, <code>workflows</code> and <code>parsnip</code> introduce several ideas which I think are difficult to remember (mainly because you have to <strong>remember</strong> them and they don’t come off naturally, as an abstract concept).</p>
+<p><code>workflows</code> seems to be a package that combines some of the steps performed by <code>parsnip</code> and <code>recipes</code>, suggesting that you can build a logical workflow with it. However, <code>workflows</code> is introduced <strong>after</strong> you define your preprocessing and model. My intuition would tell me that the workflow should begin at first rather than in the middle. For example, in pseucode a logical workflow could look like this:</p>
+<pre class="r"><code>ml_wflow &lt;-
+  # Original data (unsplit)
+  ames %&gt;%
+  # Begin workflow
+  workflow() %&gt;%
+  # No need to extract training/testing, they&#39;re already in the workflow
+  # This eliminates the mental load of mixing up training/testing and
+  # mistakenly predict one over the other.
+  initial_split(prop = .75) %&gt;%
+  # Apply directly the cross-validation to the training set. No resaving
+  # the data into different names, adding more and more objects to remember
+  vfold_cv() %&gt;%
+  # Introduce preprocessing
+  # No need to specify the data, the training data is already inside
+  # the workflow. This simplifies having to specify your training
+  # data in many different places (recipes, fit, vfold_cv). The data
+  # was specified at the beginning and that&#39;s it.
+  recipe(Sale_Price ~ Longitude + Latitude + Neighborhood) %&gt;%
+  step_log(Sale_Price, base = 10) %&gt;%
+  step_other(Neighborhood, threshold = 0.05) %&gt;%
+  step_dummy(recipes::all_nominal()) %&gt;%
+  # Add your model definition and include placeholders for your tuning
+  # parameters
+  linear_reg(penalty = tune(), mixture = tune()) %&gt;%
+  set_engine(&quot;glmnet&quot;)</code></pre>
+<p>I believe the code above is much more logical than the current setup for three reasons which are very much related to each other.</p>
+<p>First, it follows the ‘traditional’ workflow of machine learning more clearly without intermediate steps. You begin with your data and add the key modelling steps one by one. Second, it avoids creating too many intermediate steps which add mental load. Whenever I’m using <code>tidymodels</code> I have to remember so many things: the training data, the cross-validated set, the recipe, the tuning grid, the model, etc. I often forget what I need to add to <code>tune_grid</code>: is it the recipe and the resample set? Is it the workflow? Did I mistakenly add the test set to the recipe and fit the data with the training set? It’s very easy to get lost along the way. And third, I think the workflow from above fits with the <code>tidyverse</code> philosophy much better, where you can read the steps from left to right, in a linear fashion.</p>
+<p>The power of the pseudocode above is that the workflow is thought of as the holder of your workflow since the beginning, meaning you can add or remove stuff from it. For example, it would very easy to add <strong>another model</strong> to be compared:</p>
+<pre class="r"><code>ml_wflow &lt;-
+  # Original data (unsplit)
+  ames %&gt;%
+  workflow() %&gt;%
+  initial_split(prop = .75) %&gt;%
+  vfold_cv() %&gt;%
+  recipe(Sale_Price ~ Longitude + Latitude + Neighborhood) %&gt;%
+  step_log(Sale_Price, base = 10) %&gt;%
+  step_other(Neighborhood, threshold = 0.05) %&gt;%
+  step_dummy(recipes::all_nominal()) %&gt;%
+  linear_reg(penalty = tune(), mixture = tune()) %&gt;%
+  set_engine(&quot;glmnet&quot;) %&gt;%
+  # Adds another model
+  rand_forest(mtry = tune(), tress = tune(), min_n = tune()) %&gt;%
+  set_engine(&quot;rf&quot;)</code></pre>
+<p>The code above could also include additional steps for adding tuning grids for each model and then a final call to <code>fit</code> would fit all models/tuning parameters directly into the cross-validated set. Additionally, since the original data is in the workflow, methods for fitting the best model to the complete training data could be implemented as well as methods for running the best tuned model on the test data. No objects laying around to remember and everything is unified into a bundle of logical steps which begin with your data.</p>
+<p>This workflow idea doesn’t introduce anything new programatically in <code>tidymodels</code>: all ingredients are currently implemented. The idea is to rearrange specific methods to handle a workflow in this fashion. <em>This workflow idea is just a prototype idea and I’m sure that many things can be improved</em>. I do think, however, that this is the direction which would make <code>tidymodels</code> a truly friendly interface. At least to me, it would make it as easy to use as the <code>tidyverse</code>.</p>
+</div>
+<div id="wrap-up" class="section level2">
+<h2>Wrap-up</h2>
+<p>This post is intended to be thought-provoking take on the current development of <code>tidymodels</code>. I’m a big fan of RStudio and their work and I’m looking forward to the “official release” of <code>tidymodels</code>. I wrote this piece with the intention of understanding the currently workflow but noticed that I’m not comfortable with it, nor did it come off naturally. I hope these ideas can help exemplify some of the bottlenecks that future <code>tidymodels</code> users can face with the aim of improving the user experience of the modelling framework from <code>tidymodels</code>.</p>
+</div>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>Turning a pdf book into machine readable format</title>
+      <link>https://cimentadaj.github.io/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/turning-a-pdf-book-into-machine-readable-format/</link>
+      <pubDate>Sat, 26 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/turning-a-pdf-book-into-machine-readable-format/</guid>
+      <description><![CDATA[
+      
+
+
+<p>A few days ago a well known Sociologist, Erik Olin Wright, died from Leukemia. Torkild Lyngstand then <a href="https://twitter.com/torkildl/status/1088325262758969344">posted on twitter</a> his <a href="https://www.ssc.wisc.edu/~wright/Published%20writing/FallingIntoMarxismChoosingToStay.pdf">‘intellectual biography’</a> which is an interesting document that outlines how he ended up being a Marxist. This document is a pdf book that has two actual book pages per pdf page.</p>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-1-1.png" width="702" /></p>
+<p>Although this is perfectly fine for reading on a computer, I usually don’t like to read anything longer than 15 pages on my computer. So I decided I would turn this book into machine readable text with R for my Kindle.</p>
+<p>Spoiler: I couldn’t do it, so help me out!</p>
+<p>Firs things first. I will use the <code>magick</code> and <code>tabulizer</code> packages. <code>tabulizer</code> has a dependency with <code>rJava</code> which is a bit difficult to handle. I wrote <a href="blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/index.html">this blogpost</a> explaining how to install <code>rJava</code> on Windows 10 and it’s helped me inmensely not to waste time in the installation process.</p>
+<p>After installing both packages successfully, I loaded them, and split the pdf into separate pages using <code>tabulizer::split_pdf</code>.</p>
+<pre class="r"><code>library(magick)
+Sys.setenv(JAVA_HOME=&quot;C:/Program Files/Java/jdk-11.0.2/&quot;)
+library(tabulizer)
+
+url &lt;- &quot;https://www.ssc.wisc.edu/~wright/Published%20writing/FallingIntoMarxismChoosingToStay.pdf&quot;
+all_pages &lt;- tabulizer::split_pdf(url)
+
+all_pages</code></pre>
+<pre><code>##  [1] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce401.pdf&quot;
+##  [2] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce402.pdf&quot;
+##  [3] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce403.pdf&quot;
+##  [4] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce404.pdf&quot;
+##  [5] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce405.pdf&quot;
+##  [6] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce406.pdf&quot;
+##  [7] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce407.pdf&quot;
+##  [8] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce408.pdf&quot;
+##  [9] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce409.pdf&quot;
+## [10] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce410.pdf&quot;
+## [11] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce411.pdf&quot;
+## [12] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce412.pdf&quot;
+## [13] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce413.pdf&quot;
+## [14] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce414.pdf&quot;</code></pre>
+<p><code>tabulizer::split_df</code> saved each page on a separate pdf in a temporary directory. Now we only have to develop a function to clean one page and apply it to all middle pages (that is, excluding the first and last because they have a slightly different format).</p>
+<p>After hard work, I developed the function <code>convert_page</code> which accepts one pdf page crops all the corners so that only text is available.</p>
+<pre class="r"><code>convert_page &lt;- function(page) {
+  page &lt;- magick::image_read_pdf(page)
+  separator &lt;- image_info(page)$width / 2
+  first_page &lt;- image_crop(page, geometry_area(width = separator))
+  second_page &lt;- image_crop(page, geometry_area(x_off = separator, y_off = 1))
+  
+  size &lt;- geometry_area(width = 1400,
+                        height = 2200,
+                        x_off = 300,
+                        y_off = 200)
+  
+  first_page &lt;- image_crop(first_page, size)
+  
+  
+  size &lt;- geometry_area(width = 1400,
+                        height = 2200,
+                        x_off = 130,
+                        y_off = 200)
+  
+  second_page &lt;- image_crop(second_page, size)
+  
+  f_text &lt;- image_ocr(first_page)
+  s_text &lt;- image_ocr(second_page)
+  
+  complete_page &lt;- paste0(f_text, s_text)
+  
+  complete_page
+}</code></pre>
+<p>Let’s look at an actual example. Below is a picture of page 4:</p>
+<pre class="r"><code>page_four &lt;- magick::image_read_pdf(all_pages[4])
+image_resize(page_four, geometry_size_percent(width = 40))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-5-1.png" width="702" /></p>
+<p><code>convert_page</code> crops the sides to obtain the leftmost page:</p>
+<pre class="r"><code>separator &lt;- image_info(page_four)$width / 2
+first_page &lt;- image_crop(page_four, geometry_area(width = separator))
+second_page &lt;- image_crop(page_four, geometry_area(x_off = separator, y_off = 1))
+
+size &lt;- geometry_area(width = 1400,
+                      height = 2200,
+                      x_off = 300,
+                      y_off = 200)
+
+first_page &lt;- image_crop(first_page, size)
+
+
+size &lt;- geometry_area(width = 1400,
+                      height = 2200,
+                      x_off = 130,
+                      y_off = 200)
+
+second_page &lt;- image_crop(second_page, size)
+
+image_resize(first_page, geometry_size_percent(width = 40))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-6-1.png" width="280" /></p>
+<p>And for the rightmost page:</p>
+<pre class="r"><code>image_resize(second_page, geometry_size_percent(width = 40))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-7-1.png" width="280" /></p>
+<p>Finally, it converts and merges both pages into text with:</p>
+<pre class="r"><code>f_text &lt;- image_ocr(first_page)
+s_text &lt;- image_ocr(second_page)
+
+complete_page &lt;- paste0(f_text, s_text)
+
+cat(complete_page)</code></pre>
+<pre><code>## thusiastic and involved in their children’s school projects and intellectual pur-
+## suits. My mother would carefully go over term papers with each of us, giving us
+## both editorial advice and substantive suggestions. We were members of the Law-
+## rence Unitarian Fellowship, which was made up of, to a substantial extent, uni-
+## versity families. Sunday morning services were basically interdisciplinary semi-
+## nars on matters of philosophical and social concern; Sunday school was an
+## extended curriculum on world religions. | knew by about age ten that | wanted
+## to be a professor. Both of my parents were academics. Both of my siblings be-
+## came academics. Both of their spouses are academics. (Only my wife, a clinical
+## psychologist, is not an academic, although her father was a professor.) ‘The only
+## social mobility in my family was interdepartmental. It just felt natural to go into
+## the family business.
+## 
+## Lawrence was a delightful, easy place to grow up. Although Kansas was a po-
+## litically conservative state, Lawrence was a vibrant, liberal community. My ear-
+## liest form of political activism centered on religion: | was an active member of a
+## Unitarian youth group called Liberal Religious Youth, and in high school { went
+## out of my way to argue with Bible Belt Christians about their belief in God. The
+## early 1960s also witnessed my earliest engagement with social activism. The civil
+## rights movement came to Lawrence first in the form of an organized boycott of
+## a local segregated swimming pool in the 1950s and then in the form of civil rights
+## rallies in the 1960s. In 1963 I went to the Civil Rights March on Washington and
+## heard Martin Luther King Jr’s “I have a dream” speech. My earliest sense of pol-
+## itics was that at its core it was about moral questions of social justice, not prob-
+## lems of economic power and interests.
+## 
+## My family, also, was liberal, supporting the civil rights movement and other
+## liberal causes; but while the family culture encouraged an intellectual interest in
+## social and moral concerns, it was not intensely political. We would often talk
+## about values, and the Unitarian Fellowship we attended also stressed humanis-
+## tic, socially concerned values, but these were mostly framed as matters of indi-
+## vidual responsibility and morality not as the grounding of a coherent political
+## challenge to social injustice. My only real exposure toa more radical political per-
+## spective came through my maternal grandparents, Russian Jewish immigrants
+## who had come to the United States before World War I and lived near us in Law-
+## rence, and my mother’s sister’s family in New York. Although I was not aware of
+## this at the time, my grandparents and the New York relatives were Communists.
+## This was never openly talked about, but from time to time I would hear glowing
+## things said about the Soviet Union, socialism would be held out as an ideal, and
+## America and capitalism would be criticized in emotionally laden ways. My cous-
+## ins in New York were especially vocal about this, and in the mid-1g60s when I be-
+## came more engaged in political matters, intense political discussions with my
+## New York relatives contributed significantly to anchoring my radical sensibilities.
+## 
+## My interest in social sciences began in earnest in high school. fn Lawrence it
+## was easy for academically oriented kids to take courses at the University of Kan-
+## sas, and in my senior year | took a political science course on American politics.
+## For my term project | decided to do a survey of children’s attitudes toward the
+## American presidency and got permission to administer a questionnaire to several
+## hundred students from grades 1-12 in the public schools. | then organized a party
+## with my friends to code the data and produce graphs of how various attitudes
+## changed by age. I&#39;he most striking finding was that, in response to the question,
+## “Would you like to be President of the United States when you grow up?” there
+## were more girls who said yes than boys through third grade, after which the rate
+## for girls declined dramatically.
+## 
+## By the time I graduated from high school in 1964, I had enough university
+## credits and advanced placement credits to enter KU as a second-semester soph-
+## omore, and that is what | had planned to do. Nearly all of my friends were going
+## to KU. It just seemed like the thing to do. A friend of my parents, Karl Heider,
+## gave me, as a Christmas present in my senior year in high school, an application
+## form to Harvard. He was a graduate student at Harvard in anthropology at the
+## time. I filled it out and sent it in. Harvard was the only place to which I applied,
+## not out of inflated self-confidence but because it was the only application I got as
+## a Christmas present. When | eventually was accepted (initially I was on the wait-
+## ing list), the choice was thus between KU and Harvard. I suppose this was a
+## “choice” since I could have decided to stay at KU. However, it just seemed so ob-
+## vious; there was no angst, no weighing of alternatives, no thinking about the pros
+## and cons. Thus, going to Harvard in a way just happened.
+## 
+## Like many students who began university in the mid-1960s, my political ideas
+## were rapidly radicalized as the Viet Nam War escalated and began to impinge on
+## our lives. I was not a student leader in activist politics, but I did actively partici-
+## pate in demonstrations, rallies, fasts for peace, and endless political debate. At
+## Harvard I majored in social studies, an intense interdisciplinary social science
+## major centering on the classics of social theory, and in that program I was first ex-
+## posed to the more abstract theoretical issues that bore on the political concerns
+## of the day: the dynamics of capitalism, the nature of power and domination, the
+## importance of elites in shaping American foreign policy, and the problem of</code></pre>
+<p>If we pass the pdf page directly to <code>convert_page</code>, it will do it all in one take:</p>
+<pre class="r"><code>cat(convert_page(all_pages[4]))</code></pre>
+<pre><code>## thusiastic and involved in their children’s school projects and intellectual pur-
+## suits. My mother would carefully go over term papers with each of us, giving us
+## both editorial advice and substantive suggestions. We were members of the Law-
+## rence Unitarian Fellowship, which was made up of, to a substantial extent, uni-
+## versity families. Sunday morning services were basically interdisciplinary semi-
+## nars on matters of philosophical and social concern; Sunday school was an
+## extended curriculum on world religions. | knew by about age ten that | wanted
+## to be a professor. Both of my parents were academics. Both of my siblings be-
+## came academics. Both of their spouses are academics. (Only my wife, a clinical
+## psychologist, is not an academic, although her father was a professor.) ‘The only
+## social mobility in my family was interdepartmental. It just felt natural to go into
+## the family business.
+## 
+## Lawrence was a delightful, easy place to grow up. Although Kansas was a po-
+## litically conservative state, Lawrence was a vibrant, liberal community. My ear-
+## liest form of political activism centered on religion: | was an active member of a
+## Unitarian youth group called Liberal Religious Youth, and in high school { went
+## out of my way to argue with Bible Belt Christians about their belief in God. The
+## early 1960s also witnessed my earliest engagement with social activism. The civil
+## rights movement came to Lawrence first in the form of an organized boycott of
+## a local segregated swimming pool in the 1950s and then in the form of civil rights
+## rallies in the 1960s. In 1963 I went to the Civil Rights March on Washington and
+## heard Martin Luther King Jr’s “I have a dream” speech. My earliest sense of pol-
+## itics was that at its core it was about moral questions of social justice, not prob-
+## lems of economic power and interests.
+## 
+## My family, also, was liberal, supporting the civil rights movement and other
+## liberal causes; but while the family culture encouraged an intellectual interest in
+## social and moral concerns, it was not intensely political. We would often talk
+## about values, and the Unitarian Fellowship we attended also stressed humanis-
+## tic, socially concerned values, but these were mostly framed as matters of indi-
+## vidual responsibility and morality not as the grounding of a coherent political
+## challenge to social injustice. My only real exposure toa more radical political per-
+## spective came through my maternal grandparents, Russian Jewish immigrants
+## who had come to the United States before World War I and lived near us in Law-
+## rence, and my mother’s sister’s family in New York. Although I was not aware of
+## this at the time, my grandparents and the New York relatives were Communists.
+## This was never openly talked about, but from time to time I would hear glowing
+## things said about the Soviet Union, socialism would be held out as an ideal, and
+## America and capitalism would be criticized in emotionally laden ways. My cous-
+## ins in New York were especially vocal about this, and in the mid-1g60s when I be-
+## came more engaged in political matters, intense political discussions with my
+## New York relatives contributed significantly to anchoring my radical sensibilities.
+## 
+## My interest in social sciences began in earnest in high school. fn Lawrence it
+## was easy for academically oriented kids to take courses at the University of Kan-
+## sas, and in my senior year | took a political science course on American politics.
+## For my term project | decided to do a survey of children’s attitudes toward the
+## American presidency and got permission to administer a questionnaire to several
+## hundred students from grades 1-12 in the public schools. | then organized a party
+## with my friends to code the data and produce graphs of how various attitudes
+## changed by age. I&#39;he most striking finding was that, in response to the question,
+## “Would you like to be President of the United States when you grow up?” there
+## were more girls who said yes than boys through third grade, after which the rate
+## for girls declined dramatically.
+## 
+## By the time I graduated from high school in 1964, I had enough university
+## credits and advanced placement credits to enter KU as a second-semester soph-
+## omore, and that is what | had planned to do. Nearly all of my friends were going
+## to KU. It just seemed like the thing to do. A friend of my parents, Karl Heider,
+## gave me, as a Christmas present in my senior year in high school, an application
+## form to Harvard. He was a graduate student at Harvard in anthropology at the
+## time. I filled it out and sent it in. Harvard was the only place to which I applied,
+## not out of inflated self-confidence but because it was the only application I got as
+## a Christmas present. When | eventually was accepted (initially I was on the wait-
+## ing list), the choice was thus between KU and Harvard. I suppose this was a
+## “choice” since I could have decided to stay at KU. However, it just seemed so ob-
+## vious; there was no angst, no weighing of alternatives, no thinking about the pros
+## and cons. Thus, going to Harvard in a way just happened.
+## 
+## Like many students who began university in the mid-1960s, my political ideas
+## were rapidly radicalized as the Viet Nam War escalated and began to impinge on
+## our lives. I was not a student leader in activist politics, but I did actively partici-
+## pate in demonstrations, rallies, fasts for peace, and endless political debate. At
+## Harvard I majored in social studies, an intense interdisciplinary social science
+## major centering on the classics of social theory, and in that program I was first ex-
+## posed to the more abstract theoretical issues that bore on the political concerns
+## of the day: the dynamics of capitalism, the nature of power and domination, the
+## importance of elites in shaping American foreign policy, and the problem of</code></pre>
+<p>We pass all middle pages to <code>convert_page</code> to convert them to text:</p>
+<pre class="r"><code>middle_pages &lt;- lapply(all_pages[3:(length(all_pages) - 1)], convert_page)
+cat(middle_pages[[1]])</code></pre>
+<pre><code>## versity of Western Australia); music camp (1 played viola); assisting in a lab. And
+## in college, it was much the same: volunteering as a photographer on an archae-
+## ological dig in Hawaii; teaching in a high school enrichment program for mi-
+## nority kids; traveling in urope. The closest thing to an ordinary paying job |
+## ever had was occasionally selling hot dogs at football games in my freshman year
+## in college. What is more, the ivory towers that [ have inhabited since the mid-
+## 1960s have been located in beautiful physical settings, filled with congenial and
+## interesting colleagues and students, and animated by exciting ideas. This, then,
+## is the first fundamental fact of my life as an academic: [ have been extraordinar-
+## ily lucky and have always lived what can only be considered a life of extreme priv-
+## ilege. Nearly all of the time [ am doing what [ want to do; what I do gives me a
+## sense of fulfillment and purpose; and | am paid well for doing it.
+## 
+## Here is the second fundamental fact of my academic life: since the early
+## 19708, my intellectual life has been firmly anchored in the Marxist tradition. The
+## core of my teaching as a professor has centered on communicating the central
+## ideas and debates of contemporary Marxism and allied traditions of emancipa-
+## tory social theory. The courses I have taught have had names like Class, State and
+## Ideology: An Introduction to Marxist Sociology; Envisioning Real Utopias; Mars-
+## ist Theories of the State; Alternative Foundations of Class Analysis. My energies
+## in institution building have all involved creating and expanding arenas within
+## which radical system-challenging ideas could flourish: creating a graduate pro-
+## gram in class analysis and historical change in the Sociology Department at the
+## University of Wisconsin—Madison; establishing the A. E. Havens Center, a re-
+## search institute for critical scholarship at Wisconsin; organizing an annual con-
+## ference for activists and academics, now called RadFest, which has been held
+## every year since 1983. And my scholarship has been primarily devoted to recon-
+## structing Marxism as a theoretical framework and research tradition. While the
+## substantive preoccupations of this scholarship have shifted over the past thirty
+## years, its central mission has not.
+## 
+## As in any biography, this pair of facts is the result of a trajectory of circum-
+## stances and choices: circumstances that formed me and shaped the range of
+## choices I encountered, and choices that in turn shaped my future circumstances.
+## Some of these choices were made easily, with relatively little weighing of alter-
+## natives, sometimes even without much awareness that a choice was actually be-
+## ing made; others were the result of protracted reflection and conscious decision
+## making, sometimes with the explicit understanding that the choice being made
+## would constrain possible choices in the future. Six such junctures of circum-
+## stance and choice seem especially important to me in shaping the contours of
+## my academic career. ‘The first was posed incrementally in the early 1970s: the
+## choice to identify my work primarily as contributing to Marxism rather than
+## simply using Marxism. The second concerns the choice, made just before grad-
+## uate school at the University of California, Berkeley, to be a sociologist, rather
+## than some other ist. ‘The third was the choice to become what some people de-
+## scribe as multivariate Marxist: to be a Marxist sociologist who engages in grandi-
+## ose, perhaps overblown, quantitative research, The fourth choice was the choice
+## of which academic department to be in. This choice was acutely posed to me
+## in 1987 when I spent a year as a visiting professor at the University of Califor-
+## nia, Berkeley. | had been offered a position there, and | had to decide whether
+## I wanted to return to Wisconsin. Returning to Madison was unquestionably a
+## choice that shaped subsequent contexts of choice. The fifth choice has been
+## posed and reposed to me with increasing intensity since the late 1980s: the
+## choice to stay a Marxist in this world of post-Marxisms when many of my intel-
+## lectual comrades have decided for various good, and sometimes perhaps not so
+## good, reasons to recast their intellectual agenda as being perhaps friendly to, but
+## outside of, the Marxist tradition. Finally, the sixth important choice was to shift
+## my central academic work from the study of class structure to the problem of en-
+## visioning real utopias.
+## 
+## To set the stage for this reflection on choice and constraint, I need to give a
+## brief account of the circumstances of my life that brought me into the arena of
+## these choices.
+## 
+## Growing Up
+## 
+## I was born in Berkeley, California, in 1947 while my father, who had received a
+## PhD in psychology before World War II, was in medical school on the GI Bill.
+## When he finished his medical training in 1951, we moved to Lawrence, Kansas,
+## where he became the head of the program in clinical psychology at Kansas Uni-
+## versity (KU) and a professor of psychiatry in the KU Medical School. Because of
+## antinepotism rules at the time, my mother, who also had a PhD in psychology,
+## was not allowed to be employed at the university, so throughout the 1950s she did
+## research on various research grants. In 1961, when the state law on such things
+## changed, she became a professor of rehabilitation psychology.
+## 
+## Life in my family was intensely intellectual. Dinner table conversation would
+## often revolve around intellectual matters, and my parents were always deeply en-</code></pre>
+<p>Ok, everything’s looking good. Because the first and last pages have different croping dimensions, I slightly adapt the <code>geometry_area</code> to do it manually:</p>
+<pre class="r"><code>### First page
+first_page &lt;- magick::image_read_pdf(all_pages[2])
+image_resize(first_page, geometry_size_percent(width = 40))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-11-1.png" width="702" /></p>
+<pre class="r"><code>separator &lt;- image_info(first_page)$width / 2
+
+size &lt;- geometry_area(width = 1400,
+                      height = 1700,
+                      x_off = separator + 100,
+                      y_off = 650)
+
+first_page &lt;- image_crop(first_page, size)
+image_resize(first_page, geometry_size_percent(width = 40))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-11-2.png" width="280" /></p>
+<pre class="r"><code>first_page &lt;- image_ocr(first_page)
+###
+
+
+### Last page
+last_page &lt;- magick::image_read_pdf(all_pages[14])
+image_resize(last_page, geometry_size_percent(width = 40))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-11-3.png" width="702" /></p>
+<pre class="r"><code>separator &lt;- image_info(last_page)$width / 2
+
+size &lt;- geometry_area(width = separator - 400,
+                      height = 500,
+                      x_off = 150,
+                      y_off = 260)
+
+last_page &lt;- image_crop(last_page, size)
+image_resize(last_page, geometry_size_percent(width = 70))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-11-4.png" width="474" /></p>
+<pre class="r"><code>last_page &lt;- image_ocr(last_page)
+###</code></pre>
+<p>Ok, the hard work is over! Now we need to merge all of the pages together and print a subset of the text:</p>
+<pre class="r"><code>final_document &lt;- paste0(first_page, Reduce(paste0, middle_pages), last_page)
+cat(paste0(substring(final_document, 0, 5000), &quot;...&quot;))</code></pre>
+<pre><code>## Falling into Marxism; Choosing to Stay
+## 
+## Erik Olin Wright received his PhD from the University of California, Berkeley, and
+## has taught at the University of Wisconsin since then. His academic work has been
+## centrally concerned with reconstructing the Marxist tradition of social theory and
+## research in ways that attempt to make it more relevant to contemporary concerns
+## and more cogent as a scientific framework of analysis. His empirical research has
+## focused especially on the changing character of class relations in developed capi-
+## talist societies. Since 1992 he has directed the Real Utopias Project, which explores
+## a range of proposals for new institutional designs that embody emancipatory ideals
+## and yet are attentive to issues of pragmatic feasibility. His principle publications
+## include The Politics of Punishment: A Critical Analysis of Prisons in America;
+## Class, Crisis and the State; Classes; Reconstructing Marxism (with Elliott Sober
+## and Andrew Levine); Interrogating Inequality; Class Counts: Comparative Stud-
+## ies in Class Analysis; and Deepening Democracy: Innovations in Empowered
+## Participatory Governance (with Archon Fung). He is married to Marcia Kahn
+## Wright, a clinical psychologist working in community mental health, and has tvo
+## grown daughters, Jennifer and Rebecca.
+## 
+## [ have been in school continuously for more than fifty vears: since I entered
+## kindergarten in 1952, there has never been a September when I wasn’t beginning
+## a school year. | have never held a nine-to-five job with fixed hours and a boss
+## telling me what to do. In high school, my summers were always spent in vari-
+## ous kinds of interesting and engaging activities — traveling home from Australia
+## where my family spent a year (my parents were Fulbright professors at the Uni-
+## versity of Western Australia); music camp (1 played viola); assisting in a lab. And
+## in college, it was much the same: volunteering as a photographer on an archae-
+## ological dig in Hawaii; teaching in a high school enrichment program for mi-
+## nority kids; traveling in urope. The closest thing to an ordinary paying job |
+## ever had was occasionally selling hot dogs at football games in my freshman year
+## in college. What is more, the ivory towers that [ have inhabited since the mid-
+## 1960s have been located in beautiful physical settings, filled with congenial and
+## interesting colleagues and students, and animated by exciting ideas. This, then,
+## is the first fundamental fact of my life as an academic: [ have been extraordinar-
+## ily lucky and have always lived what can only be considered a life of extreme priv-
+## ilege. Nearly all of the time [ am doing what [ want to do; what I do gives me a
+## sense of fulfillment and purpose; and | am paid well for doing it.
+## 
+## Here is the second fundamental fact of my academic life: since the early
+## 19708, my intellectual life has been firmly anchored in the Marxist tradition. The
+## core of my teaching as a professor has centered on communicating the central
+## ideas and debates of contemporary Marxism and allied traditions of emancipa-
+## tory social theory. The courses I have taught have had names like Class, State and
+## Ideology: An Introduction to Marxist Sociology; Envisioning Real Utopias; Mars-
+## ist Theories of the State; Alternative Foundations of Class Analysis. My energies
+## in institution building have all involved creating and expanding arenas within
+## which radical system-challenging ideas could flourish: creating a graduate pro-
+## gram in class analysis and historical change in the Sociology Department at the
+## University of Wisconsin—Madison; establishing the A. E. Havens Center, a re-
+## search institute for critical scholarship at Wisconsin; organizing an annual con-
+## ference for activists and academics, now called RadFest, which has been held
+## every year since 1983. And my scholarship has been primarily devoted to recon-
+## structing Marxism as a theoretical framework and research tradition. While the
+## substantive preoccupations of this scholarship have shifted over the past thirty
+## years, its central mission has not.
+## 
+## As in any biography, this pair of facts is the result of a trajectory of circum-
+## stances and choices: circumstances that formed me and shaped the range of
+## choices I encountered, and choices that in turn shaped my future circumstances.
+## Some of these choices were made easily, with relatively little weighing of alter-
+## natives, sometimes even without much awareness that a choice was actually be-
+## ing made; others were the result of protracted reflection and conscious decision
+## making, sometimes with the explicit understanding that the choice being made
+## would constrain possible choices in the future. Six such junctures of circum-
+## stance and choice seem especially important to me in shaping the contours of
+## my academic career. ‘The first was posed incrementally in the early 1970s: the
+## choice to identify my work primarily as contributing to Marxism rather than
+## simply using Marxism. The second concerns the choice, made just before grad-
+## uate school at the University ...</code></pre>
+<p>There we go, nicely formatted text all obtained from pdf images (after carefully revising the text there are many mistakes, but this was a lightning post, so no time to tidy up the text).</p>
+<div id="converting-the-text-to-an-epub" class="section level3">
+<h3>Converting the text to an epub</h3>
+<p>I thought this was going to be much easier, but <code>knitr</code> seems to crash when compiling this text. According to <a href="https://bookdown.org/yihui/bookdown/build-the-book.html">bookdown</a>, I would need a <code>.Rmd</code> file and then use <code>bookdown::render_book(&quot;my_book.Rmd&quot;, bookdown::epub_book())</code>. However, I cannot compile the <code>.Rmd</code> file using this text because it runs out of memory. Run the example below:</p>
+<pre class="r"><code>rmd_path &lt;- tempfile(pattern = &#39;our_book&#39;, fileext = &quot;.Rmd&quot;)
+
+rmd_preamble &lt;-&quot;---
+  title: &#39;Final Book&#39;
+  output: html_document
+---\n\n&quot;
+
+final_document &lt;- paste0(rmd_preamble, final_document)
+  
+writeLines(final_document, con = rmd_path, useBytes = TRUE)
+
+# Bookdown compiles all .Rmd in the working directory, so we move
+# to the temporary directory where the book is
+setwd(dirname(rmd_path))
+bookdown::render_book(rmd_path, bookdown::epub_book())</code></pre>
+<p>If you figure out how make to this work, I’d love to hear about it in the comment section.</p>
+<p>EDIT:</p>
+<p>Thanks to the <a href="https://twitter.com/leonawicz/status/1089537068550651907">tweet by Matthew Leonawicz</a> I managed to do it!</p>
+<pre class="r"><code>txt_path &lt;- tempfile(pattern = &#39;our_book&#39;, fileext = &quot;.txt&quot;)
+
+writeLines(final_document, con = txt_path, useBytes = TRUE)
+
+# First download Calibre
+path &lt;- paste0(Sys.getenv(&quot;PATH&quot;), &quot;;&quot;, &quot;C:\\Program Files\\Calibre2&quot;)
+Sys.setenv(PATH = path)
+bookdown::calibre(txt_path, paste0(dirname(txt_path), &quot;/erik_wright.mobi&quot;))</code></pre>
+</div>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>Some guides and pre-project documents on ML</title>
+      <link>https://cimentadaj.github.io/blog/2019-01-22-some-guides-and-preproject-documents-on-ml/some-guides-and-pre-project-documents-on-ml/</link>
+      <pubDate>Tue, 22 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2019-01-22-some-guides-and-preproject-documents-on-ml/some-guides-and-pre-project-documents-on-ml/</guid>
+      <description><![CDATA[
+      
+
+
+<p>I was just browsing the web and found <a href="https://developers.google.com/machine-learning/guides/rules-of-ml/">this cool resource on ML from Google</a>. They’re not like you’re typical tutorial but rather bullet-point type questions with advice on what to do on certain scenarios. I just came up with the idea of an interesting series of posts where each of the questions outlined in the documents is accompanied with a concrete example that shows how it works under certain scenarios.</p>
+<p>There’s also other tutorial on that website such as with <a href="https://developers.google.com/machine-learning/guides/text-classification/">text classification</a>. This reminds me of the <a href="https://github.com/cimentadaj/info_to_read">list I keep of interesting blog posts/books/courses</a> I would to follow through in the future</p>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>A list of must pre-project questions</title>
+      <link>https://cimentadaj.github.io/blog/2018-05-23-a-list-of-must-preproject-questions/a-list-of-must-pre-project-questions/</link>
+      <pubDate>Wed, 23 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2018-05-23-a-list-of-must-preproject-questions/a-list-of-must-pre-project-questions/</guid>
+      <description><![CDATA[
+      
+
+
+<p>Rumbling through Twitter I found a Jupyter Notebook of Paige Bailey written at the rOpensci unconf about Ethical Machine Learning which you can read <a href="https://github.com/ropenscilabs/proxy-bias-vignette/blob/master/EthicalMachineLearning.ipynb">here</a>. It was very interesting to look at her workflow but even more interesting was the set of questions she asked herself before and during the analysis. I paste them here just to keep them as a reference.</p>
+<p><strong>As you design the goal and the purpose of your machine learning product, you must first ask: Who is your audience?</strong></p>
+<ul>
+<li>Is your product or analysis meant to include all people?</li>
+<li>And, if not: is it targeted to an exclusive audience?</li>
+<li>Is there a person on your team tasked specifically with identifying and resolving bias and discrimination issues?</li>
+</ul>
+<p><strong>Once the concept and scope have been defined, it is time to focus on the acquisition, evaluation, and cleaning of data. We have received a single .csv file filled with information on customers from the bank’s manager. Some questions to consider:</strong></p>
+<ul>
+<li>Did the data come from a system prone to human error?</li>
+<li>Is the data current?</li>
+<li>What technology facilitated the collection of the data?</li>
+<li>Was participation of the data subjects voluntary?</li>
+<li>Does the context of the collection match the context of your use?</li>
+<li>Was your data collected by people or a system that was operating with quotas or a particular incentive structure?</li>
+</ul>
+<p><strong>Now that your data has been collected, it would be a great idea to evaluate and describe it:</strong></p>
+<ul>
+<li>Who is represented in the data?</li>
+<li>Who is under-represented or absent from your data?</li>
+<li>Can you find additional data, or use statistical methods, to make your data more inclusive?</li>
+<li>Was the data collected in an environment where data subjects had meaningful choices?</li>
+<li>How does the data reflect the perspective of the institution that collected it?</li>
+<li>Were fields within the data inferred or appended beyond what was clear to the data subject?
+Would this use of the data surprise the data subjects?</li>
+</ul>
+<p><strong>The next step would be cleaning the data.</strong></p>
+<ul>
+<li>Are there any fields that should be eliminated from your data?</li>
+<li>Can you use anonymization or pseudonymization techniques to avoid needless evaluation or processing of individual data?</li>
+</ul>
+<p><strong>Establishing logic for variables</strong></p>
+<ul>
+<li>Can you describe the logic that connects the variables to the output of your equation?</li>
+<li>Do your variables have a causal relationship to the results they predict?</li>
+<li>How did you determine what weight to give each variable?</li>
+</ul>
+<p><strong>Identifying assumptions</strong></p>
+<ul>
+<li>Will your variables apply equally across race, gender, age, disability, ethnicity, socioeconomic status, education, etc.?</li>
+<li>What are you assuming about the kinds of people in your data set?</li>
+<li>Would you be comfortable explaining your assumptions to the public?</li>
+<li>What assumptions are you relying on to determine the relevant variables and their weights?</li>
+</ul>
+<p><strong>Defining success</strong>
+- What amount and type of error do you expect?
+- How will you ensure your system is behaving the way you intend? How reliable is it?</p>
+<p><strong>How will you choose your analytical method? For example, predictive analytics, machine learning (supervised, unsupervised), neural networks or deep learning, etc.</strong></p>
+<ul>
+<li>How much transparency does this method allow your end users and yourself?</li>
+<li>Are non-deterministic outcomes acceptable given your legal or ethical obligations around transparency and explainability?</li>
+<li>Does your choice of analytical method allow you to sufficiently explain your results?</li>
+<li>What particular tasks are associated with the type of analytical method you are using?</li>
+</ul>
+<p><strong>Tools</strong></p>
+<ul>
+<li>How could results that look successful still contain bias?</li>
+<li>Is there a trustworthy or audited source for the tools you need?</li>
+<li>Have the tools you are using been associated with biased products?</li>
+<li>Or, if you build from scratch: can you or a third-party test your tools for any features that can result in biased or unfair outcomes?</li>
+</ul>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>The LOO and the Bootstrap</title>
+      <link>https://cimentadaj.github.io/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</link>
+      <pubDate>Thu, 07 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2017-09-07-the-loo-and-the-bootstrap/the-loo-and-the-bootstrap/</guid>
+      <description><![CDATA[
+      
+
+
+<p>This is the second entry, and probably the last, on model validation methods. These posts are inspired by the work of Kohavi (1995), which I totally recommend reading. This post will talk talk about the Leave-One-Out Cross Validation (LOOCV), which is the extreme version of the K-Fold Cross Validation and the Bootstrap for model assessment.</p>
+<p>Let’s dive in!</p>
+<div id="the-leave-one-out-cv-method" class="section level2">
+<h2>The Leave-One-Out CV method</h2>
+<p>The LOOCV is actually a very intuitive idea if you know how the K-Fold CV works.</p>
+<ul>
+<li>LOOCV: Let’s imagine a data set with 30 rows. We separate the 1st row to be the test data and the remaining 29 rows to be the training data. We fit the model on the training data and then predict the one observation we left out. We record the model accuracy and then repeat but predicting the 2nd row from training the model on row 1 and 3:30. We repeat until every row has been predicted.</li>
+</ul>
+<p>This is surprisingly easy to implement in R.</p>
+<pre class="r"><code>library(tidyverse)
+
+set.seed(21341)
+loo_result &lt;-
+  map_lgl(1:nrow(mtcars), ~ {
+  test &lt;- mtcars[.x, ] # Pick the .x row of the iteration to be the test
+  train &lt;- mtcars[-.x, ] # Let the training be all the data EXCEPT that row
+  
+  train_model &lt;- glm(am ~ mpg + cyl + disp, family = binomial(), data = train) # Fit any model
+  
+  # Since the prediction is in probabilities, pass the probability
+  # to generate either a 1 or 0 based on the probability
+  prediction &lt;- predict(train_model, newdata = test, type = &quot;response&quot;) %&gt;% rbinom(1, 1, .)
+  
+  test$am == prediction # compare whether the prediction matches the actual value
+})
+
+summary(loo_result %&gt;% as.numeric) # percentage of accurate results
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#  0.0000  0.0000  1.0000  0.5938  1.0000  1.0000</code></pre>
+<p>It looks like our model had nearly 60% accuracy, not very good. But not entirely bad given our very low sample size.</p>
+<p>Advantages:</p>
+<ul>
+<li><p>Just as with the K-Fold CV, this approach is useful because it uses all the data. At some point, every rows gets to be the test set and training set, maximizing information.</p></li>
+<li><p>In fact, it uses almost ALL the data as the original data set as the training set is just N - 1 (this method uses even more than the K-Fold CV).</p></li>
+</ul>
+<p>Disadvantage:</p>
+<ul>
+<li><p>This approach is very heavy on your computer. We need to refit de model N times (although there is a shortcut for linear regreesion, see <a href="https://gerardnico.com/wiki/lang/r/cross_validation">here</a>).</p></li>
+<li><p>Given that the test set is of only 1 observation, there might be a lot of variance in the prediction, making the accuracy test more unreliable (that is, relative to K-Fold CV)</p></li>
+</ul>
+</div>
+<div id="the-bootstrap-method" class="section level2">
+<h2>The Bootstrap method</h2>
+<p>The bootstrap method is a bit different. Maybe you’ve heard about the bootstrap for estimating standard errors, and in fact for model assessment it’s very similar.</p>
+<ul>
+<li>Boostrap method: Take the data from before with 30 rows. Suppose we resample this dataset with replacement. That is, the dataset will have the same 30 rows, but row 1 might be repeated 3 times, row 2 might be repeated 4 times, row 3 might not be in the dataset anymore, and so on. Now, take this resampled data and use it to train the model. Now test your predictions on the actual data (the one with 30 unique rows) and calculate the model accuracy. Repeat N times.</li>
+</ul>
+<p>Again, the R implementation is very straightforward.</p>
+<pre class="r"><code>
+set.seed(21314)
+bootstrap &lt;-
+  map_dbl(1:500, ~ {
+  train &lt;- mtcars[sample(nrow(mtcars), replace = T), ] # randomly sample rows with replacement
+  test &lt;- mtcars
+  
+  train_model &lt;- glm(am ~ mpg + cyl + disp, family = binomial(), data = train) # fit any model
+  
+  # Get predicted probabilities and assign a 1 or 0 based on the probability
+  prediction &lt;- predict(train_model, newdata = test, type = &quot;response&quot;) %&gt;% rbinom(nrow(mtcars), 1, .)
+  accuracy &lt;- test$am == prediction # compare whether the prediction matches the actual value
+  
+  mean(accuracy) # get the proportion of correct predictions
+})
+
+summary(bootstrap)
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#  0.4375  0.6875  0.7500  0.7468  0.8125  0.9375</code></pre>
+<p>We got a better accuracy with the bootstrap (probably biased, see below) and a range of possible values going from 0.43 to 0.93. Note that if you run these models you’ll get a bunch of warnings like <code>glm.fit: fitted probabilities numerically 0 or 1 occurred</code> because we just have too few observations to be including covariates, resulting in a lot of overfitting.</p>
+<p>Advantages:</p>
+<ul>
+<li>Variance is small considering both train and test have the same number of rows.</li>
+</ul>
+<p>Disadvantages</p>
+<ul>
+<li>It gives more biased results than the CV methods because it repeats data, rather than keep unique observations for training and testing.</li>
+</ul>
+<p>In the end, it’s a trade-off against what you’re looking for. In some instances, it’s alright to have a slightly biased estimate (either pessimistic or optimistic) as long as its reliable (bootstrap). On other instances, it’s better to have a very exact prediction but that is less unreliable (CV methods).</p>
+<p>Some rule of thumbs:</p>
+<ul>
+<li><p>For large sample sizes, the variance issues become less important and the computational part is more of an issues. I still would stick by repeated CV for small and large sample sizes. See <a href="https://stats.stackexchange.com/questions/18348/differences-between-cross-validation-and-bootstrapping-to-estimate-the-predictio">here</a></p></li>
+<li><p>Cross validation is a good tool when deciding on the model – it helps you avoid fooling yourself into thinking that you have a good model when in fact you are overfitting. When your model is fixed, then using the bootstrap makes more sense to assess accuracy (to me at least). See again <a href="https://stats.stackexchange.com/questions/18348/differences-between-cross-validation-and-bootstrapping-to-estimate-the-predictio">here</a></p></li>
+</ul>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>Again, this is a very crude approach, and the whole idea is to understand the inner workings of these algorithms in practice. For more thorough approaches I suggest using the <code>cv</code> functions from the <code>boot</code> package or <code>caret</code> or <code>modelr</code>. I hope this was useful. I will try to keep doing these things as they help me understand these techniques better.</p>
+<ul>
+<li>Kohavi, Ron. “A study of cross-validation and bootstrap for accuracy estimation and model selection.” Ijcai. Vol. 14. No. 2. 1995.</li>
+</ul>
+</div>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>Holdout and cross-validation</title>
+      <link>https://cimentadaj.github.io/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</link>
+      <pubDate>Wed, 06 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2017-09-06-holdout-and-crossvalidation/holdout-and-crossvalidation/</guid>
+      <description><![CDATA[
+      
+
+
+<p>In a recent attempt to bring a bit of discipline into my life, I’ve been forcing myself to read papers after lunch, specifically concentrated on data science topics. The whole idea is to educated myself every day, but if I find something cool that I can implement in R, I’ll do it right away.</p>
+<p>This blogpost is the first of a series of entries I plan to post explaining the main concepts of Kohavi (1995), which compares cross-validation methods and bootstrap methods for model selection. This first post will implement a K-Fold cross validation from scratch in order to understand more deeply what’s going on behind the scenes.</p>
+<p>Before we explain the concept of K-Fold cross validation, we need to define what the ‘Holdout’ method is.</p>
+<div id="holdout-method" class="section level2">
+<h2>Holdout method</h2>
+<ul>
+<li>Holdout method: Imagine we have a dataset with house prices as the dependent variable and two independent variables showing the square footage of the house and the number of rooms. Now, imagine this dataset has <code>30</code> rows. The whole idea is that you build a model that can predict house prices accurately. To ‘train’ your model, or see how well it performs, we randomly subset 20 of those rows and fit the model. The second step is to predict the values of those 10 rows that we excluded and measure how well our predictions were. As a rule of thumb, experts suggest to randomly sample 80% of the data into the training set and 20% into the test set.</li>
+</ul>
+<p>A very quick example:</p>
+<pre class="r"><code>library(tidyverse)
+library(modelr)
+
+holdout &lt;- function(repeat_times) { # empty argument for later
+  n &lt;- nrow(mtcars)
+  eighty_percent &lt;- (n * 0.8) %&gt;% floor
+  train_sample &lt;- sample(1:n, eighty_percent) # randomly pick 80% of the rows
+  test_sample &lt;- setdiff(1:n, train_sample) # get the remaining 20% of the rows
+  
+  train &lt;- mtcars[train_sample, ] # subset the 80% of the rows
+  test &lt;- mtcars[test_sample, ] # subset 20% of the rows
+  
+  train_model &lt;- lm(mpg ~ ., data = train)
+  
+  test %&gt;%
+    add_predictions(train_model) %&gt;% # add the predicted mpg values to the test data
+    summarize(average_error = (pred - mpg) %&gt;% mean %&gt;% round(2)) %&gt;%
+    pull(average_error)
+  # calculate the average difference of the predicition from the actual value
+}
+
+set.seed(2131)
+holdout()
+# [1] 3.59</code></pre>
+<p>We can see that on average the training set over predicts the actual values by about 3.6 points. An even more complex approach is what Kohavi (1995) calls “random subsampling”.</p>
+</div>
+<div id="random-subsampling" class="section level2">
+<h2>Random subsampling</h2>
+<p>In a nutshell, repeat the previous <code>N</code> times and calculate the average and standard deviation of your metric of interest.</p>
+<pre class="r"><code>set.seed(2134)
+
+random_subsampling &lt;- map_dbl(1:500, holdout)
+summary(random_subsampling)
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# -7.3100 -0.7525  0.4000  0.4255  1.5550  9.1500</code></pre>
+<p>We get a mean error of 0.42, a maximum of 9.15 and a minimum of -7.31. Quite some variation, eh? It is precisely for this reason that Kohavi (1995) highlights that random subsampling has an important problem.</p>
+<ul>
+<li><p>Each time we resample, some observations might’ve been in the previous resample, leading to non-independence and making the training dataset unrepresentative of the original dataset.</p></li>
+<li><p>What happens when you try to predict Y from an unrepresented X, 500 times? What we just saw before.</p></li>
+</ul>
+</div>
+<div id="k-fold-cross-validation" class="section level2">
+<h2>K-Fold cross validation</h2>
+<p>Let’s move on to cross validation. K-Fold cross validation is a bit trickier, but here is a simple explanation.</p>
+<ul>
+<li>K-Fold cross validation: Take the house prices dataset from the previous example, divide the dataset into 10 parts of equal size, so if the data is 30 rows long, you’ll have 10 datasets of 3 rows each. Each split contains unique rows not present in other splits. In the first iteration, take the first dataset as the test dataset and merge the remaining 9 datasets as the train dataset. Fit the model on the training data, predict on the test data and record model accuracy. Repeat a new iteration where dataset 2 is the test set and data set 1 and 3:10 merged is the training set. Repeat for all K slices.</li>
+</ul>
+<p>We can implement this in R.</p>
+<pre class="r"><code>k_slicer &lt;- function(data, slices) {
+  stopifnot(nrow(data) &gt; slices) # the number of rows must be bigger than the K slices
+  slice_size &lt;- (nrow(data) / slices) %&gt;% floor
+  
+  rows &lt;- 1:nrow(data)
+  data_list &lt;- rep(list(list()), slices) # create empty list of N slices
+
+  # Randomly sample slice_size from the rows available, but exclude these rows
+  # from the next sample of rows. This makes sure each slice has unique rows.
+  for (k in 1:slices) {
+    specific_rows &lt;- sample(rows, slice_size) # sample unique rows for K slice
+    rows &lt;- setdiff(rows, specific_rows) # exclue those rows
+    data_list[[k]] &lt;- data[specific_rows, ] # sample the K slice and save in empty list
+  }
+  
+  data_list
+}
+
+mtcars_sliced &lt;- k_slicer(mtcars, slices = 5) # data sliced in K slices</code></pre>
+<p>All good so far? We took a dataset and split it into K mutually exclusive datasets. The next step is to run the modeling on <code>K = 2:10</code> and test on <code>K = 1</code>, and then repeat on <code>K = c(1, 3:10)</code> as training and test on <code>K = 2</code>, and repeat for al <code>K’s</code>. Below we implement it in R.</p>
+<pre class="r"><code>
+k_fold_cv &lt;-
+  map_dbl(seq_along(mtcars_sliced), ~ {
+  test &lt;- mtcars_sliced[[.x]] # Take the K fold
+  
+  # Note the -.x, for excluding that K
+  train &lt;- mtcars_sliced[-.x] %&gt;% reduce(bind_rows) # bind row all remaining K&#39;s
+  
+  lm(mpg ~ ., data = train) %&gt;%
+    rmse(test) # calculate the root mean square error of predicting the test set
+})
+
+k_fold_cv %&gt;%
+  summary
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#   3.192   3.746   3.993   3.957   4.279   4.574</code></pre>
+<p>And we get a summary of the root mean square error, a metric we decided to use now, instead of predictions. We can asses how accurate our model is this way and compare several specification of models and choose the one which better fits the data.</p>
+<p>The main advantage of this approach:</p>
+<ul>
+<li>We maximize the use of data because all data is used, at some point, as test and training.</li>
+</ul>
+<p>This is very interesting in contrast to the holdout method in which we can’t maximize our data! Take data out of the test set and the predictions will have wider uncertainty intervals, take data out of the train set and get biased predictions.</p>
+<p>This approach, as any other, has disadvantages.</p>
+<ul>
+<li><p>It is computationally intensive, given that we have to run the model K-1 times. In this setting it’s trivial, but in more complex modeling this can be quite costly.</p></li>
+<li><p>If in any of the K iterations the predictions are bad, the overall accuracy will be bad, considering that other K iterations will also likely be bad. In other words, predictions need to be stable across all K iterations.</p></li>
+<li><p>Building on the previous point, once the model is stable, increasing the number of folds (5, 10, 20, 25…) generates little change considering that the accuracy will be similar (and the variance of different K-folds will be similar as well).</p></li>
+<li><p>Finally, if Y consists of categories, and one of these categories is very minimal, the best K-Fold CV can do is predict the class with more observations. If an observation of this minimal class gets to be in the test set in one of the iterations, then the training model will have very little accuracy for that category. See Kohavi (1995) page 3, example 1 for a detailed example.</p></li>
+</ul>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>This was my first attempt at manually implementing the Holdout method and the K-Fold CV. These examples are certainly flawed, like rounding the decimal number of rows correct for the unique number of rows in each K-Fold slice. If anyone is interested in correcting thes, please do send a pull request. For those interested in using more reliable approaches, take a look at the <code>caret</code> and the <code>modelr</code> package. In the next entry I will implement the LOO method and the bootstrap (and maybe the stratified K-Fold CV)</p>
+<ul>
+<li>Kohavi, Ron. “A study of cross-validation and bootstrap for accuracy estimation and model selection.” Ijcai. Vol. 14. No. 2. 1995.</li>
+</ul>
+</div>
+]]>
+      </description>
+    </item>
+    
+  </channel>
+</rss>

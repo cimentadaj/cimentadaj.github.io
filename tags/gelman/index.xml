@@ -1,0 +1,487 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>gelman on Jorge Cimentada</title>
+    <link>https://cimentadaj.github.io/tags/gelman/</link>
+    <description>Recent content in gelman on Jorge Cimentada</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 10 Nov 2016 00:00:00 +0000</lastBuildDate>
+    
+    <atom:link href="https://cimentadaj.github.io/tags/gelman/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Fitting the wrong model</title>
+      <link>https://cimentadaj.github.io/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</link>
+      <pubDate>Thu, 10 Nov 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2016-11-10-fitting-the-wrong-model/fitting-the-wrong-model/</guid>
+      <description><![CDATA[
+      
+
+
+<p>These exercises are from the book <a href="http://www.stat.columbia.edu/~gelman/arm/">Data Analysis Using Regression and Multilevel/Hierarchical Models</a>. I’ve really gotten into completing these exercises and I guess that by posting them I’ve found an excuse to keep doing it. This time I went back to chapter 8 which deals with simulations. I picked the first exercise, page 165 exercise 8.6.1, which says:</p>
+<blockquote>
+<p>Fitting the wrong model: suppose you have 100 data points that arose from the following model: y = 3 + 0.1×1 + 0.5×2 + error, with errors having a t distribution with mean 0, scale 5, and 4 degrees of freedom.We shall explore the implications of fitting a standard linear regression to these data.</p>
+</blockquote>
+<p>The (a) section of the exercises says as follows:</p>
+<blockquote>
+<ol style="list-style-type: lower-alpha">
+<li>Simulate data from this model. For simplicity, suppose the values of x1 are simply the integers from 1 to 100, and that the values of x2 are random and equally likely to be 0 or 1. Fit a linear regression (with normal errors) to these data and see if the 68% confidence intervals for the regression coefficients (for each, the estimates ±1 standard error) cover the true values.</li>
+</ol>
+</blockquote>
+<p>This is simple enough. Simulate some linear model but change the error term to be t distributed with a set of characteristics. Here’s the code:</p>
+<pre class="r"><code>suppressWarnings(suppressMessages({
+  library(arm)
+  library(broom)
+  library(hett)
+  }))
+
+set.seed(2131)
+x1 &lt;- 1:100
+x2 &lt;- rbinom(100, 1, 0.5)
+error1 &lt;- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+                                              # with df 4, mean 0 and var 5
+
+y = 3 + 0.1*x1 + 0.5*x2 + error1
+
+display(lm(y ~ x1 + x2))</code></pre>
+<pre><code>## lm(formula = y ~ x1 + x2)
+##             coef.est coef.se
+## (Intercept) 3.30     0.43   
+## x1          0.10     0.01   
+## x2          0.33     0.40   
+## ---
+## n = 100, k = 3
+## residual sd = 1.96, R-Squared = 0.67</code></pre>
+<p>It looks like the true slope of x1 is contained in the 68% CI’s.</p>
+<pre class="r"><code>c(upper = 0.10 + (1 * 0.01), lower = 0.10 + (-1 * 0.01))</code></pre>
+<pre><code>## upper lower 
+##  0.11  0.09</code></pre>
+<p>For x2 it’s contained but the uncertainty is too high making the CI’s too wide.</p>
+<pre class="r"><code>c(upper = 0.33 + (1 * 0.40), lower = 0.33 + (-1 * 0.40))</code></pre>
+<pre><code>## upper lower 
+##  0.73 -0.07</code></pre>
+<hr />
+<blockquote>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Put the above step in a loop and repeat 1000 times. Calculate the confidence coverage for the 68% intervals for each of the three coefficients in the model.</li>
+</ol>
+</blockquote>
+<pre class="r"><code>coefs &lt;- matrix(NA, nrow = 3, ncol = 1000)
+se &lt;- matrix(NA, nrow = 3, ncol = 1000)
+
+# Naturally, these estimates will be different for anyone who runs this code
+# even if specifying set seed because the loop will loop new numbers each time.
+
+for (i in 1:ncol(coefs)) {
+  x1 &lt;- 1:100
+  x2 &lt;- rbinom(100, 1, 0.5)
+  error1 &lt;- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+                                                # with df 4 and mean 0
+  y = 3 + 0.1*x1 + 0.5*x2 + error1
+  
+  mod1 &lt;- summary(lm(y ~ x1 + x2))
+  coefs[1,i] &lt;- tidy(mod1)[1,2, drop = TRUE]
+  coefs[2,i] &lt;- tidy(mod1)[2,2, drop = TRUE]
+  coefs[3,i] &lt;- tidy(mod1)[3,2, drop = TRUE]
+  
+  se[1,i] &lt;- tidy(mod1)[1,3, drop = TRUE]
+  se[2,i] &lt;- tidy(mod1)[2,3, drop = TRUE]
+  se[3,i] &lt;- tidy(mod1)[3,3, drop = TRUE]
+}
+
+repl_coef &lt;- rowMeans(coefs)
+repl_se &lt;- rowMeans(se)
+
+cbind(repl_coef + (-1 * repl_se), repl_coef + (1 * repl_se))</code></pre>
+<pre><code>##            [,1]      [,2]
+## [1,] 2.48215326 3.4808804
+## [2,] 0.09255549 0.1079026
+## [3,] 0.05919238 0.9495994</code></pre>
+<p>Going back to previous block of code which contains the true parameters, the 68% interval for the intercept does contain 3, the 68% interval for x1 does contain 0.10 and both CI’s are quite precise. Finally, the confidence interval for x2 does contain 0.5 but the uncertainty is huge. What does this mean? The estimation of the slope for x2 does contain the true parameter but given that our error is too big and the normal distribution of <code>lm</code> does not account for that, it presents much more uncertainty in the estimation of the slope. If we ran a t distributed <code>lm</code> then it will certainly be more precise.</p>
+<p>The last section of the exercise asks you to do exactly that. Repeat the previous loop but instead of using <code>lm</code>, use <code>tlm</code> from the hett package which accounts for a t-distributed error term. Compare the CI’s and coefficients. Let’s do it:</p>
+<blockquote>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Repeat this simulation, but instead fit the model using t errors (see Exercise 6.6). The only change here is defining error1 as a t distribution instead of normally distributed</li>
+</ol>
+</blockquote>
+<pre class="r"><code>coefs &lt;- matrix(NA, nrow = 3, ncol = 1000)
+se &lt;- matrix(NA, nrow = 3, ncol = 1000)
+
+for (i in 1:ncol(coefs)) {
+  x1 &lt;- 1:100
+  x2 &lt;- rbinom(100, 1, 0.5)
+  error1 &lt;- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+  y = 3 + 0.1*x1 + 0.5*x2 + error1
+  
+  mod1 &lt;- summary(tlm(y ~ x1 + x2))
+  coefs[1,i] &lt;- mod1$loc.summary$coefficients[1,1]
+  coefs[2,i] &lt;- mod1$loc.summary$coefficients[2,1]
+  coefs[3,i] &lt;- mod1$loc.summary$coefficients[3,1]
+  
+  se[1,i] &lt;- mod1$loc.summary$coefficients[1,2]
+  se[2,i] &lt;- mod1$loc.summary$coefficients[2,2]
+  se[3,i] &lt;- mod1$loc.summary$coefficients[3,2]
+}
+
+repl_coef &lt;- rowMeans(coefs)
+repl_se &lt;- rowMeans(se)
+
+cbind(repl_coef + (-1 * repl_se), repl_coef + (1 * repl_se))</code></pre>
+<pre><code>##            [,1]      [,2]
+## [1,] 2.61212284 3.4265738
+## [2,] 0.09335461 0.1058854
+## [3,] 0.14971691 0.8769205</code></pre>
+<p>Accounting for the t-distributed error (so the tails are much wider), the intervals for the intercept and x1 are quite similar (but narrower) and for x2 they’re certainly much more narrow. Note that the CI is still pretty big, reflecting the variance in the error term. But whenever this variance exceeds what a normal distribution can capture, we should account for it: it might help to reduce the uncertainty in the estimation. Note that, if you reran both simulations and compare the coefficients in <code>repl_coef</code>, they’re practically the same. So the different estimations don’t affect the parameters, but rather the uncertainty with which we trust them.</p>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>Multilevel modeling – Part 1</title>
+      <link>https://cimentadaj.github.io/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/</link>
+      <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/</guid>
+      <description><![CDATA[
+      
+
+
+<p>I’ve been reading Andrew Gelman’s and Jennifer Hill’s book again but this time concentrating on the multilevel section of the book. I finished the first chapter (chapter 12) and got fixed on the exercises 12.2, 12.3 and 12.4. I finally completed them and I thought I’d share the three exercises in two posts, mostly for me to come back to these in the future. The first exercise goes as follows:</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Write a model predicting CD4 percentage as a function of time with varying intercepts across children. Fit using lmer() and interpret the coefficient for time.</p></li>
+<li><p>Extend the model in (a) to include child-level predictors (that is, group-level predictors) for treatment and age at baseline. Fit using lmer() and interpret the coefficients on time, treatment, and age at baseline.</p></li>
+<li><p>Investigate the change in partial pooling from (a) to (b) both graphically and numerically.</p></li>
+<li><p>Compare results in (b) to those obtained in part (c).</p></li>
+</ol>
+<p>The data set they’re referring is called ‘CD4’ and as they authors explain in the book it measures ‘… CD4 percentages for a set of young children with HIV who were measured several times over a period of two years. The dataset also includes the ages of the children at each measurement..’. I’m not sure what CD4 means, but that shouldn’t stop us from at least interpreting the results and answering the questions. Let’s start with the exercises:</p>
+<hr />
+<ol style="list-style-type: lower-alpha">
+<li>Write a model predicting CD4 percentage as a function of time with
+varying intercepts across children. Fit using lmer() and interpret the coefficient for time. The data argument is excluding some NA’s because the next model is to be compared with this model and we need to have the same number of observations</li>
+</ol>
+<pre class="r"><code>suppressWarnings(suppressMessages(library(arm)))
+cd4 &lt;- read.csv(&quot;http://www.stat.columbia.edu/~gelman/arm/examples/cd4/allvar.csv&quot;)
+
+head(cd4)</code></pre>
+<pre><code>##   VISIT newpid       VDATE CD4PCT arv   visage treatmnt CD4CNT baseage
+## 1     1      1  6/29/1988      18   0 3.910000        1    323    3.91
+## 2     4      1  1/19/1989      37   0 4.468333        1    610    3.91
+## 3     7      1  4/13/1989      13   0 4.698333        1    324    3.91
+## 4    10      1                 NA   0 5.005000        1     NA    3.91
+## 5    13      1 11/30/1989      13   0 5.330833        1    626    3.91
+## 6    16      1                 NA  NA       NA        1    220    3.91</code></pre>
+<pre class="r"><code># Let&#39;s transform the VDATE variable into date format
+cd4$VDATE &lt;- as.Date(cd4$VDATE, format = &quot;%m/%d/%Y&quot;)
+
+mod1 &lt;- lmer(CD4PCT ~
+               VDATE +
+               (1 | newpid),
+             data = subset(cd4, !is.na(treatmnt) &amp; !is.na(baseage)))
+
+display(mod1)</code></pre>
+<pre><code>## lmer(formula = CD4PCT ~ VDATE + (1 | newpid), data = subset(cd4, 
+##     !is.na(treatmnt) &amp; !is.na(baseage)))
+##             coef.est coef.se
+## (Intercept) 66.04     9.48  
+## VDATE       -0.01     0.00  
+## 
+## Error terms:
+##  Groups   Name        Std.Dev.
+##  newpid   (Intercept) 11.65   
+##  Residual              7.31   
+## ---
+## number of obs: 1072, groups: newpid, 250
+## AIC = 7914, DIC = 7885.8
+## deviance = 7895.9</code></pre>
+<p>The time coefficient simply means that as time increases the percentage of CD4 decreases by 0.01 percent for each child. The effect size is really small, although significant. We can also see that most of the variation in CD4 is between children rather than within children (that is between time because that’s the variation within each child)</p>
+<hr />
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Extend the model in (a) to include child-level predictors (that is, group-level predictors) for treatment and age at baseline. Fit using lmer() and interpret the coefficients on time, treatment, and age at baseline.</li>
+</ol>
+<pre class="r"><code>mod2 &lt;- lmer(CD4PCT ~
+               VDATE +
+               treatmnt +
+               baseage +
+               (1 | newpid),
+             data = cd4)
+
+display(mod2)</code></pre>
+<pre><code>## lmer(formula = CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), 
+##     data = cd4)
+##             coef.est coef.se
+## (Intercept) 67.28     9.82  
+## VDATE       -0.01     0.00  
+## treatmnt     1.26     1.54  
+## baseage     -1.00     0.34  
+## 
+## Error terms:
+##  Groups   Name        Std.Dev.
+##  newpid   (Intercept) 11.45   
+##  Residual              7.32   
+## ---
+## number of obs: 1072, groups: newpid, 250
+## AIC = 7906.3, DIC = 7878.8
+## deviance = 7886.5</code></pre>
+<p>The time coefficients is exactly the same so neither the treatment or the base age is correlated with the date in which the students were measured. Those who were treated have on average about 1.26% more CD4 than the non-treated. And finally, children which were older at the base measure have about 1% less CD4 than younger children at base. The between-child variance went down from 11.65 to 11.45, so either treatment, baseage or both explained some of the differences between children. The within child variation is practically the same.</p>
+<p>The next exercises uses a term called ‘partial pooling’. This term took me some time to understand but it basically means that we’re neither running a regression ignoring any multilevel structure (complete pooling of the groups) or running a regression for each group separately (complete no-pooling). Running a partially pooled model means being able to have single parameters (like in a completely-pooled model), but estimated from separate regression models for each group(like in a complete-no-pooled model).</p>
+<p>How we can investigate the changes in partial pooling? A completely pooled model runs perfectly when you have little to no variation between groups. Whenever a set of predictors shrinks the between group variation, we’re getting closer to a model with less and less between group variation ( so completely pooled). How can we measure this? In our case, because we’re modeling a varying intercept, we can compare the confidence intervals of the intercept of each group intercept and see if the estimation has become more certain. Numerically, we can check whether the between group variation has decreased, becoming closer to a completely-pooled model.</p>
+<hr />
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Investigate the change in partial pooling from (a) to (b) both graphically and numerically.</li>
+</ol>
+<pre class="r"><code>suppressMessages(suppressWarnings(library(ggplot2)))
+# Change in standard errors
+
+# First and second model intercepts
+df1 &lt;- coef(mod1)$newpid[,1 , drop = F]
+df2 &lt;- coef(mod2)$newpid[,1 , drop = F]
+names(df1) &lt;- c(&quot;int&quot;)
+names(df2) &lt;- c(&quot;int&quot;)
+
+# Confidence intervals for each intercept for both moels
+df1$ci_bottom &lt;- df1$int + (-2 * se.ranef(mod1)$newpid[,1])
+df1$ci_upper &lt;- df1$int + (2 * se.ranef(mod1)$newpid[,1])
+
+df2$ci_bottom &lt;- df2$int + (-2 * se.ranef(mod2)$newpid[,1])
+df2$ci_upper &lt;- df2$int + (2 * se.ranef(mod2)$newpid[,1])
+
+# Now we need to compare whether the CI&#39;s shrunk from
+# the first to the second model
+
+# Calculate difference
+df1$diff &lt;- df1$ci_upper - df1$ci_bottom
+df2$dff &lt;- df2$ci_upper - df2$ci_bottom
+
+# Create a df with both differences
+df3 &lt;- data.frame(cbind(df1$diff, df2$dff))
+
+# Create a difference out of that
+df3$diff &lt;- df3$X1 - df3$X2
+
+# Graph it
+ggplot(df3, aes(diff)) + geom_histogram(bins = 100) +
+  xlim(0, 0.2)</code></pre>
+<p><img src="/blog/2016-11-06-multilevel-modeling--part-1/2016-11-06-multilevel-modeling--part-1_files/figure-html/fig.-1.png" width="672" /></p>
+<p>It looks like the difference is always higher than zero which means that in the second model the difference between the upper and lower CI is smaller than in the first model. This suggests we have greater certainty of our estimation by including the two predictors in the model.</p>
+<pre class="r"><code># Numerically, the between-child variance in the first
+# model was:
+display(mod1)</code></pre>
+<pre><code>## lmer(formula = CD4PCT ~ VDATE + (1 | newpid), data = subset(cd4, 
+##     !is.na(treatmnt) &amp; !is.na(baseage)))
+##             coef.est coef.se
+## (Intercept) 66.04     9.48  
+## VDATE       -0.01     0.00  
+## 
+## Error terms:
+##  Groups   Name        Std.Dev.
+##  newpid   (Intercept) 11.65   
+##  Residual              7.31   
+## ---
+## number of obs: 1072, groups: newpid, 250
+## AIC = 7914, DIC = 7885.8
+## deviance = 7895.9</code></pre>
+<pre class="r"><code>11.65 / (11.65 + 7.31)</code></pre>
+<pre><code>## [1] 0.6144515</code></pre>
+<pre class="r"><code># For the second model
+display(mod2)</code></pre>
+<pre><code>## lmer(formula = CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), 
+##     data = cd4)
+##             coef.est coef.se
+## (Intercept) 67.28     9.82  
+## VDATE       -0.01     0.00  
+## treatmnt     1.26     1.54  
+## baseage     -1.00     0.34  
+## 
+## Error terms:
+##  Groups   Name        Std.Dev.
+##  newpid   (Intercept) 11.45   
+##  Residual              7.32   
+## ---
+## number of obs: 1072, groups: newpid, 250
+## AIC = 7906.3, DIC = 7878.8
+## deviance = 7886.5</code></pre>
+<pre class="r"><code>11.45 / (11.45 + 7.32)</code></pre>
+<pre><code>## [1] 0.610016</code></pre>
+<p>The between variance went down JUST a little, in line with the tiny reduction in the standard errors of the intercept.</p>
+<hr />
+<p>The last question asks:</p>
+<p>Compare results in (b) to those obtained in part (c).</p>
+<p>It looks like from the results in (c) the second model a bit more certain in making estimations because it shrinks the partial pooling closer to complete-pooling. As Gelman and Hill explain in page 270, multilevel modeling is most effective when closest to complete-pooling because the estimation of individual group parameters can be done much more precisely, specially for groups with a small amount of observations.</p>
+<p>In the next post we’ll cover exercises 12.3 and 12.4 which build on the models outlined here.</p>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>Multilevel modeling – Part 2</title>
+      <link>https://cimentadaj.github.io/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/</link>
+      <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2016-11-06-multilevel-modeling-part-2/multilevel-modeling-part-2/</guid>
+      <description><![CDATA[
+      
+
+
+<p>This is a continuation of the multilevel exercise 12.2 from chapter 12 of Data Analysis Using Regression and Multilevel/Hierarchical Models. In the last post (link to previous post) we explored the basic interpretation of multilevel modeling with a varying intercept and delved into comparing models and understanding partial pooling.</p>
+<p>This was all done by completing the exercise 12.2 from chapter 12 of the book Data Analysis Using Regression and Multilevel/Hierarchical Models. Exercises 12.3 and 12.4 continue using the same dataset and the same models, so I figured I’d post them here. Let’s start.</p>
+<p>Exercise 12.3 asks:</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Predictions for new observations and new groups:</li>
+</ol>
+<ol style="list-style-type: lower-alpha">
+<li><p>Use the model fit from Exercise 12.2 (b) to generate simulation of predicted CD4 percentages for each child in the dataset at a hypothetical next time point.</p></li>
+<li><p>Use the same model fit to generate simulations of CD4 percentages at each of the time periods for a new child who was 4 years old at baseline.</p></li>
+</ol>
+<p>Let’s start:</p>
+<pre class="r"><code>suppressWarnings(suppressMessages(library(arm)))
+cd4 &lt;- read.csv(&quot;http://www.stat.columbia.edu/~gelman/arm/examples/cd4/allvar.csv&quot;)
+
+# Let&#39;s recreate the model from 12.2 (b)
+cd4$VDATE &lt;- as.Date(cd4$VDATE, format = &quot;%m/%d/%Y&quot;)
+mod2 &lt;- lmer(CD4PCT ~ VDATE + treatmnt + baseage + (1 | newpid), data = cd4)</code></pre>
+<ol style="list-style-type: lower-alpha">
+<li>Use the model fit from Exercise 12.2 (b) to generate simulation of predicted CD4 percentages for each child in the dataset at a hypothetical next time point.</li>
+</ol>
+<p>For this we have to create a hypothetical next time point. Let’s choose:</p>
+<pre class="r"><code>pred_data &lt;- subset(cd4, !is.na(treatmnt) &amp; !is.na(baseage))
+pred_data$VDATE &lt;- as.Date(&quot;1989-01-01&quot;)
+
+
+# Let&#39;s select only the independent variables from the model
+pred_data &lt;- pred_data[, -c(1, 4, 5, 6, 8)]
+
+# Now we have a dataset with a fixed new date for each child
+# but with the original values for all other variables.
+
+# Let&#39;s estimate the predicted CD4 percentage for each child:
+newpred &lt;- predict(mod2, newdata = pred_data)
+
+# That it! We have the predicted percentage of CD4 for a fixed date for every child.
+# Let&#39;s look at the distribution
+hist(newpred)</code></pre>
+<p><img src="/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>There’s quite some variation going from 0% to even 60%. It’d be nice to know what CD4 is.</p>
+<hr />
+<p>Question (b) is pretty similar but instead of asking for a new time point for each child, it asks to predict the CD4 percentage for a new child who was 4 years old at the baseline with a set of hypothetical time periods.</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Use the same model fit to generate simulations of CD4 percentages at each of the time periods for a new child who was 4 years old at baseline.</li>
+</ol>
+<p>For that we have to first create the dataset with the hypothetical child:</p>
+<pre class="r"><code># I&#39;ll assume 7 hypothetical dates
+hyp_child &lt;- data.frame(newpid = 120,
+                        VDATE = sample(cd4$VDATE[!is.na(cd4$VDATE)], 7),
+                        baseage = 4,
+                        treatmnt = 1)</code></pre>
+<p>The exercise doesn’t say anything about the treatment variable but I have to assign a value to it because it’s present in the previous model. I’ll assume this new child was in the treatment.</p>
+<pre class="r"><code>year_pred &lt;- predict(mod2, newdata = hyp_child)</code></pre>
+<p>That’s it! Now we have the predicted CD4 percentage for different time points
+for a hypothetical child.</p>
+<p>Finally, exercise 12.4 posits this question:</p>
+<blockquote>
+<p>Posterior predictive checking: continuing the previous exercise, use the fitted model from Exercise 12.2 (b) to simulate a new dataset of CD4 percentages (with the same sample size and ages of the original dataset) for the final time point of the study, and record the average CD4 percentage in this sample. Repeat this process 1000 times and compare the simulated distribution to the observed CD4 percentage at the final time point for the actual data.</p>
+</blockquote>
+<p>This problem was a bit confusing because I don’t understand what they mean by the ‘final time point of the study’. Is it the last date in the VDATE variable? But that couldn’t be it because the sample size would be 1. I think what they mean is to take the original data and replace the VDATE variable with the final date available. Predict CD4 percentages for each child with this date (using the original ages of the data set) and calculate the mean of these predictions. After that, do the 1000 replications and compare the distribution with the actual CD4 percentage of the specific date. Let’s start.</p>
+<pre class="r"><code># Make the data similar to the model in mod2
+finaltime_data &lt;- subset(cd4, !is.na(treatmnt) &amp; !is.na(baseage))
+
+# Assign the final date to the date variable
+finaltime_data$VDATE &lt;- as.Date(max(finaltime_data$VDATE, na.rm = T))
+
+# Only select the variables present in the model
+finaltime_data &lt;- finaltime_data[, -c(1, 4, 5, 6, 8)]
+
+# Calculate the mean predicted CD4 percentage and it&#39;s standard deviation
+mean_cd4 &lt;- mean(predict(mod2, newdata = finaltime_data), na.rm = T)
+sd_cd4 &lt;- sd(predict(mod2, newdata = finaltime_data), na.rm = T)
+
+# Simulate 1000 observations considering the uncertainty
+# and look at the distribution.
+set.seed(421)
+
+hist(rnorm(1000, mean_cd4, sd = sd_cd4))</code></pre>
+<p><img src="/blog/2016-11-06-multilevel-modeling--part-2/2016-11-06-multilevel-modeling--part-2_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>It’s incredibly wide and it even includes negative numbers, something impossible with percentages. But whats the actual CD4 percentage of that date?</p>
+<pre class="r"><code>cd4 &lt;- subset(cd4, !is.na(VDATE))
+cd4[cd4$VDATE == max(cd4$VDATE, na.rm = T), ]</code></pre>
+<pre><code>##      VISIT newpid      VDATE CD4PCT arv   visage treatmnt CD4CNT  baseage
+## 483     16     99 1991-01-14   39.0   1 1.497500        2    526 0.347500
+## 1208    19    237 1991-01-14   21.2   0 2.510833        2   1036 1.073333</code></pre>
+<p>And the mean is:</p>
+<pre class="r"><code>mean(c(39.0, 21.2))</code></pre>
+<pre><code>## [1] 30.1</code></pre>
+<p>So our predictions are extremely uncertain. Over half our simulations are underestimating the date and a handful are overestimating the results. It looks like our model is terrible at predicting that final time point.</p>
+<hr />
+<p>Well that’s it. Hope you enjoyed it. I’ll be completing more exercises in the future so remember to check back.
+```</p>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>Simulations and model predictions in R</title>
+      <link>https://cimentadaj.github.io/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</link>
+      <pubDate>Tue, 13 Sep 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2016-09-13-simulations-and-model-predictions-in-r/simulations-and-model-predictions-in-r/</guid>
+      <description><![CDATA[
+      
+
+
+<p>I was on a flight from Asturias to Barcelona yesterday and I finally had some free time to open Gelman and Hill’s book and submerge in some studying. After finishing the chapter on simulations, I tried doing the first exercise and enjoyed it very much.</p>
+<p>The exercise goes as follows:</p>
+<p><em>Discrete probability simulation: suppose that a basketball player has a 60% chance of making a shot, and he keeps taking shots until he misses two in a row. Also assume his shots are independent (so that each shot has 60% probability of success, no matter what happened before).</em></p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Write an R function to simulate this process.</p></li>
+<li><p>Put the R function in a loop to simulate the process 1000 times. Use the simulation to estimate the mean, standard deviation, and distribution of the total number of shots that the player will take.</p></li>
+<li><p>Using your simulations, make a scatterplot of the number of shots the player will take and the proportion of shots that are successes.</p></li>
+</ol>
+<p>Below you can find my answer with some comments on how I did it:</p>
+<pre class="r"><code># a)
+# The probs argument sets the probability of making a shot. In this case it&#39;ll be 0.60
+thrower &lt;- function(probs) {
+  vec &lt;- replicate(2, rbinom(1, 1, probs)) 
+  # create a vector with two random numbers of either 1 or 0,
+  # with a probability of probs for 1
+  
+  # While the sum of the last and the second-last element is not 0
+  while ((vec[length(vec)] + vec[length(vec) - 1]) != 0) { 
+    
+      vec &lt;- c(vec, rbinom(1, 1, probs))
+      # keep adding random shots with a probability of probs
+  }
+return(vec)
+}
+# The loop works because whenever the sum of the last two elements is 0,
+# then the last two elements must be 0 meaning that the player missed two
+# shots in a row.</code></pre>
+<pre class="r"><code># test
+thrower(0.6)</code></pre>
+<pre><code>##  [1] 1 0 1 0 1 1 1 1 1 1 1 1 0 1 1 1 0 1 1 1 0 1 1 0 1 1 1 0 0</code></pre>
+<pre class="r"><code># 0 1 0 1 0 0
+# Last two elements are always zero</code></pre>
+<pre class="r"><code># b)
+attempts &lt;- replicate(1000, thrower(0.60))
+mean(sapply(attempts, length)) </code></pre>
+<pre><code>## [1] 8.501</code></pre>
+<pre class="r"><code># mean number of shots until two shots are missed in a row</code></pre>
+<pre class="r"><code>sd(sapply(attempts, length)) </code></pre>
+<pre><code>## [1] 7.158019</code></pre>
+<pre class="r"><code># standard deviation of shots made
+# until two shots are missed in a row</code></pre>
+<pre class="r"><code>hist(sapply(attempts, length)) # distribution of shots made</code></pre>
+<p><img src="/blog/2016-09-13-simulations-and-model-predictions-in-r/2016-09-13-simulations-and-model-predictions-in-r_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code># c)
+df &lt;- cbind(sapply(attempts, mean), sapply(attempts, length)) 
+# data frame with % of shots made and number of shots thrown
+plot(df[, 2], df[, 1])</code></pre>
+<p><img src="/blog/2016-09-13-simulations-and-model-predictions-in-r/2016-09-13-simulations-and-model-predictions-in-r_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>That was fun. I think the key take away here is that you can use these type of simulations to asses the accuracy of model predictions, for example. If you have the probability of being in either 1 or 0 in any dependent variable, then simulation can help determine its reliability by looking at the distribution of the replications.</p>
+<p>Whenever I have some free time I’ll go back to the next exercises.</p>
+]]>
+      </description>
+    </item>
+    
+  </channel>
+</rss>

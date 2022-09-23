@@ -1,0 +1,512 @@
+mutate(time = lubridate::ymd_hms(time),
+slots = as.numeric(slots),
+bikes = as.numeric(slots))
+bicing
+bicing %>%
+filter(status != "OPN")
+summary_time <-
+bicing %>%
+group_by(hour = as.factor(lubridate::hour(time))) %>%
+summarize(Average = mean(bikes, na.rm = TRUE),
+Median = median(bikes, na.rm = TRUE)) %>%
+gather(type, value, -hour)
+bicing %>%
+mutate(hour = as.factor(lubridate::hour(time))) %>%
+ggplot(aes(hour, bikes)) +
+geom_jitter(alpha = 1/8) +
+geom_point(data = summary_time,
+aes(y = value, colour = type), size = 3) +
+theme_bw() +
+labs(x = "Hour of the day (24H)",
+y = "# of available bikes",
+title = "Mornings have greater bicycle usage than evenings",
+subtitle = "But number of bikes can vary betwen 0 and 20 in the morning") +
+scale_colour_manual(name = "Types", values = c('Average' = 'red', 'Median' = 'blue'))
+summary_time <-
+bicing %>%
+group_by(hour = as.factor(lubridate::hour(time)),
+day = as.factor(lubridate::wday(time, label = TRUE, week_start = TRUE))) %>%
+summarize(Average = mean(bikes, na.rm = TRUE),
+Variation = mean(bikes > 10, na.rm = TRUE)) %>%
+gather(type, value, -hour, -day)
+p1 <-
+summary_time %>%
+filter(type == "Average") %>%
+ggplot(aes(hour, day, fill = value)) +
+geom_tile() +
+scale_fill_viridis(name = "Avg # of bikes") +
+labs(x = 'Hour of the day (24H)',
+y = 'Day of the week',
+title = 'Average number of bikes has a workin week/end of week divide',
+subtitle = 'Thu and Wed seem to have high peaks at 8, Sun and Sat have peaks at 10')
+p2 <-
+summary_time %>%
+filter(type == "Variation") %>%
+ggplot(aes(hour, day, fill = value)) +
+geom_tile() +
+scale_fill_viridis(name = '% of times \n station has > 10 bikes') +
+labs(x = 'Hour of the day (24H)',
+y = 'Day of the week',
+title = 'Variability reflects same pattern as average # of bikes',
+subtitle = 'Thu and Wed seem to have > 10 bikes often at 8, Sun and Sat have peaks at 10')
+library(patchwork)
+install.packages(patchwork)
+devtools::install_github("patchwork")
+devtools::install_github("thomasp85/patchwork")
+library(patchwork)
+devtools::install_github("thomasp85/patchwork")
+library(gridExtra)
+grid.arrange(p1, p2, ncol = 2)
+grid.arrange(p1, p2, ncol = 2)
+grid.arrange(p1, p2, ncol = 2)
+library(DBI)
+library(RMySQL)
+library(caret)
+library(viridis)
+library(tidyverse)
+# First input the PASSWORD
+# Then the host IP
+con <- dbConnect(MySQL(),
+dbname = "bicing", # in "" quotes
+user = "cimentadaj", # in "" quotes
+password = rstudioapi::askForPassword(),
+host = rstudioapi::askForPassword()) # ip of my server)
+query <-
+"SELECT slots, bikes, status, time
+FROM bicing_station
+WHERE hour(time) IN ('7', '8', '9', '10', '18', '19', '20')
+AND error_msg IS NULL;"
+bicing <-
+dbGetQuery(con, query) %>%
+as_tibble() %>%
+mutate(time = lubridate::ymd_hms(time),
+slots = as.numeric(slots),
+bikes = as.numeric(slots))
+bicing
+bicing %>%
+filter(status != "OPN")
+summary_time <-
+bicing %>%
+group_by(hour = as.factor(lubridate::hour(time))) %>%
+summarize(Average = mean(bikes, na.rm = TRUE),
+Median = median(bikes, na.rm = TRUE)) %>%
+gather(type, value, -hour)
+bicing %>%
+mutate(hour = as.factor(lubridate::hour(time))) %>%
+ggplot(aes(hour, bikes)) +
+geom_jitter(alpha = 1/8) +
+geom_point(data = summary_time,
+aes(y = value, colour = type), size = 3) +
+theme_bw() +
+labs(x = "Hour of the day (24H)",
+y = "# of available bikes",
+title = "Mornings have greater bicycle usage than evenings",
+subtitle = "But number of bikes can vary betwen 0 and 20 in the morning") +
+scale_colour_manual(name = "Types", values = c('Average' = 'red', 'Median' = 'blue'))
+summary_time <-
+bicing %>%
+group_by(hour = as.factor(lubridate::hour(time)),
+day = as.factor(lubridate::wday(time, label = TRUE, week_start = TRUE))) %>%
+summarize(Average = mean(bikes, na.rm = TRUE),
+Variation = mean(bikes > 10, na.rm = TRUE)) %>%
+gather(type, value, -hour, -day)
+p1 <-
+summary_time %>%
+filter(type == "Average") %>%
+ggplot(aes(hour, day, fill = value)) +
+geom_tile() +
+scale_fill_viridis(name = "Avg # of bikes") +
+labs(x = 'Hour of the day (24H)',
+y = 'Day of the week',
+title = 'Average number of bikes has a workin week/end of week divide',
+subtitle = 'Thu and Wed seem to have high peaks at 8, Sun and Sat have peaks at 10')
+p2 <-
+summary_time %>%
+filter(type == "Variation") %>%
+ggplot(aes(hour, day, fill = value)) +
+geom_tile() +
+scale_fill_viridis(name = '% of times \n station has > 10 bikes') +
+labs(x = 'Hour of the day (24H)',
+y = 'Day of the week',
+title = 'Variability reflects same pattern as average # of bikes',
+subtitle = 'Thu and Wed seem to have > 10 bikes often at 8, Sun and Sat have peaks at 10')
+library(gridExtra)
+grid.arrange(p1, p2, ncol = 2)
+grid.arrange(p1, p2, ncol = 2)
+library(DBI)
+library(RMySQL)
+library(caret)
+library(viridis)
+library(tidyverse)
+# First input the PASSWORD
+# Then the host IP
+con <- dbConnect(MySQL(),
+dbname = "bicing", # in "" quotes
+user = "cimentadaj", # in "" quotes
+password = rstudioapi::askForPassword(),
+host = rstudioapi::askForPassword()) # ip of my server)
+p2
+bicing %>%
+mutate(hour = lubridate::hour(time),
+day = lubridate::wday(time, label = TRUE, week_start = TRUE),
+morning_evening = ifelse(hour <= 10, "Morning", "Evening")) %>%
+ggplot(aes(day, bikes, fill = morning_evening)) +
+geom_col(position = "fill") +
+labs(x = "Day of the week",
+y = "% of bikes",
+title = '# of bikes increases linearly through out the week',
+fill = 'Time of day')
+intm_df <-
+bicing %>%
+mutate(hour = as.factor(lubridate::hour(time)),
+day = lubridate::wday(time, label = TRUE, week_start = TRUE)) %>%
+group_by(hour, day) %>%
+mutate(future_bike = lag(bikes)) %>%
+summarize(avg_movement = mean(bikes != future_bike, na.rm = TRUE) * 60) %>%
+ungroup()
+intm_df %>%
+ggplot(aes(hour, avg_movement, colour = day, group = day)) +
+geom_line(size = 1.2) +
+facet_wrap(~ day, ncol = 4) +
+theme_bw() +
+labs(x = 'Hour of the day (24H)',
+y = "Minutes per hour with a bicycle change",
+title = 'Weekdays have much greater bicycle usage than weekends',
+subtitle = "Wed has the busiest hour of the week at 8AM; There's activity 25 minutes out of the 60 minutes.") +
+theme(legend.position = 'none')
+bicing %>%
+filter(bikes == 0) %>%
+mutate(time_day = as.numeric(lubridate::hm(str_extract(time, "[0-9]{2}:[0-9]{2}")))) %>%
+ggplot(aes(x = time_day)) +
+geom_histogram()
+empty_bicycle <-
+mutate(bicing,
+empty = ifelse(bikes == 0, 1, 0),
+hour = as.character(lubridate::hour(time)),
+day = lubridate::wday(time),
+day = as.character(day)) %>%
+select(-(1:4))
+training_rows <- createDataPartition(empty_bicycle$empty, 1, p = 0.8)[[1]]
+training <- empty_bicycle[training_rows, ]
+test <- empty_bicycle[-training_rows, ]
+mod1 <- glm(empty ~ . + day:hour, data = training, family = "binomial")
+mod1 <- glm(empty ~ . + day:hour, data = training, family = "binomial")
+pred1 <- predict(mod1, newdata = test, type = 'response')
+pred_empty <- rbinom(length(pred1), 1, prob = pred1)
+confusionMatrix(test$empty, pred_empty, positive = "1")
+blogdown::serve_site()
+library(DBI)
+library(RMySQL)
+library(caret)
+library(caret)
+library(viridis)
+library(tidyverse)
+con <- dbConnect(MySQL(),
+dbname = "bicing", # in "" quotes
+user = "cimentadaj", # in "" quotes
+password = rstudioapi::askForPassword(),
+host = rstudioapi::askForPassword()) # ip of my server)
+?rstudioapi::askForPassword
+options()$askpass
+options()$askpass()
+knit_with_parameters('~/all_repos/cimentadaj.github.io/content/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike.Rmd')
+knit_with_parameters('~/all_repos/cimentadaj.github.io/content/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike.Rmd')
+knit_with_parameters('~/all_repos/cimentadaj.github.io/content/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike.Rmd')
+knit_with_parameters('~/all_repos/cimentadaj.github.io/content/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike.Rmd')
+blogdown::hugo_build()
+blogdown::serve_site()
+blogdown::serve_site
+knit_with_parameters('~/all_repos/cimentadaj.github.io/content/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike.Rmd')
+knit_with_parameters('~/all_repos/cimentadaj.github.io/content/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike.Rmd')
+knit_with_parameters('~/all_repos/cimentadaj.github.io/content/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike.Rmd')
+knit_with_parameters('~/all_repos/cimentadaj.github.io/content/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike.Rmd')
+knit_with_parameters('~/all_repos/cimentadaj.github.io/content/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike.Rmd')
+blogdown::hugo_cmd()
+blogdown::serve_site()
+rmarkdown::render("./content/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike.Rmd", params = "ask")
+blogdown::serve_site()
+blogdown::serve_site
+?
+blogdown::serve_site
+blogdown::serve_site(params = "ask")
+Sys.setenv(password = "Lolasouno2")
+Sys.setenv(host = "82.196.1.229")
+blogdown::serve_site()
+blogdown::hugo_build()
+blogdown::serve_site()
+Sys.setenv(password = "Lolasouno2")
+Sys.setenv(password = "Lolasouno2")
+blogdown::serve_site()
+Sys.setenv(password = "Lolasouno2")
+Sys.setenv(host = "82.196.1.229")
+blogdown::serve_site()
+Sys.setenv(host = "82.196.1.229")
+Sys.setenv(password = "Lolasouno2")
+blogdown::hugo_build()
+blogdown::serve_site()
+blogdown::serve_site()
+blogdown::hugo_build()
+blogdown::serve_site()
+blogdown::hugo_build()
+blogdown::hugo_build()
+blogdown::serve_site()
+blogdown::serve_site()
+blogdown::hugo_build()
+blogdown::hugo_build()
+blogdown::hugo_build()
+blogdown::hugo_build()
+cimentadaj::my_new_post("The Monty Hall problem")
+blogdown::find_tags()
+blogdown::find_categories()
+blogdown::find_yaml()
+blogdown::count_yaml()
+blogdown::serve_site()
+blogdown::hugo_build()
+cimentadaj::my_new_post("A list of must pre-project questions")
+blogdown::count_yaml()
+blogdown::hugo_build()
+blogdown::build_site()
+blogdown::hugo_build()
+blogdown::serve_site()
+cimentadaj::gen_rscript()
+cimentadaj::my_new_post("Exploring Google Scholar coauthorship")
+blogdown::count_yaml()
+library(coauthornetwork)
+network <- grab_network("citations?user=F0kCgy8AAAAJ&hl=en")
+network
+library(coauthornetwork)
+network <- grab_network("citations?user=F0kCgy8AAAAJ&hl=en")
+network <- grab_network("citations?user=F0kCgy8AAAAJ&hl=en")
+network
+plot_coauthors(network)
+plot_coauthors(network)
+plot_coauthors(grab_network("citations?user=F0kCgy8AAAAJ&hl=en", n_coauthors = 7))
+blogdown::serve_site()
+devtools::install_github("cimentadaj/coauthornetwork")
+library(coauthornetwork)
+blogdown::serve_site()
+blogdown::serve_site()
+blogdown::serve_site()
+blogdown::hugo_build()
+suppressWarnings(plot_coauthors(network, size_labels = 3))
+library(coauthornetwork)
+suppressWarnings(plot_coauthors(network, size_labels = 3))
+network <- grab_network("citations?user=F0kCgy8AAAAJ&hl=en")
+suppressWarnings(plot_coauthors(network, size_labels = 3))
+blogdown::hugo_build()
+blogdown::serve_site()
+library(coauthornetwork)
+library(coauthornetwork)
+plot_coauthors(grab_network("citations?user=YA43PbsAAAAJ&hl=en", n = 20))
+plot_coauthors(grab_network("citations?user=YA43PbsAAAAJ&hl=en", n_coauthors = 20))
+plot_coauthors(grab_network("citations?user=YA43PbsAAAAJ&hl=en", n_coauthors = 10))
+plot_coauthors(grab_network("citations?user=YA43PbsAAAAJ&hl=en", n_coauthors = 5))
+plot_coauthors(grab_network("citations?user=YA43PbsAAAAJ&hl=en", n_coauthors = 7))
+blogdown::serve_site()
+blogdown::hugo_build()
+rsconnect::setAccountInfo(name='survey-quality-prediction', token='91D4070152AF58AEBBC73D16A8AC406F', secret='fs4zK5k1dHcM69Fw4B3NfTgRhA6arnWU2RDDTp8d')
+blogdown::hugo_build()
+blogdown::build_site()
+suppressWarnings(suppressMessages({
+library(arm)
+library(broom)
+library(hett)
+}))
+set.seed(2131)
+x1 <- 1:100
+x2 <- rbinom(100, 1, 0.5)
+error1 <- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+y = 3 + 0.1*x1 + 0.5*x2 + error1
+display(lm(y ~ x1 + x2))
+c(upper = 0.10 + (1 * 0.01), lower = 0.10 + (-1 * 0.01))
+c(upper = 0.33 + (1 * 0.40), lower = 0.33 + (-1 * 0.40))
+coefs <- array(NA, c(3, 1000))
+se <- array(NA, c(3, 1000))
+for (i in 1:ncol(coefs)) {
+x1 <- 1:100
+x2 <- rbinom(100, 1, 0.5)
+error1 <- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+# with df 4 and mean 0
+y = 3 + 0.1*x1 + 0.5*x2 + error1
+mod1 <- summary(lm(y ~ x1 + x2))
+coefs[1,i] <- tidy(mod1)[1,2]
+coefs[2,i] <- tidy(mod1)[2,2]
+coefs[3,i] <- tidy(mod1)[3,2]
+se[1,i] <- tidy(mod1)[1,3]
+se[2,i] <- tidy(mod1)[2,3]
+se[3,i] <- tidy(mod1)[3,3]
+}
+coefs <- array(NA, c(3, 1000))
+se <- array(NA, c(3, 1000))
+i <- 1
+x1 <- 1:100
+x2 <- rbinom(100, 1, 0.5)
+error1 <- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+y = 3 + 0.1*x1 + 0.5*x2 + error1
+mod1 <- summary(lm(y ~ x1 + x2))
+coefs[1,i] <- tidy(mod1)[1,2]
+coefs[2,i] <- tidy(mod1)[2,2]
+tidy(mod1)[
+tidy(mod1)
+tidy(mod1)[2,2]
+coefs
+class(coefs)
+coefs[1,i] <- tidy(mod1)[1,2]
+tidy(mod1)[2,2]
+tidy(mod1)[3,2]
+coefs[2,i]
+coefs <- matrix(NA, c(3, 1000))
+se <- matrix(NA, c(3, 1000))
+for (i in 1:ncol(coefs)) {
+x1 <- 1:100
+x2 <- rbinom(100, 1, 0.5)
+error1 <- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+# with df 4 and mean 0
+y = 3 + 0.1*x1 + 0.5*x2 + error1
+mod1 <- summary(lm(y ~ x1 + x2))
+coefs[1,i] <- tidy(mod1)[1,2]
+coefs[2,i] <- tidy(mod1)[2,2]
+coefs[3,i] <- tidy(mod1)[3,2]
+se[1,i] <- tidy(mod1)[1,3]
+se[2,i] <- tidy(mod1)[2,3]
+se[3,i] <- tidy(mod1)[3,3]
+}
+x1 <- 1:100
+x2 <- rbinom(100, 1, 0.5)
+error1 <- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+# with df 4 and mean 0
+y = 3 + 0.1*x1 + 0.5*x2 + error1
+mod1 <- summary(lm(y ~ x1 + x2))
+coefs
+coefs <- matrix(NA, c(3, 1000))
+se <- matrix(NA, c(3, 1000))
+coefs
+coefs <- matrix(NA, nrow = 3, ncol = 1000)
+coefs
+coefs <- matrix(NA, nrow = 3, ncol = 1000)
+se <- matrix(NA, nrow = 3, ncol = 1000)
+for (i in 1:ncol(coefs)) {
+x1 <- 1:100
+x2 <- rbinom(100, 1, 0.5)
+error1 <- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+# with df 4 and mean 0
+y = 3 + 0.1*x1 + 0.5*x2 + error1
+mod1 <- summary(lm(y ~ x1 + x2))
+coefs[1,i] <- tidy(mod1)[1,2]
+coefs[2,i] <- tidy(mod1)[2,2]
+coefs[3,i] <- tidy(mod1)[3,2]
+se[1,i] <- tidy(mod1)[1,3]
+se[2,i] <- tidy(mod1)[2,3]
+se[3,i] <- tidy(mod1)[3,3]
+}
+coefs <- matrix(NA, nrow = 3, ncol = 1000)
+se <- matrix(NA, nrow = 3, ncol = 1000)
+i <- 1
+x1 <- 1:100
+x2 <- rbinom(100, 1, 0.5)
+error1 <- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+# with df 4 and mean 0
+y = 3 + 0.1*x1 + 0.5*x2 + error1
+mod1 <- summary(lm(y ~ x1 + x2))
+coefs[1, ]
+coefs[1,i] <- tidy(mod1)[1,2]
+coefs[2,i] <- tidy(mod1)[2,2]
+tidy(mod1)[2,2]
+coefs[2,i]
+1
+i
+coefs[2, 1]
+head(coefs)
+coefs <- matrix(NA, nrow = 3, ncol = 1000)
+coefs[1:5, 1:5]
+coefs <- matrix(NA, nrow = 3, ncol = 1000)
+se <- matrix(NA, nrow = 3, ncol = 1000)
+coefs[1:5, 1:5]
+coefs
+dim(coefs)
+coefs[2, 1]
+coefs[3, 100]
+coefs <- matrix(NA, nrow = 3, ncol = 1000)
+se <- matrix(NA, nrow = 3, ncol = 1000)
+# Naturally, these estimates will be different for anyone who runs this code
+# even if specifying set seed because the loop will loop new numbers each time.
+for (i in 1:ncol(coefs)) {
+x1 <- 1:100
+x2 <- rbinom(100, 1, 0.5)
+error1 <- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+# with df 4 and mean 0
+y = 3 + 0.1*x1 + 0.5*x2 + error1
+mod1 <- summary(lm(y ~ x1 + x2))
+coefs[1,i] <- tidy(mod1)[1,2]
+coefs[2,i] <- tidy(mod1)[2,2]
+coefs[3,i] <- tidy(mod1)[3,2]
+se[1,i] <- tidy(mod1)[1,3]
+se[2,i] <- tidy(mod1)[2,3]
+se[3,i] <- tidy(mod1)[3,3]
+}
+coefs <- matrix(NA, nrow = 3, ncol = 1000)
+se <- matrix(NA, nrow = 3, ncol = 1000)
+x1 <- 1:100
+x2 <- rbinom(100, 1, 0.5)
+error1 <- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+# with df 4 and mean 0
+y = 3 + 0.1*x1 + 0.5*x2 + error1
+mod1 <- summary(lm(y ~ x1 + x2))
+class(coefs)
+tidy(mod1)[1,2]
+tidy(mod1)[1,2, drop = TRUE]
+coefs <- matrix(NA, nrow = 3, ncol = 1000)
+se <- matrix(NA, nrow = 3, ncol = 1000)
+# Naturally, these estimates will be different for anyone who runs this code
+# even if specifying set seed because the loop will loop new numbers each time.
+for (i in 1:ncol(coefs)) {
+x1 <- 1:100
+x2 <- rbinom(100, 1, 0.5)
+error1 <- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+# with df 4 and mean 0
+y = 3 + 0.1*x1 + 0.5*x2 + error1
+mod1 <- summary(lm(y ~ x1 + x2))
+coefs[1,i] <- tidy(mod1)[1,2, drop = TRUE]
+coefs[2,i] <- tidy(mod1)[2,2, drop = TRUE]
+coefs[3,i] <- tidy(mod1)[3,2, drop = TRUE]
+se[1,i] <- tidy(mod1)[1,3, drop = TRUE]
+se[2,i] <- tidy(mod1)[2,3, drop = TRUE]
+se[3,i] <- tidy(mod1)[3,3, drop = TRUE]
+}
+coefs <- matrix(NA, nrow = 3, ncol = 1000)
+se <- matrix(NA, nrow = 3, ncol = 1000)
+for (i in 1:ncol(coefs)) {
+x1 <- 1:100
+x2 <- rbinom(100, 1, 0.5)
+error1 <- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+y = 3 + 0.1*x1 + 0.5*x2 + error1
+mod1 <- summary(tlm(y ~ x1 + x2))
+coefs[1,i] <- mod1$loc.summary$coefficients[1,1]
+coefs[2,i] <- mod1$loc.summary$coefficients[2,1]
+coefs[3,i] <- mod1$loc.summary$coefficients[3,1]
+se[1,i] <- mod1$loc.summary$coefficients[1,2]
+se[2,i] <- mod1$loc.summary$coefficients[2,2]
+se[3,i] <- mod1$loc.summary$coefficients[3,2]
+}
+blogdown::build_site()
+library(essurvey)
+library(cimentadaj)
+library(tidyverse)
+library(tidyverse)
+spain_df <- import_country("Spain", 7, "your_email@gmail.com")
+spain_df <- import_country("Spain", 7, "cimentadaj@gmail.com")
+blogdown::hugo_build()
+blogdown::hugo_build()
+blogdown::serve_site()
+blogdown::serve_site()
+blogdown::stop_server()
+blogdown::serve_site()
+blogdown::stop_server()
+cimentadaj::my_new_post("Test")
+?blogdown::hugo_build()
+blogdown::hugo_build(method = "custom")
+blogdown::build_site(method = "custom")
+blogdown::build_site
+?blogdown::build_site
+blogdown::build_site()
+blogdown::serve_site()

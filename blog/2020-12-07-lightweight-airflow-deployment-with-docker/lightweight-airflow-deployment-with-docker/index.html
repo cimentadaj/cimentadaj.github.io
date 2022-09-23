@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Simple minimalist theme">
+<meta name="keywords" content="blog,goa,hugo,r,statistics,education">
+
+<base href="https://cimentadaj.github.io/">
+
+<title>Jorge Cimentada</title>
+
+<meta name="generator" content="Hugo 0.91.2" />
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cimentadaj.github.io/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
+<script src="https://cimentadaj.github.io/js/highlight.pack.js"></script>
+<script>
+hljs.configure({langauges: ['R']});
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cimentadaj.github.io/css/main.css">
+
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="https://cimentadaj.github.io/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="https://cimentadaj.github.io/manifest.json">
+<link rel="mask-icon" href="https://cimentadaj.github.io/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="row text-left title">
+  <h1 class="title">Lightweight Airflow Deployment with Docker in 5 steps</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON DEC 7, 2020 
+      
+      
+      
+      —
+      
+      
+      <a class="meta" href="https://cimentadaj.github.io/categories/data-engineering">DATA-ENGINEERING</a>, 
+      
+      <a class="meta" href="https://cimentadaj.github.io/categories/docker">DOCKER</a>, 
+      
+      <a class="meta" href="https://cimentadaj.github.io/categories/etl">ETL</a>, 
+      
+      <a class="meta" href="https://cimentadaj.github.io/categories/python">PYTHON</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    
+<script src="https://cimentadaj.github.io/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p>There’s a bunch of tutorials out there on how to deploy Airflow for scaling tasks across clusters. This is another one of those tutorials. However, I’m interested in doing the above without much hassle, meaning that I don’t want to spend 2 hours installing Airflow, dependencies, PostgreSQL, and so on. This tutorial extends most internet tutorials on Airflow to deploy a full-fledged example using Docker in the least amount of code possible.</p>
+<p>For the sake of not repeating content on the internet, I’m gonna limit my definition of Airflow to this: it’s a way of repeating a program in a given interval of time, like within a specified schedule. That sounds oddly similar to <a href="https://en.wikipedia.org/wiki/Cron">cron</a>. It is in fact a cron-like system but it has other stuff like automatic email warning when your task fails, detailed logs, scaling thousands of tasks within a cluster and an infrastructure for creating dependencies between tasks. Interested? See <a href="https://airflow.apache.org/docs/apache-airflow/stable/_images/graph.png">this</a>.</p>
+<p>Enough of definitions. Airflow is not particularly easy to install so let’s get to the point. At the end of this tutorial we’ll have a very simple python program that runs every minute of every single day setup on Airflow with email warning whenever this program fails. That, without having to install anything other than Docker on your local computer.</p>
+<p>If you don’t have docker and docker-compose installed, follow <a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04">this</a> tutorial for docker and <a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04">this one</a> for docker-compose for installing both.</p>
+<div id="summarized-version" class="section level1">
+<h1>Summarized version</h1>
+<p>If you’re here for the code, here’s the summarized versions. Skip down for detailed explanations. <strong>Make sure you replace everything that is signaled that needs replacing</strong>.</p>
+<pre class="bash"><code># Replace this with the directory that you want
+# to use to save your Airflow directory.
+TEST_DIR=~/Downloads/
+
+# Create the directory structure for Airflow
+mkdir -p $TEST_DIR/airflow_test2
+cd $TEST_DIR/airflow_test2
+mkdir dags
+mkdir scripts
+mkdir airflow-logs
+
+# If an &#39;event not found&#39; error arises, see https://stackoverflow.com/questions/42798737/bash-usr-bin-env-event-not-found
+echo -e &#39;#!/usr/bin/env bash
+airflow upgradedb
+airflow webserver
+&#39; &gt; scripts/airflow-entrypoint.sh
+
+# Save environmental variables needed by Airflow in a separate
+# .env file.
+echo &quot;AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS=False
+AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgres+psycopg2://airflow:airflow@postgres:5432/airflow
+AIRFLOW_CONN_METADATA_DB=postgres+psycopg2://airflow:airflow@postgres:5432/airflow
+AIRFLOW_VAR__METADATA_DB_SCHEMA=airflow
+AIRFLOW__SCHEDULER__SCHEDULER_HEARTBEAT_SEC=10
+&quot; &gt; .env
+
+# Create a docker-compose file with the container
+# specification for the database, the scheduler
+# and the webserver for docker.
+echo &quot;version: &#39;2.1&#39;
+services:
+  postgres:
+    image: postgres:12
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    ports:
+      - &#39;5433:5432&#39;
+
+  scheduler:
+    image: apache/airflow
+    restart: always
+    depends_on:
+      - postgres
+      - webserver
+    env_file:
+      - .env
+    ports:
+      - &#39;8793:8793&#39;
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./airflow-logs:/opt/airflow/logs
+    command: scheduler
+    healthcheck:
+      test: [&#39;CMD-SHELL&#39;, &#39;[ -f /usr/local/airflow/airflow-webserver.pid ]&#39;]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  webserver:
+    image: apache/airflow
+    hostname: webserver
+    restart: always
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./scripts:/opt/airflow/scripts
+      - ./airflow-logs:/opt/airflow/logs
+    ports:
+      - &#39;8080:8080&#39;
+    entrypoint: ./scripts/airflow-entrypoint.sh
+    healthcheck:
+      test: [&#39;CMD-SHELL&#39;, &#39;[ -f /usr/local/airflow/airflow-webserver.pid ]&#39;]
+      interval: 30s
+      timeout: 30s
+      retries: 32
+&quot; &gt; docker-compose.yml
+
+# Create the task that will be ran within a schedule
+
+# Replace `start_date` with the starting date of your process as well as the
+# owner and email. Moreover, you can change `schedule_interval` for specifying
+# the schedule for when you want your ask to run. For customizing additional
+# arguments, see https://airflow.apache.org/docs/apache-airflow/stable/tutorial.html
+echo &quot;from datetime import timedelta, datetime
+from airflow import DAG
+from airflow.operators.python_operator import PythonOperator
+from airflow.operators.dummy_operator import DummyOperator
+
+# Define default arguments for the DAG
+default_args = {
+    &#39;owner&#39;: &#39;cimentadaj&#39;,
+    &#39;depends_on_past&#39;: False,
+    &#39;start_date&#39;: datetime(2020, 12, 7, 13, 20),
+    &#39;email&#39;: [&#39;airflow@example.com&#39;],
+    &#39;email_on_failure&#39;: True,
+    &#39;retries&#39;: 1,
+    &#39;retry_delay&#39;: timedelta(seconds=5)
+}
+
+# Define the main DAG: this is a general
+# process that can have many tasks inside
+dag = DAG(
+    &#39;tutorial&#39;,
+    default_args=default_args,
+    schedule_interval=&#39;*/1 * * * *&#39;,
+)
+
+# Define what task_1 will do
+def task_1():
+    &#39;Print task 1 complete&#39;
+    print(&#39;Task 1 complete&#39;)
+
+# Define what task_2 will do
+def task_2():
+    &#39;Print task 2 complete&#39;
+    print(&#39;Task 2 complete&#39;)
+
+# Create initial empty task
+task0 = DummyOperator(
+    task_id=&#39;start&#39;,
+    dag=dag
+)
+
+# Create task1
+task1 = PythonOperator(
+    task_id=&#39;task_1&#39;,
+    python_callable=task_1,
+    dag=dag
+)
+
+# Create task2
+task2 = PythonOperator(
+    task_id=&#39;task_2&#39;,
+    python_callable=task_2,
+    dag=dag
+)
+
+# Create dependencies between tasks.
+# task0 is first, then task1 then task2
+task0 &gt;&gt; task1 &gt;&gt; task2
+&quot; &gt; dags/airflow-test.py
+
+# Airflow can have some issues with permissions, so we set all
+# possible permissions available for our Airflow folder.
+sudo chmod -R 777 $TEST_DIR/airflow_test2
+
+# Deploy everything
+docker-compose up -d</code></pre>
+<pre><code># Creating network &quot;airflow_test2_default&quot; with the default driver
+# Starting airflow_test2_postgres_1 ... 
+# Starting airflow_test2_webserver_1 ... 
+# Starting airflow_test2_scheduler_1 ... </code></pre>
+<p>Visit <a href="http://localhost:8080/admin/" class="uri">http://localhost:8080/admin/</a> and you should see something like this:</p>
+<p><img src="https://cimentadaj.github.io/img/airflow.png" alt="drawing" width="120%"/></p>
+<p>We can toggle our tasks to begin, inspect the dependency of the different tasks and also begin the task process manually. Below is a GIF showing you how to do it. <strong>Make sure you click on the image for it to start</strong>:</p>
+<p><img src="https://cimentadaj.github.io/img/airflow_workflow.gif" alt="drawing" width="120%"/></p>
+<p>Next to the dag ‘Tutorial’ (on the left) there is an Off/On slider. Swipe the slider to be ‘On’ and this task will run according to the cron expression in ‘Schedule’ (on the right of ‘Tutorial’) on the starting date that we defined in the Python script <code>dags/airflow-test.py</code> (just search for <code>start_date</code> and you’ll find it).</p>
+</div>
+<div id="detailed-version" class="section level1">
+<h1>Detailed version</h1>
+<ol style="list-style-type: decimal">
+<li>Create the folder structure for saving our Airflow files/logs/scripts</li>
+</ol>
+<pre class="bash"><code># Replace this with the directory that you want
+# to use save your Airflow directory.
+TEST_DIR=~/Downloads/
+mkdir -p $TEST_DIR/airflow_test2
+cd $TEST_DIR/airflow_test2
+mkdir dags
+mkdir scripts
+mkdir airflow-logs</code></pre>
+<p>After creating the main folder, we create three folders: <code>dags</code>, <code>scripts</code> and <code>airflow-logs</code>. Later on you’ll see why we need these.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Create an entry point for the Airflow webserver.</li>
+</ol>
+<pre class="bash"><code># If an &#39;event not found&#39; error arises, see https://stackoverflow.com/questions/42798737/bash-usr-bin-env-event-not-found
+echo -e &#39;#!/usr/bin/env bash
+airflow upgradedb
+airflow webserver
+&#39; &gt; scripts/airflow-entrypoint.sh</code></pre>
+<p>The Airflow webserver is essentially the front-end of Airflow. It’s the website that you see that allows you to toggle on/off different processes, look at their logs and their schedule. In the bash script <code>scripts/airflow-entrypoint.sh</code> we need to ‘initialize’ that webserver. This literally just means: deploy the front-end. <code>airflow upgradedb</code> makes sure all tables related to the database hosting the logs, dags and so on is complete (no missing tables, for example) and <code>airflow webserver</code> deploys the website that we’ll use to control Airflow.</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Save all environmental variables to a file called <code>.env</code></li>
+</ol>
+<pre class="bash"><code>echo &quot;AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS=False
+AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgres+psycopg2://airflow:airflow@postgres:5432/airflow
+AIRFLOW_CONN_METADATA_DB=postgres+psycopg2://airflow:airflow@postgres:5432/airflow
+AIRFLOW_VAR__METADATA_DB_SCHEMA=airflow
+AIRFLOW__SCHEDULER__SCHEDULER_HEARTBEAT_SEC=10
+&quot; &gt; .env</code></pre>
+<p>These are some of the core environmental variables that Airflow uses. For example, <code>AIRFLOW__CORE__SQL_ALCHEMY_CONN</code> specifies the direct connection to the back-end database hosting all the logs/dags of your Airflow instance. All of this is set with default values that can work well with this toy problem. If you’re planning to do some serious Airflow deployment then you should <a href="https://airflow.apache.org/docs/apache-airflow/stable/configurations-ref.html">learn more</a> about what these variables do for better customization. For example, in <code>AIRFLOW__CORE__SQL_ALCHEMY_CONN</code> we’re directly storing the user/password to access the database. <strong>This is not safe</strong> and warrants further customization.</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Write a <code>docker-compose</code> file that deploys the back-end database, the airflow scheduler and the webserver.</li>
+</ol>
+<pre class="bash"><code>echo &quot;version: &#39;2.1&#39;
+services:
+  postgres:
+    image: postgres:12
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    ports:
+      - &#39;5433:5432&#39;
+
+  scheduler:
+    image: apache/airflow
+    restart: always
+    depends_on:
+      - postgres
+      - webserver
+    env_file:
+      - .env
+    ports:
+      - &#39;8793:8793&#39;
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./airflow-logs:/opt/airflow/logs
+    command: scheduler
+    healthcheck:
+      test: [&#39;CMD-SHELL&#39;, &#39;[ -f /usr/local/airflow/airflow-webserver.pid ]&#39;]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  webserver:
+    image: apache/airflow
+    hostname: webserver
+    restart: always
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./scripts:/opt/airflow/scripts
+      - ./airflow-logs:/opt/airflow/logs
+    ports:
+      - &#39;8080:8080&#39;
+    entrypoint: ./scripts/airflow-entrypoint.sh
+    healthcheck:
+      test: [&#39;CMD-SHELL&#39;, &#39;[ -f /usr/local/airflow/airflow-webserver.pid ]&#39;]
+      interval: 30s
+      timeout: 30s
+      retries: 32
+&quot; &gt; docker-compose.yml</code></pre>
+<p>I don’t want to go very in depth about how Airflow works because there’s just too many tutorials out there. Just search for ‘airflow tutorial’ on Google and you’ll find a bunch. I’ll limit myself to very simple explanations of how Airflow works.</p>
+<p>Airflow has three components: a database, a scheduler and a webserver. The database hosts all information that is used by the scheduler and webserver such as how many tasks you have created, whether certain tasks failed on a given day/time and so on. It’s just that: a database for hosting all information needed by the other processes.</p>
+<p>On the other hand, the scheduler makes sure that your tasks run on the start date and schedule that you’ve specified. This is the ‘cron’ part of Airflow. It speaks directly to the database we defined above to make sure we’re up to date on running everything. It won’t work if it doesn’t find the database we defined above because it needs to figure out whether certain tasks are behind schedule.</p>
+<p>Finally, the webserver is a process for visualizing all of this in an intuitive way. Among other things, it creates maps of how your tasks are connected and shows the logs stored in the database in a convenient way.</p>
+<p><code>docker-compose.yml</code> hosts these three processes and allows them to speak to each other. I’ll focus on the important options from this <code>docker-compose</code> file.</p>
+<p>The first service uses a PostgreSQL image tagged at version 12 and specifies the port at which will be used together with some environmental variables used to access the database:</p>
+<pre><code>postgres:
+  image: postgres:12
+  environment:
+    - POSTGRES_USER=airflow
+    - POSTGRES_PASSWORD=airflow
+    - POSTGRES_DB=airflow
+  ports:
+    - &#39;5433:5432&#39;</code></pre>
+<p>This means that we don’t have to download the database engine, this image will host it directly. How can we be sure that Airflow speaks to <em>this</em> database? We haven’t linked them or anything, right? Well, think again! <code>docker-compose</code> creates a network between the docker images that we specify. Notice how we’re specifying the ports <code>5433:5432</code>? We also specified those in <code>AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgres+psycopg2://airflow:airflow@postgres:5432/airflow</code>. We’re slowly connecting the different parts we’ve been defining.</p>
+<p>The next part of the <code>docker-compose</code> specifies the scheduler.</p>
+<pre><code>scheduler:
+  image: apache/airflow
+  restart: always
+  depends_on:
+    - postgres
+    - webserver
+  env_file:
+    - .env
+  ports:
+    - &#39;8793:8793&#39;
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./airflow-logs:/opt/airflow/logs
+  command: scheduler
+  healthcheck:
+    test: [&#39;CMD-SHELL&#39;, &#39;[ -f /usr/local/airflow/airflow-webserver.pid ]&#39;]
+    interval: 30s
+    timeout: 30s
+    retries: 3</code></pre>
+<p>The image we use for the scheduler comes from the official Airflow docker image (<code>apache/airflow</code>). Remember that this scheduler will not work if it’s not connected to the database? We specify that in <code>depends_on</code>, saying that this image has to wait until these other containers are ready and deployed. Remember the <code>.env</code> file hosting the PostgreSQL and other environmental variables? We also specify it here because the Airflow image needs these to correctly know where to find things such as the PostgreSQL connection. As I said, I’ll only focus on the most important parts.</p>
+<p>Volumes is perhaps the most important thing to explain here. Volumes are links between your local computer and the virtual docker container. This means that if I link my local folder <code>./dags/</code> to the container’s folder <code>/opt/airflow/dags</code> everything that is inside <code>./dags/</code> will be inside <code>/opt/airflow/dags</code> and viceversa. It essentially creates a mirror between the folders on your local computer and your container.</p>
+<p>In this image we’re saying: anything that we put inside the folder <code>dags</code> needs to be placed in the container’s folder for dags. This is <strong>key</strong> because this is where you define your tasks that will be ran on a given schedule. We do the same with the logs because we might want to see the logs later on in our local computer.</p>
+<p>The final part of <code>docker-compose</code> has the webserver.</p>
+<pre><code>webserver:
+  image: apache/airflow
+  hostname: webserver
+  restart: always
+  depends_on:
+    - postgres
+  env_file:
+    - .env
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./scripts:/opt/airflow/scripts
+    - ./airflow-logs:/opt/airflow/logs
+  ports:
+    - &#39;8080:8080&#39;
+  entrypoint: ./scripts/airflow-entrypoint.sh
+  healthcheck:
+    test: [&#39;CMD-SHELL&#39;, &#39;[ -f /usr/local/airflow/airflow-webserver.pid ]&#39;]
+    interval: 30s
+    timeout: 30s
+    retries: 32</code></pre>
+<p>This container shares a lot of similarity to the schedule container (same image, depends on the PostgreSQL container, passing the <code>.env</code> file) but there’s one thing that we should stop to explain: the entry point. Can you see that we’re linking our <code>scripts</code> folder to the a scripts folder within the container as a volume? This is because we will run the file <code>airflow-entrypoint.sh</code> once this container has been deployed. That is, docker already interprets entry points as scripts that it needs to run once it has been deployed; we just have to specify which script.</p>
+<p>If you remember correctly, this entry point script ‘refreshes’ the database (through <code>airflow upgradedb</code>, which just checks up that everything is fine in terms of all tables available, connections, etc..) and deploys the webserver (through <code>airflow webserver</code>). The key thing here is that the <code>entrypoint</code> option for this container makes sure that all of this is ran once everything is deployed.</p>
+<p>That is all for our <code>docker-compose.yml</code> file. This part is a bit tricky and if you don’t understand everything so far, it’s fine. You can ignore some of these details as this example you’re developing should work out of the box. However, if you’re planning to use Airflow for serious projects which might hold sensitive data, you should study this in depth.</p>
+<ol start="5" style="list-style-type: decimal">
+<li>Create your tasks that will be executed on a schedule</li>
+</ol>
+<pre class="{bash"><code>echo &quot;from datetime import timedelta, datetime
+from airflow import DAG
+from airflow.operators.python_operator import PythonOperator
+from airflow.operators.dummy_operator import DummyOperator
+
+# Define default arguments for the DAG
+default_args = {
+    &#39;owner&#39;: &#39;cimentadaj&#39;,
+    &#39;depends_on_past&#39;: False,
+    &#39;start_date&#39;: datetime(2020, 12, 7, 13, 20),
+    &#39;email&#39;: [&#39;airflow@example.com&#39;],
+    &#39;email_on_failure&#39;: True,
+    &#39;retries&#39;: 1,
+    &#39;retry_delay&#39;: timedelta(seconds=5)
+}
+
+# Define the main DAG: this is a general
+# process that can have many tasks inside
+dag = DAG(
+    &#39;tutorial&#39;,
+    default_args=default_args,
+    schedule_interval=&#39;*/1 * * * *&#39;,
+)
+
+# Define what task_1 will do
+def task_1():
+    &#39;Print task 1 complete&#39;
+    print(&#39;Task 1 complete&#39;)
+
+# Define what task_2 will do
+def task_2():
+    &#39;Print task 2 complete&#39;
+    print(&#39;Task 2 complete&#39;)
+
+# Create initial empty task
+task0 = DummyOperator(
+    task_id=&#39;start&#39;,
+    dag=dag
+)
+
+# Create task1
+task1 = PythonOperator(
+    task_id=&#39;task_1&#39;,
+    python_callable=task_1,
+    dag=dag
+)
+
+# Create task2
+task2 = PythonOperator(
+    task_id=&#39;task_2&#39;,
+    python_callable=task_2,
+    dag=dag
+)
+
+# Create dependencies between tasks.
+# task0 is first, then task1 then task2
+task0 &gt;&gt; task1 &gt;&gt; task2
+&quot; &gt; dags/airflow-test.py</code></pre>
+<p>The above is some Python code which we save to <code>dags/airflow-test.py</code>. I wouldn’t do justice to the superb explanation of how to create a DAG file as the <a href="https://airflow.apache.org/docs/apache-airflow/1.10.7/tutorial.html">Airflow team has done</a> so I’ll limit myself to briefly explaining what I did in the example above.</p>
+<p>After loading the Airflow module I set some default arguments which you should update accordingly with your details (owner name, email, <code>start_date</code>, etc..). I then defined the DAG name as ‘tutorial’ where I specify <code>schedule_interval</code>, which has the cron expression for when to run this task (I set it to every minute of every day of the year). I then define some Python functions that I use with the <code>PythonOperator</code> to create the Airflow tasks.</p>
+<p>Once you have your tasks created you can create the dependencies between these tasks. For example, by writing <code>task0 &gt;&gt; task1 &gt;&gt; task2</code> I’m saying that <code>task2</code> depends on <code>task1</code> and <code>task1</code> depends on <code>task0</code>. Or the other way around: we begin with <code>task0</code>, once it’s finished we follow with <code>task1</code> and once that’s done, we continue with <code>task2</code>. Depending on another task in this context means that <strong>only</strong> when a given task has ended, the other task will begin. This creates a beautiful framework for creating complex dependencies in no time.</p>
+<p>Airflow has different operators for <a href="https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/">different languages</a>, and if your preferred language is not present, the <code>BashOperator</code> makes it easy to run anything not covered (such as R or Julia, for example).</p>
+<p>Remember that we linked our <code>dags</code> folder to the container’s <code>dags</code> folder so anything we add in this folder will be automatically synced to the container.</p>
+<div id="putting-everything-together" class="section level2">
+<h2>Putting everything together</h2>
+<p>Before we deploy everything, we need to make sure that this entire folder has all permissions available. Due to some issues I’ve yet to understand, our containers can have some permission problems while trying to access the volumes we specified between our local computer and the containers. Let’s give full access to everyone for that folder:</p>
+<pre class="bash"><code>sudo chmod -R 777 $TEST_DIR/airflow_test2</code></pre>
+<p>With that out of the way, deploy everything with <code>docker-compose up -d</code>:</p>
+<pre class="bash"><code>docker-compose up -d</code></pre>
+<pre><code># Creating network &quot;airflow_test2_default&quot; with the default driver
+# Starting airflow_test2_postgres_1 ... 
+# Starting airflow_test2_webserver_1 ... 
+# Starting airflow_test2_scheduler_1 ... </code></pre>
+<p>How would all of this look like? Visit the website <a href="http://localhost:8080/admin/" class="uri">http://localhost:8080/admin/</a>.</p>
+<p>You should see something like this:</p>
+<p><img src="https://cimentadaj.github.io/img/airflow.png" alt="drawing" width="120%"/></p>
+<p>We can toggle our task to start, inspect the dependency of the different tasks and also begin the process manually. Below is a GIF showing you how to do it. <strong>Make sure you click on the image for the GIF to start</strong>:</p>
+<p><img src="https://cimentadaj.github.io/img/airflow_workflow.gif" alt="drawing" width="120%"/></p>
+</div>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<p>This was a long post because I wanted to touch upon several details related to Airflow. However, if you want to just make this work, you can copy the worked out example from the beginning and edit your tasks accordingly. I hope this was useful!</p>
+</div>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "cimentadaj-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog/2020-11-26-maximum-likelihood-distilled/maximum-likelihood-distilled/">&lt; prev | </a></span>
+  
+  
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog">blog</a></span>
+  
+  
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog/2021-01-11-talking-between-containers-in-dockercompose/talking-between-containers-in-docker-compose/"> | next &gt;</a></span>
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="https://cimentadaj.github.io/">home</a></h4>
+</section>
+
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2022. Jorge Cimentada. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+

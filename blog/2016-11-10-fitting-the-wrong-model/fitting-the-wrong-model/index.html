@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Simple minimalist theme">
+<meta name="keywords" content="blog,goa,hugo,r,statistics,education">
+
+<base href="https://cimentadaj.github.io/">
+
+<title>Jorge Cimentada</title>
+
+<meta name="generator" content="Hugo 0.91.2" />
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cimentadaj.github.io/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
+<script src="https://cimentadaj.github.io/js/highlight.pack.js"></script>
+<script>
+hljs.configure({langauges: ['R']});
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cimentadaj.github.io/css/main.css">
+
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="https://cimentadaj.github.io/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="https://cimentadaj.github.io/manifest.json">
+<link rel="mask-icon" href="https://cimentadaj.github.io/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="row text-left title">
+  <h1 class="title">Fitting the wrong model</h1>
+</header>
+<section id="category-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON NOV 10, 2016 
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="row">
+  <div class="col-md-12 text-justify content">
+    
+
+
+<p>These exercises are from the book <a href="http://www.stat.columbia.edu/~gelman/arm/">Data Analysis Using Regression and Multilevel/Hierarchical Models</a>. I’ve really gotten into completing these exercises and I guess that by posting them I’ve found an excuse to keep doing it. This time I went back to chapter 8 which deals with simulations. I picked the first exercise, page 165 exercise 8.6.1, which says:</p>
+<blockquote>
+<p>Fitting the wrong model: suppose you have 100 data points that arose from the following model: y = 3 + 0.1×1 + 0.5×2 + error, with errors having a t distribution with mean 0, scale 5, and 4 degrees of freedom.We shall explore the implications of fitting a standard linear regression to these data.</p>
+</blockquote>
+<p>The (a) section of the exercises says as follows:</p>
+<blockquote>
+<ol style="list-style-type: lower-alpha">
+<li>Simulate data from this model. For simplicity, suppose the values of x1 are simply the integers from 1 to 100, and that the values of x2 are random and equally likely to be 0 or 1. Fit a linear regression (with normal errors) to these data and see if the 68% confidence intervals for the regression coefficients (for each, the estimates ±1 standard error) cover the true values.</li>
+</ol>
+</blockquote>
+<p>This is simple enough. Simulate some linear model but change the error term to be t distributed with a set of characteristics. Here’s the code:</p>
+<pre class="r"><code>suppressWarnings(suppressMessages({
+  library(arm)
+  library(broom)
+  library(hett)
+  }))
+
+set.seed(2131)
+x1 &lt;- 1:100
+x2 &lt;- rbinom(100, 1, 0.5)
+error1 &lt;- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+                                              # with df 4, mean 0 and var 5
+
+y = 3 + 0.1*x1 + 0.5*x2 + error1
+
+display(lm(y ~ x1 + x2))</code></pre>
+<pre><code>## lm(formula = y ~ x1 + x2)
+##             coef.est coef.se
+## (Intercept) 3.30     0.43   
+## x1          0.10     0.01   
+## x2          0.33     0.40   
+## ---
+## n = 100, k = 3
+## residual sd = 1.96, R-Squared = 0.67</code></pre>
+<p>It looks like the true slope of x1 is contained in the 68% CI’s.</p>
+<pre class="r"><code>c(upper = 0.10 + (1 * 0.01), lower = 0.10 + (-1 * 0.01))</code></pre>
+<pre><code>## upper lower 
+##  0.11  0.09</code></pre>
+<p>For x2 it’s contained but the uncertainty is too high making the CI’s too wide.</p>
+<pre class="r"><code>c(upper = 0.33 + (1 * 0.40), lower = 0.33 + (-1 * 0.40))</code></pre>
+<pre><code>## upper lower 
+##  0.73 -0.07</code></pre>
+<hr />
+<blockquote>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Put the above step in a loop and repeat 1000 times. Calculate the confidence coverage for the 68% intervals for each of the three coefficients in the model.</li>
+</ol>
+</blockquote>
+<pre class="r"><code>coefs &lt;- matrix(NA, nrow = 3, ncol = 1000)
+se &lt;- matrix(NA, nrow = 3, ncol = 1000)
+
+# Naturally, these estimates will be different for anyone who runs this code
+# even if specifying set seed because the loop will loop new numbers each time.
+
+for (i in 1:ncol(coefs)) {
+  x1 &lt;- 1:100
+  x2 &lt;- rbinom(100, 1, 0.5)
+  error1 &lt;- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+                                                # with df 4 and mean 0
+  y = 3 + 0.1*x1 + 0.5*x2 + error1
+  
+  mod1 &lt;- summary(lm(y ~ x1 + x2))
+  coefs[1,i] &lt;- tidy(mod1)[1,2, drop = TRUE]
+  coefs[2,i] &lt;- tidy(mod1)[2,2, drop = TRUE]
+  coefs[3,i] &lt;- tidy(mod1)[3,2, drop = TRUE]
+  
+  se[1,i] &lt;- tidy(mod1)[1,3, drop = TRUE]
+  se[2,i] &lt;- tidy(mod1)[2,3, drop = TRUE]
+  se[3,i] &lt;- tidy(mod1)[3,3, drop = TRUE]
+}
+
+repl_coef &lt;- rowMeans(coefs)
+repl_se &lt;- rowMeans(se)
+
+cbind(repl_coef + (-1 * repl_se), repl_coef + (1 * repl_se))</code></pre>
+<pre><code>##            [,1]      [,2]
+## [1,] 2.48215326 3.4808804
+## [2,] 0.09255549 0.1079026
+## [3,] 0.05919238 0.9495994</code></pre>
+<p>Going back to previous block of code which contains the true parameters, the 68% interval for the intercept does contain 3, the 68% interval for x1 does contain 0.10 and both CI’s are quite precise. Finally, the confidence interval for x2 does contain 0.5 but the uncertainty is huge. What does this mean? The estimation of the slope for x2 does contain the true parameter but given that our error is too big and the normal distribution of <code>lm</code> does not account for that, it presents much more uncertainty in the estimation of the slope. If we ran a t distributed <code>lm</code> then it will certainly be more precise.</p>
+<p>The last section of the exercise asks you to do exactly that. Repeat the previous loop but instead of using <code>lm</code>, use <code>tlm</code> from the hett package which accounts for a t-distributed error term. Compare the CI’s and coefficients. Let’s do it:</p>
+<blockquote>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Repeat this simulation, but instead fit the model using t errors (see Exercise 6.6). The only change here is defining error1 as a t distribution instead of normally distributed</li>
+</ol>
+</blockquote>
+<pre class="r"><code>coefs &lt;- matrix(NA, nrow = 3, ncol = 1000)
+se &lt;- matrix(NA, nrow = 3, ncol = 1000)
+
+for (i in 1:ncol(coefs)) {
+  x1 &lt;- 1:100
+  x2 &lt;- rbinom(100, 1, 0.5)
+  error1 &lt;- rt(100, df=4)*sqrt(5 * (4-2)/4) + 0 # t distributed errors
+  y = 3 + 0.1*x1 + 0.5*x2 + error1
+  
+  mod1 &lt;- summary(tlm(y ~ x1 + x2))
+  coefs[1,i] &lt;- mod1$loc.summary$coefficients[1,1]
+  coefs[2,i] &lt;- mod1$loc.summary$coefficients[2,1]
+  coefs[3,i] &lt;- mod1$loc.summary$coefficients[3,1]
+  
+  se[1,i] &lt;- mod1$loc.summary$coefficients[1,2]
+  se[2,i] &lt;- mod1$loc.summary$coefficients[2,2]
+  se[3,i] &lt;- mod1$loc.summary$coefficients[3,2]
+}
+
+repl_coef &lt;- rowMeans(coefs)
+repl_se &lt;- rowMeans(se)
+
+cbind(repl_coef + (-1 * repl_se), repl_coef + (1 * repl_se))</code></pre>
+<pre><code>##            [,1]      [,2]
+## [1,] 2.61212284 3.4265738
+## [2,] 0.09335461 0.1058854
+## [3,] 0.14971691 0.8769205</code></pre>
+<p>Accounting for the t-distributed error (so the tails are much wider), the intervals for the intercept and x1 are quite similar (but narrower) and for x2 they’re certainly much more narrow. Note that the CI is still pretty big, reflecting the variance in the error term. But whenever this variance exceeds what a normal distribution can capture, we should account for it: it might help to reduce the uncertainty in the estimation. Note that, if you reran both simulations and compare the coefficients in <code>repl_coef</code>, they’re practically the same. So the different estimations don’t affect the parameters, but rather the uncertainty with which we trust them.</p>
+
+  </div>
+</section>
+<section id="tag-pane" class="row meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+      
+      
+      TAGS:
+      
+      
+      <a class="meta" href="https://cimentadaj.github.io/tags/gelman">GELMAN</a>, 
+      
+      <a class="meta" href="https://cimentadaj.github.io/tags/r">R</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "cimentadaj-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+<section id="menu-pane" class="row menu text-center">
+  
+  
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog/2016-11-06-multilevel-modeling-part-1/multilevel-modeling-part-1/">&lt; prev | </a></span>
+  
+  
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog">blog</a></span>
+  
+  
+  <span><a class="menu-item" href="https://cimentadaj.github.io/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/"> | next &gt;</a></span>
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="https://cimentadaj.github.io/">home</a></h4>
+</section>
+
+
+
+<footer class="row text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2022. Jorge Cimentada. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+  
+</footer>
+
+</div>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+

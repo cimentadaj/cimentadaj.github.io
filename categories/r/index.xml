@@ -1,0 +1,961 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>R on Jorge Cimentada</title>
+    <link>https://cimentadaj.github.io/categories/r/</link>
+    <description>Recent content in R on Jorge Cimentada</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 26 Nov 2020 00:00:00 +0000</lastBuildDate>
+    
+    <atom:link href="https://cimentadaj.github.io/categories/r/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Maximum Likelihood Distilled</title>
+      <link>https://cimentadaj.github.io/blog/2020-11-26-maximum-likelihood-distilled/maximum-likelihood-distilled/</link>
+      <pubDate>Thu, 26 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2020-11-26-maximum-likelihood-distilled/maximum-likelihood-distilled/</guid>
+      <description><![CDATA[
+      
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p>We all hear about Maximum Likelihood Estimation (MLE) and we often see hints of it in our model output. As usual, doing things manually can give a better grasp on how to better understand how our models work. Here’s a very short example implementing MLE based on the explanation from Gelman and Hill (2007), page 404-405.</p>
+<p>The likelihood is literally how much our outcome variable <strong>Y</strong> is compatible with our predictor <strong>X</strong>. We compute this measure of compatibility with the probability density function for the normal distribution. In R, <code>dnorm</code> returns this likelihood. The plot on this <a href="https://sakai.unc.edu/access/content/group/3d1eb92e-7848-4f55-90c3-7c72a54e7e43/public/docs/lectures/lecture13.htm#probfunc">website</a> gives a very clear intuition on what <code>dnorm</code> returns: it is literally the <em>height</em> of the distribution, or in other words, the likelihood. We of course, want the highest likelihood, as it indicates greater compatibility.</p>
+<p>For example, assuming <code>parameters</code> is a vector with the intercept <code>a</code>, the coefficient <code>b</code> and an error term <code>sigma</code>, we can compute the likelihood for any random value of these coefficients:</p>
+<pre class="r"><code>loglikelihood &lt;- function(parameters, predictor, outcome) {
+  # intercept
+  a &lt;- parameters[1]
+  # beta coef
+  b &lt;- parameters[2]
+  # error term
+  sigma &lt;- parameters[3]
+
+  # Calculate the likelihood of `y` given `a + b * x`
+  ll.vec &lt;- dnorm(outcome, a + b * predictor, sigma, log = TRUE)
+
+  # sum that likelihood over all the values in the data
+  sum(ll.vec)
+}
+
+# Generate three random values for intercept, beta and error term
+inits &lt;- runif(3)
+
+# Calculate the likelihood given these three values
+loglikelihood(
+  inits,
+  predictor = mtcars$disp,
+  outcome = mtcars$mpg
+)</code></pre>
+<pre><code>## [1] -11687.41</code></pre>
+<p>That’s the likelihood given the random values for the intercept, the coefficient and sigma. How does a typical linear model estimate the <strong>maximum</strong> of these likelihoods? It performs an optimization search trying out a sliding set of values for these unknowns and searches for the combination that returns the maximum:</p>
+<pre class="r"><code>mle &lt;-
+  optim(
+    inits, # The three random values for intercept, beta and sigma
+    loglikelihood, # The loglik function
+    lower = c(-Inf, -Inf, 1.e-5), # The lower bound for the three values (all can be negative except sigma, which is 1.e-5)
+    method = &quot;L-BFGS-B&quot;,
+    control = list(fnscale = -1), # This signals to search for the maximum rather than the minimum
+    predictor = mtcars$disp,
+    outcome = mtcars$mpg
+  )
+
+mle$par[1:2]</code></pre>
+<pre><code>## [1] 29.59985346 -0.04121511</code></pre>
+<p>Let’s compare that to the result of <code>lm</code>:</p>
+<pre class="r"><code>coef(lm(mpg ~ disp, data = mtcars))</code></pre>
+<pre><code>## (Intercept)        disp 
+## 29.59985476 -0.04121512</code></pre>
+<p>In layman terms, MLE really just checks how compatible a given data point is with the outcome with the respect to a coefficient. It repeats that step many times until it finds the combination of coefficients that maximizes the outcome.</p>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>The simplest tidy machine learning workflow</title>
+      <link>https://cimentadaj.github.io/blog/2020-02-06-the-simplest-tidy-machine-learning-workflow/the-simplest-tidy-machine-learning-workflow/</link>
+      <pubDate>Thu, 06 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2020-02-06-the-simplest-tidy-machine-learning-workflow/the-simplest-tidy-machine-learning-workflow/</guid>
+      <description><![CDATA[
+      
+
+
+<p><code>caret</code> is a magical package for doing machine learning in R. Look at this code for running a regularized regression:</p>
+<pre class="r"><code>library(caret)
+
+inTrain &lt;- createDataPartition(y = mtcars$mpg,
+                               p = 0.75,
+                               list = FALSE)  
+
+reg_mod &lt;- train(
+  mpg ~ .,
+  data = mtcars[inTrain, ],
+  method = &quot;glmnet&quot;,
+  tuneLength = 10,
+  preProc = c(&quot;center&quot;, &quot;scale&quot;),
+  trControl = trainControl(method = &quot;cv&quot;, number = 10)
+)</code></pre>
+<p>The two function calls in the expression above perform these operations:</p>
+<ol style="list-style-type: decimal">
+<li>Create a training set containing a random sample of 75% of the initial sample</li>
+<li>Center and scale all predictors in the model</li>
+<li>Identifies 10 alpha values (0 to 1) and then 10 additional lambda values</li>
+<li>For each parameter set (one alpha value and another lambda value), <a href="http://topepo.github.io/caret/model-training-and-tuning.html">run a cross-validation 10 times</a></li>
+<li>Effectively run 1000 models (10 alpha * 10 alpha) each one cross-validated (10)</li>
+<li>Save the best model in the result together with the optimized tuning parameteres</li>
+</ol>
+<p>That is a lot of modelling, optimization and computation done with almost no mental load. However, in case you didn’t know, <code>caret</code> is doomed to be left behind. The creator of the package has stated that he will give maintenance to the package but <a href="https://twitter.com/topepos/status/1026939727910461440">most active development</a> will be given to <code>tidymodels</code>, its successor.</p>
+<p><code>tidymodels</code> is more or less a restructuring of the <code>caret</code> package (as it aims to do the same thing and more) but with an interface and design philosophy that resembles the <code>Unix</code> philosophy. This means that instead of having one package and one function (<code>caret</code> and <code>train</code>) that does much of the work, all operations described above are performed by different packages.</p>
+<p><code>tidymodels</code> has been in development for the past two years and the main pieces for effective modelling have been implemented (packages such as <code>parsnip</code>, <code>tune</code>, <code>yardstick</code>, etc…). However, there still isn’t a completely unified workflow that allows them to be as succint and elegant as <code>train</code>. I’ve been keeping an eye on the development of the different packages from <code>tidymodels</code> and I really want to understand the key workflow that will allow users to make modelling with <code>tidymodels</code> easy.</p>
+<p>The objective of this post is to present what I think is currently the most succint and barebones workflow that a user should need using <code>tidymodels</code>. I reached this workflow by looking at the machine learning tutorials from the RStudio conference and stripped most of the details to see the link between the high-level steps in the modelling workflow and where <code>tidymodels</code> fits . In particular, I was curious on how <code>tidymodels</code> makes the workflow fit a logical set of steps without much mental load.</p>
+<ul>
+<li>What this post isn’t about:
+<ul>
+<li>This post won’t introduce you to the <code>tidymodels</code> package. It assumes you are familiar with some of the main packages</li>
+<li>This post won’t show you everything that <code>tidymodels</code> can do (no fancy modelling or deep learning)</li>
+<li>This post won’t delve into specific details on every single function</li>
+</ul></li>
+</ul>
+<p>In fact, I’ve always had some issues using <code>tidymodels</code> because there are so many functions that are difficult to think as isolated entities that remembering every step is quite difficult (unlike the <code>tidyverse</code> where each package can be thought of as a different entity independent of the others but that you use them because they work well together).</p>
+<ul>
+<li>What this post is about:
+<ul>
+<li>This post will divide the key operations in <strong>modelling</strong> and how they fit <code>tidymodels</code></li>
+<li>It will describe the specific functions that perform each step</li>
+<li>It will describe what I think the current workflow is missing</li>
+</ul></li>
+</ul>
+<p>This post is slightly longer than my usual posts, so here’s the <em>too long don’t read</em> version of the workflow:</p>
+<pre class="r"><code>library(AmesHousing)
+# devtools::install_github(&quot;tidymodels/tidymodels&quot;)
+library(tidymodels)
+
+ames &lt;- make_ames()
+
+############################# Data Partitioning ###############################
+###############################################################################
+
+ames_split &lt;- rsample::initial_split(ames, prop = .7)
+ames_train &lt;- rsample::training(ames_split)
+ames_cv &lt;- rsample::vfold_cv(ames_train)
+
+############################# Preprocessing ###################################
+###############################################################################
+
+mod_rec &lt;-
+  recipes::recipe(Sale_Price ~ Longitude + Latitude + Neighborhood,
+                  data = ames_train) %&gt;%
+  recipes::step_log(Sale_Price, base = 10) %&gt;%
+  recipes::step_other(Neighborhood, threshold = 0.05) %&gt;%
+  recipes::step_dummy(recipes::all_nominal())
+
+
+############################# Model Training/Tuning ###########################
+###############################################################################
+
+## Define a regularized regression and explicitly leave the tuning parameters
+## empty for later tuning.
+lm_mod &lt;-
+  parsnip::linear_reg(penalty = tune::tune(), mixture = tune::tune()) %&gt;%
+  parsnip::set_engine(&quot;glmnet&quot;)
+
+## Construct a workflow that combines your recipe and your model
+ml_wflow &lt;-
+  workflows::workflow() %&gt;%
+  workflows::add_recipe(mod_rec) %&gt;%
+  workflows::add_model(lm_mod)
+
+# Find best tuned model
+res &lt;-
+  ml_wflow %&gt;%
+  tune::tune_grid(resamples = ames_cv,
+                  grid = 10,
+                  metrics = yardstick::metric_set(yardstick::rmse))
+
+############################# Validation ######################################
+###############################################################################
+# Select best parameters
+best_params &lt;-
+  res %&gt;%
+  tune::select_best(metric = &quot;rmse&quot;, maximize = FALSE)
+
+# Refit using the entire training data
+reg_res &lt;-
+  ml_wflow %&gt;%
+  tune::finalize_workflow(best_params) %&gt;%
+  parsnip::fit(data = ames_train)
+
+# Predict on test data
+ames_test &lt;- rsample::testing(ames_split)
+reg_res %&gt;%
+  parsnip::predict(new_data = recipes::bake(mod_rec, ames_test)) %&gt;%
+  bind_cols(ames_test, .) %&gt;%
+  mutate(Sale_Price = log10(Sale_Price)) %&gt;% 
+  select(Sale_Price, .pred) %&gt;% 
+  rmse(Sale_Price, .pred)</code></pre>
+<p>and here’s what I think it should look like in pseudocode:</p>
+<pre class="r"><code>############################# Pseudocode ######################################
+###############################################################################
+
+library(AmesHousing)
+# devtools::install_github(&quot;tidymodels/tidymodels&quot;)
+library(tidymodels)
+
+ames &lt;- make_ames()
+
+ml_wflow &lt;-
+  # Original data (unsplit)
+  ames %&gt;%
+  workflow() %&gt;%
+  # Split test/train
+  initial_split(prop = .75) %&gt;%
+  # Specify cross-validation
+  vfold_cv() %&gt;%
+  # Start preprocessing
+  recipe(Sale_Price ~ Longitude + Latitude + Neighborhood) %&gt;%
+  step_log(Sale_Price, base = 10) %&gt;%
+  step_other(Neighborhood, threshold = 0.05) %&gt;%
+  step_dummy(recipes::all_nominal()) %&gt;%
+  # Define model
+  linear_reg(penalty = tune(), mixture = tune()) %&gt;%
+  set_engine(&quot;glmnet&quot;) %&gt;%
+  # Define grid of tuning parameters
+  tune_grid(grid = 10)
+
+# ml_wflow shouldn&#39;t run anything -- it&#39;s just a specification
+# of all the different steps. `fit` should run everything
+ml_wflow &lt;- fit(ml_wflow)
+
+# Plot results of tuning parameters
+ml_wflow %&gt;%
+  autoplot()
+
+# Automatically extract best parameters and fit to the training data
+final_model &lt;-
+  ml_wflow %&gt;%
+  fit_best_model(metrics = metric_set(rmse))
+
+# Predict on the test data using the last model
+# Everything is bundled into a workflow object
+# and everything can be extracted with separate
+# functions with the same verb
+final_model %&gt;%
+  holdout_error()</code></pre>
+<p>If you want more details on each step, continue reading :).</p>
+<div id="a-data-science-workflow" class="section level2">
+<h2>A Data Science Workflow</h2>
+<p>Let’s recycle the operations I described above from <code>caret::train</code> and redefine them as general principles:</p>
+<ul>
+<li><strong>Data Preparation</strong>
+<ul>
+<li>Create a separate training set which represent 75% of the initial sample</li>
+</ul></li>
+<li><strong>Preprocessing (or Feature Engineering, for those liking fancy CS names)</strong>
+<ul>
+<li>Center and scale all predictors in the model</li>
+</ul></li>
+<li><strong>Model Training/Tuning</strong>
+<ul>
+<li>Identifies 10 alpha values (0 to 1) and then 10 additional lambda values</li>
+<li>For each parameter set (1 alpha value and another lambda value), <a href="http://topepo.github.io/caret/model-training-and-tuning.html">run a cross-validation 10 times</a></li>
+<li>Effectively run 1000 models (10 alpha * 10 alpha) each one cross-validated (10)</li>
+<li>Record the validation metrics for each model on the assessment dataset</li>
+</ul></li>
+<li><strong>Validation</strong>
+<ul>
+<li>Save the best model in the result together with the optimized tuning parameters</li>
+</ul></li>
+</ul>
+<p>Before we start, let’s load the two packages and data we’ll use:</p>
+<pre class="r"><code>library(AmesHousing)
+# devtools::install_github(&quot;tidymodels/tidymodels&quot;)
+library(tidymodels)</code></pre>
+<pre><code>## ── Attaching packages ────────────────────────────────────── tidymodels 0.0.4 ──</code></pre>
+<pre><code>## ✔ broom     0.5.4          ✔ recipes   0.1.9     
+## ✔ dials     0.0.4          ✔ rsample   0.0.5.9000
+## ✔ dplyr     0.8.4          ✔ tibble    2.1.3     
+## ✔ ggplot2   3.2.1          ✔ tune      0.0.1     
+## ✔ infer     0.5.1          ✔ workflows 0.1.0.9000
+## ✔ parsnip   0.0.5.9000     ✔ yardstick 0.0.5     
+## ✔ purrr     0.3.3</code></pre>
+<pre><code>## ── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+## ✖ purrr::discard()    masks scales::discard()
+## ✖ dplyr::filter()     masks stats::filter()
+## ✖ dplyr::lag()        masks stats::lag()
+## ✖ ggplot2::margin()   masks dials::margin()
+## ✖ recipes::step()     masks stats::step()
+## ✖ recipes::yj_trans() masks scales::yj_trans()</code></pre>
+<pre class="r"><code>ames &lt;- make_ames()</code></pre>
+</div>
+<div id="data-preparation" class="section level2">
+<h2>Data Preparation</h2>
+<p>This step is performed by the <code>rsample</code> package. It allows you to do two basic things in machine learning: separate your training/test set and create resamples sets for tuning. Since nearly all machine learning modelling requires model tuning, I will create a cross-validation set in this example.</p>
+<pre class="r"><code>ames_split &lt;- rsample::initial_split(ames, prop = .75)
+ames_train &lt;- rsample::training(ames_split)
+ames_cv &lt;- rsample::vfold_cv(ames_train)</code></pre>
+<p>I believe the code above is quite easy to understand and (even if slightly more verbose than the <code>caret</code> equivalent) is quite elegant. For now, there are two things to keep in mind: we have a training set (<code>ames_train</code>) and we have a cross-validation set (<code>ames_cv</code>). We can forget about the testing set all together since it’ll be used in the end.</p>
+</div>
+<div id="preprocessing" class="section level2">
+<h2>Preprocessing</h2>
+<p><code>caret</code> takes care of doing the preprocessing behind the scenes while the user only needs to specify which steps are needed. In <code>tidymodels</code>, the <code>recipes</code> package takes care of preprocessing and you have to perform each step explicitly:</p>
+<pre class="r"><code>mod_rec &lt;-
+  recipes::recipe(Sale_Price ~ Longitude + Latitude + Neighborhood,
+                  data = ames_train) %&gt;%
+  recipes::step_log(Sale_Price, base = 10) %&gt;%
+  recipes::step_other(Neighborhood, threshold = 0.05) %&gt;%
+  recipes::step_dummy(recipes::all_nominal())</code></pre>
+<p>I find this preprocessing statement very intuitive as well. You define the formula for your analysis, provide the training dataset and then apply whatever transformation to the prediction variables. So far the workflow is simple but growing:</p>
+<p><code>Divide training set</code> -&gt; <code>Define model formula</code> -&gt; <code>Specify the data is the training set</code> -&gt; <code>Apply preprocessing</code></p>
+<p>Previously, <code>recipes</code> was a bit confusing because there were steps which are not easy to remember: <code>prep</code> the dataset and <code>juice</code> or <code>bake</code> it depending on what you want to do (even more verbose and complex when applying this to a cross-validation set). With the <code>workflows</code> package, these steps have been completely eliminated from the users mental load.</p>
+</div>
+<div id="model-trainingtuning" class="section level2">
+<h2>Model Training/Tuning</h2>
+<p>Model training and tuning is the step on which I think <code>tidymodels</code> brings in too many moving parts. This has been partially ameliorated with <code>workflows</code>. For this step there are three to four packages: <code>parsnip</code> for modelling, <code>workflows</code> for creating modelling workflows, <code>tune</code> for tuning models and <code>yardstick</code> for validating the results. Let’s see how they fit together:</p>
+<pre class="r"><code>## Define a regularized regression and explicitly leave the tuning parameters
+## empty for later tuning.
+lm_mod &lt;-
+  parsnip::linear_reg(penalty = tune::tune(), mixture = tune::tune()) %&gt;%
+  parsnip::set_engine(&quot;glmnet&quot;)
+
+## Construct a workflow that combines your recipe and your model
+ml_wflow &lt;-
+  workflows::workflow() %&gt;%
+  workflows::add_recipe(mod_rec) %&gt;%
+  workflows::add_model(lm_mod)</code></pre>
+<p>The expression above adds much more flexibility as you can swap models by just changing the <code>linear_reg</code> to another model. However, it also adds more complexity. <code>tune()</code> requires you to know about <code>parameters()</code> to extract the parameters to create the grid. For that you have to be aware of the <code>grid_*</code> functions to create a grid of values. However, this comes from the <code>dials</code> package and not the <code>tune</code> package. However, all of these moving parts return different things, so they’re not very easy to remember at first glance.</p>
+<p>Having said that, the actual tuning is done with <code>tune_grid</code> where we specify the cross-validated set from the first step. Here <code>tune_grid</code> is quite elegant since it allows you specify a grid of values or an integer which it will use to create a grid of parameters:</p>
+<pre class="r"><code>res &lt;-
+  ml_wflow %&gt;%
+  tune::tune_grid(resamples = ames_cv,
+                  grid = 10,
+                  metrics = yardstick::metric_set(yardstick::rmse))</code></pre>
+<p>And finally, you can get the summary of the metrics with <code>collect_metrics</code>:</p>
+<pre class="r"><code>res %&gt;%
+  tune::collect_metrics()</code></pre>
+<pre><code>## # A tibble: 10 x 7
+##     penalty mixture .metric .estimator  mean     n std_err
+##       &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
+##  1 4.99e-10   0.577 rmse    standard   0.141    10 0.00327
+##  2 3.11e- 9   0.655 rmse    standard   0.141    10 0.00327
+##  3 2.74e- 8   0.476 rmse    standard   0.141    10 0.00327
+##  4 1.86e- 7   0.795 rmse    standard   0.141    10 0.00327
+##  5 8.39e- 6   0.976 rmse    standard   0.141    10 0.00327
+##  6 8.47e- 5   0.177 rmse    standard   0.141    10 0.00327
+##  7 6.00e- 4   0.394 rmse    standard   0.141    10 0.00327
+##  8 4.45e- 3   0.268 rmse    standard   0.141    10 0.00329
+##  9 1.28e- 2   0.143 rmse    standard   0.142    10 0.00331
+## 10 1.66e- 1   0.863 rmse    standard   0.175    10 0.00387</code></pre>
+<p>Or choose the best parameters with <code>select_best</code>:</p>
+<pre class="r"><code>best_params &lt;-
+  res %&gt;%
+  tune::select_best(metric = &quot;rmse&quot;, maximize = FALSE)
+
+best_params</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##     penalty mixture
+##       &lt;dbl&gt;   &lt;dbl&gt;
+## 1 0.0000847   0.177</code></pre>
+</div>
+<div id="validation" class="section level2">
+<h2>Validation</h2>
+<p>The final step is to extract the best model and contrast the training and test error. Here <code>workflows</code> offers some convenience to replace the model with the best parameters and fit the complete training data with the best parameters. This step is currently completely automatized with <code>train</code> where you can extract the best model even after exploring the results of different tuning parameters.</p>
+<pre class="r"><code>reg_res &lt;-
+  ml_wflow %&gt;%
+  # Attach the best tuning parameters to the model
+  tune::finalize_workflow(best_params) %&gt;%
+  # Fit the final model to the training data
+  parsnip::fit(data = ames_train)
+
+ames_test &lt;- rsample::testing(ames_split)
+
+reg_res %&gt;%
+  predict(new_data = ames_test) %&gt;%
+  bind_cols(ames_test, .) %&gt;%
+  mutate(Sale_Price = log10(Sale_Price)) %&gt;% 
+  select(Sale_Price, .pred) %&gt;% 
+  yardstick::rmse(Sale_Price, .pred)</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 rmse    standard       0.139</code></pre>
+<p>One of the things I don’t like about <code>fit</code> for this current scenario is that I have to think about specifying the training data again. I understand that the data specified in <code>recipe</code> could be even an empty data frame, as it is used only to detect the column names. However, in nearly all the applications I can think of, I will specify the training data at the beginning (in my recipe). So I find that having to specify the data again is a step that can be eliminated altogether if the data is in the workflow.</p>
+</div>
+<div id="what-to-remember" class="section level2">
+<h2>What to remember</h2>
+<p>There are many things to remember from the workflow above. Below is a kind of cheatsheet:</p>
+<ul>
+<li><strong>Data Preparation</strong>
+<ul>
+<li><code>rsample::initial_split</code>: splits your data into training/testing</li>
+<li><code>rsample::training</code>: extract the training data</li>
+<li><code>rsample::vfold_cv</code>: create a cross-validated set from the training data</li>
+</ul></li>
+<li><strong>Preprocessing (or Feature Engineering, for those liking fancy CS names)</strong>
+<ul>
+<li><code>recipes::recipe</code>: define your formula with the training data</li>
+<li><code>recipes::step_*</code>: add any preprocessing steps your data</li>
+</ul></li>
+<li><strong>Model Training/Tuning</strong>
+<ul>
+<li><code>parsnip::linear_reg</code>: define your model. This example shows a linear regression but it could be anything else (random forest)</li>
+<li><code>tune::tune</code>: leave the tuning parameters empty for later</li>
+<li><code>parsnip::set_engine</code>: set the engine to run the models (which package to use)</li>
+<li><code>workflows::workflow</code>: create a workflow object to hold your model/recipe</li>
+<li><code>workflows::add_recipe</code>: add the recipe to your workflow</li>
+<li><code>workflows::add_model</code>: add the model to your workflow</li>
+<li><code>yardstick::metric_set</code>: create a set of metrics</li>
+<li><code>yardstick::rmse</code>: specify the root-mean-square-error as the loss function</li>
+<li><code>tune::tune_grid</code> run the workflow across all resamples with the desired tuning parameters</li>
+<li><code>tune::collect_metrics</code>: collect which are the best tuning parameters</li>
+<li><code>tune::select_best</code>: select the best tuning parameter</li>
+</ul></li>
+<li><strong>Validation</strong>
+<ul>
+<li><code>tune::finalize_workflow</code>: replace the empty parameters of the model with the best tuned parameters</li>
+<li><code>parsnip::fit</code>: fit the final model to the training data</li>
+<li><code>rsample::testing</code>: extract the testing data from the initial split</li>
+<li><code>parsnip::predict</code>: predict the trained model on the testing data</li>
+</ul></li>
+</ul>
+<p>This is currently what I think is the simplest workflow to train models in <code>tidymodels</code>. This is of course a very simplified example which doesn’t create tuning grids or tune parameters in the recipes. This is supposed to be the barebones workflow that is currently available in <code>tidymodels</code>. Having said that, I still think there are too many steps which makes the workflow convoluted.</p>
+</div>
+<div id="thoughts-on-the-workflow" class="section level2">
+<h2>Thoughts on the workflow</h2>
+<p><code>tidymodels</code> is currently being designed to be decoupled into several packages and the key steps for modelling are currently implemented. This offers greater flexibility for defining models, making some of the steps in modelling less obscure and explicit.</p>
+<p>Having said that, there is too much to remember. <code>dplyr::select</code> is a function which is easy to remember because it can be thought of as an independent entity which I can use with a <code>data.table</code> or base <code>R</code>. On top of that, I know it follows the general principle of the <code>tidyverse</code> where it only accepts a data frame and only returns a data frame. This makes it much more memorable. Due to its simplicity, it’s easy to think of it like a hammer: I can apply it to so many different problems that I don’t have to memorize it, it becomes a general tool that represents an abstract idea.</p>
+<p>Some of the functions/packages from <code>tidymodels</code> are difficult to think like that. I believe this is because they are supposed to be almost always used together, otherwise they have no practical applications. <code>tune</code>, <code>workflows</code> and <code>parsnip</code> introduce several ideas which I think are difficult to remember (mainly because you have to <strong>remember</strong> them and they don’t come off naturally, as an abstract concept).</p>
+<p><code>workflows</code> seems to be a package that combines some of the steps performed by <code>parsnip</code> and <code>recipes</code>, suggesting that you can build a logical workflow with it. However, <code>workflows</code> is introduced <strong>after</strong> you define your preprocessing and model. My intuition would tell me that the workflow should begin at first rather than in the middle. For example, in pseucode a logical workflow could look like this:</p>
+<pre class="r"><code>ml_wflow &lt;-
+  # Original data (unsplit)
+  ames %&gt;%
+  # Begin workflow
+  workflow() %&gt;%
+  # No need to extract training/testing, they&#39;re already in the workflow
+  # This eliminates the mental load of mixing up training/testing and
+  # mistakenly predict one over the other.
+  initial_split(prop = .75) %&gt;%
+  # Apply directly the cross-validation to the training set. No resaving
+  # the data into different names, adding more and more objects to remember
+  vfold_cv() %&gt;%
+  # Introduce preprocessing
+  # No need to specify the data, the training data is already inside
+  # the workflow. This simplifies having to specify your training
+  # data in many different places (recipes, fit, vfold_cv). The data
+  # was specified at the beginning and that&#39;s it.
+  recipe(Sale_Price ~ Longitude + Latitude + Neighborhood) %&gt;%
+  step_log(Sale_Price, base = 10) %&gt;%
+  step_other(Neighborhood, threshold = 0.05) %&gt;%
+  step_dummy(recipes::all_nominal()) %&gt;%
+  # Add your model definition and include placeholders for your tuning
+  # parameters
+  linear_reg(penalty = tune(), mixture = tune()) %&gt;%
+  set_engine(&quot;glmnet&quot;)</code></pre>
+<p>I believe the code above is much more logical than the current setup for three reasons which are very much related to each other.</p>
+<p>First, it follows the ‘traditional’ workflow of machine learning more clearly without intermediate steps. You begin with your data and add the key modelling steps one by one. Second, it avoids creating too many intermediate steps which add mental load. Whenever I’m using <code>tidymodels</code> I have to remember so many things: the training data, the cross-validated set, the recipe, the tuning grid, the model, etc. I often forget what I need to add to <code>tune_grid</code>: is it the recipe and the resample set? Is it the workflow? Did I mistakenly add the test set to the recipe and fit the data with the training set? It’s very easy to get lost along the way. And third, I think the workflow from above fits with the <code>tidyverse</code> philosophy much better, where you can read the steps from left to right, in a linear fashion.</p>
+<p>The power of the pseudocode above is that the workflow is thought of as the holder of your workflow since the beginning, meaning you can add or remove stuff from it. For example, it would very easy to add <strong>another model</strong> to be compared:</p>
+<pre class="r"><code>ml_wflow &lt;-
+  # Original data (unsplit)
+  ames %&gt;%
+  workflow() %&gt;%
+  initial_split(prop = .75) %&gt;%
+  vfold_cv() %&gt;%
+  recipe(Sale_Price ~ Longitude + Latitude + Neighborhood) %&gt;%
+  step_log(Sale_Price, base = 10) %&gt;%
+  step_other(Neighborhood, threshold = 0.05) %&gt;%
+  step_dummy(recipes::all_nominal()) %&gt;%
+  linear_reg(penalty = tune(), mixture = tune()) %&gt;%
+  set_engine(&quot;glmnet&quot;) %&gt;%
+  # Adds another model
+  rand_forest(mtry = tune(), tress = tune(), min_n = tune()) %&gt;%
+  set_engine(&quot;rf&quot;)</code></pre>
+<p>The code above could also include additional steps for adding tuning grids for each model and then a final call to <code>fit</code> would fit all models/tuning parameters directly into the cross-validated set. Additionally, since the original data is in the workflow, methods for fitting the best model to the complete training data could be implemented as well as methods for running the best tuned model on the test data. No objects laying around to remember and everything is unified into a bundle of logical steps which begin with your data.</p>
+<p>This workflow idea doesn’t introduce anything new programatically in <code>tidymodels</code>: all ingredients are currently implemented. The idea is to rearrange specific methods to handle a workflow in this fashion. <em>This workflow idea is just a prototype idea and I’m sure that many things can be improved</em>. I do think, however, that this is the direction which would make <code>tidymodels</code> a truly friendly interface. At least to me, it would make it as easy to use as the <code>tidyverse</code>.</p>
+</div>
+<div id="wrap-up" class="section level2">
+<h2>Wrap-up</h2>
+<p>This post is intended to be thought-provoking take on the current development of <code>tidymodels</code>. I’m a big fan of RStudio and their work and I’m looking forward to the “official release” of <code>tidymodels</code>. I wrote this piece with the intention of understanding the currently workflow but noticed that I’m not comfortable with it, nor did it come off naturally. I hope these ideas can help exemplify some of the bottlenecks that future <code>tidymodels</code> users can face with the aim of improving the user experience of the modelling framework from <code>tidymodels</code>.</p>
+</div>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>Locating parts of a string with `stringr`</title>
+      <link>https://cimentadaj.github.io/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</link>
+      <pubDate>Sun, 08 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</guid>
+      <description><![CDATA[
+      
+
+
+<p>I was wondering the realms of StackOver Flow answering some questions when I encoutered a question that looked to extract some parts of a string based on a regex. I thought I knew how to do this with the package <code>stringr</code> using, for example, <code>str_sub</code> but I found it a bit difficult to map how <code>str_locate</code> complements <code>str_sub</code>.</p>
+<p><code>str_locate</code> and <code>str_locate_all</code> give back the locations of your regex inside the desired string as a <code>matrix</code> or a <code>list</code> respectively. However, that didn’t look very intuitive to pass on to <code>str_sub</code> which (I thought) only accepted numeric vectors with the indices of the parts of the strings that you want to extract. However, to my surprise, <code>str_sub</code> accepts not only numeric vectors but also a matrix with two columns, precisely the result of <code>str_locate</code>.</p>
+<p>Let’s create a set of random strings from which we want to extract the word <code>special*word</code>, where <code>*</code> represents a random number.</p>
+<pre class="r"><code>library(stringr)    
+
+test_string &lt;-
+  replicate(
+    100,
+    paste0(
+      sample(c(letters, LETTERS, paste0(&quot;special&quot;, sample(1:10, 1),&quot;word&quot;)), 15),
+      collapse = &quot;&quot;)
+  )
+
+head(test_string)</code></pre>
+<pre><code>## [1] &quot;pZTQHcDVObnaCFS&quot;             &quot;qBxfbIHjauyEmgspecial10word&quot;
+## [3] &quot;TKgbmQAEFoJHOVh&quot;             &quot;VoBdUAuzfPrmCGX&quot;            
+## [5] &quot;dGgJOspecial5wordiFpbvXzUD&quot;  &quot;WOfLjNospecial4wordEeGkyTA&quot;</code></pre>
+<p>Using <code>str_locate</code> returns a matrix with the positions of all matches for <strong>every string</strong>. This is what’s called <strong>vectorised</strong> functions in R.</p>
+<pre class="r"><code>location_matrix &lt;-
+  str_locate(test_string, pattern =  &quot;special[0-9]word&quot;)
+
+head(location_matrix)</code></pre>
+<pre><code>##      start end
+## [1,]    NA  NA
+## [2,]    NA  NA
+## [3,]    NA  NA
+## [4,]    NA  NA
+## [5,]     6  17
+## [6,]     8  19</code></pre>
+<p>For this example this wouldn’t work, but I was also interested in checking how the result of <code>str_locate_all</code> would fit in this workflow. <code>str_locate_all</code> is the same as <code>str_locate</code> but since it can find <strong>more</strong> than one match per string, it returns a list with the same slots as there are strings in <code>test_string</code> with a matrix per slot showing the indices of the matches. Since many of the strings in <code>test_string</code> might not have <code>special*word</code>, we need to fill out those matches with <code>NA</code>:</p>
+<pre class="r"><code>location_list &lt;-
+  str_locate_all(test_string, pattern =  &quot;special[0-9]word&quot;) %&gt;% 
+  lapply(function(.x) if (all(is.na(.x))) matrix(c(NA, NA), ncol = 2) else .x) %&gt;%
+  {do.call(rbind, .)}
+
+head(location_list)</code></pre>
+<pre><code>##      start end
+## [1,]    NA  NA
+## [2,]    NA  NA
+## [3,]    NA  NA
+## [4,]    NA  NA
+## [5,]     6  17
+## [6,]     8  19</code></pre>
+<p>Now that we have everything ready, <code>str_sub</code> can give our desires results using both numeric vectors as well as the entire matrix:</p>
+<pre class="r"><code># Using numeric vectors from str_locate
+str_sub(test_string, location_matrix[, 1], location_matrix[, 2])</code></pre>
+<pre><code>##   [1] NA             NA             NA             NA             &quot;special5word&quot;
+##   [6] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [11] NA             NA             NA             NA             NA            
+##  [16] NA             NA             NA             NA             NA            
+##  [21] NA             NA             NA             &quot;special5word&quot; &quot;special6word&quot;
+##  [26] NA             NA             NA             NA             NA            
+##  [31] &quot;special4word&quot; NA             NA             NA             NA            
+##  [36] NA             NA             NA             &quot;special7word&quot; NA            
+##  [41] NA             NA             NA             NA             NA            
+##  [46] NA             NA             NA             NA             NA            
+##  [51] NA             NA             NA             NA             NA            
+##  [56] NA             NA             NA             NA             NA            
+##  [61] NA             NA             &quot;special4word&quot; NA             NA            
+##  [66] NA             NA             NA             NA             NA            
+##  [71] NA             NA             NA             &quot;special7word&quot; &quot;special9word&quot;
+##  [76] NA             NA             NA             NA             NA            
+##  [81] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [86] NA             NA             NA             &quot;special9word&quot; &quot;special9word&quot;
+##  [91] NA             NA             NA             NA             NA            
+##  [96] &quot;special6word&quot; NA             NA             &quot;special3word&quot; &quot;special1word&quot;</code></pre>
+<pre class="r"><code># Using numeric vectors from str_locate_all
+str_sub(test_string, location_list[, 1], location_list[, 2])</code></pre>
+<pre><code>##   [1] NA             NA             NA             NA             &quot;special5word&quot;
+##   [6] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [11] NA             NA             NA             NA             NA            
+##  [16] NA             NA             NA             NA             NA            
+##  [21] NA             NA             NA             &quot;special5word&quot; &quot;special6word&quot;
+##  [26] NA             NA             NA             NA             NA            
+##  [31] &quot;special4word&quot; NA             NA             NA             NA            
+##  [36] NA             NA             NA             &quot;special7word&quot; NA            
+##  [41] NA             NA             NA             NA             NA            
+##  [46] NA             NA             NA             NA             NA            
+##  [51] NA             NA             NA             NA             NA            
+##  [56] NA             NA             NA             NA             NA            
+##  [61] NA             NA             &quot;special4word&quot; NA             NA            
+##  [66] NA             NA             NA             NA             NA            
+##  [71] NA             NA             NA             &quot;special7word&quot; &quot;special9word&quot;
+##  [76] NA             NA             NA             NA             NA            
+##  [81] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [86] NA             NA             NA             &quot;special9word&quot; &quot;special9word&quot;
+##  [91] NA             NA             NA             NA             NA            
+##  [96] &quot;special6word&quot; NA             NA             &quot;special3word&quot; &quot;special1word&quot;</code></pre>
+<pre class="r"><code># Using the entire matrix
+str_sub(test_string, location_matrix)</code></pre>
+<pre><code>##   [1] NA             NA             NA             NA             &quot;special5word&quot;
+##   [6] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [11] NA             NA             NA             NA             NA            
+##  [16] NA             NA             NA             NA             NA            
+##  [21] NA             NA             NA             &quot;special5word&quot; &quot;special6word&quot;
+##  [26] NA             NA             NA             NA             NA            
+##  [31] &quot;special4word&quot; NA             NA             NA             NA            
+##  [36] NA             NA             NA             &quot;special7word&quot; NA            
+##  [41] NA             NA             NA             NA             NA            
+##  [46] NA             NA             NA             NA             NA            
+##  [51] NA             NA             NA             NA             NA            
+##  [56] NA             NA             NA             NA             NA            
+##  [61] NA             NA             &quot;special4word&quot; NA             NA            
+##  [66] NA             NA             NA             NA             NA            
+##  [71] NA             NA             NA             &quot;special7word&quot; &quot;special9word&quot;
+##  [76] NA             NA             NA             NA             NA            
+##  [81] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [86] NA             NA             NA             &quot;special9word&quot; &quot;special9word&quot;
+##  [91] NA             NA             NA             NA             NA            
+##  [96] &quot;special6word&quot; NA             NA             &quot;special3word&quot; &quot;special1word&quot;</code></pre>
+<p>A much easier approach to doing the above (which is cumbersome and verbose) is to use <code>str_extract</code>:</p>
+<pre class="r"><code>str_extract(test_string, &quot;special[0-9]word&quot;)</code></pre>
+<pre><code>##   [1] NA             NA             NA             NA             &quot;special5word&quot;
+##   [6] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [11] NA             NA             NA             NA             NA            
+##  [16] NA             NA             NA             NA             NA            
+##  [21] NA             NA             NA             &quot;special5word&quot; &quot;special6word&quot;
+##  [26] NA             NA             NA             NA             NA            
+##  [31] &quot;special4word&quot; NA             NA             NA             NA            
+##  [36] NA             NA             NA             &quot;special7word&quot; NA            
+##  [41] NA             NA             NA             NA             NA            
+##  [46] NA             NA             NA             NA             NA            
+##  [51] NA             NA             NA             NA             NA            
+##  [56] NA             NA             NA             NA             NA            
+##  [61] NA             NA             &quot;special4word&quot; NA             NA            
+##  [66] NA             NA             NA             NA             NA            
+##  [71] NA             NA             NA             &quot;special7word&quot; &quot;special9word&quot;
+##  [76] NA             NA             NA             NA             NA            
+##  [81] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [86] NA             NA             NA             &quot;special9word&quot; &quot;special9word&quot;
+##  [91] NA             NA             NA             NA             NA            
+##  [96] &quot;special6word&quot; NA             NA             &quot;special3word&quot; &quot;special1word&quot;</code></pre>
+<p>However, the whole objecive behind this exercise was to clearly map out how to connect <code>str_locate</code> to <code>str_sub</code> and it’s much clearer if you can pass the entire matrix. However, converting <code>str_locate_all</code> is still a bit tricky.</p>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>essurvey release</title>
+      <link>https://cimentadaj.github.io/blog/2019-11-15-release-essurvey/essurvey-release/</link>
+      <pubDate>Sat, 16 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2019-11-15-release-essurvey/essurvey-release/</guid>
+      <description><![CDATA[
+      
+
+
+<p>The new <code>essurvey</code> 1.0.3 is here! This release is mainly about downloading weight data from the European Social Survey (ESS), which <a href="https://github.com/ropensci/essurvey/issues/9">has been on the works since</a> 2017! As usual, you can install from CRAN or Github with:</p>
+<pre class="r"><code># From CRAN
+install.packages(&quot;essurvey&quot;)
+
+# or development version from Github
+devtools::install_github(&quot;ropensci/essurvey&quot;)
+
+# and load
+library(essurvey)
+set_email(&quot;your@email.com&quot;)</code></pre>
+<p>Remember to set your registered email with <code>set_email</code> to download ESS data. This is as easy as running <code>set_email("your@email.com")</code>, with your email. The package now has two main functions to download weight data (called SDDF by the ESS): <code>show_sddf_cntrounds</code> and <code>import_sddf_country</code>. The first one returns the available weight rounds for a specific country. For example, for which rounds does Italy have weight data?</p>
+<pre class="r"><code>ita_rnds &lt;- show_sddf_cntrounds(&quot;Italy&quot;)
+
+ita_rnds</code></pre>
+<pre><code>## [1] 6 8</code></pre>
+<p>How about Germany?</p>
+<pre class="r"><code>show_sddf_cntrounds(&quot;Germany&quot;)</code></pre>
+<pre><code>## [1] 1 2 3 4 5 6 7 8</code></pre>
+<p>For some rounds, some countries used complete random sampling, so they didn’t need any weight data for correct estimation. Italy did not use a random sample for round 8 so let’s focus on that wave for the example. To actually download this round, we use <code>import_sddf_country</code>:</p>
+<pre class="r"><code># Download weight data
+ita_dt &lt;- import_sddf_country(&quot;Italy&quot;, 8)
+
+ita_dt</code></pre>
+<pre><code>## # A tibble: 2,626 x 10
+##    name  essround edition proddate cntry  idno   psu domain stratum    prob
+##    &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+##  1 ESS8…        8 1.2     11.02.2… IT        1 11029      2     658 1.01e-4
+##  2 ESS8…        8 1.2     11.02.2… IT        2 11170      2     665 1.11e-4
+##  3 ESS8…        8 1.2     11.02.2… IT        4 11127      2     660 1.03e-4
+##  4 ESS8…        8 1.2     11.02.2… IT        5 10771      2     671 1.04e-4
+##  5 ESS8…        8 1.2     11.02.2… IT        6 11148      2     666 1.06e-4
+##  6 ESS8…        8 1.2     11.02.2… IT        9 11163      1     667 1.05e-4
+##  7 ESS8…        8 1.2     11.02.2… IT       14 11183      1     657 1.06e-4
+##  8 ESS8…        8 1.2     11.02.2… IT       15 11184      2     661 9.97e-5
+##  9 ESS8…        8 1.2     11.02.2… IT       16 10928      2     652 1.01e-4
+## 10 ESS8…        8 1.2     11.02.2… IT       22 11171      2     664 9.97e-5
+## # … with 2,616 more rows</code></pre>
+<p>Notice that the weight data has an <code>idno</code> column. This column can be used to match each respondent from each country to the main ESS data. This means that you can now actually do proper weighted analysis using the ESS data on the fly! How would we match the data for Italy, for example?</p>
+<p>We download the main data:</p>
+<pre class="r"><code>library(dplyr)
+
+# Download main data
+ita_main &lt;- import_country(&quot;Italy&quot;, 8)</code></pre>
+<p>And then merge it with the weight data:</p>
+<pre class="r"><code># Let&#39;s keep only the important weight columns
+ita_dt &lt;- ita_dt %&gt;% select(idno, psu, domain, stratum, prob)
+
+# Merged main data and weight data
+complete_data &lt;- inner_join(ita_main, ita_dt, by = &quot;idno&quot;)</code></pre>
+<pre><code>## Warning: Column `idno` has different attributes on LHS and RHS of join</code></pre>
+<pre class="r"><code># There we have the matched data
+complete_data %&gt;%
+  select(essround, idno, cntry, psu, stratum, prob)</code></pre>
+<pre><code>## # A tibble: 2,626 x 6
+##    essround  idno cntry   psu stratum      prob
+##       &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+##  1        8     1 IT    11029     658 0.000101 
+##  2        8     2 IT    11170     665 0.000111 
+##  3        8     4 IT    11127     660 0.000103 
+##  4        8     5 IT    10771     671 0.000104 
+##  5        8     6 IT    11148     666 0.000106 
+##  6        8     9 IT    11163     667 0.000105 
+##  7        8    14 IT    11183     657 0.000106 
+##  8        8    15 IT    11184     661 0.0000997
+##  9        8    16 IT    10928     652 0.000101 
+## 10        8    22 IT    11171     664 0.0000997
+## # … with 2,616 more rows</code></pre>
+<p>There we have the matched data! This can be easily piped to the <code>survey</code> package and perform properly weighted analysis of the ESS data. In fact, an official ESS package for analyzing data is something we’re thinking of developing to making analyzing ESS data very easy.</p>
+<p>Weight data (or SDDF data) is a bit tricky because not all country/rounds data have the same extension (some have SPSS, some have Stata, etc..) nor the same format (number of columns, name of columns, etc..). We would appreciate if you can submit any errors you find on <a href="https://github.com/ropensci/essurvey/issues">Github</a> and we’ll try taking care of them as soon as possible.</p>
+<p>Special thanks to <a href="https://twitter.com/phnk?lang=en">phnk</a>, <a href="https://twitter.com/djhurio/">djhurio</a> and Stefan Zins for helping out to push this.</p>
+<p>Enjoy this new release!</p>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>Saving missing categories from R to Stata</title>
+      <link>https://cimentadaj.github.io/blog/2019-03-16-saving-missing-categories-from-r-to-stata/saving-missing-categories-from-r-to-stata/</link>
+      <pubDate>Sat, 16 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2019-03-16-saving-missing-categories-from-r-to-stata/saving-missing-categories-from-r-to-stata/</guid>
+      <description><![CDATA[
+      
+
+
+<p>I’m finishing a project from the RECSM institute where we developed a <a href="https://essurvey.shinyapps.io/ess_castellano/">Shiny application</a> to download data from the European Social Survey with Spanish translated labels. This was one hell of a project since I had to build some wrappers around the Google Translate API to generate translations for over 1300 questions and stream line this to be interactive while users download the data. That’s a long story which I will not delve into.</p>
+<p>This post is about a bug I found in the <code>haven</code> package while doing the project. The bug is simple to explain and <a href="https://github.com/tidyverse/haven/issues/435">I filed it in <code>haven</code> already</a>:</p>
+<p>Let’s define a labelled double with only one tagged NA value.</p>
+<pre class="r"><code>library(haven)
+#&gt; Warning: package &#39;haven&#39; was built under R version 3.4.4
+
+tst &lt;-
+  labelled(
+    c(
+      1:5,
+      tagged_na(&quot;d&quot;)
+    ),
+    c(
+      &quot;Agree Strongly&quot; = 1,
+      &quot;Agree&quot; = 2,
+      &quot;Neither agree nor disagree&quot; = 3,
+      &quot;Disagree&quot; = 4,
+      &quot;Disagree strongly&quot; = 5,
+      &quot;No answer&quot; = tagged_na(&quot;d&quot;)
+    )
+  )
+
+tst</code></pre>
+<pre><code>## &lt;Labelled double&gt;
+## [1]     1     2     3     4     5 NA(d)
+## 
+## Labels:
+##  value                      label
+##      1             Agree Strongly
+##      2                      Agree
+##      3 Neither agree nor disagree
+##      4                   Disagree
+##      5          Disagree strongly
+##  NA(d)                  No answer</code></pre>
+<pre class="r"><code>write_dta(data.frame(freehms = tst), &quot;test.dta&quot;, version = 13)</code></pre>
+<p>If I load this in Stata and type tab freehms, all labels are correct:</p>
+<p><img src="/img/stata1.png" /></p>
+<p>Now, if I take the code above and add another tagged NA value, then <code>write_dta</code> drops the last label for some reason:</p>
+<pre class="r"><code>library(haven)
+
+tst &lt;-
+  labelled(c(1:5,
+             tagged_na(&#39;d&#39;),
+             ## Only added this
+             tagged_na(&#39;c&#39;)
+          ),
+        c(&#39;Agree Strongly&#39; = 1,
+          &#39;Agree&#39; = 2,
+          &#39;Neither agree nor disagree&#39; = 3,
+          &#39;Disagree&#39; = 4,
+          &#39;Disagree strongly&#39; = 5,
+          &#39;No answer&#39; = tagged_na(&#39;d&#39;),
+            ## And this
+          &#39;Dont know&#39; = tagged_na(&#39;c&#39;)
+          )
+        )
+
+tst</code></pre>
+<pre><code>## &lt;Labelled double&gt;
+## [1]     1     2     3     4     5 NA(d) NA(c)
+## 
+## Labels:
+##  value                      label
+##      1             Agree Strongly
+##      2                      Agree
+##      3 Neither agree nor disagree
+##      4                   Disagree
+##      5          Disagree strongly
+##  NA(d)                  No answer
+##  NA(c)                  Dont know</code></pre>
+<pre class="r"><code>write_dta(data.frame(freehms = tst), &quot;test.dta&quot;, version = 13)</code></pre>
+<p><img src="/img/stata2.png" /></p>
+<p>Well, the bug is evident (notice the 5 without a label?). However, since the project is on a deadline I had to come up with a solution. It’s very simple: avoid tagged NA’s but recode them as traditional labels. Here’s a solution:</p>
+<pre class="r"><code>library(sjlabelled)
+library(sjmisc)
+
+# Labels tags present in the ESS data
+old_label_names &lt;- c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;)
+
+# Grab the labels with tagged NA&#39;s with a regex
+na_available &lt;- unname(gsub(&quot;NA|\\(|\\)&quot;, &quot;&quot;, get_na(tst, TRUE)))
+
+# Identify which of the existent labels are actually valid ESS missings
+which_ones_use &lt;- old_label_names %in% na_available
+
+# Subset only the ones which need recoding
+value_code &lt;- c(666, 777, 888, 999)[which_ones_use]
+new_label_names &lt;- c(&quot;.a&quot;, &quot;.b&quot;, &quot;.c&quot;, &quot;.d&quot;)[which_ones_use]
+
+# Recode them
+for (i in seq_along(na_available)) {
+  tst &lt;- replace_na(tst,
+                    value = value_code[i],
+                    na.label = new_label_names[i],
+                    tagged.na = na_available[i]
+                    )
+}
+
+tst</code></pre>
+<pre><code>## &lt;Labelled double&gt;
+## [1]   1   2   3   4   5 888 999
+## 
+## Labels:
+##  value                      label
+##      1             Agree Strongly
+##      2                      Agree
+##      3 Neither agree nor disagree
+##      4                   Disagree
+##      5          Disagree strongly
+##    888                         .c
+##    999                         .d</code></pre>
+<p>There we go. Those labels would clearly be interpreted as missings and Stata would read them as traditional labels (well, it’s not perfect, but it’s a workaround). What I did was wrap the above code into a function and apply it to all questions in all rounds (&gt; 1300!).</p>
+<pre class="r"><code>recode_stata_labels &lt;- function(x) {
+  # Labels tags present in the ESS data
+  old_label_names &lt;- c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;)
+
+  # Grab the labels with tagged NA&#39;s with a regex
+  na_available &lt;- unname(gsub(&quot;NA|\\(|\\)&quot;, &quot;&quot;, get_na(x, TRUE)))
+
+  # Identify which of the existent labels are actually valid ESS missings
+  which_ones_use &lt;- old_label_names %in% na_available
+
+  # Subset only the ones which need recoding
+  value_code &lt;- c(666, 777, 888, 999)[which_ones_use]
+  new_label_names &lt;- c(&quot;.a&quot;, &quot;.b&quot;, &quot;.c&quot;, &quot;.d&quot;)[which_ones_use]
+
+  for (i in seq_along(na_available)) {
+    x &lt;- replace_na(x,
+                    value = value_code[i],
+                    na.label = new_label_names[i],
+                    tagged.na = na_available[i]
+    )
+  }
+
+  x
+}</code></pre>
+<p>Now, what happens if a <code>labelled</code> class only has tagged NA’s?</p>
+<pre class="r"><code>tst &lt;-
+  labelled(c(1:5,
+             tagged_na(&#39;d&#39;),
+             tagged_na(&#39;c&#39;)
+             ),
+           c(&#39;No answer&#39; = tagged_na(&#39;d&#39;), &#39;Dont know&#39; = tagged_na(&#39;c&#39;)))
+
+tst</code></pre>
+<pre><code>## &lt;Labelled double&gt;
+## [1]     1     2     3     4     5 NA(d) NA(c)
+## 
+## Labels:
+##  value     label
+##  NA(d) No answer
+##  NA(c) Dont know</code></pre>
+<pre class="r"><code>recode_stata_labels(tst)</code></pre>
+<pre><code>## Error: `x` must be a double vector</code></pre>
+<p>That’s weird. I was in such a rush that I didn’t really want to debug the source code in <code>haven</code>. However, I had the intuition that this was related to the fact that there were only tagged NA’s as labels. How do I fixed it? Just add a toy label at the beginning of the function and remove it after the recoding.</p>
+<pre class="r"><code>recode_stata_labels &lt;- function(x) {
+    # I add a random label (here) and delete it at the end (end of the function)
+    x &lt;- add_labels(x, labels = c(&#39;test&#39; = 111111))
+
+    # Note that this vector is in the same order as the `value_code` and `new_label_names`
+    # because they&#39;re values correspond to each other in this order.
+    old_label_names &lt;- c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;)
+
+    na_available &lt;- unname(gsub(&quot;NA|\\(|\\)&quot;, &quot;&quot;, sjlabelled::get_na(x, TRUE)))
+    which_ones_use &lt;- old_label_names %in% na_available
+
+    value_code &lt;- c(666, 777, 888, 999)[which_ones_use]
+    new_label_names &lt;- c(&quot;.a&quot;, &quot;.b&quot;, &quot;.c&quot;, &quot;.d&quot;)[which_ones_use]
+
+    for (i in seq_along(na_available)) {
+      x &lt;- replace_na(x, value = value_code[i], na.label = new_label_names[i], tagged.na = na_available[i])
+    }
+
+    x &lt;- remove_labels(x, labels = &quot;test&quot;)
+
+  x
+}
+
+recode_stata_labels(tst)</code></pre>
+<pre><code>## &lt;Labelled double&gt;
+## [1]   1   2   3   4   5 888 999
+## 
+## Labels:
+##  value label
+##    888    .c
+##    999    .d</code></pre>
+<p>There we are. The <code>replace_na</code> function is actually doing most of the work and I found it extremely useful (comes from the <code>sjmisc</code> package).</p>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>Why does R drop attributes when subsetting?</title>
+      <link>https://cimentadaj.github.io/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/</link>
+      <pubDate>Sat, 16 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/</guid>
+      <description><![CDATA[
+      
+
+
+<p>I had to spend about 1 hour yesterday because R did something completely unpredictable (for my taste). It dropped an attribute without a warning.</p>
+<pre class="r"><code>df &lt;- data.frame(x = rep(c(1, 2), 20))
+
+attr(df$x, &quot;label&quot;) &lt;- &quot;This is clearly a label&quot;
+
+df$x</code></pre>
+<pre><code>##  [1] 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1
+## [36] 2 1 2 1 2
+## attr(,&quot;label&quot;)
+## [1] &quot;This is clearly a label&quot;</code></pre>
+<p>The label is clearly there. To my surprise, if I subset this data frame, R drops the attribute.</p>
+<pre class="r"><code>new_df &lt;- df[df$x == 2, , drop = FALSE]
+
+new_df$x</code></pre>
+<pre><code>##  [1] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2</code></pre>
+<p>It doesn’t matter if it’s using bracket subsetting (<code>[</code>) or <code>subset</code>.</p>
+<pre class="r"><code>new_df &lt;- subset(df, x == 2)
+
+new_df$x</code></pre>
+<pre><code>##  [1] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2</code></pre>
+<p>That’s not good. R’s dropping attributes silently. For my specific purpose I ended up using <code>dplyr::filter</code> which safely enough preserves attributes.</p>
+<pre class="r"><code>library(dplyr)
+
+df %&gt;% 
+  filter(df, x == 2) %&gt;% 
+  pull(x)</code></pre>
+<pre><code>##  [1] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+## attr(,&quot;label&quot;)
+## [1] &quot;This is clearly a label&quot;</code></pre>
+]]>
+      </description>
+    </item>
+    
+  </channel>
+</rss>

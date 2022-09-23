@@ -1,0 +1,30 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>latex on Jorge Cimentada</title>
+    <link>https://cimentadaj.github.io/tags/latex/</link>
+    <description>Recent content in latex on Jorge Cimentada</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Tue, 24 Oct 2017 00:00:00 +0000</lastBuildDate>
+    
+    <atom:link href="https://cimentadaj.github.io/tags/latex/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>PhD thesis template with Sweave and knitr</title>
+      <link>https://cimentadaj.github.io/blog/2017-10-24-phd-thesis-template-with-sweave-and-knitr/phd-thesis-template-with-sweave-and-knitr/</link>
+      <pubDate>Tue, 24 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2017-10-24-phd-thesis-template-with-sweave-and-knitr/phd-thesis-template-with-sweave-and-knitr/</guid>
+      <description><![CDATA[
+      
+
+
+<p>Writing my thesis with <code>Sweave</code> and <code>knitr</code> was very nice at the beginning, but then I began running into problems when I wanted to combine different chapters into one single document. Most of the problems were related to having each chapter be compilable on its own with separate bibliographies, among other things. I wrote a detailed guide on how I did it and you can read it <a href="https://cimentadaj.github.io/phd_thesis/thesis_template_example/2017-10-24-thesis-template.html">here</a>. I’d love some feedback as workflow is still very rudimentary. You can post a comment on this post or email me at <a href="mailto:cimentadaj@gmail.com">cimentadaj@gmail.com</a>.</p>
+<p>Hope it’s useful.</p>
+]]>
+      </description>
+    </item>
+    
+  </channel>
+</rss>

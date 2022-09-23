@@ -1,0 +1,2160 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>R on Jorge Cimentada</title>
+    <link>https://cimentadaj.github.io/tags/r/</link>
+    <description>Recent content in R on Jorge Cimentada</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 06 Feb 2020 00:00:00 +0000</lastBuildDate>
+    
+    <atom:link href="https://cimentadaj.github.io/tags/r/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>The simplest tidy machine learning workflow</title>
+      <link>https://cimentadaj.github.io/blog/2020-02-06-the-simplest-tidy-machine-learning-workflow/the-simplest-tidy-machine-learning-workflow/</link>
+      <pubDate>Thu, 06 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2020-02-06-the-simplest-tidy-machine-learning-workflow/the-simplest-tidy-machine-learning-workflow/</guid>
+      <description><![CDATA[
+      
+
+
+<p><code>caret</code> is a magical package for doing machine learning in R. Look at this code for running a regularized regression:</p>
+<pre class="r"><code>library(caret)
+
+inTrain &lt;- createDataPartition(y = mtcars$mpg,
+                               p = 0.75,
+                               list = FALSE)  
+
+reg_mod &lt;- train(
+  mpg ~ .,
+  data = mtcars[inTrain, ],
+  method = &quot;glmnet&quot;,
+  tuneLength = 10,
+  preProc = c(&quot;center&quot;, &quot;scale&quot;),
+  trControl = trainControl(method = &quot;cv&quot;, number = 10)
+)</code></pre>
+<p>The two function calls in the expression above perform these operations:</p>
+<ol style="list-style-type: decimal">
+<li>Create a training set containing a random sample of 75% of the initial sample</li>
+<li>Center and scale all predictors in the model</li>
+<li>Identifies 10 alpha values (0 to 1) and then 10 additional lambda values</li>
+<li>For each parameter set (one alpha value and another lambda value), <a href="http://topepo.github.io/caret/model-training-and-tuning.html">run a cross-validation 10 times</a></li>
+<li>Effectively run 1000 models (10 alpha * 10 alpha) each one cross-validated (10)</li>
+<li>Save the best model in the result together with the optimized tuning parameteres</li>
+</ol>
+<p>That is a lot of modelling, optimization and computation done with almost no mental load. However, in case you didn’t know, <code>caret</code> is doomed to be left behind. The creator of the package has stated that he will give maintenance to the package but <a href="https://twitter.com/topepos/status/1026939727910461440">most active development</a> will be given to <code>tidymodels</code>, its successor.</p>
+<p><code>tidymodels</code> is more or less a restructuring of the <code>caret</code> package (as it aims to do the same thing and more) but with an interface and design philosophy that resembles the <code>Unix</code> philosophy. This means that instead of having one package and one function (<code>caret</code> and <code>train</code>) that does much of the work, all operations described above are performed by different packages.</p>
+<p><code>tidymodels</code> has been in development for the past two years and the main pieces for effective modelling have been implemented (packages such as <code>parsnip</code>, <code>tune</code>, <code>yardstick</code>, etc…). However, there still isn’t a completely unified workflow that allows them to be as succint and elegant as <code>train</code>. I’ve been keeping an eye on the development of the different packages from <code>tidymodels</code> and I really want to understand the key workflow that will allow users to make modelling with <code>tidymodels</code> easy.</p>
+<p>The objective of this post is to present what I think is currently the most succint and barebones workflow that a user should need using <code>tidymodels</code>. I reached this workflow by looking at the machine learning tutorials from the RStudio conference and stripped most of the details to see the link between the high-level steps in the modelling workflow and where <code>tidymodels</code> fits . In particular, I was curious on how <code>tidymodels</code> makes the workflow fit a logical set of steps without much mental load.</p>
+<ul>
+<li>What this post isn’t about:
+<ul>
+<li>This post won’t introduce you to the <code>tidymodels</code> package. It assumes you are familiar with some of the main packages</li>
+<li>This post won’t show you everything that <code>tidymodels</code> can do (no fancy modelling or deep learning)</li>
+<li>This post won’t delve into specific details on every single function</li>
+</ul></li>
+</ul>
+<p>In fact, I’ve always had some issues using <code>tidymodels</code> because there are so many functions that are difficult to think as isolated entities that remembering every step is quite difficult (unlike the <code>tidyverse</code> where each package can be thought of as a different entity independent of the others but that you use them because they work well together).</p>
+<ul>
+<li>What this post is about:
+<ul>
+<li>This post will divide the key operations in <strong>modelling</strong> and how they fit <code>tidymodels</code></li>
+<li>It will describe the specific functions that perform each step</li>
+<li>It will describe what I think the current workflow is missing</li>
+</ul></li>
+</ul>
+<p>This post is slightly longer than my usual posts, so here’s the <em>too long don’t read</em> version of the workflow:</p>
+<pre class="r"><code>library(AmesHousing)
+# devtools::install_github(&quot;tidymodels/tidymodels&quot;)
+library(tidymodels)
+
+ames &lt;- make_ames()
+
+############################# Data Partitioning ###############################
+###############################################################################
+
+ames_split &lt;- rsample::initial_split(ames, prop = .7)
+ames_train &lt;- rsample::training(ames_split)
+ames_cv &lt;- rsample::vfold_cv(ames_train)
+
+############################# Preprocessing ###################################
+###############################################################################
+
+mod_rec &lt;-
+  recipes::recipe(Sale_Price ~ Longitude + Latitude + Neighborhood,
+                  data = ames_train) %&gt;%
+  recipes::step_log(Sale_Price, base = 10) %&gt;%
+  recipes::step_other(Neighborhood, threshold = 0.05) %&gt;%
+  recipes::step_dummy(recipes::all_nominal())
+
+
+############################# Model Training/Tuning ###########################
+###############################################################################
+
+## Define a regularized regression and explicitly leave the tuning parameters
+## empty for later tuning.
+lm_mod &lt;-
+  parsnip::linear_reg(penalty = tune::tune(), mixture = tune::tune()) %&gt;%
+  parsnip::set_engine(&quot;glmnet&quot;)
+
+## Construct a workflow that combines your recipe and your model
+ml_wflow &lt;-
+  workflows::workflow() %&gt;%
+  workflows::add_recipe(mod_rec) %&gt;%
+  workflows::add_model(lm_mod)
+
+# Find best tuned model
+res &lt;-
+  ml_wflow %&gt;%
+  tune::tune_grid(resamples = ames_cv,
+                  grid = 10,
+                  metrics = yardstick::metric_set(yardstick::rmse))
+
+############################# Validation ######################################
+###############################################################################
+# Select best parameters
+best_params &lt;-
+  res %&gt;%
+  tune::select_best(metric = &quot;rmse&quot;, maximize = FALSE)
+
+# Refit using the entire training data
+reg_res &lt;-
+  ml_wflow %&gt;%
+  tune::finalize_workflow(best_params) %&gt;%
+  parsnip::fit(data = ames_train)
+
+# Predict on test data
+ames_test &lt;- rsample::testing(ames_split)
+reg_res %&gt;%
+  parsnip::predict(new_data = recipes::bake(mod_rec, ames_test)) %&gt;%
+  bind_cols(ames_test, .) %&gt;%
+  mutate(Sale_Price = log10(Sale_Price)) %&gt;% 
+  select(Sale_Price, .pred) %&gt;% 
+  rmse(Sale_Price, .pred)</code></pre>
+<p>and here’s what I think it should look like in pseudocode:</p>
+<pre class="r"><code>############################# Pseudocode ######################################
+###############################################################################
+
+library(AmesHousing)
+# devtools::install_github(&quot;tidymodels/tidymodels&quot;)
+library(tidymodels)
+
+ames &lt;- make_ames()
+
+ml_wflow &lt;-
+  # Original data (unsplit)
+  ames %&gt;%
+  workflow() %&gt;%
+  # Split test/train
+  initial_split(prop = .75) %&gt;%
+  # Specify cross-validation
+  vfold_cv() %&gt;%
+  # Start preprocessing
+  recipe(Sale_Price ~ Longitude + Latitude + Neighborhood) %&gt;%
+  step_log(Sale_Price, base = 10) %&gt;%
+  step_other(Neighborhood, threshold = 0.05) %&gt;%
+  step_dummy(recipes::all_nominal()) %&gt;%
+  # Define model
+  linear_reg(penalty = tune(), mixture = tune()) %&gt;%
+  set_engine(&quot;glmnet&quot;) %&gt;%
+  # Define grid of tuning parameters
+  tune_grid(grid = 10)
+
+# ml_wflow shouldn&#39;t run anything -- it&#39;s just a specification
+# of all the different steps. `fit` should run everything
+ml_wflow &lt;- fit(ml_wflow)
+
+# Plot results of tuning parameters
+ml_wflow %&gt;%
+  autoplot()
+
+# Automatically extract best parameters and fit to the training data
+final_model &lt;-
+  ml_wflow %&gt;%
+  fit_best_model(metrics = metric_set(rmse))
+
+# Predict on the test data using the last model
+# Everything is bundled into a workflow object
+# and everything can be extracted with separate
+# functions with the same verb
+final_model %&gt;%
+  holdout_error()</code></pre>
+<p>If you want more details on each step, continue reading :).</p>
+<div id="a-data-science-workflow" class="section level2">
+<h2>A Data Science Workflow</h2>
+<p>Let’s recycle the operations I described above from <code>caret::train</code> and redefine them as general principles:</p>
+<ul>
+<li><strong>Data Preparation</strong>
+<ul>
+<li>Create a separate training set which represent 75% of the initial sample</li>
+</ul></li>
+<li><strong>Preprocessing (or Feature Engineering, for those liking fancy CS names)</strong>
+<ul>
+<li>Center and scale all predictors in the model</li>
+</ul></li>
+<li><strong>Model Training/Tuning</strong>
+<ul>
+<li>Identifies 10 alpha values (0 to 1) and then 10 additional lambda values</li>
+<li>For each parameter set (1 alpha value and another lambda value), <a href="http://topepo.github.io/caret/model-training-and-tuning.html">run a cross-validation 10 times</a></li>
+<li>Effectively run 1000 models (10 alpha * 10 alpha) each one cross-validated (10)</li>
+<li>Record the validation metrics for each model on the assessment dataset</li>
+</ul></li>
+<li><strong>Validation</strong>
+<ul>
+<li>Save the best model in the result together with the optimized tuning parameters</li>
+</ul></li>
+</ul>
+<p>Before we start, let’s load the two packages and data we’ll use:</p>
+<pre class="r"><code>library(AmesHousing)
+# devtools::install_github(&quot;tidymodels/tidymodels&quot;)
+library(tidymodels)</code></pre>
+<pre><code>## ── Attaching packages ────────────────────────────────────── tidymodels 0.0.4 ──</code></pre>
+<pre><code>## ✔ broom     0.5.4          ✔ recipes   0.1.9     
+## ✔ dials     0.0.4          ✔ rsample   0.0.5.9000
+## ✔ dplyr     0.8.4          ✔ tibble    2.1.3     
+## ✔ ggplot2   3.2.1          ✔ tune      0.0.1     
+## ✔ infer     0.5.1          ✔ workflows 0.1.0.9000
+## ✔ parsnip   0.0.5.9000     ✔ yardstick 0.0.5     
+## ✔ purrr     0.3.3</code></pre>
+<pre><code>## ── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+## ✖ purrr::discard()    masks scales::discard()
+## ✖ dplyr::filter()     masks stats::filter()
+## ✖ dplyr::lag()        masks stats::lag()
+## ✖ ggplot2::margin()   masks dials::margin()
+## ✖ recipes::step()     masks stats::step()
+## ✖ recipes::yj_trans() masks scales::yj_trans()</code></pre>
+<pre class="r"><code>ames &lt;- make_ames()</code></pre>
+</div>
+<div id="data-preparation" class="section level2">
+<h2>Data Preparation</h2>
+<p>This step is performed by the <code>rsample</code> package. It allows you to do two basic things in machine learning: separate your training/test set and create resamples sets for tuning. Since nearly all machine learning modelling requires model tuning, I will create a cross-validation set in this example.</p>
+<pre class="r"><code>ames_split &lt;- rsample::initial_split(ames, prop = .75)
+ames_train &lt;- rsample::training(ames_split)
+ames_cv &lt;- rsample::vfold_cv(ames_train)</code></pre>
+<p>I believe the code above is quite easy to understand and (even if slightly more verbose than the <code>caret</code> equivalent) is quite elegant. For now, there are two things to keep in mind: we have a training set (<code>ames_train</code>) and we have a cross-validation set (<code>ames_cv</code>). We can forget about the testing set all together since it’ll be used in the end.</p>
+</div>
+<div id="preprocessing" class="section level2">
+<h2>Preprocessing</h2>
+<p><code>caret</code> takes care of doing the preprocessing behind the scenes while the user only needs to specify which steps are needed. In <code>tidymodels</code>, the <code>recipes</code> package takes care of preprocessing and you have to perform each step explicitly:</p>
+<pre class="r"><code>mod_rec &lt;-
+  recipes::recipe(Sale_Price ~ Longitude + Latitude + Neighborhood,
+                  data = ames_train) %&gt;%
+  recipes::step_log(Sale_Price, base = 10) %&gt;%
+  recipes::step_other(Neighborhood, threshold = 0.05) %&gt;%
+  recipes::step_dummy(recipes::all_nominal())</code></pre>
+<p>I find this preprocessing statement very intuitive as well. You define the formula for your analysis, provide the training dataset and then apply whatever transformation to the prediction variables. So far the workflow is simple but growing:</p>
+<p><code>Divide training set</code> -&gt; <code>Define model formula</code> -&gt; <code>Specify the data is the training set</code> -&gt; <code>Apply preprocessing</code></p>
+<p>Previously, <code>recipes</code> was a bit confusing because there were steps which are not easy to remember: <code>prep</code> the dataset and <code>juice</code> or <code>bake</code> it depending on what you want to do (even more verbose and complex when applying this to a cross-validation set). With the <code>workflows</code> package, these steps have been completely eliminated from the users mental load.</p>
+</div>
+<div id="model-trainingtuning" class="section level2">
+<h2>Model Training/Tuning</h2>
+<p>Model training and tuning is the step on which I think <code>tidymodels</code> brings in too many moving parts. This has been partially ameliorated with <code>workflows</code>. For this step there are three to four packages: <code>parsnip</code> for modelling, <code>workflows</code> for creating modelling workflows, <code>tune</code> for tuning models and <code>yardstick</code> for validating the results. Let’s see how they fit together:</p>
+<pre class="r"><code>## Define a regularized regression and explicitly leave the tuning parameters
+## empty for later tuning.
+lm_mod &lt;-
+  parsnip::linear_reg(penalty = tune::tune(), mixture = tune::tune()) %&gt;%
+  parsnip::set_engine(&quot;glmnet&quot;)
+
+## Construct a workflow that combines your recipe and your model
+ml_wflow &lt;-
+  workflows::workflow() %&gt;%
+  workflows::add_recipe(mod_rec) %&gt;%
+  workflows::add_model(lm_mod)</code></pre>
+<p>The expression above adds much more flexibility as you can swap models by just changing the <code>linear_reg</code> to another model. However, it also adds more complexity. <code>tune()</code> requires you to know about <code>parameters()</code> to extract the parameters to create the grid. For that you have to be aware of the <code>grid_*</code> functions to create a grid of values. However, this comes from the <code>dials</code> package and not the <code>tune</code> package. However, all of these moving parts return different things, so they’re not very easy to remember at first glance.</p>
+<p>Having said that, the actual tuning is done with <code>tune_grid</code> where we specify the cross-validated set from the first step. Here <code>tune_grid</code> is quite elegant since it allows you specify a grid of values or an integer which it will use to create a grid of parameters:</p>
+<pre class="r"><code>res &lt;-
+  ml_wflow %&gt;%
+  tune::tune_grid(resamples = ames_cv,
+                  grid = 10,
+                  metrics = yardstick::metric_set(yardstick::rmse))</code></pre>
+<p>And finally, you can get the summary of the metrics with <code>collect_metrics</code>:</p>
+<pre class="r"><code>res %&gt;%
+  tune::collect_metrics()</code></pre>
+<pre><code>## # A tibble: 10 x 7
+##     penalty mixture .metric .estimator  mean     n std_err
+##       &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
+##  1 4.99e-10   0.577 rmse    standard   0.141    10 0.00327
+##  2 3.11e- 9   0.655 rmse    standard   0.141    10 0.00327
+##  3 2.74e- 8   0.476 rmse    standard   0.141    10 0.00327
+##  4 1.86e- 7   0.795 rmse    standard   0.141    10 0.00327
+##  5 8.39e- 6   0.976 rmse    standard   0.141    10 0.00327
+##  6 8.47e- 5   0.177 rmse    standard   0.141    10 0.00327
+##  7 6.00e- 4   0.394 rmse    standard   0.141    10 0.00327
+##  8 4.45e- 3   0.268 rmse    standard   0.141    10 0.00329
+##  9 1.28e- 2   0.143 rmse    standard   0.142    10 0.00331
+## 10 1.66e- 1   0.863 rmse    standard   0.175    10 0.00387</code></pre>
+<p>Or choose the best parameters with <code>select_best</code>:</p>
+<pre class="r"><code>best_params &lt;-
+  res %&gt;%
+  tune::select_best(metric = &quot;rmse&quot;, maximize = FALSE)
+
+best_params</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##     penalty mixture
+##       &lt;dbl&gt;   &lt;dbl&gt;
+## 1 0.0000847   0.177</code></pre>
+</div>
+<div id="validation" class="section level2">
+<h2>Validation</h2>
+<p>The final step is to extract the best model and contrast the training and test error. Here <code>workflows</code> offers some convenience to replace the model with the best parameters and fit the complete training data with the best parameters. This step is currently completely automatized with <code>train</code> where you can extract the best model even after exploring the results of different tuning parameters.</p>
+<pre class="r"><code>reg_res &lt;-
+  ml_wflow %&gt;%
+  # Attach the best tuning parameters to the model
+  tune::finalize_workflow(best_params) %&gt;%
+  # Fit the final model to the training data
+  parsnip::fit(data = ames_train)
+
+ames_test &lt;- rsample::testing(ames_split)
+
+reg_res %&gt;%
+  predict(new_data = ames_test) %&gt;%
+  bind_cols(ames_test, .) %&gt;%
+  mutate(Sale_Price = log10(Sale_Price)) %&gt;% 
+  select(Sale_Price, .pred) %&gt;% 
+  yardstick::rmse(Sale_Price, .pred)</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 rmse    standard       0.139</code></pre>
+<p>One of the things I don’t like about <code>fit</code> for this current scenario is that I have to think about specifying the training data again. I understand that the data specified in <code>recipe</code> could be even an empty data frame, as it is used only to detect the column names. However, in nearly all the applications I can think of, I will specify the training data at the beginning (in my recipe). So I find that having to specify the data again is a step that can be eliminated altogether if the data is in the workflow.</p>
+</div>
+<div id="what-to-remember" class="section level2">
+<h2>What to remember</h2>
+<p>There are many things to remember from the workflow above. Below is a kind of cheatsheet:</p>
+<ul>
+<li><strong>Data Preparation</strong>
+<ul>
+<li><code>rsample::initial_split</code>: splits your data into training/testing</li>
+<li><code>rsample::training</code>: extract the training data</li>
+<li><code>rsample::vfold_cv</code>: create a cross-validated set from the training data</li>
+</ul></li>
+<li><strong>Preprocessing (or Feature Engineering, for those liking fancy CS names)</strong>
+<ul>
+<li><code>recipes::recipe</code>: define your formula with the training data</li>
+<li><code>recipes::step_*</code>: add any preprocessing steps your data</li>
+</ul></li>
+<li><strong>Model Training/Tuning</strong>
+<ul>
+<li><code>parsnip::linear_reg</code>: define your model. This example shows a linear regression but it could be anything else (random forest)</li>
+<li><code>tune::tune</code>: leave the tuning parameters empty for later</li>
+<li><code>parsnip::set_engine</code>: set the engine to run the models (which package to use)</li>
+<li><code>workflows::workflow</code>: create a workflow object to hold your model/recipe</li>
+<li><code>workflows::add_recipe</code>: add the recipe to your workflow</li>
+<li><code>workflows::add_model</code>: add the model to your workflow</li>
+<li><code>yardstick::metric_set</code>: create a set of metrics</li>
+<li><code>yardstick::rmse</code>: specify the root-mean-square-error as the loss function</li>
+<li><code>tune::tune_grid</code> run the workflow across all resamples with the desired tuning parameters</li>
+<li><code>tune::collect_metrics</code>: collect which are the best tuning parameters</li>
+<li><code>tune::select_best</code>: select the best tuning parameter</li>
+</ul></li>
+<li><strong>Validation</strong>
+<ul>
+<li><code>tune::finalize_workflow</code>: replace the empty parameters of the model with the best tuned parameters</li>
+<li><code>parsnip::fit</code>: fit the final model to the training data</li>
+<li><code>rsample::testing</code>: extract the testing data from the initial split</li>
+<li><code>parsnip::predict</code>: predict the trained model on the testing data</li>
+</ul></li>
+</ul>
+<p>This is currently what I think is the simplest workflow to train models in <code>tidymodels</code>. This is of course a very simplified example which doesn’t create tuning grids or tune parameters in the recipes. This is supposed to be the barebones workflow that is currently available in <code>tidymodels</code>. Having said that, I still think there are too many steps which makes the workflow convoluted.</p>
+</div>
+<div id="thoughts-on-the-workflow" class="section level2">
+<h2>Thoughts on the workflow</h2>
+<p><code>tidymodels</code> is currently being designed to be decoupled into several packages and the key steps for modelling are currently implemented. This offers greater flexibility for defining models, making some of the steps in modelling less obscure and explicit.</p>
+<p>Having said that, there is too much to remember. <code>dplyr::select</code> is a function which is easy to remember because it can be thought of as an independent entity which I can use with a <code>data.table</code> or base <code>R</code>. On top of that, I know it follows the general principle of the <code>tidyverse</code> where it only accepts a data frame and only returns a data frame. This makes it much more memorable. Due to its simplicity, it’s easy to think of it like a hammer: I can apply it to so many different problems that I don’t have to memorize it, it becomes a general tool that represents an abstract idea.</p>
+<p>Some of the functions/packages from <code>tidymodels</code> are difficult to think like that. I believe this is because they are supposed to be almost always used together, otherwise they have no practical applications. <code>tune</code>, <code>workflows</code> and <code>parsnip</code> introduce several ideas which I think are difficult to remember (mainly because you have to <strong>remember</strong> them and they don’t come off naturally, as an abstract concept).</p>
+<p><code>workflows</code> seems to be a package that combines some of the steps performed by <code>parsnip</code> and <code>recipes</code>, suggesting that you can build a logical workflow with it. However, <code>workflows</code> is introduced <strong>after</strong> you define your preprocessing and model. My intuition would tell me that the workflow should begin at first rather than in the middle. For example, in pseucode a logical workflow could look like this:</p>
+<pre class="r"><code>ml_wflow &lt;-
+  # Original data (unsplit)
+  ames %&gt;%
+  # Begin workflow
+  workflow() %&gt;%
+  # No need to extract training/testing, they&#39;re already in the workflow
+  # This eliminates the mental load of mixing up training/testing and
+  # mistakenly predict one over the other.
+  initial_split(prop = .75) %&gt;%
+  # Apply directly the cross-validation to the training set. No resaving
+  # the data into different names, adding more and more objects to remember
+  vfold_cv() %&gt;%
+  # Introduce preprocessing
+  # No need to specify the data, the training data is already inside
+  # the workflow. This simplifies having to specify your training
+  # data in many different places (recipes, fit, vfold_cv). The data
+  # was specified at the beginning and that&#39;s it.
+  recipe(Sale_Price ~ Longitude + Latitude + Neighborhood) %&gt;%
+  step_log(Sale_Price, base = 10) %&gt;%
+  step_other(Neighborhood, threshold = 0.05) %&gt;%
+  step_dummy(recipes::all_nominal()) %&gt;%
+  # Add your model definition and include placeholders for your tuning
+  # parameters
+  linear_reg(penalty = tune(), mixture = tune()) %&gt;%
+  set_engine(&quot;glmnet&quot;)</code></pre>
+<p>I believe the code above is much more logical than the current setup for three reasons which are very much related to each other.</p>
+<p>First, it follows the ‘traditional’ workflow of machine learning more clearly without intermediate steps. You begin with your data and add the key modelling steps one by one. Second, it avoids creating too many intermediate steps which add mental load. Whenever I’m using <code>tidymodels</code> I have to remember so many things: the training data, the cross-validated set, the recipe, the tuning grid, the model, etc. I often forget what I need to add to <code>tune_grid</code>: is it the recipe and the resample set? Is it the workflow? Did I mistakenly add the test set to the recipe and fit the data with the training set? It’s very easy to get lost along the way. And third, I think the workflow from above fits with the <code>tidyverse</code> philosophy much better, where you can read the steps from left to right, in a linear fashion.</p>
+<p>The power of the pseudocode above is that the workflow is thought of as the holder of your workflow since the beginning, meaning you can add or remove stuff from it. For example, it would very easy to add <strong>another model</strong> to be compared:</p>
+<pre class="r"><code>ml_wflow &lt;-
+  # Original data (unsplit)
+  ames %&gt;%
+  workflow() %&gt;%
+  initial_split(prop = .75) %&gt;%
+  vfold_cv() %&gt;%
+  recipe(Sale_Price ~ Longitude + Latitude + Neighborhood) %&gt;%
+  step_log(Sale_Price, base = 10) %&gt;%
+  step_other(Neighborhood, threshold = 0.05) %&gt;%
+  step_dummy(recipes::all_nominal()) %&gt;%
+  linear_reg(penalty = tune(), mixture = tune()) %&gt;%
+  set_engine(&quot;glmnet&quot;) %&gt;%
+  # Adds another model
+  rand_forest(mtry = tune(), tress = tune(), min_n = tune()) %&gt;%
+  set_engine(&quot;rf&quot;)</code></pre>
+<p>The code above could also include additional steps for adding tuning grids for each model and then a final call to <code>fit</code> would fit all models/tuning parameters directly into the cross-validated set. Additionally, since the original data is in the workflow, methods for fitting the best model to the complete training data could be implemented as well as methods for running the best tuned model on the test data. No objects laying around to remember and everything is unified into a bundle of logical steps which begin with your data.</p>
+<p>This workflow idea doesn’t introduce anything new programatically in <code>tidymodels</code>: all ingredients are currently implemented. The idea is to rearrange specific methods to handle a workflow in this fashion. <em>This workflow idea is just a prototype idea and I’m sure that many things can be improved</em>. I do think, however, that this is the direction which would make <code>tidymodels</code> a truly friendly interface. At least to me, it would make it as easy to use as the <code>tidyverse</code>.</p>
+</div>
+<div id="wrap-up" class="section level2">
+<h2>Wrap-up</h2>
+<p>This post is intended to be thought-provoking take on the current development of <code>tidymodels</code>. I’m a big fan of RStudio and their work and I’m looking forward to the “official release” of <code>tidymodels</code>. I wrote this piece with the intention of understanding the currently workflow but noticed that I’m not comfortable with it, nor did it come off naturally. I hope these ideas can help exemplify some of the bottlenecks that future <code>tidymodels</code> users can face with the aim of improving the user experience of the modelling framework from <code>tidymodels</code>.</p>
+</div>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>Locating parts of a string with `stringr`</title>
+      <link>https://cimentadaj.github.io/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</link>
+      <pubDate>Sun, 08 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2019-12-08-locating-parts-of-a-string-with-stringr/locating-parts-of-a-string-with-stringr/</guid>
+      <description><![CDATA[
+      
+
+
+<p>I was wondering the realms of StackOver Flow answering some questions when I encoutered a question that looked to extract some parts of a string based on a regex. I thought I knew how to do this with the package <code>stringr</code> using, for example, <code>str_sub</code> but I found it a bit difficult to map how <code>str_locate</code> complements <code>str_sub</code>.</p>
+<p><code>str_locate</code> and <code>str_locate_all</code> give back the locations of your regex inside the desired string as a <code>matrix</code> or a <code>list</code> respectively. However, that didn’t look very intuitive to pass on to <code>str_sub</code> which (I thought) only accepted numeric vectors with the indices of the parts of the strings that you want to extract. However, to my surprise, <code>str_sub</code> accepts not only numeric vectors but also a matrix with two columns, precisely the result of <code>str_locate</code>.</p>
+<p>Let’s create a set of random strings from which we want to extract the word <code>special*word</code>, where <code>*</code> represents a random number.</p>
+<pre class="r"><code>library(stringr)    
+
+test_string &lt;-
+  replicate(
+    100,
+    paste0(
+      sample(c(letters, LETTERS, paste0(&quot;special&quot;, sample(1:10, 1),&quot;word&quot;)), 15),
+      collapse = &quot;&quot;)
+  )
+
+head(test_string)</code></pre>
+<pre><code>## [1] &quot;pZTQHcDVObnaCFS&quot;             &quot;qBxfbIHjauyEmgspecial10word&quot;
+## [3] &quot;TKgbmQAEFoJHOVh&quot;             &quot;VoBdUAuzfPrmCGX&quot;            
+## [5] &quot;dGgJOspecial5wordiFpbvXzUD&quot;  &quot;WOfLjNospecial4wordEeGkyTA&quot;</code></pre>
+<p>Using <code>str_locate</code> returns a matrix with the positions of all matches for <strong>every string</strong>. This is what’s called <strong>vectorised</strong> functions in R.</p>
+<pre class="r"><code>location_matrix &lt;-
+  str_locate(test_string, pattern =  &quot;special[0-9]word&quot;)
+
+head(location_matrix)</code></pre>
+<pre><code>##      start end
+## [1,]    NA  NA
+## [2,]    NA  NA
+## [3,]    NA  NA
+## [4,]    NA  NA
+## [5,]     6  17
+## [6,]     8  19</code></pre>
+<p>For this example this wouldn’t work, but I was also interested in checking how the result of <code>str_locate_all</code> would fit in this workflow. <code>str_locate_all</code> is the same as <code>str_locate</code> but since it can find <strong>more</strong> than one match per string, it returns a list with the same slots as there are strings in <code>test_string</code> with a matrix per slot showing the indices of the matches. Since many of the strings in <code>test_string</code> might not have <code>special*word</code>, we need to fill out those matches with <code>NA</code>:</p>
+<pre class="r"><code>location_list &lt;-
+  str_locate_all(test_string, pattern =  &quot;special[0-9]word&quot;) %&gt;% 
+  lapply(function(.x) if (all(is.na(.x))) matrix(c(NA, NA), ncol = 2) else .x) %&gt;%
+  {do.call(rbind, .)}
+
+head(location_list)</code></pre>
+<pre><code>##      start end
+## [1,]    NA  NA
+## [2,]    NA  NA
+## [3,]    NA  NA
+## [4,]    NA  NA
+## [5,]     6  17
+## [6,]     8  19</code></pre>
+<p>Now that we have everything ready, <code>str_sub</code> can give our desires results using both numeric vectors as well as the entire matrix:</p>
+<pre class="r"><code># Using numeric vectors from str_locate
+str_sub(test_string, location_matrix[, 1], location_matrix[, 2])</code></pre>
+<pre><code>##   [1] NA             NA             NA             NA             &quot;special5word&quot;
+##   [6] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [11] NA             NA             NA             NA             NA            
+##  [16] NA             NA             NA             NA             NA            
+##  [21] NA             NA             NA             &quot;special5word&quot; &quot;special6word&quot;
+##  [26] NA             NA             NA             NA             NA            
+##  [31] &quot;special4word&quot; NA             NA             NA             NA            
+##  [36] NA             NA             NA             &quot;special7word&quot; NA            
+##  [41] NA             NA             NA             NA             NA            
+##  [46] NA             NA             NA             NA             NA            
+##  [51] NA             NA             NA             NA             NA            
+##  [56] NA             NA             NA             NA             NA            
+##  [61] NA             NA             &quot;special4word&quot; NA             NA            
+##  [66] NA             NA             NA             NA             NA            
+##  [71] NA             NA             NA             &quot;special7word&quot; &quot;special9word&quot;
+##  [76] NA             NA             NA             NA             NA            
+##  [81] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [86] NA             NA             NA             &quot;special9word&quot; &quot;special9word&quot;
+##  [91] NA             NA             NA             NA             NA            
+##  [96] &quot;special6word&quot; NA             NA             &quot;special3word&quot; &quot;special1word&quot;</code></pre>
+<pre class="r"><code># Using numeric vectors from str_locate_all
+str_sub(test_string, location_list[, 1], location_list[, 2])</code></pre>
+<pre><code>##   [1] NA             NA             NA             NA             &quot;special5word&quot;
+##   [6] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [11] NA             NA             NA             NA             NA            
+##  [16] NA             NA             NA             NA             NA            
+##  [21] NA             NA             NA             &quot;special5word&quot; &quot;special6word&quot;
+##  [26] NA             NA             NA             NA             NA            
+##  [31] &quot;special4word&quot; NA             NA             NA             NA            
+##  [36] NA             NA             NA             &quot;special7word&quot; NA            
+##  [41] NA             NA             NA             NA             NA            
+##  [46] NA             NA             NA             NA             NA            
+##  [51] NA             NA             NA             NA             NA            
+##  [56] NA             NA             NA             NA             NA            
+##  [61] NA             NA             &quot;special4word&quot; NA             NA            
+##  [66] NA             NA             NA             NA             NA            
+##  [71] NA             NA             NA             &quot;special7word&quot; &quot;special9word&quot;
+##  [76] NA             NA             NA             NA             NA            
+##  [81] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [86] NA             NA             NA             &quot;special9word&quot; &quot;special9word&quot;
+##  [91] NA             NA             NA             NA             NA            
+##  [96] &quot;special6word&quot; NA             NA             &quot;special3word&quot; &quot;special1word&quot;</code></pre>
+<pre class="r"><code># Using the entire matrix
+str_sub(test_string, location_matrix)</code></pre>
+<pre><code>##   [1] NA             NA             NA             NA             &quot;special5word&quot;
+##   [6] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [11] NA             NA             NA             NA             NA            
+##  [16] NA             NA             NA             NA             NA            
+##  [21] NA             NA             NA             &quot;special5word&quot; &quot;special6word&quot;
+##  [26] NA             NA             NA             NA             NA            
+##  [31] &quot;special4word&quot; NA             NA             NA             NA            
+##  [36] NA             NA             NA             &quot;special7word&quot; NA            
+##  [41] NA             NA             NA             NA             NA            
+##  [46] NA             NA             NA             NA             NA            
+##  [51] NA             NA             NA             NA             NA            
+##  [56] NA             NA             NA             NA             NA            
+##  [61] NA             NA             &quot;special4word&quot; NA             NA            
+##  [66] NA             NA             NA             NA             NA            
+##  [71] NA             NA             NA             &quot;special7word&quot; &quot;special9word&quot;
+##  [76] NA             NA             NA             NA             NA            
+##  [81] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [86] NA             NA             NA             &quot;special9word&quot; &quot;special9word&quot;
+##  [91] NA             NA             NA             NA             NA            
+##  [96] &quot;special6word&quot; NA             NA             &quot;special3word&quot; &quot;special1word&quot;</code></pre>
+<p>A much easier approach to doing the above (which is cumbersome and verbose) is to use <code>str_extract</code>:</p>
+<pre class="r"><code>str_extract(test_string, &quot;special[0-9]word&quot;)</code></pre>
+<pre><code>##   [1] NA             NA             NA             NA             &quot;special5word&quot;
+##   [6] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [11] NA             NA             NA             NA             NA            
+##  [16] NA             NA             NA             NA             NA            
+##  [21] NA             NA             NA             &quot;special5word&quot; &quot;special6word&quot;
+##  [26] NA             NA             NA             NA             NA            
+##  [31] &quot;special4word&quot; NA             NA             NA             NA            
+##  [36] NA             NA             NA             &quot;special7word&quot; NA            
+##  [41] NA             NA             NA             NA             NA            
+##  [46] NA             NA             NA             NA             NA            
+##  [51] NA             NA             NA             NA             NA            
+##  [56] NA             NA             NA             NA             NA            
+##  [61] NA             NA             &quot;special4word&quot; NA             NA            
+##  [66] NA             NA             NA             NA             NA            
+##  [71] NA             NA             NA             &quot;special7word&quot; &quot;special9word&quot;
+##  [76] NA             NA             NA             NA             NA            
+##  [81] &quot;special4word&quot; NA             NA             &quot;special5word&quot; NA            
+##  [86] NA             NA             NA             &quot;special9word&quot; &quot;special9word&quot;
+##  [91] NA             NA             NA             NA             NA            
+##  [96] &quot;special6word&quot; NA             NA             &quot;special3word&quot; &quot;special1word&quot;</code></pre>
+<p>However, the whole objecive behind this exercise was to clearly map out how to connect <code>str_locate</code> to <code>str_sub</code> and it’s much clearer if you can pass the entire matrix. However, converting <code>str_locate_all</code> is still a bit tricky.</p>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>essurvey release</title>
+      <link>https://cimentadaj.github.io/blog/2019-11-15-release-essurvey/essurvey-release/</link>
+      <pubDate>Sat, 16 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2019-11-15-release-essurvey/essurvey-release/</guid>
+      <description><![CDATA[
+      
+
+
+<p>The new <code>essurvey</code> 1.0.3 is here! This release is mainly about downloading weight data from the European Social Survey (ESS), which <a href="https://github.com/ropensci/essurvey/issues/9">has been on the works since</a> 2017! As usual, you can install from CRAN or Github with:</p>
+<pre class="r"><code># From CRAN
+install.packages(&quot;essurvey&quot;)
+
+# or development version from Github
+devtools::install_github(&quot;ropensci/essurvey&quot;)
+
+# and load
+library(essurvey)
+set_email(&quot;your@email.com&quot;)</code></pre>
+<p>Remember to set your registered email with <code>set_email</code> to download ESS data. This is as easy as running <code>set_email("your@email.com")</code>, with your email. The package now has two main functions to download weight data (called SDDF by the ESS): <code>show_sddf_cntrounds</code> and <code>import_sddf_country</code>. The first one returns the available weight rounds for a specific country. For example, for which rounds does Italy have weight data?</p>
+<pre class="r"><code>ita_rnds &lt;- show_sddf_cntrounds(&quot;Italy&quot;)
+
+ita_rnds</code></pre>
+<pre><code>## [1] 6 8</code></pre>
+<p>How about Germany?</p>
+<pre class="r"><code>show_sddf_cntrounds(&quot;Germany&quot;)</code></pre>
+<pre><code>## [1] 1 2 3 4 5 6 7 8</code></pre>
+<p>For some rounds, some countries used complete random sampling, so they didn’t need any weight data for correct estimation. Italy did not use a random sample for round 8 so let’s focus on that wave for the example. To actually download this round, we use <code>import_sddf_country</code>:</p>
+<pre class="r"><code># Download weight data
+ita_dt &lt;- import_sddf_country(&quot;Italy&quot;, 8)
+
+ita_dt</code></pre>
+<pre><code>## # A tibble: 2,626 x 10
+##    name  essround edition proddate cntry  idno   psu domain stratum    prob
+##    &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+##  1 ESS8…        8 1.2     11.02.2… IT        1 11029      2     658 1.01e-4
+##  2 ESS8…        8 1.2     11.02.2… IT        2 11170      2     665 1.11e-4
+##  3 ESS8…        8 1.2     11.02.2… IT        4 11127      2     660 1.03e-4
+##  4 ESS8…        8 1.2     11.02.2… IT        5 10771      2     671 1.04e-4
+##  5 ESS8…        8 1.2     11.02.2… IT        6 11148      2     666 1.06e-4
+##  6 ESS8…        8 1.2     11.02.2… IT        9 11163      1     667 1.05e-4
+##  7 ESS8…        8 1.2     11.02.2… IT       14 11183      1     657 1.06e-4
+##  8 ESS8…        8 1.2     11.02.2… IT       15 11184      2     661 9.97e-5
+##  9 ESS8…        8 1.2     11.02.2… IT       16 10928      2     652 1.01e-4
+## 10 ESS8…        8 1.2     11.02.2… IT       22 11171      2     664 9.97e-5
+## # … with 2,616 more rows</code></pre>
+<p>Notice that the weight data has an <code>idno</code> column. This column can be used to match each respondent from each country to the main ESS data. This means that you can now actually do proper weighted analysis using the ESS data on the fly! How would we match the data for Italy, for example?</p>
+<p>We download the main data:</p>
+<pre class="r"><code>library(dplyr)
+
+# Download main data
+ita_main &lt;- import_country(&quot;Italy&quot;, 8)</code></pre>
+<p>And then merge it with the weight data:</p>
+<pre class="r"><code># Let&#39;s keep only the important weight columns
+ita_dt &lt;- ita_dt %&gt;% select(idno, psu, domain, stratum, prob)
+
+# Merged main data and weight data
+complete_data &lt;- inner_join(ita_main, ita_dt, by = &quot;idno&quot;)</code></pre>
+<pre><code>## Warning: Column `idno` has different attributes on LHS and RHS of join</code></pre>
+<pre class="r"><code># There we have the matched data
+complete_data %&gt;%
+  select(essround, idno, cntry, psu, stratum, prob)</code></pre>
+<pre><code>## # A tibble: 2,626 x 6
+##    essround  idno cntry   psu stratum      prob
+##       &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+##  1        8     1 IT    11029     658 0.000101 
+##  2        8     2 IT    11170     665 0.000111 
+##  3        8     4 IT    11127     660 0.000103 
+##  4        8     5 IT    10771     671 0.000104 
+##  5        8     6 IT    11148     666 0.000106 
+##  6        8     9 IT    11163     667 0.000105 
+##  7        8    14 IT    11183     657 0.000106 
+##  8        8    15 IT    11184     661 0.0000997
+##  9        8    16 IT    10928     652 0.000101 
+## 10        8    22 IT    11171     664 0.0000997
+## # … with 2,616 more rows</code></pre>
+<p>There we have the matched data! This can be easily piped to the <code>survey</code> package and perform properly weighted analysis of the ESS data. In fact, an official ESS package for analyzing data is something we’re thinking of developing to making analyzing ESS data very easy.</p>
+<p>Weight data (or SDDF data) is a bit tricky because not all country/rounds data have the same extension (some have SPSS, some have Stata, etc..) nor the same format (number of columns, name of columns, etc..). We would appreciate if you can submit any errors you find on <a href="https://github.com/ropensci/essurvey/issues">Github</a> and we’ll try taking care of them as soon as possible.</p>
+<p>Special thanks to <a href="https://twitter.com/phnk?lang=en">phnk</a>, <a href="https://twitter.com/djhurio/">djhurio</a> and Stefan Zins for helping out to push this.</p>
+<p>Enjoy this new release!</p>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>Saving missing categories from R to Stata</title>
+      <link>https://cimentadaj.github.io/blog/2019-03-16-saving-missing-categories-from-r-to-stata/saving-missing-categories-from-r-to-stata/</link>
+      <pubDate>Sat, 16 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2019-03-16-saving-missing-categories-from-r-to-stata/saving-missing-categories-from-r-to-stata/</guid>
+      <description><![CDATA[
+      
+
+
+<p>I’m finishing a project from the RECSM institute where we developed a <a href="https://essurvey.shinyapps.io/ess_castellano/">Shiny application</a> to download data from the European Social Survey with Spanish translated labels. This was one hell of a project since I had to build some wrappers around the Google Translate API to generate translations for over 1300 questions and stream line this to be interactive while users download the data. That’s a long story which I will not delve into.</p>
+<p>This post is about a bug I found in the <code>haven</code> package while doing the project. The bug is simple to explain and <a href="https://github.com/tidyverse/haven/issues/435">I filed it in <code>haven</code> already</a>:</p>
+<p>Let’s define a labelled double with only one tagged NA value.</p>
+<pre class="r"><code>library(haven)
+#&gt; Warning: package &#39;haven&#39; was built under R version 3.4.4
+
+tst &lt;-
+  labelled(
+    c(
+      1:5,
+      tagged_na(&quot;d&quot;)
+    ),
+    c(
+      &quot;Agree Strongly&quot; = 1,
+      &quot;Agree&quot; = 2,
+      &quot;Neither agree nor disagree&quot; = 3,
+      &quot;Disagree&quot; = 4,
+      &quot;Disagree strongly&quot; = 5,
+      &quot;No answer&quot; = tagged_na(&quot;d&quot;)
+    )
+  )
+
+tst</code></pre>
+<pre><code>## &lt;Labelled double&gt;
+## [1]     1     2     3     4     5 NA(d)
+## 
+## Labels:
+##  value                      label
+##      1             Agree Strongly
+##      2                      Agree
+##      3 Neither agree nor disagree
+##      4                   Disagree
+##      5          Disagree strongly
+##  NA(d)                  No answer</code></pre>
+<pre class="r"><code>write_dta(data.frame(freehms = tst), &quot;test.dta&quot;, version = 13)</code></pre>
+<p>If I load this in Stata and type tab freehms, all labels are correct:</p>
+<p><img src="/img/stata1.png" /></p>
+<p>Now, if I take the code above and add another tagged NA value, then <code>write_dta</code> drops the last label for some reason:</p>
+<pre class="r"><code>library(haven)
+
+tst &lt;-
+  labelled(c(1:5,
+             tagged_na(&#39;d&#39;),
+             ## Only added this
+             tagged_na(&#39;c&#39;)
+          ),
+        c(&#39;Agree Strongly&#39; = 1,
+          &#39;Agree&#39; = 2,
+          &#39;Neither agree nor disagree&#39; = 3,
+          &#39;Disagree&#39; = 4,
+          &#39;Disagree strongly&#39; = 5,
+          &#39;No answer&#39; = tagged_na(&#39;d&#39;),
+            ## And this
+          &#39;Dont know&#39; = tagged_na(&#39;c&#39;)
+          )
+        )
+
+tst</code></pre>
+<pre><code>## &lt;Labelled double&gt;
+## [1]     1     2     3     4     5 NA(d) NA(c)
+## 
+## Labels:
+##  value                      label
+##      1             Agree Strongly
+##      2                      Agree
+##      3 Neither agree nor disagree
+##      4                   Disagree
+##      5          Disagree strongly
+##  NA(d)                  No answer
+##  NA(c)                  Dont know</code></pre>
+<pre class="r"><code>write_dta(data.frame(freehms = tst), &quot;test.dta&quot;, version = 13)</code></pre>
+<p><img src="/img/stata2.png" /></p>
+<p>Well, the bug is evident (notice the 5 without a label?). However, since the project is on a deadline I had to come up with a solution. It’s very simple: avoid tagged NA’s but recode them as traditional labels. Here’s a solution:</p>
+<pre class="r"><code>library(sjlabelled)
+library(sjmisc)
+
+# Labels tags present in the ESS data
+old_label_names &lt;- c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;)
+
+# Grab the labels with tagged NA&#39;s with a regex
+na_available &lt;- unname(gsub(&quot;NA|\\(|\\)&quot;, &quot;&quot;, get_na(tst, TRUE)))
+
+# Identify which of the existent labels are actually valid ESS missings
+which_ones_use &lt;- old_label_names %in% na_available
+
+# Subset only the ones which need recoding
+value_code &lt;- c(666, 777, 888, 999)[which_ones_use]
+new_label_names &lt;- c(&quot;.a&quot;, &quot;.b&quot;, &quot;.c&quot;, &quot;.d&quot;)[which_ones_use]
+
+# Recode them
+for (i in seq_along(na_available)) {
+  tst &lt;- replace_na(tst,
+                    value = value_code[i],
+                    na.label = new_label_names[i],
+                    tagged.na = na_available[i]
+                    )
+}
+
+tst</code></pre>
+<pre><code>## &lt;Labelled double&gt;
+## [1]   1   2   3   4   5 888 999
+## 
+## Labels:
+##  value                      label
+##      1             Agree Strongly
+##      2                      Agree
+##      3 Neither agree nor disagree
+##      4                   Disagree
+##      5          Disagree strongly
+##    888                         .c
+##    999                         .d</code></pre>
+<p>There we go. Those labels would clearly be interpreted as missings and Stata would read them as traditional labels (well, it’s not perfect, but it’s a workaround). What I did was wrap the above code into a function and apply it to all questions in all rounds (&gt; 1300!).</p>
+<pre class="r"><code>recode_stata_labels &lt;- function(x) {
+  # Labels tags present in the ESS data
+  old_label_names &lt;- c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;)
+
+  # Grab the labels with tagged NA&#39;s with a regex
+  na_available &lt;- unname(gsub(&quot;NA|\\(|\\)&quot;, &quot;&quot;, get_na(x, TRUE)))
+
+  # Identify which of the existent labels are actually valid ESS missings
+  which_ones_use &lt;- old_label_names %in% na_available
+
+  # Subset only the ones which need recoding
+  value_code &lt;- c(666, 777, 888, 999)[which_ones_use]
+  new_label_names &lt;- c(&quot;.a&quot;, &quot;.b&quot;, &quot;.c&quot;, &quot;.d&quot;)[which_ones_use]
+
+  for (i in seq_along(na_available)) {
+    x &lt;- replace_na(x,
+                    value = value_code[i],
+                    na.label = new_label_names[i],
+                    tagged.na = na_available[i]
+    )
+  }
+
+  x
+}</code></pre>
+<p>Now, what happens if a <code>labelled</code> class only has tagged NA’s?</p>
+<pre class="r"><code>tst &lt;-
+  labelled(c(1:5,
+             tagged_na(&#39;d&#39;),
+             tagged_na(&#39;c&#39;)
+             ),
+           c(&#39;No answer&#39; = tagged_na(&#39;d&#39;), &#39;Dont know&#39; = tagged_na(&#39;c&#39;)))
+
+tst</code></pre>
+<pre><code>## &lt;Labelled double&gt;
+## [1]     1     2     3     4     5 NA(d) NA(c)
+## 
+## Labels:
+##  value     label
+##  NA(d) No answer
+##  NA(c) Dont know</code></pre>
+<pre class="r"><code>recode_stata_labels(tst)</code></pre>
+<pre><code>## Error: `x` must be a double vector</code></pre>
+<p>That’s weird. I was in such a rush that I didn’t really want to debug the source code in <code>haven</code>. However, I had the intuition that this was related to the fact that there were only tagged NA’s as labels. How do I fixed it? Just add a toy label at the beginning of the function and remove it after the recoding.</p>
+<pre class="r"><code>recode_stata_labels &lt;- function(x) {
+    # I add a random label (here) and delete it at the end (end of the function)
+    x &lt;- add_labels(x, labels = c(&#39;test&#39; = 111111))
+
+    # Note that this vector is in the same order as the `value_code` and `new_label_names`
+    # because they&#39;re values correspond to each other in this order.
+    old_label_names &lt;- c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;)
+
+    na_available &lt;- unname(gsub(&quot;NA|\\(|\\)&quot;, &quot;&quot;, sjlabelled::get_na(x, TRUE)))
+    which_ones_use &lt;- old_label_names %in% na_available
+
+    value_code &lt;- c(666, 777, 888, 999)[which_ones_use]
+    new_label_names &lt;- c(&quot;.a&quot;, &quot;.b&quot;, &quot;.c&quot;, &quot;.d&quot;)[which_ones_use]
+
+    for (i in seq_along(na_available)) {
+      x &lt;- replace_na(x, value = value_code[i], na.label = new_label_names[i], tagged.na = na_available[i])
+    }
+
+    x &lt;- remove_labels(x, labels = &quot;test&quot;)
+
+  x
+}
+
+recode_stata_labels(tst)</code></pre>
+<pre><code>## &lt;Labelled double&gt;
+## [1]   1   2   3   4   5 888 999
+## 
+## Labels:
+##  value label
+##    888    .c
+##    999    .d</code></pre>
+<p>There we are. The <code>replace_na</code> function is actually doing most of the work and I found it extremely useful (comes from the <code>sjmisc</code> package).</p>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>Why does R drop attributes when subsetting?</title>
+      <link>https://cimentadaj.github.io/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/</link>
+      <pubDate>Sat, 16 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2019-03-17-why-does-r-drop-attributes-when-subsetting/one-thing-i-hate-about-r/</guid>
+      <description><![CDATA[
+      
+
+
+<p>I had to spend about 1 hour yesterday because R did something completely unpredictable (for my taste). It dropped an attribute without a warning.</p>
+<pre class="r"><code>df &lt;- data.frame(x = rep(c(1, 2), 20))
+
+attr(df$x, &quot;label&quot;) &lt;- &quot;This is clearly a label&quot;
+
+df$x</code></pre>
+<pre><code>##  [1] 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1
+## [36] 2 1 2 1 2
+## attr(,&quot;label&quot;)
+## [1] &quot;This is clearly a label&quot;</code></pre>
+<p>The label is clearly there. To my surprise, if I subset this data frame, R drops the attribute.</p>
+<pre class="r"><code>new_df &lt;- df[df$x == 2, , drop = FALSE]
+
+new_df$x</code></pre>
+<pre><code>##  [1] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2</code></pre>
+<p>It doesn’t matter if it’s using bracket subsetting (<code>[</code>) or <code>subset</code>.</p>
+<pre class="r"><code>new_df &lt;- subset(df, x == 2)
+
+new_df$x</code></pre>
+<pre><code>##  [1] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2</code></pre>
+<p>That’s not good. R’s dropping attributes silently. For my specific purpose I ended up using <code>dplyr::filter</code> which safely enough preserves attributes.</p>
+<pre class="r"><code>library(dplyr)
+
+df %&gt;% 
+  filter(df, x == 2) %&gt;% 
+  pull(x)</code></pre>
+<pre><code>##  [1] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+## attr(,&quot;label&quot;)
+## [1] &quot;This is clearly a label&quot;</code></pre>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>Turning a pdf book into machine readable format</title>
+      <link>https://cimentadaj.github.io/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/turning-a-pdf-book-into-machine-readable-format/</link>
+      <pubDate>Sat, 26 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/turning-a-pdf-book-into-machine-readable-format/</guid>
+      <description><![CDATA[
+      
+
+
+<p>A few days ago a well known Sociologist, Erik Olin Wright, died from Leukemia. Torkild Lyngstand then <a href="https://twitter.com/torkildl/status/1088325262758969344">posted on twitter</a> his <a href="https://www.ssc.wisc.edu/~wright/Published%20writing/FallingIntoMarxismChoosingToStay.pdf">‘intellectual biography’</a> which is an interesting document that outlines how he ended up being a Marxist. This document is a pdf book that has two actual book pages per pdf page.</p>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-1-1.png" width="702" /></p>
+<p>Although this is perfectly fine for reading on a computer, I usually don’t like to read anything longer than 15 pages on my computer. So I decided I would turn this book into machine readable text with R for my Kindle.</p>
+<p>Spoiler: I couldn’t do it, so help me out!</p>
+<p>Firs things first. I will use the <code>magick</code> and <code>tabulizer</code> packages. <code>tabulizer</code> has a dependency with <code>rJava</code> which is a bit difficult to handle. I wrote <a href="blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/index.html">this blogpost</a> explaining how to install <code>rJava</code> on Windows 10 and it’s helped me inmensely not to waste time in the installation process.</p>
+<p>After installing both packages successfully, I loaded them, and split the pdf into separate pages using <code>tabulizer::split_pdf</code>.</p>
+<pre class="r"><code>library(magick)
+Sys.setenv(JAVA_HOME=&quot;C:/Program Files/Java/jdk-11.0.2/&quot;)
+library(tabulizer)
+
+url &lt;- &quot;https://www.ssc.wisc.edu/~wright/Published%20writing/FallingIntoMarxismChoosingToStay.pdf&quot;
+all_pages &lt;- tabulizer::split_pdf(url)
+
+all_pages</code></pre>
+<pre><code>##  [1] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce401.pdf&quot;
+##  [2] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce402.pdf&quot;
+##  [3] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce403.pdf&quot;
+##  [4] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce404.pdf&quot;
+##  [5] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce405.pdf&quot;
+##  [6] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce406.pdf&quot;
+##  [7] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce407.pdf&quot;
+##  [8] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce408.pdf&quot;
+##  [9] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce409.pdf&quot;
+## [10] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce410.pdf&quot;
+## [11] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce411.pdf&quot;
+## [12] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce412.pdf&quot;
+## [13] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce413.pdf&quot;
+## [14] &quot;C:\\Users\\Cimentadaj\\AppData\\Local\\Temp\\RtmpYnb7KJ\\file1ba438de3ce414.pdf&quot;</code></pre>
+<p><code>tabulizer::split_df</code> saved each page on a separate pdf in a temporary directory. Now we only have to develop a function to clean one page and apply it to all middle pages (that is, excluding the first and last because they have a slightly different format).</p>
+<p>After hard work, I developed the function <code>convert_page</code> which accepts one pdf page crops all the corners so that only text is available.</p>
+<pre class="r"><code>convert_page &lt;- function(page) {
+  page &lt;- magick::image_read_pdf(page)
+  separator &lt;- image_info(page)$width / 2
+  first_page &lt;- image_crop(page, geometry_area(width = separator))
+  second_page &lt;- image_crop(page, geometry_area(x_off = separator, y_off = 1))
+  
+  size &lt;- geometry_area(width = 1400,
+                        height = 2200,
+                        x_off = 300,
+                        y_off = 200)
+  
+  first_page &lt;- image_crop(first_page, size)
+  
+  
+  size &lt;- geometry_area(width = 1400,
+                        height = 2200,
+                        x_off = 130,
+                        y_off = 200)
+  
+  second_page &lt;- image_crop(second_page, size)
+  
+  f_text &lt;- image_ocr(first_page)
+  s_text &lt;- image_ocr(second_page)
+  
+  complete_page &lt;- paste0(f_text, s_text)
+  
+  complete_page
+}</code></pre>
+<p>Let’s look at an actual example. Below is a picture of page 4:</p>
+<pre class="r"><code>page_four &lt;- magick::image_read_pdf(all_pages[4])
+image_resize(page_four, geometry_size_percent(width = 40))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-5-1.png" width="702" /></p>
+<p><code>convert_page</code> crops the sides to obtain the leftmost page:</p>
+<pre class="r"><code>separator &lt;- image_info(page_four)$width / 2
+first_page &lt;- image_crop(page_four, geometry_area(width = separator))
+second_page &lt;- image_crop(page_four, geometry_area(x_off = separator, y_off = 1))
+
+size &lt;- geometry_area(width = 1400,
+                      height = 2200,
+                      x_off = 300,
+                      y_off = 200)
+
+first_page &lt;- image_crop(first_page, size)
+
+
+size &lt;- geometry_area(width = 1400,
+                      height = 2200,
+                      x_off = 130,
+                      y_off = 200)
+
+second_page &lt;- image_crop(second_page, size)
+
+image_resize(first_page, geometry_size_percent(width = 40))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-6-1.png" width="280" /></p>
+<p>And for the rightmost page:</p>
+<pre class="r"><code>image_resize(second_page, geometry_size_percent(width = 40))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-7-1.png" width="280" /></p>
+<p>Finally, it converts and merges both pages into text with:</p>
+<pre class="r"><code>f_text &lt;- image_ocr(first_page)
+s_text &lt;- image_ocr(second_page)
+
+complete_page &lt;- paste0(f_text, s_text)
+
+cat(complete_page)</code></pre>
+<pre><code>## thusiastic and involved in their children’s school projects and intellectual pur-
+## suits. My mother would carefully go over term papers with each of us, giving us
+## both editorial advice and substantive suggestions. We were members of the Law-
+## rence Unitarian Fellowship, which was made up of, to a substantial extent, uni-
+## versity families. Sunday morning services were basically interdisciplinary semi-
+## nars on matters of philosophical and social concern; Sunday school was an
+## extended curriculum on world religions. | knew by about age ten that | wanted
+## to be a professor. Both of my parents were academics. Both of my siblings be-
+## came academics. Both of their spouses are academics. (Only my wife, a clinical
+## psychologist, is not an academic, although her father was a professor.) ‘The only
+## social mobility in my family was interdepartmental. It just felt natural to go into
+## the family business.
+## 
+## Lawrence was a delightful, easy place to grow up. Although Kansas was a po-
+## litically conservative state, Lawrence was a vibrant, liberal community. My ear-
+## liest form of political activism centered on religion: | was an active member of a
+## Unitarian youth group called Liberal Religious Youth, and in high school { went
+## out of my way to argue with Bible Belt Christians about their belief in God. The
+## early 1960s also witnessed my earliest engagement with social activism. The civil
+## rights movement came to Lawrence first in the form of an organized boycott of
+## a local segregated swimming pool in the 1950s and then in the form of civil rights
+## rallies in the 1960s. In 1963 I went to the Civil Rights March on Washington and
+## heard Martin Luther King Jr’s “I have a dream” speech. My earliest sense of pol-
+## itics was that at its core it was about moral questions of social justice, not prob-
+## lems of economic power and interests.
+## 
+## My family, also, was liberal, supporting the civil rights movement and other
+## liberal causes; but while the family culture encouraged an intellectual interest in
+## social and moral concerns, it was not intensely political. We would often talk
+## about values, and the Unitarian Fellowship we attended also stressed humanis-
+## tic, socially concerned values, but these were mostly framed as matters of indi-
+## vidual responsibility and morality not as the grounding of a coherent political
+## challenge to social injustice. My only real exposure toa more radical political per-
+## spective came through my maternal grandparents, Russian Jewish immigrants
+## who had come to the United States before World War I and lived near us in Law-
+## rence, and my mother’s sister’s family in New York. Although I was not aware of
+## this at the time, my grandparents and the New York relatives were Communists.
+## This was never openly talked about, but from time to time I would hear glowing
+## things said about the Soviet Union, socialism would be held out as an ideal, and
+## America and capitalism would be criticized in emotionally laden ways. My cous-
+## ins in New York were especially vocal about this, and in the mid-1g60s when I be-
+## came more engaged in political matters, intense political discussions with my
+## New York relatives contributed significantly to anchoring my radical sensibilities.
+## 
+## My interest in social sciences began in earnest in high school. fn Lawrence it
+## was easy for academically oriented kids to take courses at the University of Kan-
+## sas, and in my senior year | took a political science course on American politics.
+## For my term project | decided to do a survey of children’s attitudes toward the
+## American presidency and got permission to administer a questionnaire to several
+## hundred students from grades 1-12 in the public schools. | then organized a party
+## with my friends to code the data and produce graphs of how various attitudes
+## changed by age. I&#39;he most striking finding was that, in response to the question,
+## “Would you like to be President of the United States when you grow up?” there
+## were more girls who said yes than boys through third grade, after which the rate
+## for girls declined dramatically.
+## 
+## By the time I graduated from high school in 1964, I had enough university
+## credits and advanced placement credits to enter KU as a second-semester soph-
+## omore, and that is what | had planned to do. Nearly all of my friends were going
+## to KU. It just seemed like the thing to do. A friend of my parents, Karl Heider,
+## gave me, as a Christmas present in my senior year in high school, an application
+## form to Harvard. He was a graduate student at Harvard in anthropology at the
+## time. I filled it out and sent it in. Harvard was the only place to which I applied,
+## not out of inflated self-confidence but because it was the only application I got as
+## a Christmas present. When | eventually was accepted (initially I was on the wait-
+## ing list), the choice was thus between KU and Harvard. I suppose this was a
+## “choice” since I could have decided to stay at KU. However, it just seemed so ob-
+## vious; there was no angst, no weighing of alternatives, no thinking about the pros
+## and cons. Thus, going to Harvard in a way just happened.
+## 
+## Like many students who began university in the mid-1960s, my political ideas
+## were rapidly radicalized as the Viet Nam War escalated and began to impinge on
+## our lives. I was not a student leader in activist politics, but I did actively partici-
+## pate in demonstrations, rallies, fasts for peace, and endless political debate. At
+## Harvard I majored in social studies, an intense interdisciplinary social science
+## major centering on the classics of social theory, and in that program I was first ex-
+## posed to the more abstract theoretical issues that bore on the political concerns
+## of the day: the dynamics of capitalism, the nature of power and domination, the
+## importance of elites in shaping American foreign policy, and the problem of</code></pre>
+<p>If we pass the pdf page directly to <code>convert_page</code>, it will do it all in one take:</p>
+<pre class="r"><code>cat(convert_page(all_pages[4]))</code></pre>
+<pre><code>## thusiastic and involved in their children’s school projects and intellectual pur-
+## suits. My mother would carefully go over term papers with each of us, giving us
+## both editorial advice and substantive suggestions. We were members of the Law-
+## rence Unitarian Fellowship, which was made up of, to a substantial extent, uni-
+## versity families. Sunday morning services were basically interdisciplinary semi-
+## nars on matters of philosophical and social concern; Sunday school was an
+## extended curriculum on world religions. | knew by about age ten that | wanted
+## to be a professor. Both of my parents were academics. Both of my siblings be-
+## came academics. Both of their spouses are academics. (Only my wife, a clinical
+## psychologist, is not an academic, although her father was a professor.) ‘The only
+## social mobility in my family was interdepartmental. It just felt natural to go into
+## the family business.
+## 
+## Lawrence was a delightful, easy place to grow up. Although Kansas was a po-
+## litically conservative state, Lawrence was a vibrant, liberal community. My ear-
+## liest form of political activism centered on religion: | was an active member of a
+## Unitarian youth group called Liberal Religious Youth, and in high school { went
+## out of my way to argue with Bible Belt Christians about their belief in God. The
+## early 1960s also witnessed my earliest engagement with social activism. The civil
+## rights movement came to Lawrence first in the form of an organized boycott of
+## a local segregated swimming pool in the 1950s and then in the form of civil rights
+## rallies in the 1960s. In 1963 I went to the Civil Rights March on Washington and
+## heard Martin Luther King Jr’s “I have a dream” speech. My earliest sense of pol-
+## itics was that at its core it was about moral questions of social justice, not prob-
+## lems of economic power and interests.
+## 
+## My family, also, was liberal, supporting the civil rights movement and other
+## liberal causes; but while the family culture encouraged an intellectual interest in
+## social and moral concerns, it was not intensely political. We would often talk
+## about values, and the Unitarian Fellowship we attended also stressed humanis-
+## tic, socially concerned values, but these were mostly framed as matters of indi-
+## vidual responsibility and morality not as the grounding of a coherent political
+## challenge to social injustice. My only real exposure toa more radical political per-
+## spective came through my maternal grandparents, Russian Jewish immigrants
+## who had come to the United States before World War I and lived near us in Law-
+## rence, and my mother’s sister’s family in New York. Although I was not aware of
+## this at the time, my grandparents and the New York relatives were Communists.
+## This was never openly talked about, but from time to time I would hear glowing
+## things said about the Soviet Union, socialism would be held out as an ideal, and
+## America and capitalism would be criticized in emotionally laden ways. My cous-
+## ins in New York were especially vocal about this, and in the mid-1g60s when I be-
+## came more engaged in political matters, intense political discussions with my
+## New York relatives contributed significantly to anchoring my radical sensibilities.
+## 
+## My interest in social sciences began in earnest in high school. fn Lawrence it
+## was easy for academically oriented kids to take courses at the University of Kan-
+## sas, and in my senior year | took a political science course on American politics.
+## For my term project | decided to do a survey of children’s attitudes toward the
+## American presidency and got permission to administer a questionnaire to several
+## hundred students from grades 1-12 in the public schools. | then organized a party
+## with my friends to code the data and produce graphs of how various attitudes
+## changed by age. I&#39;he most striking finding was that, in response to the question,
+## “Would you like to be President of the United States when you grow up?” there
+## were more girls who said yes than boys through third grade, after which the rate
+## for girls declined dramatically.
+## 
+## By the time I graduated from high school in 1964, I had enough university
+## credits and advanced placement credits to enter KU as a second-semester soph-
+## omore, and that is what | had planned to do. Nearly all of my friends were going
+## to KU. It just seemed like the thing to do. A friend of my parents, Karl Heider,
+## gave me, as a Christmas present in my senior year in high school, an application
+## form to Harvard. He was a graduate student at Harvard in anthropology at the
+## time. I filled it out and sent it in. Harvard was the only place to which I applied,
+## not out of inflated self-confidence but because it was the only application I got as
+## a Christmas present. When | eventually was accepted (initially I was on the wait-
+## ing list), the choice was thus between KU and Harvard. I suppose this was a
+## “choice” since I could have decided to stay at KU. However, it just seemed so ob-
+## vious; there was no angst, no weighing of alternatives, no thinking about the pros
+## and cons. Thus, going to Harvard in a way just happened.
+## 
+## Like many students who began university in the mid-1960s, my political ideas
+## were rapidly radicalized as the Viet Nam War escalated and began to impinge on
+## our lives. I was not a student leader in activist politics, but I did actively partici-
+## pate in demonstrations, rallies, fasts for peace, and endless political debate. At
+## Harvard I majored in social studies, an intense interdisciplinary social science
+## major centering on the classics of social theory, and in that program I was first ex-
+## posed to the more abstract theoretical issues that bore on the political concerns
+## of the day: the dynamics of capitalism, the nature of power and domination, the
+## importance of elites in shaping American foreign policy, and the problem of</code></pre>
+<p>We pass all middle pages to <code>convert_page</code> to convert them to text:</p>
+<pre class="r"><code>middle_pages &lt;- lapply(all_pages[3:(length(all_pages) - 1)], convert_page)
+cat(middle_pages[[1]])</code></pre>
+<pre><code>## versity of Western Australia); music camp (1 played viola); assisting in a lab. And
+## in college, it was much the same: volunteering as a photographer on an archae-
+## ological dig in Hawaii; teaching in a high school enrichment program for mi-
+## nority kids; traveling in urope. The closest thing to an ordinary paying job |
+## ever had was occasionally selling hot dogs at football games in my freshman year
+## in college. What is more, the ivory towers that [ have inhabited since the mid-
+## 1960s have been located in beautiful physical settings, filled with congenial and
+## interesting colleagues and students, and animated by exciting ideas. This, then,
+## is the first fundamental fact of my life as an academic: [ have been extraordinar-
+## ily lucky and have always lived what can only be considered a life of extreme priv-
+## ilege. Nearly all of the time [ am doing what [ want to do; what I do gives me a
+## sense of fulfillment and purpose; and | am paid well for doing it.
+## 
+## Here is the second fundamental fact of my academic life: since the early
+## 19708, my intellectual life has been firmly anchored in the Marxist tradition. The
+## core of my teaching as a professor has centered on communicating the central
+## ideas and debates of contemporary Marxism and allied traditions of emancipa-
+## tory social theory. The courses I have taught have had names like Class, State and
+## Ideology: An Introduction to Marxist Sociology; Envisioning Real Utopias; Mars-
+## ist Theories of the State; Alternative Foundations of Class Analysis. My energies
+## in institution building have all involved creating and expanding arenas within
+## which radical system-challenging ideas could flourish: creating a graduate pro-
+## gram in class analysis and historical change in the Sociology Department at the
+## University of Wisconsin—Madison; establishing the A. E. Havens Center, a re-
+## search institute for critical scholarship at Wisconsin; organizing an annual con-
+## ference for activists and academics, now called RadFest, which has been held
+## every year since 1983. And my scholarship has been primarily devoted to recon-
+## structing Marxism as a theoretical framework and research tradition. While the
+## substantive preoccupations of this scholarship have shifted over the past thirty
+## years, its central mission has not.
+## 
+## As in any biography, this pair of facts is the result of a trajectory of circum-
+## stances and choices: circumstances that formed me and shaped the range of
+## choices I encountered, and choices that in turn shaped my future circumstances.
+## Some of these choices were made easily, with relatively little weighing of alter-
+## natives, sometimes even without much awareness that a choice was actually be-
+## ing made; others were the result of protracted reflection and conscious decision
+## making, sometimes with the explicit understanding that the choice being made
+## would constrain possible choices in the future. Six such junctures of circum-
+## stance and choice seem especially important to me in shaping the contours of
+## my academic career. ‘The first was posed incrementally in the early 1970s: the
+## choice to identify my work primarily as contributing to Marxism rather than
+## simply using Marxism. The second concerns the choice, made just before grad-
+## uate school at the University of California, Berkeley, to be a sociologist, rather
+## than some other ist. ‘The third was the choice to become what some people de-
+## scribe as multivariate Marxist: to be a Marxist sociologist who engages in grandi-
+## ose, perhaps overblown, quantitative research, The fourth choice was the choice
+## of which academic department to be in. This choice was acutely posed to me
+## in 1987 when I spent a year as a visiting professor at the University of Califor-
+## nia, Berkeley. | had been offered a position there, and | had to decide whether
+## I wanted to return to Wisconsin. Returning to Madison was unquestionably a
+## choice that shaped subsequent contexts of choice. The fifth choice has been
+## posed and reposed to me with increasing intensity since the late 1980s: the
+## choice to stay a Marxist in this world of post-Marxisms when many of my intel-
+## lectual comrades have decided for various good, and sometimes perhaps not so
+## good, reasons to recast their intellectual agenda as being perhaps friendly to, but
+## outside of, the Marxist tradition. Finally, the sixth important choice was to shift
+## my central academic work from the study of class structure to the problem of en-
+## visioning real utopias.
+## 
+## To set the stage for this reflection on choice and constraint, I need to give a
+## brief account of the circumstances of my life that brought me into the arena of
+## these choices.
+## 
+## Growing Up
+## 
+## I was born in Berkeley, California, in 1947 while my father, who had received a
+## PhD in psychology before World War II, was in medical school on the GI Bill.
+## When he finished his medical training in 1951, we moved to Lawrence, Kansas,
+## where he became the head of the program in clinical psychology at Kansas Uni-
+## versity (KU) and a professor of psychiatry in the KU Medical School. Because of
+## antinepotism rules at the time, my mother, who also had a PhD in psychology,
+## was not allowed to be employed at the university, so throughout the 1950s she did
+## research on various research grants. In 1961, when the state law on such things
+## changed, she became a professor of rehabilitation psychology.
+## 
+## Life in my family was intensely intellectual. Dinner table conversation would
+## often revolve around intellectual matters, and my parents were always deeply en-</code></pre>
+<p>Ok, everything’s looking good. Because the first and last pages have different croping dimensions, I slightly adapt the <code>geometry_area</code> to do it manually:</p>
+<pre class="r"><code>### First page
+first_page &lt;- magick::image_read_pdf(all_pages[2])
+image_resize(first_page, geometry_size_percent(width = 40))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-11-1.png" width="702" /></p>
+<pre class="r"><code>separator &lt;- image_info(first_page)$width / 2
+
+size &lt;- geometry_area(width = 1400,
+                      height = 1700,
+                      x_off = separator + 100,
+                      y_off = 650)
+
+first_page &lt;- image_crop(first_page, size)
+image_resize(first_page, geometry_size_percent(width = 40))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-11-2.png" width="280" /></p>
+<pre class="r"><code>first_page &lt;- image_ocr(first_page)
+###
+
+
+### Last page
+last_page &lt;- magick::image_read_pdf(all_pages[14])
+image_resize(last_page, geometry_size_percent(width = 40))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-11-3.png" width="702" /></p>
+<pre class="r"><code>separator &lt;- image_info(last_page)$width / 2
+
+size &lt;- geometry_area(width = separator - 400,
+                      height = 500,
+                      x_off = 150,
+                      y_off = 260)
+
+last_page &lt;- image_crop(last_page, size)
+image_resize(last_page, geometry_size_percent(width = 70))</code></pre>
+<p><img src="/blog/2019-01-26-turning-a-pdf-book-into-machine-readable-format/2019-01-26-turning-a-pdf-book-into-machine-readable-format_files/figure-html/unnamed-chunk-11-4.png" width="474" /></p>
+<pre class="r"><code>last_page &lt;- image_ocr(last_page)
+###</code></pre>
+<p>Ok, the hard work is over! Now we need to merge all of the pages together and print a subset of the text:</p>
+<pre class="r"><code>final_document &lt;- paste0(first_page, Reduce(paste0, middle_pages), last_page)
+cat(paste0(substring(final_document, 0, 5000), &quot;...&quot;))</code></pre>
+<pre><code>## Falling into Marxism; Choosing to Stay
+## 
+## Erik Olin Wright received his PhD from the University of California, Berkeley, and
+## has taught at the University of Wisconsin since then. His academic work has been
+## centrally concerned with reconstructing the Marxist tradition of social theory and
+## research in ways that attempt to make it more relevant to contemporary concerns
+## and more cogent as a scientific framework of analysis. His empirical research has
+## focused especially on the changing character of class relations in developed capi-
+## talist societies. Since 1992 he has directed the Real Utopias Project, which explores
+## a range of proposals for new institutional designs that embody emancipatory ideals
+## and yet are attentive to issues of pragmatic feasibility. His principle publications
+## include The Politics of Punishment: A Critical Analysis of Prisons in America;
+## Class, Crisis and the State; Classes; Reconstructing Marxism (with Elliott Sober
+## and Andrew Levine); Interrogating Inequality; Class Counts: Comparative Stud-
+## ies in Class Analysis; and Deepening Democracy: Innovations in Empowered
+## Participatory Governance (with Archon Fung). He is married to Marcia Kahn
+## Wright, a clinical psychologist working in community mental health, and has tvo
+## grown daughters, Jennifer and Rebecca.
+## 
+## [ have been in school continuously for more than fifty vears: since I entered
+## kindergarten in 1952, there has never been a September when I wasn’t beginning
+## a school year. | have never held a nine-to-five job with fixed hours and a boss
+## telling me what to do. In high school, my summers were always spent in vari-
+## ous kinds of interesting and engaging activities — traveling home from Australia
+## where my family spent a year (my parents were Fulbright professors at the Uni-
+## versity of Western Australia); music camp (1 played viola); assisting in a lab. And
+## in college, it was much the same: volunteering as a photographer on an archae-
+## ological dig in Hawaii; teaching in a high school enrichment program for mi-
+## nority kids; traveling in urope. The closest thing to an ordinary paying job |
+## ever had was occasionally selling hot dogs at football games in my freshman year
+## in college. What is more, the ivory towers that [ have inhabited since the mid-
+## 1960s have been located in beautiful physical settings, filled with congenial and
+## interesting colleagues and students, and animated by exciting ideas. This, then,
+## is the first fundamental fact of my life as an academic: [ have been extraordinar-
+## ily lucky and have always lived what can only be considered a life of extreme priv-
+## ilege. Nearly all of the time [ am doing what [ want to do; what I do gives me a
+## sense of fulfillment and purpose; and | am paid well for doing it.
+## 
+## Here is the second fundamental fact of my academic life: since the early
+## 19708, my intellectual life has been firmly anchored in the Marxist tradition. The
+## core of my teaching as a professor has centered on communicating the central
+## ideas and debates of contemporary Marxism and allied traditions of emancipa-
+## tory social theory. The courses I have taught have had names like Class, State and
+## Ideology: An Introduction to Marxist Sociology; Envisioning Real Utopias; Mars-
+## ist Theories of the State; Alternative Foundations of Class Analysis. My energies
+## in institution building have all involved creating and expanding arenas within
+## which radical system-challenging ideas could flourish: creating a graduate pro-
+## gram in class analysis and historical change in the Sociology Department at the
+## University of Wisconsin—Madison; establishing the A. E. Havens Center, a re-
+## search institute for critical scholarship at Wisconsin; organizing an annual con-
+## ference for activists and academics, now called RadFest, which has been held
+## every year since 1983. And my scholarship has been primarily devoted to recon-
+## structing Marxism as a theoretical framework and research tradition. While the
+## substantive preoccupations of this scholarship have shifted over the past thirty
+## years, its central mission has not.
+## 
+## As in any biography, this pair of facts is the result of a trajectory of circum-
+## stances and choices: circumstances that formed me and shaped the range of
+## choices I encountered, and choices that in turn shaped my future circumstances.
+## Some of these choices were made easily, with relatively little weighing of alter-
+## natives, sometimes even without much awareness that a choice was actually be-
+## ing made; others were the result of protracted reflection and conscious decision
+## making, sometimes with the explicit understanding that the choice being made
+## would constrain possible choices in the future. Six such junctures of circum-
+## stance and choice seem especially important to me in shaping the contours of
+## my academic career. ‘The first was posed incrementally in the early 1970s: the
+## choice to identify my work primarily as contributing to Marxism rather than
+## simply using Marxism. The second concerns the choice, made just before grad-
+## uate school at the University ...</code></pre>
+<p>There we go, nicely formatted text all obtained from pdf images (after carefully revising the text there are many mistakes, but this was a lightning post, so no time to tidy up the text).</p>
+<div id="converting-the-text-to-an-epub" class="section level3">
+<h3>Converting the text to an epub</h3>
+<p>I thought this was going to be much easier, but <code>knitr</code> seems to crash when compiling this text. According to <a href="https://bookdown.org/yihui/bookdown/build-the-book.html">bookdown</a>, I would need a <code>.Rmd</code> file and then use <code>bookdown::render_book(&quot;my_book.Rmd&quot;, bookdown::epub_book())</code>. However, I cannot compile the <code>.Rmd</code> file using this text because it runs out of memory. Run the example below:</p>
+<pre class="r"><code>rmd_path &lt;- tempfile(pattern = &#39;our_book&#39;, fileext = &quot;.Rmd&quot;)
+
+rmd_preamble &lt;-&quot;---
+  title: &#39;Final Book&#39;
+  output: html_document
+---\n\n&quot;
+
+final_document &lt;- paste0(rmd_preamble, final_document)
+  
+writeLines(final_document, con = rmd_path, useBytes = TRUE)
+
+# Bookdown compiles all .Rmd in the working directory, so we move
+# to the temporary directory where the book is
+setwd(dirname(rmd_path))
+bookdown::render_book(rmd_path, bookdown::epub_book())</code></pre>
+<p>If you figure out how make to this work, I’d love to hear about it in the comment section.</p>
+<p>EDIT:</p>
+<p>Thanks to the <a href="https://twitter.com/leonawicz/status/1089537068550651907">tweet by Matthew Leonawicz</a> I managed to do it!</p>
+<pre class="r"><code>txt_path &lt;- tempfile(pattern = &#39;our_book&#39;, fileext = &quot;.txt&quot;)
+
+writeLines(final_document, con = txt_path, useBytes = TRUE)
+
+# First download Calibre
+path &lt;- paste0(Sys.getenv(&quot;PATH&quot;), &quot;;&quot;, &quot;C:\\Program Files\\Calibre2&quot;)
+Sys.setenv(PATH = path)
+bookdown::calibre(txt_path, paste0(dirname(txt_path), &quot;/erik_wright.mobi&quot;))</code></pre>
+</div>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>Exploring Google Scholar coauthorship</title>
+      <link>https://cimentadaj.github.io/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</link>
+      <pubDate>Tue, 19 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2018-06-19-exploring-google-scholar-coauthorship/exploring-google-scholar-coauthorship/</guid>
+      <description><![CDATA[
+      
+
+
+<p>I woke up today to read Maëlle Salmon’s latest blog entry in which she scraped her own <a href="https://masalmon.eu/2018/06/18/mathtree/">mathematical tree</a>. Running through the code I had an idea about scraping the coauthorship list that a Google Scholar profile has. With this, I could visualize the network of coauthorship of important scientists and explore whether they have closed or open collaborations.</p>
+<p>I sat down this morning and created the <code>coauthornetwork</code> package that allows you to do just that! It’s actually very simple. First, install it with the usual:</p>
+<pre class="r"><code>devtools::install_github(&quot;cimentadaj/coauthornetwork&quot;)</code></pre>
+<p>There’s two functions: <code>grab_network</code> and <code>plot_coauthors</code>. The first scrapes and returns a data frame of a Google Scholar profile, their coauthors and the coauthors of their coauthors (what?). More simply, by default, the data frame returns this:</p>
+<p>Google Scholar Profile –&gt; Coauthors –&gt; Coauthors</p>
+<p>It’s not that hard after all. The only thing you need to provide is the end of the URL of a Google Scholar profile. For example, a typical URL looks like this: <code>https://scholar.google.com/citations?user=F0kCgy8AAAAJ&amp;hl=en</code>. <code>grab_network</code> will accept the latter part of the URL, namely: <code>citations?user=F0kCgy8AAAAJ&amp;hl=en</code>. Let’s test it:</p>
+<pre class="r"><code>library(coauthornetwork)
+
+network &lt;- grab_network(&quot;citations?user=F0kCgy8AAAAJ&amp;hl=en&quot;)
+network</code></pre>
+<pre><code>## # A tibble: 21 x 4
+##    author       href                 coauthors     coauthors_href          
+##    &lt;fct&gt;        &lt;fct&gt;                &lt;fct&gt;         &lt;fct&gt;                   
+##  1 Hans-Peter ~ citations?user=F0kC~ Melinda Mills /citations?user=HX9KQ5M~
+##  2 Hans-Peter ~ citations?user=F0kC~ Karl Ulrich ~ /citations?user=iuzu9xw~
+##  3 Hans-Peter ~ citations?user=F0kC~ Florian Schu~ /citations?user=MWCt6hQ~
+##  4 Hans-Peter ~ citations?user=F0kC~ Yossi Shavit  /citations?user=brfWXKM~
+##  5 Hans-Peter ~ citations?user=F0kC~ Jan Skopek    /citations?user=Mmo1hFk~
+##  6 Melinda Mil~ /citations?user=HX9~ Hans-Peter B~ /citations?user=F0kCgy8~
+##  7 Melinda Mil~ /citations?user=HX9~ Tanturri Mar~ /citations?user=xN3XevQ~
+##  8 Melinda Mil~ /citations?user=HX9~ René Veenstra /citations?user=_9OVrqM~
+##  9 Melinda Mil~ /citations?user=HX9~ Francesco C.~ /citations?user=-JR6yo4~
+## 10 Karl Ulrich~ /citations?user=iuz~ Paul B. Balt~ /citations?user=vcOZeDg~
+## # ... with 11 more rows</code></pre>
+<p>The main author here is Hans-Peter Blossfeld, a well known Sociologist. We also see that Melinda Mills is one of his coauthors, so we also have the coauthors of Melinda Mills right after him. <code>grab_networks</code> also has the <code>n_coauthors</code> argument to control how many coauthors you can extract (limited to 20 by Google Scholar). You’ll notice that once you go over 10 coauthors things start to get very messy when we visualize this.</p>
+<pre class="r"><code>plot_coauthors(network, size_labels = 3)</code></pre>
+<p><img src="/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Cool eh? We can play around with more coauthors as well.</p>
+<pre class="r"><code>plot_coauthors(grab_network(&quot;citations?user=F0kCgy8AAAAJ&amp;hl=en&quot;, n_coauthors = 7), size_labels = 3)</code></pre>
+<p><img src="/blog/2018-06-19-exploring-google-scholar-coauthorship/2018-06-19-exploring-google-scholar-coauthorship_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Hope you enjoy it!</p>
+<!-- To make it more accesible to non-R users, I [created a Shiny app](https://cimentadaj.shinyapps.io/gs_coauthorsip/) where everyone can explore their own coauthors. Enjoy! -->
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>Installing rJava on Windows 10</title>
+      <link>https://cimentadaj.github.io/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/</link>
+      <pubDate>Fri, 25 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2018-05-25-installing-rjava-on-windows-10/installing-rjava-on-windows-10/</guid>
+      <description><![CDATA[
+      
+
+
+<p>Struggled for about two hours to install <code>rJava</code> on my Windows 10 machine. Post here the steps that made it work in case anyone is interested (that is, future me).</p>
+<ul>
+<li><p>Check whether R is 32/64 bit with <code>sessionInfo()</code>. Check Platform.</p></li>
+<li><p>Download the specific 32/64 bit of Java. This is <strong>really</strong> important. R and Java must have the same memory signature, either 32 or 64 bit. I had 64 bit so I downloaded the Offline 64-bit version from <a href="https://www.java.com/en/download/manual.jsp">here</a>.</p></li>
+<li><p>Download Java JDK for 32/64 bit. For 64-bit I had to download the Windows version from <a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk10-downloads-4416644.html">here</a>.</p></li>
+<li><p>If you installed 32-bit Java then everything should be saved in <code>C:/Program Files (x86)/Java/</code>. Conversely, if you installed 64-bit then everything should be installed in <code>C:/Program Files/Java/</code>.</p></li>
+<li><p>Install <code>rJava</code> with <code>install.packages(&quot;rJava&quot;)</code>.</p></li>
+<li><p>Set your <code>JAVA_HOME</code> environment with <code>Sys.setenv(JAVA_HOME=&quot;C:/Program Files/Java/jdk-10.0.1/&quot;)</code> so that it points to your specific (64-bit in my case) folder that contains the <code>jdk</code>. Don’t worry about <code>jdk-10.0.1</code> as this might change for future releases.</p></li>
+<li><p><code>library(rJava)</code> throws no errors to me!</p></li>
+</ul>
+<p>Good luck!</p>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>Login in, scraping and hidden fields</title>
+      <link>https://cimentadaj.github.io/blog/2018-04-05-login-in-scraping-and-hidden-fields/login-in-scraping-and-hidden-fields/</link>
+      <pubDate>Thu, 05 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2018-04-05-login-in-scraping-and-hidden-fields/login-in-scraping-and-hidden-fields/</guid>
+      <description><![CDATA[
+      
+
+
+<p>Lightning post. Earlier today I was trying to scrape the emails from all the PhD candidates in my program and I had to log in from our ‘Aula Global’. I did so using <code>httr</code> but something was off: I introduced both my username and password but the website did not log in. Apparently, when loging in through <code>POST</code>, sometimes there’s a thing call hidden fields that you need to fill out! I would’ve never though about this. Below is a case study, that excludes my credentials.</p>
+<p>The first thing we have to do is identify the <code>POST</code> method and the inputs to the request. Using Google Chrome, go to the website <a href="https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php">https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php</a> and then on the Google Chrome menu go to -&gt; Settings -&gt; More tools -&gt; Developer tools. Here we have the complete html of the website.</p>
+<ol style="list-style-type: decimal">
+<li>We identify the POST method and the URL</li>
+</ol>
+<!-- <img src="/img/post_method.png" alt="Drawing" style="width: 600px;"/> -->
+<div class="figure">
+<img src="/img/post_method.png" />
+
+</div>
+<p>It’s the branch with <code>form</code> that has <code>method='post'</code>.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Open the <code>POST</code> branch and find all fields. We can see the two ‘hidden’ fields.</li>
+</ol>
+<div class="figure">
+<img src="/img/hidden_fields.png" />
+
+</div>
+<p>Below the <code>form</code> tag, we see two <code>input</code> tags set to hidden, there they are! Even though we want to login, we also have to provide the two hidden fields. Take note of both their <code>name</code> and <code>value</code> tags.</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Dive deeper down the branch and find other fields. In our case, username and password.</li>
+</ol>
+<p>For username:</p>
+<div class="figure">
+<img src="/img/username.png" />
+
+</div>
+<p>For password:</p>
+<div class="figure">
+<img src="/img/password.png" />
+
+</div>
+<ol start="4" style="list-style-type: decimal">
+<li>Write down the field names with the correspoding values.</li>
+</ol>
+<pre class="r"><code>all_fields &lt;-
+  list(
+    adAS_username = &quot;private&quot;,
+    adAS_password = &quot;private&quot;,
+    adAS_i18n_theme = &#39;en&#39;,
+    adAS_mode = &#39;authn&#39;
+  )</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>Load our packages and our URL’s</li>
+</ol>
+<pre class="r"><code>library(tidyverse)
+library(httr)
+library(xml2)
+
+login &lt;- &quot;https://sso.upf.edu/CAS/index.php/login?service=https%3A%2F%2Faulaglobal.upf.edu%2Flogin%2Findex.php&quot;
+website &lt;- &quot;https://aulaglobal.upf.edu/user/index.php?page=0&amp;perpage=5000&amp;mode=1&amp;accesssince=0&amp;search&amp;roleid=5&amp;contextid=185837&amp;id=9829&quot;</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Login using all of our fields.</li>
+</ol>
+<pre class="r"><code>upf &lt;- handle(&quot;https://aulaglobal.upf.edu&quot;)
+
+access &lt;- POST(login,
+               body = all_fields,
+               handle = upf)</code></pre>
+<p>Note how I set the <code>handle</code>. If the website you want to visit and the website that hosts the login information have the same root of the URL (<code>aulaglobal.upf.edu</code> for example), then you can avoid using <code>handle</code> (it’s done behind the scenes). In my case, I set the <code>handle</code> to the same root URL of the website I WANT to visit after I log in (because they have different root URL’s). This way the cookies and login information from the login are preserved through out the session.</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Request the information from the website you’re interested</li>
+</ol>
+<pre class="r"><code>emails &lt;- GET(website, handle = upf)</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>Scrape away!</li>
+</ol>
+<pre class="r"><code>all_emails &lt;-
+  read_html(emails) %&gt;% 
+  xml_ns_strip() %&gt;% 
+  xml_find_all(&quot;//table//a&quot;) %&gt;% 
+  as_list() %&gt;% 
+  unlist() %&gt;% 
+  str_subset(&quot;.+@upf.edu$&quot;)</code></pre>
+<p>Unfortunately you won’t be able to reproduce this script because you don’t have a log information unless you belong to the same PhD program as I do. However, I hope you find the hidden fields explanation useful, I’m sure I will come back to this in the near future for reference!</p>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>ess is now essurvey</title>
+      <link>https://cimentadaj.github.io/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</link>
+      <pubDate>Mon, 26 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2018-03-26-ess-is-now-essurvey/ess-is-now-essurvey/</guid>
+      <description><![CDATA[
+      
+
+
+<p>My <code>ess</code> package has be renamed to <code>essurvey</code>. For quite some time I’ve been pondering whether I should change the name. All of this comes from a dicussion we had on the <a href="http://r.789695.n4.nabble.com/R-pkgs-Release-of-ess-0-0-1-td4746540.html">R-pkg mailing list</a> where many R users suggested that the name was unfortunate given that Emacs Speaks Statistics (ESS) has a long precedence in the R community and the names are very similar. Later on, when submitting the package to <a href="https://ropensci.org/">rOpensci</a>, Jim Hester <a href="https://github.com/ropensci/onboarding/issues/201#issuecomment-372304003">raised the fact once again</a>, without being aware of the previous email thread.</p>
+<p>Considering that I was already changing some of the functionalities of the package due to the <a href="https://github.com/ropensci/onboarding/issues/201">rOpensci review</a>, I decided to change the package name and republish an improved version of <code>ess</code> as <code>essurvey 1.0.0</code>. <code>essurvey</code> is now on CRAN and the repository has been moved to rOpensci’s <a href="https://github.com/ropensci/essurvey">github account</a>.</p>
+<p>The new package is mostly similar although there are now some deprecated functions and new features. Below are the main changes.</p>
+<ul>
+<li><p>You can login <strong>once</strong> using <code>set_email(&quot;your_email&quot;)</code> and avoid rewriting your email in every call to the <code>ess_*</code> functions.</p></li>
+<li><p>All <code>ess_*</code> functions have been deprecated in favour of similar <code>import_*</code> functions. For example:</p></li>
+</ul>
+<pre class="r"><code>ess_rounds(1:7)</code></pre>
+<p>becomes..</p>
+<pre class="r"><code>import_rounds(1:7)</code></pre>
+<p>But that’s the same you would say. The only difference is that with <code>ess_rounds</code> you could download data in Stata, SPSS or SAS formats directly. For that, there’s now the <code>download_*</code> functions.</p>
+<pre class="r"><code>download_rounds(
+  1:5,
+  output_dir = getwd(),
+  format = &quot;spss&quot;
+)</code></pre>
+<p>All of the above applies to <code>ess_country</code> and the <code>ess_all_*</code> functions. There’s also some other minor changes you can checkout in the <a href="https://github.com/ropensci/essurvey/blob/master/NEWS.md">NEWS</a> file. If you haven’t tried <code>essurvey</code>, you can visit the package website for more detailed examples at <a href="https://ropensci.github.io/essurvey/" class="uri">https://ropensci.github.io/essurvey/</a>.</p>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>ess 0.1.1 is out!</title>
+      <link>https://cimentadaj.github.io/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/</link>
+      <pubDate>Sun, 04 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2018-03-04-ess-011-is-out/ess-0-1-1-is-out/</guid>
+      <description><![CDATA[
+      
+
+
+<p>The new version of the ess package is out! <code>ess 0.1.1</code> fixes some bugs and inconsistencies across the package and has one important new feature and a change that breaks backward compatibility. You can see all changes <a href="https://cimentadaj.github.io/ess/news/index.html">here</a>.</p>
+<p>Install the latest version <code>0.1.1</code> from CRAN with <code>install.packages(&quot;ess&quot;)</code>.</p>
+<div id="new-features" class="section level2">
+<h2>New features</h2>
+<p>When downloading any round(s) from the European Social Survey the files are always accompanied by a script that recodes values like 6, 7, 8 and 9 or 96, 97, 98 and 99 to missings, depending on the question. This is a bit tricky because a question with a scale from 1 to 5 will have 6 to 9 as missing values and a question with a scale from 1 to 10 will have the missing values set as 96 to 99. The new <code>remove_missings()</code> function removes all missing values from all questions.</p>
+<p>For example…</p>
+<pre class="r"><code>library(tidyverse)
+library(ess)
+
+clean_df &lt;-
+  ess_rounds(1, &quot;your_email@gmail.com&quot;) %&gt;%
+  recode_missings()</code></pre>
+<p>… will set all the missing categories to NA. That is, the 6 to 9 and 96 to 99 categories on the specific questions. It gives you flexibility in recoding specific categories such as ‘Don’t Know’, ‘Refusal’ or both.</p>
+<pre class="r"><code>another_clean_df &lt;-
+  ess_rounds(1, &quot;your_email@gmail.com&quot;) %&gt;%
+  recode_missings(c(&quot;Refusal&quot;, &quot;No answer&quot;))</code></pre>
+<p>See <code>?recode_missings</code> for the missing categories that are available for recode.</p>
+<p>However, I do not advise recoding missing values right away if you’re exploring the dataset. If you want to manually recode missing values you can use the <code>recode_numeric_missing()</code> and <code>recode_strings_missing</code> correspondingly on numeric and string variables. They work the same as <code>recode_missings</code> but accept a vector of class labelled, the class of each of the columns that returns the <code>ess_*</code> functions.</p>
+<p>For example</p>
+<pre class="r"><code>another_clean_df$tvtot &lt;-
+  recode_numeric_missing(
+    another_clean_df$tvtot,
+    &quot;Don&#39;t know&quot;
+    )</code></pre>
+<p>works for recoding the “Don’t know” category. By default all missing values are chosen.</p>
+<p>Note that both sets of functions <strong>only</strong> work with labelled numeric vectors from the <code>haven</code> package. If you use the <code>ess</code> package that’s taken care of. If you download the data manually, you must read it with the <code>haven</code> package for these functions to work.</p>
+<p>There are also two new <code>show_*</code> functions, namely <code>show_themes</code> and <code>show_rounds_country</code>.</p>
+<p>The first one returns all available themes…</p>
+<pre class="r"><code>show_themes()</code></pre>
+<pre><code>##  [1] &quot;Ageism&quot;                            
+##  [2] &quot;Citizen involvement&quot;               
+##  [3] &quot;Democracy&quot;                         
+##  [4] &quot;Economic morality&quot;                 
+##  [5] &quot;Family work and well-being&quot;        
+##  [6] &quot;Gender, Household&quot;                 
+##  [7] &quot;Health and care&quot;                   
+##  [8] &quot;Human values&quot;                      
+##  [9] &quot;Immigration&quot;                       
+## [10] &quot;Justice&quot;                           
+## [11] &quot;Media and social trust&quot;            
+## [12] &quot;Personal ... well-being&quot;           
+## [13] &quot;Politics&quot;                          
+## [14] &quot;Public attitudes to climate change&quot;
+## [15] &quot;Social inequalities in health&quot;     
+## [16] &quot;Socio demographics&quot;                
+## [17] &quot;Subjective well-being...&quot;          
+## [18] &quot;Timing of life&quot;                    
+## [19] &quot;Welfare attitudes&quot;</code></pre>
+<p>… but doesn’t haven a corresponding <code>ess_*</code> function. This means that it works purely for descriptive purposes.</p>
+<p>Additionaly, <code>show_rounds_country</code> returns all countries that participated in a give round.</p>
+<pre class="r"><code>show_rounds_country(rounds = 2)</code></pre>
+<pre><code>##  [1] &quot;Austria&quot;        &quot;Belgium&quot;        &quot;Czech Republic&quot; &quot;Denmark&quot;       
+##  [5] &quot;Estonia&quot;        &quot;Finland&quot;        &quot;France&quot;         &quot;Germany&quot;       
+##  [9] &quot;Greece&quot;         &quot;Hungary&quot;        &quot;Iceland&quot;        &quot;Ireland&quot;       
+## [13] &quot;Italy&quot;          &quot;Luxembourg&quot;     &quot;Netherlands&quot;    &quot;Norway&quot;        
+## [17] &quot;Poland&quot;         &quot;Portugal&quot;       &quot;Slovakia&quot;       &quot;Slovenia&quot;      
+## [21] &quot;Spain&quot;          &quot;Sweden&quot;         &quot;Switzerland&quot;    &quot;Turkey&quot;        
+## [25] &quot;Ukraine&quot;        &quot;United Kingdom&quot;</code></pre>
+<p>You could use this to see which countries participated in all rounds. For example..</p>
+<pre class="r"><code>all_countries &lt;-
+  map(show_rounds(), ~ show_rounds_country(.x)) %&gt;%
+  reduce(intersect)
+
+all_countries</code></pre>
+<pre><code>##  [1] &quot;Belgium&quot;        &quot;Finland&quot;        &quot;France&quot;         &quot;Germany&quot;       
+##  [5] &quot;Ireland&quot;        &quot;Netherlands&quot;    &quot;Norway&quot;         &quot;Poland&quot;        
+##  [9] &quot;Slovenia&quot;       &quot;Sweden&quot;         &quot;Switzerland&quot;    &quot;United Kingdom&quot;</code></pre>
+</div>
+<div id="breaking-changes" class="section level2">
+<h2>Breaking changes</h2>
+<p>Finally, there is one change that breaks backward compatability. All the <code>ess_*</code> functions always used to return a list, regardless of the number of rounds that were requested. Now, <code>ess_*</code> functions return a <code>tibble</code> whenever it is request only one round and a list when more than one round is requested.</p>
+<p>For example</p>
+<pre class="r"><code>ess_rounds(1, &quot;your_email@gmail.com&quot;)</code></pre>
+<p>will return a tibble but…</p>
+<pre class="r"><code>ess_rounds(1:3, &quot;your_email@gmail.com&quot;)</code></pre>
+<p>…will return a list with each tibble in a slot.</p>
+<p>For more concrete examples check out the new website of the ess <a href="https://cimentadaj.github.io/ess/">here</a>. If you have any ideas for features or find a bug, please report <a href="https://github.com/cimentadaj/ess/issues">here</a>.</p>
+</div>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>What time should I ride my bike?</title>
+      <link>https://cimentadaj.github.io/blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/</link>
+      <pubDate>Mon, 12 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2018-02-12-what-time-should-i-ride-my-bike/what-time-should-i-ride-my-bike/</guid>
+      <description><![CDATA[
+      
+
+
+<p>For a few months now I’ve started developing a project on which I download live bicycle usage from the API of Bicing, the public bicycle service from the city of Barcelona. Before I started analyzing the data I wanted to harvest a reasonable amount of data to be able to get a representative sample of bicycle usage.</p>
+<ol style="list-style-type: decimal">
+<li><p>The first thing I did was to set up my Virtual Private Server (VPS) and set a <code>cron</code> job to email me every day after the scraping of the data is done. Check out a detailed tutorial on how to this <a href="blog/2017-12-01-how-long-should-i-wait-for-my-bike/how-long-should-i-wait-for-my-bike/index.html">here</a></p></li>
+<li><p>The second thing I did was to set up a MySQL database in my VPS and develop a program that interacts with the Barcelona Public Bicycle System API and feeds the database on a daily basis. Check out a detailed tutorial on how I did it <a href="blog/2018-01-31-scraping-at-scale-daily-scraping-to-your-database/scraping-at-scale-daily-scraping-to-your-database/index.html">here</a></p></li>
+</ol>
+<p>I left this program grabing biclycle data of a station close to my house only in the mornings and evenings (moments I used the bicycle) for the last 3 months. This is my first attempt to analyze this data. Please take this as a work in progress as I develop more fine-grained understanding of the data.</p>
+<p>Here I load the libraries and connect to the database in my VPS. Note how I hide the IP of the server and the password by grabbing it as environment variables.</p>
+<pre class="r"><code>library(DBI)
+library(RMySQL)
+library(caret)
+library(viridis)
+library(tidyverse)
+
+
+password &lt;- Sys.getenv(&quot;password&quot;)
+host &lt;- Sys.getenv(&quot;host&quot;)
+
+con &lt;- dbConnect(MySQL(),
+                 dbname = &quot;bicing&quot;, # in &quot;&quot; quotes
+                 user = &quot;cimentadaj&quot;, # in &quot;&quot; quotes
+                 password = password,
+                 host = host) # ip of my server</code></pre>
+<p>Next, let’s grab the data with a simple query. Let’s get some columns:</p>
+<ol style="list-style-type: decimal">
+<li><code>slots</code> is the number of available slots in the station</li>
+<li><code>bikes</code> is the number of available bikes in the station</li>
+</ol>
+<p>These two columns are exact opposites. If the station can hold 20 bicycles and there are 8 slots available, then there’s 12 bicycles availables.</p>
+<ol start="3" style="list-style-type: decimal">
+<li><code>status</code> is the status of the station. Whether <code>OPN</code> or <code>CLOSED</code>.</li>
+<li><code>time</code> is the specific date/time at which that row was returned from the API.</li>
+</ol>
+<p>There’s an additional column named <code>error_msg</code> that has the error message if the API couldn’t retrieve the data. Let’s use only those which were scraped correctly. Let’s write that query and grab the data.</p>
+<pre class="r"><code>query &lt;- 
+&quot;SELECT slots, bikes, status, time
+ FROM bicing_station
+ WHERE hour(time) IN (&#39;7&#39;, &#39;8&#39;, &#39;9&#39;, &#39;10&#39;, &#39;18&#39;, &#39;19&#39;, &#39;20&#39;)
+ AND error_msg IS NULL;&quot;
+
+bicing &lt;-
+  dbGetQuery(con, query) %&gt;%
+  as_tibble() %&gt;% 
+  mutate(time = lubridate::ymd_hms(time),
+         slots = as.numeric(slots),
+         bikes = as.numeric(slots))</code></pre>
+<p>Awesome. Now we have our data set.</p>
+<pre class="r"><code>bicing</code></pre>
+<pre><code>## # A tibble: 46,399 x 4
+##    slots bikes status time               
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dttm&gt;             
+##  1   10.   10. OPN    2017-12-11 08:01:16
+##  2   10.   10. OPN    2017-12-11 08:02:12
+##  3   10.   10. OPN    2017-12-11 08:03:04
+##  4   10.   10. OPN    2017-12-11 08:04:04
+##  5   10.   10. OPN    2017-12-11 08:05:04
+##  6    9.    9. OPN    2017-12-11 08:06:04
+##  7    8.    8. OPN    2017-12-11 08:07:04
+##  8    8.    8. OPN    2017-12-11 08:08:05
+##  9    7.    7. OPN    2017-12-11 08:09:04
+## 10    8.    8. OPN    2017-12-11 08:10:04
+## # ... with 46,389 more rows</code></pre>
+<p>Let’s check if there’s any cases in which the station was not open.</p>
+<pre class="r"><code>bicing %&gt;%
+  filter(status != &quot;OPN&quot;)</code></pre>
+<pre><code>## # A tibble: 0 x 4
+## # ... with 4 variables: slots &lt;dbl&gt;, bikes &lt;dbl&gt;, status &lt;chr&gt;,
+## #   time &lt;dttm&gt;</code></pre>
+<p>Empty rows, alright, station has worked fine.</p>
+<p>Let’s explore the number of bikes comparing between mornings/evenings</p>
+<pre class="r"><code>summary_time &lt;-
+  bicing %&gt;% 
+  group_by(hour = as.factor(lubridate::hour(time))) %&gt;% 
+  summarize(Average = mean(bikes, na.rm = TRUE),
+            Median = median(bikes, na.rm = TRUE)) %&gt;% 
+  gather(type, value, -hour)
+
+bicing %&gt;%
+  mutate(hour = as.factor(lubridate::hour(time))) %&gt;%
+  ggplot(aes(hour, bikes)) +
+  geom_jitter(alpha = 1/8) +
+  geom_point(data = summary_time,
+             aes(y = value, colour = type), size = 3) +
+  theme_bw() +
+  labs(x = &quot;Hour of the day (24H)&quot;,
+       y = &quot;# of available bikes&quot;,
+       title = &quot;Mornings have greater bicycle usage than evenings&quot;,
+       subtitle = &quot;But number of bikes can vary betwen 0 and 20 in the morning&quot;) +
+  scale_colour_manual(name = &quot;Types&quot;, values = c(&#39;Average&#39; = &#39;red&#39;, &#39;Median&#39; = &#39;blue&#39;))</code></pre>
+<p><img src="/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>This is a bit revealing. Some take aways:</p>
+<ol style="list-style-type: decimal">
+<li><p>Mornings have greater number of bikes but they also have high variability. For example, look at the 8 AM category. Even though the average is at around 7 bikes, it’s also very likely that there’s 0 bikes as well as 20 bikes.</p></li>
+<li><p>As time passes, more outliers appear in the distribution. We can infer this both from the overall distribution and the average and the mean are farther away from each other.</p></li>
+</ol>
+<p>This is probably related to how Bicing fills out the stations (a few times a days a truck with bicycles passes by the station and fills them out). I think this is beginning to tell a story although perhaps it’s too early: usage in the mornings is heavy and very dynamic but as the day passes by more a more bikes are taken (either by the Bicing team or by citizens).</p>
+<p>This gives no clear clue to the layman citizen: if it’s 8 AM, how likely am I find bikes? Let’s inspect further.</p>
+<p>Logically, the next question is: does this differ by day of the week? Bloew I plot the average number of bikes per day/hour combination. In addition we’d also want to plot some sort of uncertainty indicator like the standard deviation. However, because it’s very common for bikes to be close to 7-10 bikes as average and below, I plot the uncertainty as the percentage of times that the station has over 10 bikes.</p>
+<pre class="r"><code>summary_time &lt;-
+  bicing %&gt;% 
+  group_by(hour = as.factor(lubridate::hour(time)),
+           day = as.factor(lubridate::wday(time, label = TRUE, week_start = TRUE))) %&gt;% 
+  summarize(Average = mean(bikes, na.rm = TRUE),
+            Variation = mean(bikes &gt; 10, na.rm = TRUE)) %&gt;% 
+  gather(type, value, -hour, -day)
+
+p1 &lt;- 
+  summary_time %&gt;% 
+  filter(type == &quot;Average&quot;) %&gt;% 
+  ggplot(aes(hour, day, fill = value)) + 
+  geom_tile() +
+  scale_fill_viridis(name = &quot;Avg # of bikes&quot;) +
+  labs(x = &#39;Hour of the day (24H)&#39;,
+       y = &#39;Day of the week&#39;,
+       title = &#39;Average number of bikes has a workin week/end of week divide&#39;,
+       subtitle = &#39;Thu and Wed seem to have high peaks at 8, Sun and Sat have peaks at 10&#39;)
+
+p2 &lt;-
+  summary_time %&gt;% 
+  filter(type == &quot;Variation&quot;) %&gt;% 
+  ggplot(aes(hour, day, fill = value)) + 
+  geom_tile() +
+  scale_fill_viridis(name = &#39;% of times \n station has &gt; 10 bikes&#39;) +
+  labs(x = &#39;Hour of the day (24H)&#39;,
+       y = &#39;Day of the week&#39;,
+       title = &#39;Variability reflects same pattern as average # of bikes&#39;,
+       subtitle = &#39;Thu and Wed seem to have &gt; 10 bikes often at 8, Sun and Sat have peaks at 10&#39;)
+
+p1</code></pre>
+<p><img src="/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>p2</code></pre>
+<p><img src="/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>Similarly, we can see whether there’s a clear morning/evening divide by looking at the percentage of bikes for every day in the evening and the morning.</p>
+<pre class="r"><code>bicing %&gt;%
+  mutate(hour = lubridate::hour(time),
+         day = lubridate::wday(time, label = TRUE, week_start = TRUE),
+         morning_evening = ifelse(hour &lt;= 10, &quot;Morning&quot;, &quot;Evening&quot;)) %&gt;%
+  ggplot(aes(day, bikes, fill = morning_evening)) +
+  geom_col(position = &quot;fill&quot;) +
+  labs(x = &quot;Day of the week&quot;,
+       y = &quot;% of bikes&quot;,
+       title = &#39;# of bikes increases linearly through out the week&#39;,
+       fill = &#39;Time of day&#39;)</code></pre>
+<p><img src="/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Alright, so we got that down. So far:</p>
+<ol style="list-style-type: decimal">
+<li><p>There’s more taking and droping happening in the first few days of the week than in the rest</p></li>
+<li><p>Weekdays and weekends have different patterns in bike usage; namely that bike usage is higher in earlier in the week than in the weekends.</p></li>
+<li><p>More bikes are taken in the early days of the weeks than in the latter parts.</p></li>
+</ol>
+<p>Following the previous conclusion, I had the itching of figuring out the rate at which bicycles are taken out by hour. This we can depart from the total or average number of bikes, to actual rate of picking/droping bikes. This can help to pinpoint specific times at which we should avoid going or droping a bike.</p>
+<p>What’s the rate at which bicycles are being taken out by hour? At which time is the station emptying out quicker?</p>
+<p>I’ve computed a metric that calculates the percentage of minutes that there’s changes in the station.</p>
+<pre class="r"><code>intm_df &lt;-
+  bicing %&gt;%
+  mutate(hour = as.factor(lubridate::hour(time)),
+         day = lubridate::wday(time, label = TRUE, week_start = TRUE)) %&gt;%
+  group_by(hour, day) %&gt;%
+  mutate(future_bike = lag(bikes)) %&gt;%
+  summarize(avg_movement = mean(bikes != future_bike, na.rm = TRUE) * 60) %&gt;%
+  ungroup()
+
+intm_df %&gt;% 
+  ggplot(aes(hour, avg_movement, colour = day, group = day)) +
+  geom_line(size = 1.2) +
+  facet_wrap(~ day, ncol = 4) +
+  theme_bw() +
+  labs(x = &#39;Hour of the day (24H)&#39;,
+       y = &quot;Minutes per hour with a bicycle change&quot;,
+       title = &#39;Weekdays have much greater bicycle usage than weekends&#39;,
+       subtitle = &quot;Wed has the busiest hour of the week at 8AM; There&#39;s activity 25 minutes out of the 60 minutes.&quot;) +
+  theme(legend.position = &#39;none&#39;)</code></pre>
+<p><img src="/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>This is very interesting! This plot reverses some of the findings from before. First off, we see that there’s high variability between hours: there’s no point in looking at averages within an hour because a lot happens between minutes. For example, at 7AM and 10 AM during working days there’s very little activity regardless of the day. On the contrary, 8AM and 9AM have high bycicle usage through the working days.</p>
+<p>This makes sense, it’s the time that people usually go to work. Also as expected, bicycle usage is low on weekend mornings and increases linearly through out the day. All in all, 8/9 AM on working days seems to be the time to avoid bicycles if you can! Eventually, in another post, I plan to investigate whether there’s minute-to-minute patterns for 8/9 AM on working days. For example, is there more activity closer to certain minutes? Like half past the hour or at exactly the hour.</p>
+<p>Also, it seems that evenings are busy even on working days, specially on Thursdays but have very little bicycle usage on Fridays! Perhaps Catalans are ready to party and travel on the metro. On my follow up post, I also plan to see whether these patterns hold by season. I would expect summer and winter to have strong seasonal patterns.</p>
+<p>To begin the conclusion, when are the moments when the station is empty? This will trigger me to avoid picking bicycles on those specific times.</p>
+<pre class="r"><code>bicing %&gt;%
+  filter(bikes == 0) %&gt;%
+  mutate(time_day = as.numeric(lubridate::hm(str_extract(time, &quot;[0-9]{2}:[0-9]{2}&quot;)))) %&gt;% 
+  ggplot(aes(x = time_day)) +
+  geom_histogram()</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="/blog/2018-02-12-what-time-should-i-ride-my-bike/2018-02-12-what-time-should-i-ride-my-bike_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>Bicing people probably prepare very well because it’s mostly empty in the evenings</p>
+<p>The next step in the analysis is to start making predictions in waiting time. That will be the topic of my next post, in which I start to develop a modelling approach to predict the time you’ll have to have wait until a bicycle arrives or leaves. As a very simple exercise, I wanted to predict check whether I can predict when the station will be empty? I tried a simple logistic regression just to check.</p>
+<pre class="r"><code>empty_bicycle &lt;-
+  mutate(bicing,
+         empty = ifelse(bikes == 0, 1, 0),
+         hour = as.character(lubridate::hour(time)),
+         day = lubridate::wday(time),
+         day = as.character(day)) %&gt;%
+  select(-(1:4))
+
+training_rows &lt;- createDataPartition(empty_bicycle$empty, 1, p = 0.8)[[1]]
+
+training &lt;- empty_bicycle[training_rows, ]
+test &lt;- empty_bicycle[-training_rows, ]
+
+mod1 &lt;- glm(empty ~ . + day:hour, data = training, family = &quot;binomial&quot;)
+
+pred1 &lt;- predict(mod1, newdata = test, type = &#39;response&#39;)
+
+pred_empty &lt;- rbinom(length(pred1), 1, prob = pred1)
+
+confusionMatrix(test$empty, pred_empty, positive = &quot;1&quot;)</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    0    1
+##          0 6693 1162
+##          1 1103  321
+##                                          
+##                Accuracy : 0.7559         
+##                  95% CI : (0.747, 0.7646)
+##     No Information Rate : 0.8402         
+##     P-Value [Acc &gt; NIR] : 1.000          
+##                                          
+##                   Kappa : 0.0762         
+##  Mcnemar&#39;s Test P-Value : 0.223          
+##                                          
+##             Sensitivity : 0.21645        
+##             Specificity : 0.85852        
+##          Pos Pred Value : 0.22542        
+##          Neg Pred Value : 0.85207        
+##              Prevalence : 0.15982        
+##          Detection Rate : 0.03459        
+##    Detection Prevalence : 0.15346        
+##       Balanced Accuracy : 0.53749        
+##                                          
+##        &#39;Positive&#39; Class : 1              
+## </code></pre>
+<p>This model is terrible at predicting the emptyness of the stations as it can only predict 20% of the time. A few strategies I could check out to improve accuracy:</p>
+<ul>
+<li>Feature engineer when the bicing team picks up bicycles (because they leave them empty)</li>
+<li>Add more information on weather and public holidays from public API’s</li>
+<li>Because the cell that contains empty stations has very few cases, it might be useful to resample that sample until it reaches a similar sample size as the other cells. This might give greater certainty and I assume that there’s not a lot of variability in the pattern of empty stations, so it should be representative.</li>
+</ul>
+<p>Finally, other classification models are certainly warranted. One good alternative would be a random forest, as it takes into consideration specific thresholds in the time of day when prunning the trees.</p>
+<p>However, we also need to be aware that a model is as good as the data that’s being fit. Perhaps, we just need better data!</p>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>Rewriting duplicated</title>
+      <link>https://cimentadaj.github.io/blog/2018-02-06-rewriting-duplicated/rewriting-duplicated/</link>
+      <pubDate>Tue, 06 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2018-02-06-rewriting-duplicated/rewriting-duplicated/</guid>
+      <description><![CDATA[
+      
+
+
+<p>Lightning post. I got very confused earlier today on how to use <code>duplicated</code>. Basically, I didn’t know if it was picking only one duplicate or many of the duplicates at the same time. I figure it out but I still was a bit confused so I decided to rewrite the function from scratch. Below you can see it. Please post any other solutions or feedback.</p>
+<pre class="r"><code>dupl_identifier &lt;- function(vec, where) {
+  intm &lt;- x %in% vec
+  pos &lt;- which(intm)
+  intm[where(pos)] &lt;- FALSE
+  intm
+}
+
+my_duplicated &lt;- function(x, fromLast = FALSE) {
+  
+  where &lt;- ifelse(!fromLast, min, max)
+  repeated &lt;- names(which(table(x) &gt; 1))
+  
+  if (length(repeated) == 0) return(rep(FALSE, length(x)))
+  
+  val &lt;- lapply(repeated, dupl_identifier, where)
+  final &lt;- as.logical(Reduce(`+`, val))
+  
+  final
+}</code></pre>
+<pre class="r"><code>x &lt;- sample(1:10, 100, replace = TRUE)
+
+identical(my_duplicated(x),
+          duplicated(x))</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>x &lt;- sample(c(1:100, NA), 100, replace = TRUE)
+
+identical(my_duplicated(x),
+          duplicated(x))</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+]]>
+      </description>
+    </item>
+    
+    <item>
+      <title>Cleaning in-door positioning data</title>
+      <link>https://cimentadaj.github.io/blog/2018-02-03-predicting-location-via-indoor-positioning-systems/predicting-location-via-indoor-positioning-systems/</link>
+      <pubDate>Sat, 03 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://cimentadaj.github.io/blog/2018-02-03-predicting-location-via-indoor-positioning-systems/predicting-location-via-indoor-positioning-systems/</guid>
+      <description><![CDATA[
+      
+
+
+<p>I’ve just started reading the wonderful book <a href="http://rdatasciencecases.org/">Data Science in R: A Case Studies Approach to Computational Reasoning and Problem Solving</a>. I’ve just begun the first chapter and I wanted to document some of the things I found interesting. In this post I’ll walkthrough the example on how to transform a text file with GPS locations into a well formatted rectangular dataset. For a detailed explanation see their book, which I highly recommend buying.</p>
+<p>Note: When it makes senses/it’s possible, I always try to find an equivalent tidyverse solution to everything they do in the book.</p>
+<p>This is the data.</p>
+<pre class="r"><code>library(tidyverse)
+
+ex_file &lt;- read_lines(&quot;http://rdatasciencecases.org/Data/offline.final.trace.txt&quot;)
+ex_file[1:4]</code></pre>
+<pre><code>## [1] &quot;# timestamp=2006-02-11 08:31:58&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                 
+## [2] &quot;# usec=250&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+## [3] &quot;# minReadings=110&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                               
+## [4] &quot;t=1139643118358;id=00:02:2D:21:0F:33;pos=0.0,0.0,0.0;degree=0.0;00:14:bf:b1:97:8a=-38,2437000000,3;00:14:bf:b1:97:90=-56,2427000000,3;00:0f:a3:39:e1:c0=-53,2462000000,3;00:14:bf:b1:97:8d=-65,2442000000,3;00:14:bf:b1:97:81=-65,2422000000,3;00:14:bf:3b:c7:c6=-66,2432000000,3;00:0f:a3:39:dd:cd=-75,2412000000,3;00:0f:a3:39:e0:4b=-78,2462000000,3;00:0f:a3:39:e2:10=-87,2437000000,3;02:64:fb:68:52:e6=-88,2447000000,1;02:00:42:55:31:00=-84,2457000000,1&quot;</code></pre>
+<p>Some lines are comments and the 4th line is the actual data. Basically, everything that is <code>something=</code> is the name of the column and columns are separated by a <code>;</code>. Now, within each column there can also be several values like in the column <code>pos</code> where numbers are separated by a comma.</p>
+<p>First, let’s separate everything now that we know all of the delimiters.</p>
+<pre class="r"><code>tokens &lt;- str_split(ex_file[4], pattern = &quot;[;=,]&quot;)[[1]]</code></pre>
+<p>From the documentation we know that the first 4 columns are constant in every line. The remaining columns can vary by each line, which is why they decide to transform the data into stacked/long format. So each unique <code>id</code> will be repeate the number of times that there’s MAC columns (the columns that vary).</p>
+<pre class="r"><code>tmp &lt;- matrix(tokens[-(1:10)], ncol = 4, byrow = TRUE)
+# We got the MAC in a long format, now we have to get unique id
+# of each of the macs (along with time and other vars) to be repeated
+# the number of rows that tmp has
+
+
+# There we go
+tmp_two &lt;- matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, byrow = TRUE)
+
+mat &lt;- cbind(tmp_two, tmp)
+mat</code></pre>
+<pre><code>##       [,1]            [,2]                [,3]  [,4]  [,5]  [,6] 
+##  [1,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+##  [2,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+##  [3,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+##  [4,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+##  [5,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+##  [6,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+##  [7,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+##  [8,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+##  [9,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+## [10,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+## [11,] &quot;1139643118358&quot; &quot;00:02:2D:21:0F:33&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot; &quot;0.0&quot;
+##       [,7]                [,8]  [,9]         [,10]
+##  [1,] &quot;00:14:bf:b1:97:8a&quot; &quot;-38&quot; &quot;2437000000&quot; &quot;3&quot;  
+##  [2,] &quot;00:14:bf:b1:97:90&quot; &quot;-56&quot; &quot;2427000000&quot; &quot;3&quot;  
+##  [3,] &quot;00:0f:a3:39:e1:c0&quot; &quot;-53&quot; &quot;2462000000&quot; &quot;3&quot;  
+##  [4,] &quot;00:14:bf:b1:97:8d&quot; &quot;-65&quot; &quot;2442000000&quot; &quot;3&quot;  
+##  [5,] &quot;00:14:bf:b1:97:81&quot; &quot;-65&quot; &quot;2422000000&quot; &quot;3&quot;  
+##  [6,] &quot;00:14:bf:3b:c7:c6&quot; &quot;-66&quot; &quot;2432000000&quot; &quot;3&quot;  
+##  [7,] &quot;00:0f:a3:39:dd:cd&quot; &quot;-75&quot; &quot;2412000000&quot; &quot;3&quot;  
+##  [8,] &quot;00:0f:a3:39:e0:4b&quot; &quot;-78&quot; &quot;2462000000&quot; &quot;3&quot;  
+##  [9,] &quot;00:0f:a3:39:e2:10&quot; &quot;-87&quot; &quot;2437000000&quot; &quot;3&quot;  
+## [10,] &quot;02:64:fb:68:52:e6&quot; &quot;-88&quot; &quot;2447000000&quot; &quot;1&quot;  
+## [11,] &quot;02:00:42:55:31:00&quot; &quot;-84&quot; &quot;2457000000&quot; &quot;1&quot;</code></pre>
+<p>There we go. We have a stacked matrix with all the variables we need. Let’s wrap the line maker into a function:</p>
+<pre class="r"><code>processLine &lt;- function(x) {
+  tokens &lt;- str_split(x, pattern = &quot;[;=,]&quot;)[[1]]
+  
+  # We got the MAC in a long format, now we have to get unique id
+  # of each of the macs (along with time and other vars) to be repeated
+  # the number of rows that tmp has
+  tmp &lt;- matrix(tokens[-(1:10)], ncol = 4, byrow = TRUE)
+  
+  # There we go
+  tmp_two &lt;- matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, byrow = TRUE)
+  
+  mat &lt;- cbind(tmp_two, tmp)
+  mat
+}</code></pre>
+<p>Let’s apply it to a few sample rows:</p>
+<pre class="r"><code>tmp &lt;- map(ex_file[4:20], processLine)
+
+offline &lt;- as.data.frame(do.call(&quot;rbind&quot;, tmp))
+head(offline)</code></pre>
+<pre><code>##              V1                V2  V3  V4  V5  V6                V7  V8
+## 1 1139643118358 00:02:2D:21:0F:33 0.0 0.0 0.0 0.0 00:14:bf:b1:97:8a -38
+## 2 1139643118358 00:02:2D:21:0F:33 0.0 0.0 0.0 0.0 00:14:bf:b1:97:90 -56
+## 3 1139643118358 00:02:2D:21:0F:33 0.0 0.0 0.0 0.0 00:0f:a3:39:e1:c0 -53
+## 4 1139643118358 00:02:2D:21:0F:33 0.0 0.0 0.0 0.0 00:14:bf:b1:97:8d -65
+## 5 1139643118358 00:02:2D:21:0F:33 0.0 0.0 0.0 0.0 00:14:bf:b1:97:81 -65
+## 6 1139643118358 00:02:2D:21:0F:33 0.0 0.0 0.0 0.0 00:14:bf:3b:c7:c6 -66
+##           V9 V10
+## 1 2437000000   3
+## 2 2427000000   3
+## 3 2462000000   3
+## 4 2442000000   3
+## 5 2422000000   3
+## 6 2432000000   3</code></pre>
+<p>Good! Now we can apply it to all lines, excluding of course the ones which are commented out!</p>
+<pre class="r"><code>tmp &lt;- map(ex_file[!str_sub(ex_file, 1, 1) == &quot;#&quot;], processLine)</code></pre>
+<pre><code>## Warning in matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, :
+## data length exceeds size of matrix
+
+## Warning in matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, :
+## data length exceeds size of matrix
+
+## Warning in matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, :
+## data length exceeds size of matrix
+
+## Warning in matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, :
+## data length exceeds size of matrix
+
+## Warning in matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, :
+## data length exceeds size of matrix
+
+## Warning in matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, :
+## data length exceeds size of matrix</code></pre>
+<p>Aha.. so there’s a few warnings? What’s happening? If we ran the previous with <code>options(error, warn = 2)</code> we would see that it looks like there are some anomalous cases where there’s no MAC information. We either fill out those values with NA’s or we simply exclude them. Because working with the MAC’s is of utmost importance for the analysis, we drop it to save memory. We redefine our function so that if there’s only the 10 starting values it returns a NULL.</p>
+<pre class="r"><code>processLine &lt;- function(x) {
+  tokens &lt;- str_split(x, pattern = &quot;[;=,]&quot;)[[1]]
+  
+  # We exclude rows where there&#39;s no MAC information
+  if (length(tokens) == 10) return(NULL)
+  
+  # We got the MAC in a long format, now we have to get unique id
+  # of each of the macs (along with time and other vars) to be repeated
+  # the number of rows that tmp has
+  tmp &lt;- matrix(tokens[-(1:10)], ncol = 4, byrow = TRUE)
+  
+  # There we go
+  tmp_two &lt;- matrix(tokens[c(2, 4, 6:8, 10)], nrow = nrow(tmp), ncol = 6, byrow = TRUE)
+  
+  mat &lt;- cbind(tmp_two, tmp)
+  mat
+}</code></pre>
+<p>And apply it now..</p>
+<pre class="r"><code>tmp &lt;- map(ex_file[!str_sub(ex_file, 1, 1) == &quot;#&quot;], processLine)
+
+offline &lt;- as_tibble(do.call(&quot;rbind&quot;, tmp))</code></pre>
+<p>Good, let’s set warnings back: <code>options(error = recover, warn = 1)</code></p>
+<p>To finish off let’s set some names.</p>
+<pre class="r"><code>names(offline) &lt;- c(&quot;time&quot;, &quot;scanMac&quot;, &quot;posX&quot;, &quot;posY&quot;, &quot;posZ&quot;,
+                    &quot;orientation&quot;, &quot;mac&quot;, &quot;signal&quot;, &quot;channel&quot;, &quot;type&quot;)
+
+offline</code></pre>
+<pre><code>## # A tibble: 1,181,628 x 10
+##    time   scanMac posX  posY  posZ  orientation mac   signal channel type 
+##    &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;
+##  1 11396~ 00:02:~ 0.0   0.0   0.0   0.0         00:1~ -38    243700~ 3    
+##  2 11396~ 00:02:~ 0.0   0.0   0.0   0.0         00:1~ -56    242700~ 3    
+##  3 11396~ 00:02:~ 0.0   0.0   0.0   0.0         00:0~ -53    246200~ 3    
+##  4 11396~ 00:02:~ 0.0   0.0   0.0   0.0         00:1~ -65    244200~ 3    
+##  5 11396~ 00:02:~ 0.0   0.0   0.0   0.0         00:1~ -65    242200~ 3    
+##  6 11396~ 00:02:~ 0.0   0.0   0.0   0.0         00:1~ -66    243200~ 3    
+##  7 11396~ 00:02:~ 0.0   0.0   0.0   0.0         00:0~ -75    241200~ 3    
+##  8 11396~ 00:02:~ 0.0   0.0   0.0   0.0         00:0~ -78    246200~ 3    
+##  9 11396~ 00:02:~ 0.0   0.0   0.0   0.0         00:0~ -87    243700~ 3    
+## 10 11396~ 00:02:~ 0.0   0.0   0.0   0.0         02:6~ -88    244700~ 1    
+## # ... with 1,181,618 more rows</code></pre>
+<p>— <strong>BONUS</strong> —</p>
+<p>Just wanted to try to get the data in a wide format where each MAC indicator is a column rather than stacked.</p>
+<pre class="r"><code># Define the MAC colums as wide. Because each MAC columns
+# has three associated values, I stack them up so there should
+# be three rows pero every MAC column
+right_col &lt;- tokens[-(1:10)]
+
+right_names &lt;- seq(1, length(right_col), by = 4)
+
+mac_tibble &lt;-
+  matrix(right_col[-right_names], nrow = 3, ncol = length(right_names),
+         dimnames = list(NULL, right_col[right_names])) %&gt;%
+  as_tibble() %&gt;%
+  add_column(mac_indicators = c(&quot;signal&quot;, &quot;chanel&quot;, &quot;type&quot;),
+             .before = 1)
+
+# Define the first four columns
+left_col &lt;- tokens[1:10]
+
+left_names &lt;- seq(1, length(left_col), by = 2)
+
+left_tibble &lt;-
+  matrix(left_col[-left_names], nrow = 3, ncol = length(left_names), byrow = TRUE,
+         dimnames = list(NULL, left_col[left_names])) %&gt;%
+  as_tibble()
+
+# Bind both dfs
+mat &lt;- bind_cols(left_tibble, mac_tibble)
+mat</code></pre>
+<pre><code>## # A tibble: 3 x 17
+##   t         id         pos   `0.0` degree mac_indicators `00:14:bf:b1:97:~
+##   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;          &lt;chr&gt;            
+## 1 11396431~ 00:02:2D:~ 0.0   0.0   0.0    signal         -38              
+## 2 11396431~ 00:02:2D:~ 0.0   0.0   0.0    chanel         2437000000       
+## 3 11396431~ 00:02:2D:~ 0.0   0.0   0.0    type           3                
+## # ... with 10 more variables: `00:14:bf:b1:97:90` &lt;chr&gt;,
+## #   `00:0f:a3:39:e1:c0` &lt;chr&gt;, `00:14:bf:b1:97:8d` &lt;chr&gt;,
+## #   `00:14:bf:b1:97:81` &lt;chr&gt;, `00:14:bf:3b:c7:c6` &lt;chr&gt;,
+## #   `00:0f:a3:39:dd:cd` &lt;chr&gt;, `00:0f:a3:39:e0:4b` &lt;chr&gt;,
+## #   `00:0f:a3:39:e2:10` &lt;chr&gt;, `02:64:fb:68:52:e6` &lt;chr&gt;,
+## # 
