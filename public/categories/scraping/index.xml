@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>scraping on Jorge Cimentada</title>
-    <link>/categories/scraping/</link>
+    <link>https://cimentadaj.github.io/categories/scraping/</link>
     <description>Recent content in scraping on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Wed, 25 Nov 2020 00:00:00 +0000</lastBuildDate>
     
-    <atom:link href="/categories/scraping/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://cimentadaj.github.io/categories/scraping/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Deploying MySQL database using Docker</title>
-      <link>/blog/2020-11-25-deploying-mysql-database-using-docker/deploying-mysql-database-using-docker/</link>
+      <link>https://cimentadaj.github.io/blog/2020-11-25-deploying-mysql-database-using-docker/deploying-mysql-database-using-docker/</link>
       <pubDate>Wed, 25 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2020-11-25-deploying-mysql-database-using-docker/deploying-mysql-database-using-docker/</guid>
+      <guid>https://cimentadaj.github.io/blog/2020-11-25-deploying-mysql-database-using-docker/deploying-mysql-database-using-docker/</guid>
       <description><![CDATA[
       
 <script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>

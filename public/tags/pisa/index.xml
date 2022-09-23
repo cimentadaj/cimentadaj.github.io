@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>PISA on Jorge Cimentada</title>
-    <link>/tags/pisa/</link>
+    <link>https://cimentadaj.github.io/tags/pisa/</link>
     <description>Recent content in PISA on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Wed, 08 Mar 2017 00:00:00 +0000</lastBuildDate>
     
-    <atom:link href="/tags/pisa/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://cimentadaj.github.io/tags/pisa/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>My PISA twitter bot</title>
-      <link>/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</link>
+      <link>https://cimentadaj.github.io/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</link>
       <pubDate>Wed, 08 Mar 2017 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</guid>
+      <guid>https://cimentadaj.github.io/blog/2017-03-08-my-pisa-twitter-bot/my-pisa-twitter-bot/</guid>
       <description><![CDATA[
       
 
@@ -375,10 +375,10 @@ press Control + X (to exit nano). If all went well, then you should see “cront
     
     <item>
       <title>Cognitive inequality around the world – Shiny app</title>
-      <link>/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</link>
+      <link>https://cimentadaj.github.io/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</link>
       <pubDate>Mon, 12 Dec 2016 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</guid>
+      <guid>https://cimentadaj.github.io/blog/2016-12-12-cognitive-inequality-around-the-world-shiny-app/cognitive-inequality-around-the-world-shiny-app/</guid>
       <description><![CDATA[
       
 

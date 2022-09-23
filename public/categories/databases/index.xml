@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>databases on Jorge Cimentada</title>
-    <link>/categories/databases/</link>
+    <link>https://cimentadaj.github.io/categories/databases/</link>
     <description>Recent content in databases on Jorge Cimentada</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Mon, 11 Jan 2021 00:00:00 +0000</lastBuildDate>
     
-    <atom:link href="/categories/databases/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://cimentadaj.github.io/categories/databases/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Talking between containers in docker-compose</title>
-      <link>/blog/2021-01-11-talking-between-containers-in-dockercompose/talking-between-containers-in-docker-compose/</link>
+      <link>https://cimentadaj.github.io/blog/2021-01-11-talking-between-containers-in-dockercompose/talking-between-containers-in-docker-compose/</link>
       <pubDate>Mon, 11 Jan 2021 00:00:00 +0000</pubDate>
       
-      <guid>/blog/2021-01-11-talking-between-containers-in-dockercompose/talking-between-containers-in-docker-compose/</guid>
+      <guid>https://cimentadaj.github.io/blog/2021-01-11-talking-between-containers-in-dockercompose/talking-between-containers-in-docker-compose/</guid>
       <description><![CDATA[
       
 <script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
