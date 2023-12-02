@@ -12,7 +12,7 @@ publishdir = "public"
 author = "Jorge Cimentada"
 title = "Jorge Cimentada"
 theme = "hugo-goa"
-RSSLink = true
+# RSSLink = true
 
 ## Hugo Built-in Features
 disqusShortname = "cimentadaj-github-io" # Comment out to disable Disqus.
