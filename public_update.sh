@@ -6,6 +6,7 @@
 cd $PWD
 
 echo Git pull and commit in root
+
 git pull
 
 git add --ignore-errors --force .

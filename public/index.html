@@ -1,175 +1,204 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en-US">
-<head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Simple minimalist theme" />
+    <meta name="keywords" content="blog,goa,hugo,r,statistics,education" />
 
-<meta name="description" content="Simple minimalist theme">
-<meta name="keywords" content="blog,goa,hugo,r,statistics,education">
+    <base href="https://cimentadaj.github.io/" />
 
-<base href="https://cimentadaj.github.io/">
+    <title>Jorge Cimentada</title>
 
-<title>Jorge Cimentada</title>
+    <meta name="generator" content="Hugo 0.120.4" />
 
-<meta name="generator" content="Hugo 0.120.4">
+    <link
+      rel="stylesheet"
+      href="https://cimentadaj.github.io/css/github-gist.css"
+      rel="stylesheet"
+      id="theme-stylesheet"
+    />
+    <script src="https://cimentadaj.github.io/js/highlight.pack.js"></script>
+    <script>
+      hljs.configure({ langauges: ["R"] });
+      hljs.initHighlightingOnLoad();
+    </script>
 
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i"
+    />
 
-<link rel="stylesheet" href="https://cimentadaj.github.io/css/github-gist.css" rel="stylesheet" id="theme-stylesheet">
-<script src="https://cimentadaj.github.io/js/highlight.pack.js"></script>
-<script>
-hljs.configure({langauges: ['R']});
-hljs.initHighlightingOnLoad();
-</script>
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"
+    />
+    <link rel="stylesheet" href="https://cimentadaj.github.io/css/main.css" />
 
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="https://cimentadaj.github.io/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://cimentadaj.github.io/favicon-32x32.png"
+      sizes="32x32"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://cimentadaj.github.io/favicon-16x16.png"
+      sizes="16x16"
+    />
+    <link rel="manifest" href="https://cimentadaj.github.io/manifest.json" />
+    <link
+      rel="mask-icon"
+      href="https://cimentadaj.github.io/safari-pinned-tab.svg"
+      color="#5bbad5"
+    />
+    <meta name="theme-color" content="#ffffff" />
+  </head>
+  <body lang="en-US">
+    <div class="container">
+      <header class="row text-center header">
+        <img
+          src="https://cimentadaj.github.io/img/headshot.jpg"
+          alt="Author Image"
+          class="img-circle text-center headshot"
+        />
+        <h1 class="author">Jorge Cimentada</h1>
+      </header>
 
+      <section id="info-pane" class="row text-center info"></section>
 
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400|Roboto+Slab:400,700|Roboto:300,300i,400,400i,500,500i,700,700i">
+      <section id="social-pane" class="row text-center social">
+        <a href="https://twitter.com/cimentadaj"
+          ><i class="fa fa-twitter" aria-hidden="true"></i
+        ></a>
 
-<link rel="stylesheet" href="css/bootstrap.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
-<link rel="stylesheet" href="https://cimentadaj.github.io/css/main.css">
+        <a href="https://github.com/cimentadaj"
+          ><i class="fa fa-github" aria-hidden="true"></i
+        ></a>
 
-<link rel="apple-touch-icon" sizes="180x180" href="https://cimentadaj.github.io/apple-touch-icon.png">
-<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-32x32.png" sizes="32x32">
-<link rel="icon" type="image/png" href="https://cimentadaj.github.io/favicon-16x16.png" sizes="16x16">
-<link rel="manifest" href="https://cimentadaj.github.io/manifest.json">
-<link rel="mask-icon" href="https://cimentadaj.github.io/safari-pinned-tab.svg" color="#5bbad5">
-<meta name="theme-color" content="#ffffff">
+        <a href="https://linkedin.com/in/jorge-cimentada-1740877a/"
+          ><i class="fa fa-linkedin" aria-hidden="true"></i
+        ></a>
 
-</head>
-<body lang="en-US">
-<div class="container">
+        <a href="mailto:cimentadaj@gmail.com"
+          ><i class="fa fa-envelope-o" aria-hidden="true"></i
+        ></a>
+      </section>
 
+      <section id="main-menu-pane" class="row text-center main-menu">
+        <h4>
+          <a class="menu-item" href="https://cimentadaj.github.io/blog/"
+            >blog</a
+          >
+        </h4>
 
-<header class="row text-center header">
-   <img src="https://cimentadaj.github.io/img/headshot.jpg" alt="Author Image" class="img-circle text-center headshot"> 
-  <h1 class="author">Jorge Cimentada</h1>
-</header>
+        <hr />
 
+        <div class="parent">
+          <p>
+            Hi! I'm Jorge Cimentada, Founder and Chief Data Scientist at
+            <a href="https://cognitivalabs.com"> Cognitiva Labs </a>, a boutique
+            data science consulting firm. My expertise lies in developing
+            machine learning models at scale and deploying data ingestion
+            systems with cutting-edge MLOps engineering. My academic background
+            includes a PhD in Computational Sociology, where I focused on using
+            statistical methods to analyze inequality in educational systems.
+            I'm also passionate about creating open-source tools for data
+            wrangling, data science, and machine learning. To explore my
+            projects and educational content, check out the following links:
+          </p>
 
-<section id="info-pane" class="row text-center info">
-  
-  
-</section>
+          <ul class="parent">
+            <li>
+              Find my open-source contributions, including statistical
+              estimations, API wrappers, and data acquisition tools, on
+              <a href="https://github.com/cimentadaj">GitHub</a>.
+            </li>
+            <li>
+              I've developed several courses, including ones on
+              <a href="https://cimentadaj.github.io/ml_socsci/"
+                >Machine Learning</a
+              >
+              and
+              <a href="https://cimentadaj.github.io/dataharvesting/index.html"
+                >Data Harvesting</a
+              >.
+            </li>
+            <li>
+              My consulting work spans machine learning and statistical software
+              development, with collaborations including the
+              <a href="https://population.un.org/wpp/"
+                >United Nations Population Division</a
+              >
+              and the
+              <a href="https://timriffe.github.io/DemoTools/"
+                >Max Planck Institute for Demographic Research</a
+              >.
+            </li>
+            <li>
+              For more professional details, visit my
+              <a href="https://www.linkedin.com/in/jorge-cimentada-1740877a/"
+                >LinkedIn profile</a
+              >.
+            </li>
+          </ul>
 
+          <p>
+            Outside of professional pursuits, I enjoy music as the drummer of
+            <a href="https://www.instagram.com/yeituei/">YEITUEI</a>.
+          </p>
+        </div>
+      </section>
 
-<section id="social-pane" class="row text-center social">
-  
-  <a href="https://twitter.com/cimentadaj"><i class="fa fa-twitter" aria-hidden="true"></i></a>
-  
-  
-  
-  
-  <a href="https://github.com/cimentadaj"><i class="fa fa-github" aria-hidden="true"></i></a>
-  
-  
-  
-  <a href="https://linkedin.com/in/jorge-cimentada-1740877a/"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
-  
-  
-  
-  
-  
-  
-  <a href="mailto:cimentadaj@gmail.com"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
-  
-  
-</section>
+      <footer class="row text-center footer">
+        <hr />
 
+        <h6 class="text-center copyright">
+          © 2022. Jorge Cimentada.
+          <a href="http://creativecommons.org/licenses/by/3.0/"
+            >Some Rights Reserved</a
+          >.
+        </h6>
 
-<section id="main-menu-pane" class="row text-center main-menu">
-  
-  <h4><a class="menu-item" href="https://cimentadaj.github.io/blog/">blog</a></h4>
-  
+        <h6 class="text-center powered">
+          Powered by <a href="https://gohugo.io/">Hugo</a> &amp;
+          <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.
+        </h6>
+      </footer>
+    </div>
 
-  <hr />
+    <script type="application/javascript">
+      var doNotTrack = false;
+      if (!doNotTrack) {
+        window.ga =
+          window.ga ||
+          function () {
+            (ga.q = ga.q || []).push(arguments);
+          };
+        ga.l = +new Date();
+        ga("create", "XYZ", "auto");
 
-  <div class="parent">
-    <p>
-      Hi! I'm Jorge Cimentada, Founder and Chief Data Scientist at
-      <a href="www.cognitivalabs.com"> Cognitiva Labs </a>, a boutique data
-      science consulting firm. My expertise lies in developing machine learning
-      models at scale and deploying data ingestion systems with cutting-edge
-      MLOps engineering. My academic background includes a PhD in Computational
-      Sociology, where I focused on using statistical methods to analyze
-      inequality in educational systems. I'm also passionate about creating
-      open-source tools for data wrangling, data science, and machine learning.
-      To explore my projects and educational content, check out the following
-      links:
-    </p>
+        ga("send", "pageview");
+      }
+    </script>
+    <script async src="https://www.google-analytics.com/analytics.js"></script>
 
-    <ul class="parent">
-      <li>
-        Find my open-source contributions, including statistical estimations,
-        API wrappers, and data acquisition tools, on
-        <a href="https://github.com/cimentadaj">GitHub</a>.
-      </li>
-      <li>
-        I've developed several courses, including ones on
-        <a href="https://cimentadaj.github.io/ml_socsci/">Machine Learning</a>
-        and
-        <a href="https://cimentadaj.github.io/dataharvesting/index.html"
-          >Data Harvesting</a
-        >.
-      </li>
-      <li>
-        My consulting work spans machine learning and statistical software
-        development, with collaborations including the
-        <a href="https://population.un.org/wpp/"
-          >United Nations Population Division</a
-        >
-        and the
-        <a href="https://timriffe.github.io/DemoTools/"
-          >Max Planck Institute for Demographic Research</a
-        >.
-      </li>
-      <li>
-        For more professional details, visit my
-        <a href="https://www.linkedin.com/in/jorge-cimentada-1740877a/"
-          >LinkedIn profile</a
-        >.
-      </li>
-    </ul>
-
-    <p>
-      Outside of professional pursuits, I enjoy music as the drummer of
-      <a href="https://www.instagram.com/yeituei/">YEITUEI</a>.
-    </p>
-  </div>
-</section>
-
-
-
-<footer class="row text-center footer">
-  <hr />
-  
-  <h6 class="text-center copyright">© 2022. Jorge Cimentada. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
-  
-  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
-  
-  
-</footer>
-
-</div>
-
-
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'XYZ', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script src="js/main.js"></script>
-</body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+      integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+      crossorigin="anonymous"
+    ></script>
+    <script src="js/main.js"></script>
+  </body>
 </html>
-
